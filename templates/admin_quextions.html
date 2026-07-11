@@ -1,0 +1,96 @@
+
+{% extends 'layout.html' %}
+
+{% block title %}Add Questions{% endblock %}
+
+{% block content %}
+
+<style>
+    .question-box{
+        max-width:700px;
+        margin:auto;
+        background:white;
+        padding:30px;
+        border-radius:10px;
+        box-shadow:0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    h1{
+        text-align:center;
+        color:#007bff;
+        margin-bottom:30px;
+    }
+
+    label{
+        display:block;
+        font-weight:bold;
+        margin-top:15px;
+    }
+
+    input,
+    textarea,
+    select{
+        width:100%;
+        padding:12px;
+        margin-top:5px;
+        border:1px solid #ccc;
+        border-radius:5px;
+    }
+
+    button{
+        margin-top:25px;
+        background:#007bff;
+        color:white;
+        border:none;
+        padding:12px 25px;
+        border-radius:5px;
+        cursor:pointer;
+    }
+
+    button:hover{
+        background:#0056b3;
+    }
+</style>
+
+<h1>Add Mock Test Question</h1>
+
+<div class="question-box">
+
+    <form method="POST" action="/admin/questions">
+
+        <label>Question</label>
+        <textarea name="question" rows="4" required></textarea>
+
+        <label>Option 1</label>
+        <input type="text" name="option1" required>
+
+        <label>Option 2</label>
+        <input type="text" name="option2" required>
+
+        <label>Option 3</label>
+        <input type="text" name="option3" required>
+
+        <label>Option 4</label>
+        <input type="text" name="option4" required>
+
+        <label>Correct Answer</label>
+        <input type="text" name="answer" required>
+
+        <label>Category</label>
+        <select name="category">
+            <option value="Java">Java</option>
+            <option value="Python">Python</option>
+            <option value="DBMS">DBMS</option>
+            <option value="OS">Operating System</option>
+            <option value="Aptitude">Aptitude</option>
+        </select>
+
+        <button type="submit">
+            Add Question
+        </button>
+
+    </form>
+
+</div>
+
+{% endblock %}

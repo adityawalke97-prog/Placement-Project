@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Resume Builder</title>
+    <style>
+        body{
+            font-family: Arial;
+            background:#f4f4f4;
+            margin:0;
+            padding:20px;
+        }
+
+        .container{
+            width:70%;
+            margin:auto;
+            background:white;
+            padding:30px;
+            border-radius:10px;
+            box-shadow:0 0 10px #ccc;
+        }
+
+        h1{
+            text-align:center;
+            color:#007bff;
+            margin-bottom:30px;
+        }
+
+        label{
+            font-weight:bold;
+            display:block;
+            margin-top:15px;
+        }
+
+        input, textarea{
+            width:100%;
+            padding:10px;
+            margin-top:5px;
+            border:1px solid #ccc;
+            border-radius:5px;
+        }
+
+        button{
+            margin-top:25px;
+            background:#28a745;
+            color:white;
+            border:none;
+            padding:12px 20px;
+            border-radius:5px;
+            cursor:pointer;
+            font-size:16px;
+        }
+
+        button:hover{
+            background:#218838;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Resume Builder</h1>
+
+    <form action="/save_resume" method="POST">
+
+        <label>Full Name</label>
+        <input type="text" name="name" required>
+
+        <label>Email</label>
+        <input type="email" name="email" required>
+
+        <label>Mobile Number</label>
+        <input type="text" name="mobile" required>
+
+        <label>Career Objective</label>
+        <textarea name="objective" rows="4"></textarea>
+
+        <label>Education</label>
+        <textarea name="education" rows="4"></textarea>
+
+        <label>Skills</label>
+        <textarea name="skills" rows="4"></textarea>
+
+        <label>Projects</label>
+        <textarea name="projects" rows="5"></textarea>
+
+        <label>Certifications</label>
+        <textarea name="certifications" rows="4"></textarea>
+
+        <button type="submit">Save Resume</button>
+    </form>
+<a href="/resume/pdf/{{ session['user_id'] }}"
+   class="btn">
+   Download PDF
+</a>
+
+</div>
+
+</body>
+</html>

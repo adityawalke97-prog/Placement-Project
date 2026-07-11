@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Placement Training Portal{% endblock %}</title>
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}">
+      <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <style>
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:Arial, sans-serif;
+        }
+
+        body{
+            background:#f4f6f9;
+        }
+
+        .navbar{
+            background:#007bff;
+            color:white;
+            padding:18px 40px;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+        }
+
+        .logo{
+            font-size:26px;
+            font-weight:bold;
+        }
+
+        .navbar ul{
+            list-style:none;
+            display:flex;
+        }
+
+        .navbar ul li{
+            margin-left:20px;
+        }
+
+        .navbar ul li a{
+            color:white;
+            text-decoration:none;
+            font-size:16px;
+        }
+
+        .navbar ul li a:hover{
+            text-decoration:underline;
+        }
+
+        .container{
+            width:90%;
+            margin:30px auto;
+        }
+
+        .flash{
+            background:#d4edda;
+            color:#155724;
+            padding:12px;
+            border-radius:5px;
+            margin-bottom:20px;
+        }
+
+        footer{
+            background:#222;
+            color:white;
+            text-align:center;
+            padding:20px;
+            margin-top:50px;
+        }
+    </style>
+
+    {% block css %}{% endblock %}
+</head>
+<body>
+
+    <div class="navbar">
+        <div class="logo">
+            Placement Training Portal
+        </div>
+
+        <ul>
+            <li><a href="/">Home</a></li>
+            {% if session.get('user_id') %}
+            <li><a href="/dashboard">Dashboard</a></li>
+            <li><a href="/mock_test">Mock Test</a></li>
+            <li><a href="/interview_questions">Interview Questions</a></li>
+            <li><a href="/communication">Communication</a></li>
+            <li><a href="/resume_builder">Resume Builder</a></li>
+            <li><a href="/logout">Logout</a></li>
+            {% else %}
+            <li><a href="/login">Login</a></li>
+            <li><a href="/signup">Sign Up</a></li>
+            {% endif %}
+        </ul>
+    </div>
+
+    <div class="container">
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="flash">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}
+        {% endblock %}
+
+    </div>
+
+    <footer>
+        © 2026 Placement Training Portal | Flask + MySQL
+    </footer>
+
+    {% block js %}{% endblock %}
+
+</body>
+</html>

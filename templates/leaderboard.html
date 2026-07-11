@@ -1,0 +1,33 @@
+```html id="p6l5eo"
+{% extends 'layout.html' %}
+
+{% block title %}Leaderboard{% endblock %}
+
+{% block content %}
+
+<h1 style="text-align:center;margin-bottom:30px;">
+    🏆 Leaderboard
+</h1>
+
+<div class="card">
+
+<table>
+    <tr>
+        <th>Rank</th>
+        <th>Student Name</th>
+        <th>Best Score</th>
+    </tr>
+
+    {% for leader in leaders %}
+    <tr>
+        <td>{{ loop.index }}</td>
+        <td>{{ leader[0] }}</td>
+        <td>{{ leader[1] }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+</div>
+
+{% endblock %}
+```

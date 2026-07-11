@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Result</title>
+    <style>
+        body{
+            font-family:Arial;
+            background:#f4f4f4;
+            text-align:center;
+            margin-top:100px;
+        }
+
+        .box{
+            width:400px;
+            margin:auto;
+            background:white;
+            padding:40px;
+            border-radius:10px;
+            box-shadow:0 0 10px gray;
+        }
+
+        h1{
+            color:#28a745;
+        }
+
+        a{
+            text-decoration:none;
+            background:#007bff;
+            color:white;
+            padding:10px 20px;
+            border-radius:5px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="box">
+    <h1>Your Score</h1>
+    <h2>{{ score }}/{{ total }}</h2>
+
+    <br>
+
+    <a href="/dashboard">Back to Dashboard</a>
+</div>
+
+</body>
+</html>
