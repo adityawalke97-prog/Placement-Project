@@ -1,105 +1,227 @@
-```html id="9m2lqe"
 {% extends 'layout.html' %}
 
 {% block title %}Communication Skills{% endblock %}
 
 {% block content %}
 
-<style>
-    h1{
-        text-align:center;
-        margin-bottom:30px;
-        color:#007bff;
-    }
+<div class="header-section">
+    <h1>💬 Communication Skills</h1>
+    <p>
+        Improve your English speaking, confidence and interview communication.
+    </p>
+</div>
 
-    .card{
-        background:white;
-        padding:25px;
-        border-radius:10px;
-        box-shadow:0 2px 10px rgba(0,0,0,0.1);
-        margin-bottom:20px;
-    }
+<div class="communication-grid">
 
-    .card h2{
-        color:#007bff;
-        margin-bottom:15px;
-    }
+    <div class="skill-card">
+        <div class="icon">🗣️</div>
+        <h3>Self Introduction</h3>
+        <p>
+            Introduce yourself in 1 minute including your education,
+            skills and career goals.
+        </p>
+    </div>
 
-    ul{
-        margin-left:20px;
-    }
+    <div class="skill-card">
+        <div class="icon">📖</div>
+        <h3>English Speaking</h3>
+        <p>
+            Read English newspapers and speak in English for
+            at least 15 minutes daily.
+        </p>
+    </div>
 
-    li{
-        margin-bottom:10px;
-        line-height:1.6;
-    }
+    <div class="skill-card">
+        <div class="icon">😊</div>
+        <h3>Body Language</h3>
+        <p>
+            Maintain eye contact, smile and sit confidently
+            during interviews.
+        </p>
+    </div>
 
-    .paragraph{
-        background:#f8f9fa;
-        padding:15px;
-        border-left:5px solid #007bff;
-        border-radius:5px;
-        line-height:1.8;
-    }
-</style>
+    <div class="skill-card">
+        <div class="icon">👥</div>
+        <h3>Group Discussion</h3>
+        <p>
+            Listen carefully, speak clearly and support
+            your points with examples.
+        </p>
+    </div>
 
-<h1>Communication Skills Training</h1>
+    <div class="skill-card">
+        <div class="icon">🎤</div>
+        <h3>Interview Communication</h3>
+        <p>
+            Answer confidently and avoid fillers like
+            "umm" and "aaa".
+        </p>
+    </div>
 
-<div class="card">
-    <h2>Daily English Paragraph</h2>
+    <div class="skill-card">
+        <div class="icon">🎧</div>
+        <h3>Listening Practice</h3>
+        <p>
+            Listen to English podcasts or news for
+            15 minutes every day.
+        </p>
+    </div>
 
-    <div class="paragraph">
-        Good communication skills are important for success in every profession.
-        They help us express our ideas clearly and build confidence. To improve
-        communication skills, we should practice speaking English every day,
-        learn new vocabulary, and listen carefully to others.
+</div>
+
+<div class="challenge-box">
+    <h2>🔥 Today's Challenge</h2>
+    <p>
+        Speak for 1 minute on:
+        <b>"Why do you want this job?"</b>
+    </p>
+</div>
+
+<div class="vocab-card">
+    <h2>📚 Word of the Day</h2>
+    <h3>Confident</h3>
+    <p><b>Meaning:</b> Feeling sure about your abilities.</p>
+    <p><b>Sentence:</b> I am confident about my interview.</p>
+</div>
+
+<div class="practice-card">
+    <h2>🎤 Practice Questions</h2>
+
+    <ul>
+        <li>Tell me about yourself.</li>
+        <li>Why should we hire you?</li>
+        <li>What are your strengths?</li>
+        <li>What are your weaknesses?</li>
+        <li>Why do you want to join our company?</li>
+    </ul>
+</div>
+
+<div class="progress-card">
+    <h2>📈 Communication Progress</h2>
+
+    <div class="progress-bar">
+        <div class="progress">
+            70%
+        </div>
     </div>
 </div>
 
-<div class="card">
-    <h2>Interview Communication Tips</h2>
+<div class="badge-card">
+    <h2>🏆 Achievements</h2>
 
-    <ul>
-        <li>Introduce yourself confidently.</li>
-        <li>Maintain eye contact while speaking.</li>
-        <li>Speak slowly and clearly.</li>
-        <li>Listen carefully before answering.</li>
-        <li>Use simple and professional language.</li>
-        <li>Smile and maintain positive body language.</li>
-    </ul>
-</div>
-
-<div class="card">
-    <h2>Group Discussion Tips</h2>
-
-    <ul>
-        <li>Start with a proper introduction.</li>
-        <li>Do not interrupt others.</li>
-        <li>Support your points with examples.</li>
-        <li>Be confident and respectful.</li>
-        <li>Summarize the discussion if possible.</li>
-    </ul>
-</div>
-
-<div class="card">
-    <h2>Daily Vocabulary</h2>
-
-    <ul>
-        <li><b>Confident</b> – Feeling sure about yourself.</li>
-        <li><b>Opportunity</b> – A chance to do something.</li>
-        <li><b>Communicate</b> – To share information.</li>
-        <li><b>Professional</b> – Related to a job or career.</li>
-        <li><b>Achieve</b> – To successfully complete something.</li>
-    </ul>
-</div>
-
-<div class="card">
-    <h2>Practice Question</h2>
-
-    <div class="paragraph">
-        Introduce yourself in English in 5 to 6 sentences and practice it every day.
-    </div>
+    <span class="badge">Beginner</span>
+    <span class="badge">Speaker</span>
+    <span class="badge">Confident</span>
 </div>
 
 {% endblock %}
-```
+
+{% block css %}
+<style>
+
+.header-section{
+    text-align:center;
+    margin-bottom:40px;
+}
+
+.header-section h1{
+    font-size:45px;
+    color:#1e293b;
+    margin-bottom:10px;
+}
+
+.header-section p{
+    color:#64748b;
+    font-size:18px;
+}
+
+.communication-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:25px;
+    margin-bottom:40px;
+}
+
+.skill-card{
+    background:white;
+    padding:30px;
+    border-radius:20px;
+    text-align:center;
+    box-shadow:0 5px 20px rgba(0,0,0,0.08);
+    transition:0.3s;
+}
+
+.skill-card:hover{
+    transform:translateY(-10px);
+}
+
+.icon{
+    font-size:45px;
+    margin-bottom:20px;
+}
+
+.skill-card h3{
+    color:#2563eb;
+    margin-bottom:15px;
+}
+
+.skill-card p{
+    color:#475569;
+    line-height:1.7;
+}
+
+.challenge-box,
+.vocab-card,
+.practice-card,
+.progress-card,
+.badge-card{
+    background:white;
+    padding:30px;
+    border-radius:20px;
+    box-shadow:0 5px 20px rgba(0,0,0,0.08);
+    margin-bottom:30px;
+}
+
+.challenge-box h2,
+.vocab-card h2,
+.practice-card h2,
+.progress-card h2,
+.badge-card h2{
+    color:#2563eb;
+    margin-bottom:15px;
+}
+
+.practice-card ul{
+    padding-left:25px;
+}
+
+.practice-card li{
+    margin-bottom:12px;
+}
+
+.progress-bar{
+    width:100%;
+    background:#e2e8f0;
+    border-radius:30px;
+    overflow:hidden;
+}
+
+.progress{
+    width:70%;
+    background:#2563eb;
+    color:white;
+    padding:12px;
+    text-align:center;
+}
+
+.badge{
+    display:inline-block;
+    background:#2563eb;
+    color:white;
+    padding:10px 20px;
+    border-radius:30px;
+    margin:10px;
+}
+
+</style>
+{% endblock %}

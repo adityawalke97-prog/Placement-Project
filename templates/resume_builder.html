@@ -1,66 +1,14 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Resume Builder</title>
-    <style>
-        body{
-            font-family: Arial;
-            background:#f4f4f4;
-            margin:0;
-            padding:20px;
-        }
+{% extends 'layout.html' %}
 
-        .container{
-            width:70%;
-            margin:auto;
-            background:white;
-            padding:30px;
-            border-radius:10px;
-            box-shadow:0 0 10px #ccc;
-        }
+{% block title %}Resume Builder{% endblock %}
 
-        h1{
-            text-align:center;
-            color:#007bff;
-            margin-bottom:30px;
-        }
+{% block content %}
 
-        label{
-            font-weight:bold;
-            display:block;
-            margin-top:15px;
-        }
+<h1 class="page-title">📄 Resume Builder</h1>
 
-        input, textarea{
-            width:100%;
-            padding:10px;
-            margin-top:5px;
-            border:1px solid #ccc;
-            border-radius:5px;
-        }
+<div class="card">
 
-        button{
-            margin-top:25px;
-            background:#28a745;
-            color:white;
-            border:none;
-            padding:12px 20px;
-            border-radius:5px;
-            cursor:pointer;
-            font-size:16px;
-        }
-
-        button:hover{
-            background:#218838;
-        }
-    </style>
-</head>
-<body>
-
-<div class="container">
-    <h1>Resume Builder</h1>
-
-    <form action="/save_resume" method="POST">
+    <form method="POST" action="/resume_builder">
 
         <label>Full Name</label>
         <input type="text" name="name" required>
@@ -71,29 +19,33 @@
         <label>Mobile Number</label>
         <input type="text" name="mobile" required>
 
-        <label>Career Objective</label>
-        <textarea name="objective" rows="4"></textarea>
+        <label>Address</label>
+        <textarea name="address" required></textarea>
 
         <label>Education</label>
-        <textarea name="education" rows="4"></textarea>
+        <textarea name="education" required></textarea>
 
         <label>Skills</label>
-        <textarea name="skills" rows="4"></textarea>
+        <textarea name="skills"
+        placeholder="Java, Python, MySQL, HTML, CSS"></textarea>
 
         <label>Projects</label>
-        <textarea name="projects" rows="5"></textarea>
+        <textarea name="projects"></textarea>
+
+        <label>Internship / Experience</label>
+        <textarea name="experience"></textarea>
 
         <label>Certifications</label>
-        <textarea name="certifications" rows="4"></textarea>
+        <textarea name="certifications"></textarea>
 
-        <button type="submit">Save Resume</button>
+        <br><br>
+
+        <button type="submit" class="btn-submit">
+            Generate Resume
+        </button>
+
     </form>
-<a href="/resume/pdf/{{ session['user_id'] }}"
-   class="btn">
-   Download PDF
-</a>
 
 </div>
 
-</body>
-</html>
+{% endblock %}

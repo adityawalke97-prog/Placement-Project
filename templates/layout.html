@@ -1,126 +1,453 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}Placement Training Portal{% endblock %}</title>
-<link rel="stylesheet"
-      href="{{ url_for('static', filename='css/style.css') }}">
-      <script src="{{ url_for('static', filename='js/script.js') }}"></script>
-    <style>
-        *{
-            margin:0;
-            padding:0;
-            box-sizing:border-box;
-            font-family:Arial, sans-serif;
-        }
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        body{
-            background:#f4f6f9;
-        }
+    <title>
+        {% block title %}
+        Placement Training Portal
+        {% endblock %}
+    </title>
 
-        .navbar{
-            background:#007bff;
-            color:white;
-            padding:18px 40px;
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-        }
 
-        .logo{
-            font-size:26px;
-            font-weight:bold;
-        }
+    <!-- Main CSS -->
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/layout.css') }}">
 
-        .navbar ul{
-            list-style:none;
-            display:flex;
-        }
 
-        .navbar ul li{
-            margin-left:20px;
-        }
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 
-        .navbar ul li a{
-            color:white;
-            text-decoration:none;
-            font-size:16px;
-        }
 
-        .navbar ul li a:hover{
-            text-decoration:underline;
-        }
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet">
 
-        .container{
-            width:90%;
-            margin:30px auto;
-        }
 
-        .flash{
-            background:#d4edda;
-            color:#155724;
-            padding:12px;
-            border-radius:5px;
-            margin-bottom:20px;
-        }
+    {% block css %}
+    {% endblock %}
 
-        footer{
-            background:#222;
-            color:white;
-            text-align:center;
-            padding:20px;
-            margin-top:50px;
-        }
-    </style>
-
-    {% block css %}{% endblock %}
 </head>
+
+
 <body>
 
-    <div class="navbar">
-        <div class="logo">
-            Placement Training Portal
+
+<!-- ================= NAVBAR ================= -->
+
+<nav class="navbar">
+
+
+    <div class="logo">
+
+        <i class="fas fa-graduation-cap"></i>
+
+        <span>
+            Placement Portal
+        </span>
+
+    </div>
+
+
+
+    <ul class="nav-links">
+
+
+        <li>
+            <a href="/">
+                <i class="fas fa-home"></i>
+                Home
+            </a>
+        </li>
+
+
+
+        {% if session.get('user_id') %}
+
+
+
+        <li>
+            <a href="/dashboard">
+                <i class="fas fa-chart-line"></i>
+                Dashboard
+            </a>
+        </li>
+
+
+
+        <li>
+            <a href="/mock_test">
+                <i class="fas fa-file-circle-question"></i>
+                Mock Test
+            </a>
+        </li>
+
+
+
+        <li>
+            <a href="/interview_questions">
+                <i class="fas fa-user-tie"></i>
+                Interview
+            </a>
+        </li>
+
+
+
+        <li>
+            <a href="/communication">
+                <i class="fas fa-comments"></i>
+                Communication
+            </a>
+        </li>
+
+
+
+        <li>
+            <a href="/resume_builder">
+                <i class="fas fa-file-lines"></i>
+                Resume
+            </a>
+        </li>
+
+
+
+        <li>
+            <a href="/leaderboard">
+                <i class="fas fa-trophy"></i>
+                Leaderboard
+            </a>
+        </li>
+
+
+
+        <!-- User -->
+
+        <li class="profile">
+
+            <a href="#">
+
+                <i class="fas fa-user-circle"></i>
+
+                {{session.get('name','Student')}}
+
+            </a>
+
+        </li>
+
+
+
+
+        <li>
+
+            <a href="/logout"
+               class="logout">
+
+                <i class="fas fa-power-off"></i>
+
+                Logout
+
+            </a>
+
+        </li>
+
+
+
+        {% else %}
+
+
+
+        <li>
+
+            <a href="/login">
+
+                <i class="fas fa-right-to-bracket"></i>
+
+                Login
+
+            </a>
+
+        </li>
+
+
+
+        <li>
+
+            <a href="/signup"
+               class="signup-btn">
+
+                <i class="fas fa-user-plus"></i>
+
+                Sign Up
+
+            </a>
+
+        </li>
+
+
+
+        {% endif %}
+
+
+
+    </ul>
+
+
+</nav>
+
+
+
+
+
+<!-- ================= HERO SECTION ================= -->
+
+
+<header class="hero">
+
+
+    <div class="hero-content">
+
+
+        <h1>
+
+            Crack Your Dream Job 🚀
+
+        </h1>
+
+
+
+        <p>
+
+            Practice Mock Tests,
+            Improve Communication,
+            Create Resume and Prepare for Interviews.
+
+        </p>
+
+
+
+
+        {% if not session.get('user_id') %}
+
+
+        <div class="hero-buttons">
+
+
+            <a href="/signup"
+               class="hero-btn">
+
+                Start Preparation
+
+            </a>
+
+
+
+            <a href="/login"
+               class="hero-outline">
+
+                Login
+
+            </a>
+
+
         </div>
 
-        <ul>
-            <li><a href="/">Home</a></li>
-            {% if session.get('user_id') %}
-            <li><a href="/dashboard">Dashboard</a></li>
-            <li><a href="/mock_test">Mock Test</a></li>
-            <li><a href="/interview_questions">Interview Questions</a></li>
-            <li><a href="/communication">Communication</a></li>
-            <li><a href="/resume_builder">Resume Builder</a></li>
-            <li><a href="/logout">Logout</a></li>
-            {% else %}
-            <li><a href="/login">Login</a></li>
-            <li><a href="/signup">Sign Up</a></li>
-            {% endif %}
-        </ul>
-    </div>
 
-    <div class="container">
+        {% endif %}
 
-        {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="flash">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
 
-        {% block content %}
-        {% endblock %}
+
 
     </div>
 
-    <footer>
-        © 2026 Placement Training Portal | Flask + MySQL
-    </footer>
 
-    {% block js %}{% endblock %}
+
+</header>
+
+
+
+
+
+<!-- ================= MAIN CONTENT ================= -->
+
+
+<div class="container">
+
+
+
+    {% with messages = get_flashed_messages() %}
+
+
+        {% if messages %}
+
+
+
+            {% for message in messages %}
+
+
+            <div class="flash">
+
+                <i class="fas fa-circle-info"></i>
+
+                {{message}}
+
+            </div>
+
+
+
+            {% endfor %}
+
+
+
+        {% endif %}
+
+
+
+    {% endwith %}
+
+
+
+
+
+    {% block content %}
+
+    {% endblock %}
+
+
+
+</div>
+
+
+
+
+
+
+<!-- ================= FOOTER ================= -->
+
+
+<footer>
+
+
+
+<div class="footer-content">
+
+
+<h3>
+
+<i class="fas fa-graduation-cap"></i>
+
+Placement Training Portal
+
+</h3>
+
+
+
+
+<p>
+
+Complete platform for students to prepare
+for IT placement interviews.
+
+</p>
+
+
+
+
+
+<div class="footer-links">
+
+
+<a href="/">
+
+Home
+
+</a>
+
+
+<a href="/mock_test">
+
+Tests
+
+</a>
+
+
+<a href="/resume_builder">
+
+Resume
+
+</a>
+
+
+<a href="/contact">
+
+Contact
+
+</a>
+
+
+</div>
+
+
+
+
+
+<div class="social">
+
+
+<a href="#">
+<i class="fab fa-github"></i>
+</a>
+
+
+<a href="#">
+<i class="fab fa-linkedin"></i>
+</a>
+
+
+<a href="#">
+<i class="fab fa-instagram"></i>
+</a>
+
+
+
+</div>
+
+
+
+
+
+<p class="copyright">
+
+
+© 2026 Placement Training Portal
+
+<br>
+
+Built with Flask + MySQL
+
+
+</p>
+
+
+
+</div>
+
+
+</footer>
+
+
+
+
+
+{% block js %}
+
+{% endblock %}
+
+
 
 </body>
+
 </html>

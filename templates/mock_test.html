@@ -1,114 +1,55 @@
+{% extends 'layout.html' %}
 
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Mock Test</title>
-    <style>
-        body{
-            font-family: Arial;
-            background:#f4f4f4;
-            margin:0;
-            padding:20px;
-        }
+{% block title %}Mock Test{% endblock %}
 
-        .container{
-            width:80%;
-            margin:auto;
-            background:white;
-            padding:30px;
-            border-radius:10px;
-            box-shadow:0 0 10px gray;
-        }
+{% block content %}
 
-        h1{
-            text-align:center;
-            color:#333;
-        }
+<h1 class="page-title">📝 Mock Test</h1>
 
-        .question{
-            margin-bottom:30px;
-            padding:15px;
-            border:1px solid #ddd;
-            border-radius:10px;
-        }
+<form method="POST" action="/submit_test">
 
-        p{
-            font-size:18px;
-            font-weight:bold;
-        }
+{% for q in questions %}
 
-        label{
-            display:block;
-            margin:10px 0;
-            font-size:16px;
-        }
+<div class="card">
 
-        button{
-            background:#28a745;
-            color:white;
-            border:none;
-            padding:12px 25px;
-            font-size:18px;
-            border-radius:5px;
-            cursor:pointer;
-        }
+    <h3>Q{{ loop.index }}. {{ q.question }}</h3>
 
-        button:hover{
-            background:#218838;
-        }
-    </style>
-</head>
-<body>
+    <div class="option">
+        <input type="radio"
+               name="q{{ q.id }}"
+               value="{{ q.option1 }}">
+        {{ q.option1 }}
+    </div>
 
-<div class="container">
+    <div class="option">
+        <input type="radio"
+               name="q{{ q.id }}"
+               value="{{ q.option2 }}">
+        {{ q.option2 }}
+    </div>
 
-    <h1>Placement Training Mock Test</h1>
+    <div class="option">
+        <input type="radio"
+               name="q{{ q.id }}"
+               value="{{ q.option3 }}">
+        {{ q.option3 }}
+    </div>
 
-    <form method="POST" action="/submit_test">
-
-        {% for q in questions %}
-        <div class="question">
-
-            <p>{{ loop.index }}. {{ q[1] }}</p>
-
-            <label>
-                <input type="radio"
-                       name="q{{ q[0] }}"
-                       value="{{ q[2] }}">
-                {{ q[2] }}
-            </label>
-
-            <label>
-                <input type="radio"
-                       name="q{{ q[0] }}"
-                       value="{{ q[3] }}">
-                {{ q[3] }}
-            </label>
-
-            <label>
-                <input type="radio"
-                       name="q{{ q[0] }}"
-                       value="{{ q[4] }}">
-                {{ q[4] }}
-            </label>
-
-            <label>
-                <input type="radio"
-                       name="q{{ q[0] }}"
-                       value="{{ q[5] }}">
-                {{ q[5] }}
-            </label>
-
-        </div>
-        {% endfor %}
-
-        <center>
-            <button type="submit">Submit Test</button>
-        </center>
-
-    </form>
+    <div class="option">
+        <input type="radio"
+               name="q{{ q.id }}"
+               value="{{ q.option4 }}">
+        {{ q.option4 }}
+    </div>
 
 </div>
 
-</body>
-</html>
+{% endfor %}
+
+<button class="btn-submit">
+    Submit Test
+</button>
+
+</form>
+
+{% endblock %}

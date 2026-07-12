@@ -1,36 +1,31 @@
 from flask import Flask, render_template, request, redirect, session, flash
-from flask_mysqldb import MySQL
 from flask_bcrypt import Bcrypt
+import pymysql
 from reportlab.platypus import (
     SimpleDocTemplate,
     Paragraph,
     Spacer
 )
+from dotenv import load_dotenv
+load_dotenv()
 from reportlab.lib.styles import getSampleStyleSheet
 from flask import send_file
 import os
 
 app = Flask(__name__)
 app.secret_key = "placement_secret_key"
+def get_db_connection():
+    return pymysql.connect(
+        host=os.getenv("DB_HOST"),
+        port=int(os.getenv("DB_PORT")),
+        user=os.getenv("DB_USER"),
+        password=os.getenv("DB_PASSWORD"),
+        database=os.getenv("DB_NAME"),
+        cursorclass=pymysql.cursors.DictCursor,
+        connect_timeout=30
+    )
 
-app.config['MYSQL_HOST'] = 'gateway01.ap-northeast-1.prod.aws.tidbcloud.com'
-app.config['MYSQL_PORT'] = 4000
-app.config['MYSQL_USER'] = 'CotGjksA2G9iDYQ.root'
-app.config['MYSQL_PASSWORD'] = 'YOUR_ACTUAL_PASSWORD'
-app.config['MYSQL_DB'] = 'placement_training'
-
-
-import pymysql
-import os
-
-conn = pymysql.connect(
-    host='gateway01.ap-northeast-1.prod.aws.tidbcloud.com',
-    port=4000,
-    user='CotGjksA2G9iDYQ.root',
-    password=os.getenv('DB_PASSWORD'),
-    database='placement_training',
-    ssl_verify_identity=False
-)
+bcrypt = Bcrypt(app)
 # ---------------- HOME ----------------
 @app.route('/')
 def home():
@@ -47,13 +42,15 @@ def signup():
 
         hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
 
-        cur = mysql.connection.cursor()
+        conn = get_db_connection()
+        cur = conn.cursor()
         cur.execute(
             "INSERT INTO users(name, email, password) VALUES(%s,%s,%s)",
             (name, email, hashed_password)
         )
-        mysql.connection.commit()
+        conn.commit()
         cur.close()
+        conn.close()
 
         flash("Account created successfully!")
         return redirect('/login')
@@ -68,14 +65,15 @@ def login():
         email = request.form['email']
         password = request.form['password']
 
-        cur = mysql.connection.cursor()
+        conn = get_db_connection()
+        cur = conn.cursor()
         cur.execute("SELECT * FROM users WHERE email=%s", (email,))
         user = cur.fetchone()
         cur.close()
 
-        if user and bcrypt.check_password_hash(user[3], password):
-            session['user_id'] = user[0]
-            session['name'] = user[1]
+        if user and bcrypt.check_password_hash(user['password'], password):
+            session['user_id'] = user['id']
+            session['name'] = user['name']
             return redirect('/dashboard')
 
         flash("Invalid Email or Password")
@@ -97,11 +95,24 @@ def dashboard():
 # ---------------- INTERVIEW QUESTIONS ----------------
 @app.route('/interview_questions')
 def interview_questions():
-    if 'user_id' not in session:
-        return redirect('/login')
 
-    return render_template('interview_questions.html')
+    conn = get_db_connection()
+    cur = conn.cursor(pymysql.cursors.DictCursor)
 
+    cur.execute("""
+        SELECT *
+        FROM questions
+        ORDER BY category
+    """)
+
+    questions = cur.fetchall()
+    cur.close()
+    conn.close()
+
+    return render_template(
+        'interview_questions.html',
+        questions=questions
+    )
 
 # ---------------- COMMUNICATION ----------------
 @app.route('/communication')
@@ -119,37 +130,40 @@ def resume_builder():
         return redirect('/login')
 
     return render_template('resume_builder.html')
-@app.route('/mock_test')
+@app.route("/mock_test")
 def mock_test():
-    if 'user_id' not in session:
-        return redirect('/login')
 
-    cur = mysql.connection.cursor()
-    cur.execute("SELECT * FROM questions LIMIT 10")
-    questions = cur.fetchall()
+    conn = get_db_connection()  
+
+    cur = conn.cursor()
+
+    cur.execute("SELECT * FROM questions")
+
+    data = cur.fetchall()
+
     cur.close()
+    conn.close()
 
-    return render_template(
-        'mock_test.html',
-        questions=questions
-    )
-
-
+    return render_template("mock_test.html", questions=data)
 @app.route('/submit_test', methods=['POST'])
 def submit_test():
+
     if 'user_id' not in session:
         return redirect('/login')
 
-    cur = mysql.connection.cursor()
+    conn = get_db_connection()   # ✅ Add this line
+
+    cur = conn.cursor()
+
     cur.execute("SELECT * FROM questions LIMIT 10")
     questions = cur.fetchall()
 
     score = 0
 
     for q in questions:
-        selected = request.form.get(f'q{q[0]}')
+        selected = request.form.get(f'q{q["id"]}')
 
-        if selected == q[6]:
+        if selected == q['answer']:
             score += 1
 
     cur.execute(
@@ -160,8 +174,10 @@ def submit_test():
         (session['user_id'], score, len(questions))
     )
 
-    mysql.connection.commit()
+    conn.commit()
+
     cur.close()
+    conn.close()   
 
     return render_template(
         'result.html',
@@ -182,8 +198,9 @@ def save_resume():
     projects = request.form['projects']
     certifications = request.form['certifications']
 
-    cur = mysql.connection.cursor()
+    conn = get_db_connection() 
 
+    cur = conn.cursor()
     cur.execute("""
         INSERT INTO resume
         (user_id,name,email,mobile,objective,
@@ -201,7 +218,7 @@ def save_resume():
         certifications
     ))
 
-    mysql.connection.commit()
+    conn.commit()
     cur.close()
 
     flash("Resume Saved Successfully")
@@ -219,7 +236,8 @@ def admin_questions():
         answer = request.form['answer']
         category = request.form['category']
 
-        cur = mysql.connection.cursor()
+        conn = get_db_connection()
+        cur = conn.cursor()
 
         cur.execute("""
             INSERT INTO questions
@@ -236,7 +254,7 @@ def admin_questions():
             category
         ))
 
-        mysql.connection.commit()
+        conn.commit()
         cur.close()
 
         flash("Question Added Successfully")
@@ -245,31 +263,30 @@ def admin_questions():
     return render_template('admin_questions.html')
 @app.route('/leaderboard')
 def leaderboard():
-    cur = mysql.connection.cursor()
+
+    conn = get_db_connection()   # ✅ Add this
+
+    cur = conn.cursor()
 
     cur.execute("""
-        SELECT users.name,
-               MAX(results.score) AS best_score
-        FROM results
-        JOIN users
-        ON users.id = results.user_id
-        GROUP BY users.id
-        ORDER BY best_score DESC
-        LIMIT 20
+        SELECT * FROM results
+        ORDER BY score DESC
     """)
 
-    leaders = cur.fetchall()
+    data = cur.fetchall()
+
     cur.close()
+    conn.close()
 
     return render_template(
-        'leaderboard.html',
-        leaders=leaders
-    )
-    
+        "leaderboard.html",
+        data=data
+ )
 @app.route('/resume/pdf/<int:user_id>')
 def resume_pdf(user_id):
 
-    cur = mysql.connection.cursor()
+    cconn = get_db_connection() 
+    cur = cconn.cursor()
     cur.execute("""
         SELECT name, email, mobile,
                objective, education,
@@ -279,7 +296,8 @@ def resume_pdf(user_id):
     """, (user_id,))
 
     resume = cur.fetchone()
-    cur.close()
+    cur.close()    
+    cconn.close()
 
     if not resume:
         flash("Resume not found")
@@ -294,13 +312,13 @@ def resume_pdf(user_id):
     elements = []
 
     elements.append(
-        Paragraph(f"<b>{resume[0]}</b>", styles['Title'])
+        Paragraph(f"<b>{resume['name']}</b>", styles['Title'])
     )
     elements.append(
-        Paragraph(f"Email: {resume[1]}", styles['Normal'])
+        Paragraph(f"Email: {resume['email']}", styles['Normal'])
     )
     elements.append(
-        Paragraph(f"Mobile: {resume[2]}", styles['Normal'])
+        Paragraph(f"Mobile: {resume['mobile']}", styles['Normal'])
     )
 
     elements.append(Spacer(1, 20))
@@ -309,7 +327,7 @@ def resume_pdf(user_id):
                   styles['Heading2'])
     )
     elements.append(
-        Paragraph(resume[3], styles['Normal'])
+        Paragraph(resume['objective'], styles['Normal'])
     )
 
     elements.append(Spacer(1, 20))
@@ -318,7 +336,7 @@ def resume_pdf(user_id):
                   styles['Heading2'])
     )
     elements.append(
-        Paragraph(resume[4], styles['Normal'])
+        Paragraph(resume['education'], styles['Normal'])
     )
 
     elements.append(Spacer(1, 20))
@@ -357,7 +375,8 @@ def resume_pdf(user_id):
 @app.route('/certificate/<int:user_id>')
 def certificate(user_id):
 
-    cur = mysql.connection.cursor()
+    cconn = get_db_connection()
+    cur = cconn.cursor()
 
     cur.execute(
         "SELECT name FROM users WHERE id=%s",
@@ -430,6 +449,8 @@ def certificate(user_id):
         filepath,
         as_attachment=True
     )
+    
+
 # ---------------- LOGOUT ----------------
 @app.route('/logout')
 def logout():
