@@ -17,7 +17,7 @@ app.secret_key = "placement_secret_key"
 def get_db_connection():
     return pymysql.connect(
         host=os.getenv("DB_HOST"),
-        port=int(os.getenv("DB_PORT")),
+        port=int(os.getenv("DB_PORT", "4000")),
         user=os.getenv("DB_USER"),
         password=os.getenv("DB_PASSWORD"),
         database=os.getenv("DB_NAME"),
@@ -457,6 +457,9 @@ def logout():
     session.clear()
     return redirect('/')
 
-
-if __name__ == '__main__':
-    app.run(debug=True)
+if __name__ == "__main__":
+    app.run(
+        host="0.0.0.0",
+        port=int(os.getenv("PORT", 5000)),
+        debug=True
+    )
