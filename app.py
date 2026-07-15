@@ -14,18 +14,23 @@ import os
 
 app = Flask(__name__)
 app.secret_key = "placement_secret_key"
+import pymysql
+import os
+
 def get_db_connection():
     return pymysql.connect(
         host=os.getenv("DB_HOST"),
-        port=int(os.getenv("DB_PORT", "4000")),
         user=os.getenv("DB_USER"),
         password=os.getenv("DB_PASSWORD"),
         database=os.getenv("DB_NAME"),
-        cursorclass=pymysql.cursors.DictCursor,
+        port=int(os.getenv("DB_PORT", 4000)),  # TiDB default port
+        ssl={
+            "ssl": {
+                "ca": "/etc/ssl/certs/ca-certificates.crt"  # path to CA bundle
+            }
+        },
         connect_timeout=30
     )
-
-bcrypt = Bcrypt(app)
 # ---------------- HOME ----------------
 @app.route('/')
 def home():
