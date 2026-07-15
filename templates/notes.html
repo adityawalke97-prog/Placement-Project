@@ -3,7 +3,45 @@
 {% block title %}Notes{% endblock %}
 
 {% block content %}
+<style>/* Navbar Styling */
+.navbar {
+    background: #2c3e50;
+    padding: 10px;
+    text-align: center;
+}
 
+.navbar ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.navbar ul li {
+    display: inline-block;
+    margin: 0 15px;
+}
+
+.navbar ul li a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.navbar ul li a:hover {
+    color: #3498db;
+}
+
+/* Notes Card */
+.card {
+    background: #fff;
+    max-width: 700px;
+    margin: 30px auto;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+</style>
 <!-- Navbar with Subjects -->
 <nav class="navbar">
     <ul>
