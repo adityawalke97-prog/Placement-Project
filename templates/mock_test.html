@@ -3,53 +3,309 @@
 {% block title %}Mock Test{% endblock %}
 
 {% block content %}
+<style>
+    /* Premium Glassmorphism & UI Design */
+    :root {
+        --primary-color: #4f46e5;
+        --primary-hover: #4338ca;
+        --bg-glass: rgba(255, 255, 255, 0.08);
+        --border-glass: rgba(255, 255, 255, 0.15);
+        --text-color: #f3f4f6;
+    }
 
-<h1 class="page-title">📝 Mock Test</h1>
+    .test-container {
+        max-width: 850px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
 
-<form method="POST" action="/submit_test">
+    /* Sticky Header containing Timer & Progress */
+    .test-header {
+        position: sticky;
+        top: 1rem;
+        z-index: 100;
+        background: rgba(15, 23, 42, 0.85); /* Adjust based on your layout's dark theme */
+        backdrop-filter: blur(12px);
+        border: 1px solid var(--border-glass);
+        border-radius: 16px;
+        padding: 1rem 1.5rem;
+        margin-bottom: 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    }
 
-{% for q in questions %}
+    .timer-box {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #ef4444;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
 
-<div class="card">
+    .progress-container {
+        flex-grow: 0.6;
+    }
 
-    <h3>Q{{ loop.index }}. {{ q.question }}</h3>
+    .progress-bar-bg {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        height: 8px;
+        overflow: hidden;
+    }
 
-    <div class="option">
-        <input type="radio"
-               name="q{{ q.id }}"
-               value="{{ q.option1 }}">
-        {{ q.option1 }}
+    .progress-bar-fill {
+        background: linear-gradient(90deg, #3b82f6, #10b981);
+        width: 0%;
+        height: 100%;
+        transition: width 0.3s ease;
+    }
+
+    .progress-text {
+        font-size: 0.85rem;
+        margin-top: 0.3rem;
+        opacity: 0.8;
+    }
+
+    /* Beautiful Question Cards */
+    .question-card {
+        background: var(--bg-glass);
+        backdrop-filter: blur(8px);
+        border: 1px solid var(--border-glass);
+        border-radius: 16px;
+        padding: 2rem;
+        margin-bottom: 1.8rem;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .question-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .question-title {
+        font-size: 1.25rem;
+        margin-bottom: 1.5rem;
+        color: var(--text-color);
+        font-weight: 600;
+    }
+
+    /* Premium Custom Radio Options */
+    .option-wrapper {
+        position: relative;
+        margin-bottom: 1rem;
+    }
+
+    .option-wrapper input[type="radio"] {
+        position: absolute;
+        opacity: 0;
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+        z-index: 2;
+    }
+
+    .option-label {
+        display: flex;
+        align-items: center;
+        padding: 1rem 1.25rem;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--border-glass);
+        border-radius: 10px;
+        font-size: 1rem;
+        color: var(--text-color);
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
+
+    /* Checkmark circle indicator */
+    .option-label::before {
+        content: '';
+        width: 18px;
+        height: 18px;
+        border: 2px solid var(--border-glass);
+        border-radius: 50%;
+        margin-right: 12px;
+        display: inline-block;
+        flex-shrink: 0;
+        transition: all 0.2s ease;
+    }
+
+    /* Hover effect */
+    .option-wrapper:hover .option-label {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    /* Selected State */
+    .option-wrapper input[type="radio"]:checked + .option-label {
+        background: rgba(79, 70, 229, 0.15);
+        border-color: var(--primary-color);
+        box-shadow: 0 0 10px rgba(79, 70, 229, 0.2);
+    }
+
+    .option-wrapper input[type="radio"]:checked + .option-label::before {
+        border-color: var(--primary-color);
+        background: var(--primary-color);
+        box-shadow: inset 0 0 0 3px #1e1b4b; /* Ring effect */
+    }
+
+    /* Submit Button styling */
+    .btn-submit-container {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 2rem;
+    }
+
+    .btn-submit {
+        background: linear-gradient(135deg, #4f46e5, #6366f1);
+        color: white;
+        border: none;
+        padding: 1rem 2.5rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.2s;
+        box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(79, 70, 229, 0.6);
+        background: linear-gradient(135deg, #4338ca, #4f46e5);
+    }
+</style>
+
+<div class="test-container">
+    
+    <!-- Sticky HUD: Timer & Progress -->
+    <div class="test-header">
+        <div class="progress-container">
+            <div class="progress-bar-bg">
+                <div class="progress-bar-fill" id="progressBar"></div>
+            </div>
+            <div class="progress-text" id="progressText">Attempted: 0 / {{ questions|length }}</div>
+        </div>
+        <div class="timer-box">
+            ⏱️ <span id="timerDisplay">20:00</span>
+        </div>
     </div>
 
-    <div class="option">
-        <input type="radio"
-               name="q{{ q.id }}"
-               value="{{ q.option2 }}">
-        {{ q.option2 }}
-    </div>
+    <h1 class="page-title" style="margin-bottom: 1.5rem;">📝 Placement Mock Test</h1>
 
-    <div class="option">
-        <input type="radio"
-               name="q{{ q.id }}"
-               value="{{ q.option3 }}">
-        {{ q.option3 }}
-    </div>
+    <!-- Form -->
+    <form method="POST" action="/submit_test" id="mockTestForm">
+        
+        {% for q in questions %}
+        <div class="question-card" data-q-id="{{ q.id }}">
+            <h3 class="question-title">Q{{ loop.index }}. {{ q.question }}</h3>
 
-    <div class="option">
-        <input type="radio"
-               name="q{{ q.id }}"
-               value="{{ q.option4 }}">
-        {{ q.option4 }}
-    </div>
+            <!-- Option 1 -->
+            <div class="option-wrapper">
+                <input type="radio" name="q{{ q.id }}" value="{{ q.option1 }}" class="test-option">
+                <label class="option-label">{{ q.option1 }}</label>
+            </div>
 
+            <!-- Option 2 -->
+            <div class="option-wrapper">
+                <input type="radio" name="q{{ q.id }}" value="{{ q.option2 }}" class="test-option">
+                <label class="option-label">{{ q.option2 }}</label>
+            </div>
+
+            <!-- Option 3 -->
+            <div class="option-wrapper">
+                <input type="radio" name="q{{ q.id }}" value="{{ q.option3 }}" class="test-option">
+                <label class="option-label">{{ q.option3 }}</label>
+            </div>
+
+            <!-- Option 4 -->
+            <div class="option-wrapper">
+                <input type="radio" name="q{{ q.id }}" value="{{ q.option4 }}" class="test-option">
+                <label class="option-label">{{ q.option4 }}</label>
+            </div>
+        </div>
+        {% endfor %}
+
+        <div class="btn-submit-container">
+            <button type="submit" class="btn-submit">
+                Submit Test
+            </button>
+        </div>
+
+    </form>
 </div>
 
-{% endfor %}
+<script>
+    // 1. Timer Logic (e.g., 20 Minutes)
+    let totalTime = 20 * 60; // 20 mins in seconds
+    const timerDisplay = document.getElementById('timerDisplay');
+    const testForm = document.getElementById('mockTestForm');
 
-<button class="btn-submit">
-    Submit Test
-</button>
+    const countdown = setInterval(() => {
+        let minutes = Math.floor(totalTime / 60);
+        let seconds = totalTime % 60;
 
-</form>
+        // Formatting double digits
+        minutes = minutes < 10 ? '0' + minutes : minutes;
+        seconds = seconds < 10 ? '0' + seconds : seconds;
 
+        timerDisplay.textContent = `${minutes}:${seconds}`;
+
+        if (totalTime <= 60) {
+            timerDisplay.style.color = '#f87171'; // Pulse red in last minute
+        }
+
+        if (totalTime <= 0) {
+            clearInterval(countdown);
+            alert("Time's up! Your test is being automatically submitted.");
+            testForm.submit(); // Auto submit
+        }
+        totalTime--;
+    }, 1000);
+
+    // 2. Progress Tracker Logic
+    const totalQuestions = {{ questions|length }};
+    const options = document.querySelectorAll('.test-option');
+    const progressBar = document.getElementById('progressBar');
+    const progressText = document.getElementById('progressText');
+
+    function updateProgress() {
+        // Find unique names of radio groups that have a checked option
+        const checkedNames = new Set();
+        options.forEach(opt => {
+            if (opt.checked) {
+                checkedNames.add(opt.name);
+            }
+        });
+
+        const answeredCount = checkedNames.size;
+        const percentage = (answeredCount / totalQuestions) * 100;
+
+        progressBar.style.width = `${percentage}%`;
+        progressText.textContent = `Attempted: ${answeredCount} / ${totalQuestions}`;
+    }
+
+    // Attach event listeners to update progress bar whenever user selects an answer
+    options.forEach(opt => {
+        opt.addEventListener('change', updateProgress);
+    });
+
+    // 3. Warning on incomplete test submit
+    testForm.addEventListener('submit', function(e) {
+        const checkedNames = new Set();
+        options.forEach(opt => {
+            if (opt.checked) checkedNames.add(opt.name);
+        });
+
+        if (checkedNames.size < totalQuestions) {
+            const confirmSubmit = confirm(`You have only answered ${checkedNames.size} out of ${totalQuestions} questions. Are you sure you want to submit?`);
+            if (!confirmSubmit) {
+                e.preventDefault(); // Stop submission
+            }
+        }
+    });
+</script>
 {% endblock %}
