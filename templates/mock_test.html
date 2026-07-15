@@ -180,7 +180,13 @@
 </style>
 
 <div class="test-container">
-    
+    <div class="test-header">
+    <h2>Active Mock Test</h2>
+    <!-- Yeh link user ko direct history page par bhej degi -->
+    <a href="{{ url_for('mock_test_history') }}" class="btn-history">
+        <span class="icon">🕒</span> View Test History
+    </a>
+</div>
     <!-- Sticky HUD: Timer & Progress -->
     <div class="test-header">
         <div class="progress-container">
