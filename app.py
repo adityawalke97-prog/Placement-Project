@@ -456,7 +456,29 @@ def certificate(user_id):
         as_attachment=True
     )
     
+@app.route('/mock-test-history')
+def mock_test_history():
+    # Maan lete hain ki aapne user session me 'user_id' store kiya hai
+    user_id = session.get('user_id')
+    if not user_id:
+        return redirect(url_for('login')) # Agar login nahi hai toh login page par bhej do
 
+    conn = sqlite3.connect('database.db') # Apne DB ka sahi naam likhein
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+
+    # User ke saare test attempts naye se purane (DESC) order me fetch karein
+    cursor.execute('''
+        SELECT subject, score, total_questions, percentage, attempt_date 
+        FROM mock_tests 
+        WHERE user_id = ? 
+        ORDER BY attempt_date DESC
+    ''', (user_id,))
+    
+    history = cursor.fetchall()
+    conn.close()
+
+    return render_template('mock_history.html', history=history)
 # ---------------- LOGOUT ----------------
 @app.route('/logout')
 def logout():
