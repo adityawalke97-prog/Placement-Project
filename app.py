@@ -1,33 +1,37 @@
-from flask import Flask, render_template, request, redirect, session, flash
+from flask import Flask, render_template, request, redirect, session, flash, send_file
 from flask_bcrypt import Bcrypt
 import pymysql
-from reportlab.platypus import (
-    SimpleDocTemplate,
-    Paragraph,
-    Spacer
-)
-from dotenv import load_dotenv
-load_dotenv()
-from reportlab.lib.styles import getSampleStyleSheet
-from flask import send_file
 import os
+from dotenv import load_dotenv
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet
 
+# Load environment variables
+load_dotenv()
+
+# Flask App
 app = Flask(__name__)
 app.secret_key = "placement_secret_key"
 
-def getdbconnection():
+# Initialize Bcrypt
+bcrypt = Bcrypt(app)
+
+# Database Connection
+def get_db_connection():
     return pymysql.connect(
         host=os.getenv("DB_HOST"),
         user=os.getenv("DB_USER"),
         password=os.getenv("DB_PASSWORD"),
         database=os.getenv("DB_NAME"),
-        port=int(os.getenv("DB_PORT", 4000)),  # TiDB default port
+        port=int(os.getenv("DB_PORT", 4000)),
         ssl={
-            "ca": "/etc/ssl/certs/ca-certificates.crt"  # system CA bundle
+            "ca": "/etc/ssl/certs/ca-certificates.crt"
         },
         connect_timeout=30,
-        cursorclass=pymysql.cursors.DictCursor  # ensures rows are dicts
+        cursorclass=pymysql.cursors.DictCursor
     )
+
+
 # ---------------- HOME ----------------
 @app.route('/')
 def home():
