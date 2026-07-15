@@ -1,10 +1,10 @@
 {% extends 'layout.html' %}
 
-{% block title %}Resume Builder{% endblock %}
+{% block title %}Advanced Resume Builder{% endblock %}
 
 {% block content %}
 
-<h1 class="page-title">📄 Resume Builder</h1>
+<h1 class="page-title">📄 Advanced Resume Builder</h1>
 
 <div class="card">
 
@@ -19,15 +19,23 @@
         <label>Mobile Number</label>
         <input type="text" name="mobile" required>
 
-        <label>Address</label>
-        <textarea name="address" required></textarea>
+        <label>LinkedIn Profile</label>
+        <input type="url" name="linkedin">
+
+        <label>GitHub/Portfolio</label>
+        <input type="url" name="portfolio">
+
+        <label>Professional Summary</label>
+        <textarea name="summary" placeholder="Brief career overview"></textarea>
 
         <label>Education</label>
         <textarea name="education" required></textarea>
 
-        <label>Skills</label>
-        <textarea name="skills"
-        placeholder="Java, Python, MySQL, HTML, CSS"></textarea>
+        <label>Technical Skills</label>
+        <textarea name="technical_skills"></textarea>
+
+        <label>Soft Skills</label>
+        <textarea name="soft_skills"></textarea>
 
         <label>Projects</label>
         <textarea name="projects"></textarea>
@@ -35,8 +43,17 @@
         <label>Internship / Experience</label>
         <textarea name="experience"></textarea>
 
+        <label>Achievements</label>
+        <textarea name="achievements"></textarea>
+
         <label>Certifications</label>
         <textarea name="certifications"></textarea>
+
+        <label>Languages</label>
+        <textarea name="languages"></textarea>
+
+        <label>References</label>
+        <textarea name="references"></textarea>
 
         <br><br>
 
