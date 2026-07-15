@@ -14,43 +14,7 @@ import os
 
 app = Flask(__name__)
 app.secret_key = "placement_secret_key"
-Perfect — now I can see exactly why your login route is failing. The traceback shows:
 
-`
-pymysql.err.OperationalError: (1105, 'Connections using insecure transport are prohibited...')
-`
-
-and in your uploaded Flask code, your getdbconnection() is written like this:
-
-`python
-def getdbconnection():
-    return pymysql.connect(
-        host=os.getenv("DB_HOST"),
-        user=os.getenv("DB_USER"),
-        password=os.getenv("DB_PASSWORD"),
-        database=os.getenv("DB_NAME"),
-        port=int(os.getenv("DB_PORT", 4000)),  # TiDB default port
-        ssl={
-            "ssl": {
-                "ca": "/etc/ssl/certs/ca-certificates.crt"  # path to CA bundle
-            }
-        },
-        connect_timeout=30
-    )
-`
-
----
-
-🔎 What’s Wrong
-- The ssl argument is not structured correctly for PyMySQL.  
-- TiDB Cloud requires TLS/SSL connections, but PyMySQL expects ssl to be a dictionary of SSL parameters directly (not nested under "ssl").
-
----
-
-✅ Correct Fix
-Update your connection code like this:
-
-`python
 def getdbconnection():
     return pymysql.connect(
         host=os.getenv("DB_HOST"),
@@ -64,26 +28,6 @@ def getdbconnection():
         connect_timeout=30,
         cursorclass=pymysql.cursors.DictCursor  # ensures rows are dicts
     )
-`
-
----
-
-🛠️ Why This Helps
-- ssl={"ca": "/etc/ssl/certs/ca-certificates.crt"} tells PyMySQL to use TLS with the CA certificate.  
-- TiDB Cloud serverless tier rejects insecure connections — this change ensures your app connects securely.  
-- Adding cursorclass=pymysql.cursors.DictCursor makes your queries return dictionaries, so user['password'] works correctly in your login route.
-
----
-
-🚀 Next Steps
-1. Update getdbconnection() as shown above.  
-2. Redeploy your app on Render.  
-3. Test login again — the 500 error should disappear.  
-4. If you still see issues, check that your environment variables (DBHOST, DBUSER, DBPASSWORD, DBNAME, DB_PORT) are set correctly in Render’s dashboard.
-
----
-
-👉 Do you want me to also show you the SQLAlchemy URI format for TiDB Cloud with SSL? That way you can switch to SQLAlchemy and avoid manual connection handling.
 # ---------------- HOME ----------------
 @app.route('/')
 def home():
