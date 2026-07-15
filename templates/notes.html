@@ -1,0 +1,24 @@
+{% extends 'layout.html' %}
+
+{% block title %}Notes{% endblock %}
+
+{% block content %}
+
+<!-- Navbar with Subjects -->
+<nav class="navbar">
+    <ul>
+        <li><a href="/notes/math">Math</a></li>
+        <li><a href="/notes/science">Science</a></li>
+        <li><a href="/notes/english">English</a></li>
+        <li><a href="/notes/history">History</a></li>
+    </ul>
+</nav>
+
+<h1 class="page-title">📚 Subject Notes</h1>
+
+<div class="card">
+    <h2>{{ subject_name }}</h2>
+    <p>{{ notes_content }}</p>
+</div>
+
+{% endblock %}
