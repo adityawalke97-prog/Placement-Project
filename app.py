@@ -508,7 +508,19 @@ def fullstack_java():
 @app.route("/courses/fullstack-python")
 def fullstack_python():
     return render_template("fullstack_python.html")
+@app.route("/courses/<course_name>/<int:day>")
+def course_day(course_name, day):
+    cursor = mysql.connection.cursor()
+    cursor.execute("SELECT notes FROM course_notes WHERE course_name=%s AND day_number=%s", (course_name, day))
+    result = cursor.fetchone()
+    cursor.close()
 
+    if result:
+        notes = result[0]
+    else:
+        notes = "No notes available for this day."
+
+    return render_template("course_day.html", course_name=course_name, day=day, notes=notes)
 
 # ---------------- LOGOUT ----------------
 @app.route('/logout')
