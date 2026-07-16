@@ -1,0 +1,17 @@
+{% extends 'layout.html' %}
+
+{% block title %}{{ course_name }} - Day {{ day }}{% endblock %}
+
+{% block content %}
+<div class="course-section">
+    <h2>{{ course_name }} - Day {{ day }}</h2>
+    <p>{{ notes }}</p>
+
+    <div class="nav-buttons">
+        {% if day > 1 %}
+        <a href="/courses/{{ course_name }}/{{ day-1 }}" class="btn">⬅ Yesterday</a>
+        {% endif %}
+        <a href="/courses/{{ course_name }}/{{ day+1 }}" class="btn">Next ➡</a>
+    </div>
+</div>
+{% endblock %}
