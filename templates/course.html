@@ -1,89 +1,50 @@
 {% extends 'layout.html' %}
 
-{% block title %}Dashboard{% endblock %}
+{% block title %}{{ course_name }} Course{% endblock %}
 
 {% block content %}
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin:0;
-      background:#f9fafb;
-    }
-    .navbar {
-      background:#2563eb;
-      padding:15px;
-      display:flex;
-      justify-content:space-around;
-      align-items:center;
-    }
-    .navbar a {
-      color:white;
-      text-decoration:none;
-      font-weight:bold;
-      padding:10px 15px;
-    }
-    .navbar a:hover {
-      background:#1e40af;
-      border-radius:8px;
-    }
-    .course-section {
-      margin:30px;
-      background:white;
-      padding:20px;
-      border-radius:15px;
-      box-shadow:0 5px 20px rgba(0,0,0,0.08);
-    }
-    .course-section h2 {
-      color:#111827;
-      margin-bottom:15px;
-    }
-    .days {
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
-      gap:15px;
-    }
-    .day-card {
-      background:#f1f5f9;
-      padding:15px;
-      border-radius:10px;
-      text-align:center;
-      transition:0.3s;
-    }
-    .day-card:hover {
-      background:#2563eb;
-      color:white;
-      transform:translateY(-5px);
-    }
-  </style>
-</head>
-<body>
-
-  <!-- Navbar -->
-  <div class="navbar">
-    <a href="#java">Java</a>
-    <a href="#python">Python</a>
-    <a href="#html">HTML</a>
-    <a href="#css">CSS</a>
-    <a href="#fsjava">Full Stack Java</a>
-    <a href="#fspython">Full Stack Python</a>
-  </div>
-
-  <!-- Example Course Section -->
-  <div class="course-section" id="java">
-    <h2>Java - 50 Day Challenge</h2>
+<div class="course-section">
+    <h2>{{ course_name }} - {{ day_count }} Day Challenge</h2>
     <div class="days">
-      {% for i in range(1,51) %}
-      <div class="day-card">
-        <h3>Day {{ i }}</h3>
-        <p>Notes for Day {{ i }}</p>
-      </div>
-      {% endfor %}
+        {% for i in range(1, day_count+1) %}
+        <div class="day-card">
+            <h3>Day {{ i }}</h3>
+            <p>Notes for Day {{ i }}</p>
+        </div>
+        {% endfor %}
     </div>
-  </div>
+</div>
+{% endblock %}
 
-  <!-- Similarly add sections for Python, HTML, CSS, Full Stack Java, Full Stack Python -->
-
-</body>
-</html>
+{% block css %}
+<style>
+.course-section {
+    margin:30px;
+    background:white;
+    padding:20px;
+    border-radius:15px;
+    box-shadow:0 5px 20px rgba(0,0,0,0.08);
+}
+.course-section h2 {
+    color:#111827;
+    margin-bottom:15px;
+}
+.days {
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+    gap:15px;
+}
+.day-card {
+    background:#f1f5f9;
+    padding:15px;
+    border-radius:10px;
+    text-align:center;
+    transition:0.3s;
+}
+.day-card:hover {
+    background:#2563eb;
+    color:white;
+    transform:translateY(-5px);
+}
+</style>
 {% endblock %}
