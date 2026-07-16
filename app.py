@@ -483,7 +483,7 @@ def mock_test_history():
 
 @app.route("/courses")
 def courses():
-    return render_template("courses.html")
+    return render_template("course.html")
 
 @app.route("/courses/java")
 def java_course():
