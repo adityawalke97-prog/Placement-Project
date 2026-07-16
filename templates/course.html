@@ -3,10 +3,6 @@
 {% block title %}{{ course_name }} Course{% endblock %}
 
 {% block content %}
-
-
-
-
 <nav class="navbar">
     <a href="/">Dashboard</a>
     <a href="/courses/java">Java</a>
@@ -15,123 +11,345 @@
     <a href="/courses/css">CSS</a>
     <a href="/courses/fullstack-java">Full Stack Java</a>
     <a href="/courses/fullstack-python">Full Stack Python</a>
-  </nav>
-<div class="course-section">
-    <h2>{{ course_name }} - {{ day_count }} Day Challenge</h2>
+</nav>
+
+<div class="course-container">
+    <div class="course-header">
+        <h2>{{ course_name }}</h2>
+        <span class="badge">{{ day_count }} Day Challenge</span>
+    </div>
+
+    <!-- Progress Tracker -->
+    <div class="progress-section">
+        <div class="progress-info">
+            <span>Your Progress</span>
+            <span id="progress-text">0%</span>
+        </div>
+        <div class="progress-bar">
+            <div class="progress" id="progress"></div>
+        </div>
+    </div>
     
-    <!-- Day Content -->
-    <div id="day-content">
-        <h3 id="day-title">Day 1</h3>
-        <p id="day-notes">Notes for Day 1</p>
+    <!-- Day Content Card -->
+    <div class="course-card">
+        <div id="day-content">
+            <div class="day-indicator" id="day-tag">Day 1</div>
+            <h3 id="day-title">Loading Topic...</h3>
+            <div id="day-notes" class="content-body">
+                <!-- Notes HTML content dynamically loads here -->
+            </div>
+        </div>
+
+        <!-- Completion Screen (Hidden by default) -->
+        <div id="completion-screen" class="hidden">
+            <div class="trophy">🏆</div>
+            <h3>Congratulations!</h3>
+            <p>You have successfully completed the {{ course_name }} challenge!</p>
+            <button class="btn-reset" onclick="resetProgress()">Restart Challenge</button>
+        </div>
     </div>
 
     <!-- Navigation Buttons -->
     <div class="nav-buttons">
-        <button onclick="prevDay()">⬅ Yesterday</button>
-        <button onclick="nextDay()">Next ➡</button>
-    </div>
-
-    <!-- Progress Bar -->
-    <div class="progress-bar">
-        <div class="progress" id="progress"></div>
+        <button id="btn-prev" onclick="prevDay()">⬅ Previous Day</button>
+        <button id="btn-next" onclick="nextDay()">Next Day ➡</button>
     </div>
 </div>
 {% endblock %}
 
 {% block css %}
 <style>
-.course-section {
-    margin:30px;
-    background:white;
-    padding:20px;
-    border-radius:15px;
-    box-shadow:0 5px 20px rgba(0,0,0,0.08);
+:root {
+    --primary: #2563eb;
+    --primary-hover: #1d4ed8;
+    --bg-card: #ffffff;
+    --text-main: #1f2937;
+    --text-muted: #4b5563;
+    --border-color: #e5e7eb;
 }
-.course-section h2 {
-    color:#111827;
-    margin-bottom:15px;
+
+body {
+    background-color: #f9fafb;
+    font-family: 'Inter', system-ui, sans-serif;
 }
-#day-content {
-    text-align:center;
-    margin:20px 0;
+
+.course-container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 0 20px;
 }
-#day-title {
-    font-size:28px;
-    color:#2563eb;
+
+.course-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
 }
-#day-notes {
-    font-size:18px;
-    color:#374151;
+
+.course-header h2 {
+    font-size: 2rem;
+    color: var(--text-main);
+    font-weight: 800;
 }
-.nav-buttons {
-    display:flex;
-    justify-content:center;
-    gap:20px;
-    margin-top:15px;
+
+.badge {
+    background: #eff6ff;
+    color: var(--primary);
+    padding: 6px 16px;
+    border-radius: 50px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    border: 1px solid #bfdbfe;
 }
-.nav-buttons button {
-    background:#2563eb;
-    color:white;
-    padding:12px 20px;
-    border:none;
-    border-radius:10px;
-    cursor:pointer;
-    transition:0.3s;
+
+.progress-section {
+    background: var(--bg-card);
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+    margin-bottom: 20px;
+    border: 1px solid var(--border-color);
 }
-.nav-buttons button:hover {
-    background:#1e40af;
+
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    font-weight: 600;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 8px;
 }
+
 .progress-bar {
-    width:100%;
-    background:#e5e7eb;
-    border-radius:10px;
-    margin-top:20px;
+    width: 100%;
+    height: 10px;
+    background: #f3f4f6;
+    border-radius: 999px;
+    overflow: hidden;
 }
+
 .progress {
-    height:20px;
-    background:#2563eb;
-    border-radius:10px;
-    width:0%;
-    transition:width 0.5s;
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary) 0%, #3b82f6 100%);
+    border-radius: 999px;
+    width: 0%;
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.course-card {
+    background: var(--bg-card);
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--border-color);
+    min-height: 250px;
+}
+
+.day-indicator {
+    display: inline-block;
+    background: #f3f4f6;
+    color: var(--text-muted);
+    padding: 4px 12px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+}
+
+#day-title {
+    font-size: 1.75rem;
+    color: var(--text-main);
+    margin-bottom: 20px;
+    font-weight: 700;
+}
+
+.content-body {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: var(--text-muted);
+    text-align: left;
+}
+
+/* Completion Screen Styles */
+.hidden {
+    display: none !important;
+}
+
+#completion-screen {
+    text-align: center;
+    padding: 20px 0;
+}
+
+.trophy {
+    font-size: 4rem;
+    margin-bottom: 15px;
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.btn-reset {
+    background: #10b981;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: 0.2s;
+}
+
+.btn-reset:hover {
+    background: #059669;
+}
+
+/* Nav Buttons */
+.nav-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 25px;
+    gap: 15px;
+}
+
+.nav-buttons button {
+    flex: 1;
+    background: var(--primary);
+    color: white;
+    padding: 14px 24px;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+.nav-buttons button:hover {
+    background: var(--primary-hover);
+    transform: translateY(-1px);
+}
+
+.nav-buttons button:disabled {
+    background: #d1d5db;
+    color: #9ca3af;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
 }
 </style>
 {% endblock %}
 
 {% block scripts %}
 <script>
+// Backend se pass kiya hua data safely read karne ke liye
+const totalDays = parseInt("{{ day_count }}") || 30;
+const courseName = "{{ course_name }}";
 let currentDay = 1;
-const totalDays = {{ day_count }};
 
-// Load saved progress
-if(localStorage.getItem("{{ course_name }}Day")){
-  currentDay = parseInt(localStorage.getItem("{{ course_name }}Day"));
-  loadDay();
-} else {
-  loadDay();
+// Har din ka real content handle karne ke liye local data mapping
+// Aap is list ko extend karke har ek din ka asli content yahan likh sakte hain
+const courseContentMap = {
+    1: {
+        title: "Introduction & Setup",
+        html: "<p>Welcome! Today we will understand the absolute basics and set up our working environment.</p><ul><li>Install necessary IDE/Editors</li><li>Configure local environmental variables</li><li>Write your first 'Hello World' program!</li></ul>"
+    },
+    2: {
+        title: "Variables and Data Types",
+        html: "<p>Time to store some values! Today we dive deep into types:</p><p>Understanding static vs dynamic typing, primitive vs non-primitive memory sizes, and declarations.</p>"
+    },
+    3: {
+        title: "Operators & Control Flow",
+        html: "<p>Control the path of your execution using comparison, logic, and <code>if-else</code> structures.</p>"
+    }
+};
+
+// Local storage progress fetch logic
+const storageKey = `${courseName}_Day`;
+if (localStorage.getItem(storageKey)) {
+    currentDay = parseInt(localStorage.getItem(storageKey));
+    // Safe boundary checking
+    if(currentDay > totalDays) currentDay = totalDays;
 }
 
-function loadDay(){
-  document.getElementById("day-title").innerText = "Day " + currentDay;
-  document.getElementById("day-notes").innerText = "Notes for Day " + currentDay;
-  localStorage.setItem("{{ course_name }}Day", currentDay);
+// Initial render
+loadDay();
 
-  // Progress update
-  let progressPercent = (currentDay/totalDays)*100;
-  document.getElementById("progress").style.width = progressPercent + "%";
+function loadDay() {
+    const contentBox = document.getElementById("day-content");
+    const completionScreen = document.getElementById("completion-screen");
+    const btnPrev = document.getElementById("btn-prev");
+    const btnNext = document.getElementById("btn-next");
+
+    // Save current step to Storage
+    localStorage.setItem(storageKey, currentDay);
+
+    // Calculate dynamic percentage
+    let progressPercent = Math.round((currentDay / totalDays) * 100);
+    document.getElementById("progress").style.width = progressPercent + "%";
+    document.getElementById("progress-text").innerText = progressPercent + "%";
+
+    // Standard day display state
+    contentBox.classList.remove("hidden");
+    completionScreen.classList.add("hidden");
+
+    // UI elements toggle handling
+    document.getElementById("day-tag").innerText = "Day " + currentDay;
+    
+    // Check custom notes data else fallback to generic text
+    if (courseContentMap[currentDay]) {
+        document.getElementById("day-title").innerText = courseContentMap[currentDay].title;
+        document.getElementById("day-notes").innerHTML = courseContentMap[currentDay].html;
+    } else {
+        document.getElementById("day-title").innerText = `Deep Dive Topics - Chapter ${currentDay}`;
+        document.getElementById("day-notes").innerHTML = `<p>Advanced syllabus practices and challenges mapped out specifically for Day ${currentDay}. Read materials and solve code snippets manually.</p>`;
+    }
+
+    // Disable buttons state on edge conditions
+    btnPrev.disabled = currentDay === 1;
+    
+    if (currentDay === totalDays) {
+        btnNext.innerText = "Complete Challenge! 🎉";
+    } else {
+        btnNext.innerText = "Next Day ➡";
+    }
 }
 
-function nextDay(){
-  if(currentDay < totalDays){
-    currentDay++;
-    loadDay();
-  }
+function nextDay() {
+    if (currentDay < totalDays) {
+        currentDay++;
+        loadDay();
+    } else if (currentDay === totalDays) {
+        // Show celebrate / finish screen
+        document.getElementById("day-content").classList.add("hidden");
+        document.getElementById("completion-screen").classList.remove("hidden");
+        document.getElementById("btn-next").disabled = true;
+        // Perfect completion progress
+        document.getElementById("progress").style.width = "100%";
+        document.getElementById("progress-text").innerText = "100%";
+    }
 }
 
-function prevDay(){
-  if(currentDay > 1){
-    currentDay--;
-    loadDay();
-  }
+function prevDay() {
+    if (currentDay > 1) {
+        currentDay--;
+        document.getElementById("btn-next").disabled = false;
+        loadDay();
+    }
+}
+
+function resetProgress() {
+    if (confirm("Are you sure you want to reset your progress?")) {
+        currentDay = 1;
+        localStorage.setItem(storageKey, currentDay);
+        document.getElementById("btn-next").disabled = false;
+        loadDay();
+    }
 }
 </script>
 {% endblock %}
