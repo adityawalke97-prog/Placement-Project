@@ -5,13 +5,22 @@
 {% block content %}
 <div class="course-section">
     <h2>{{ course_name }} - {{ day_count }} Day Challenge</h2>
-    <div class="days">
-        {% for i in range(1, day_count+1) %}
-        <div class="day-card">
-            <h3>Day {{ i }}</h3>
-            <p>Notes for Day {{ i }}</p>
-        </div>
-        {% endfor %}
+    
+    <!-- Day Content -->
+    <div id="day-content">
+        <h3 id="day-title">Day 1</h3>
+        <p id="day-notes">Notes for Day 1</p>
+    </div>
+
+    <!-- Navigation Buttons -->
+    <div class="nav-buttons">
+        <button onclick="prevDay()">⬅ Yesterday</button>
+        <button onclick="nextDay()">Next ➡</button>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="progress-bar">
+        <div class="progress" id="progress"></div>
     </div>
 </div>
 {% endblock %}
@@ -29,22 +38,87 @@
     color:#111827;
     margin-bottom:15px;
 }
-.days {
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
-    gap:15px;
-}
-.day-card {
-    background:#f1f5f9;
-    padding:15px;
-    border-radius:10px;
+#day-content {
     text-align:center;
-    transition:0.3s;
+    margin:20px 0;
 }
-.day-card:hover {
+#day-title {
+    font-size:28px;
+    color:#2563eb;
+}
+#day-notes {
+    font-size:18px;
+    color:#374151;
+}
+.nav-buttons {
+    display:flex;
+    justify-content:center;
+    gap:20px;
+    margin-top:15px;
+}
+.nav-buttons button {
     background:#2563eb;
     color:white;
-    transform:translateY(-5px);
+    padding:12px 20px;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    transition:0.3s;
+}
+.nav-buttons button:hover {
+    background:#1e40af;
+}
+.progress-bar {
+    width:100%;
+    background:#e5e7eb;
+    border-radius:10px;
+    margin-top:20px;
+}
+.progress {
+    height:20px;
+    background:#2563eb;
+    border-radius:10px;
+    width:0%;
+    transition:width 0.5s;
 }
 </style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let currentDay = 1;
+const totalDays = {{ day_count }};
+
+// Load saved progress
+if(localStorage.getItem("{{ course_name }}Day")){
+  currentDay = parseInt(localStorage.getItem("{{ course_name }}Day"));
+  loadDay();
+} else {
+  loadDay();
+}
+
+function loadDay(){
+  document.getElementById("day-title").innerText = "Day " + currentDay;
+  document.getElementById("day-notes").innerText = "Notes for Day " + currentDay;
+  localStorage.setItem("{{ course_name }}Day", currentDay);
+
+  // Progress update
+  let progressPercent = (currentDay/totalDays)*100;
+  document.getElementById("progress").style.width = progressPercent + "%";
+}
+
+function nextDay(){
+  if(currentDay < totalDays){
+    currentDay++;
+    loadDay();
+  }
+}
+
+function prevDay(){
+  if(currentDay > 1){
+    currentDay--;
+    loadDay();
+  }
+}
+</script>
 {% endblock %}
