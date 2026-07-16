@@ -1,0 +1,60 @@
+{% extends 'layout.html' %}
+
+{% block title %}Java Course{% endblock %}
+
+{% block content %}
+<div class="course-section">
+    <h2>Java - {{ day_count }} Day Challenge</h2>
+
+    <div id="day-content">
+        <h3 id="day-title">Day 1</h3>
+        <p id="day-notes">Notes for Day 1</p>
+    </div>
+
+    <div class="nav-buttons">
+        <button onclick="prevDay()">⬅ Yesterday</button>
+        <button onclick="nextDay()">Next ➡</button>
+    </div>
+
+    <div class="progress-bar">
+        <div class="progress" id="progress"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let currentDay = 1;
+const totalDays = {{ day_count }};
+
+if(localStorage.getItem("JavaDay")){
+  currentDay = parseInt(localStorage.getItem("JavaDay"));
+  loadDay();
+} else {
+  loadDay();
+}
+
+function loadDay(){
+  document.getElementById("day-title").innerText = "Day " + currentDay;
+  document.getElementById("day-notes").innerText = "Notes for Day " + currentDay;
+  localStorage.setItem("JavaDay", currentDay);
+
+  let progressPercent = (currentDay/totalDays)*100;
+  document.getElementById("progress").style.width = progressPercent + "%";
+}
+
+function nextDay(){
+  if(currentDay < totalDays){
+    currentDay++;
+    loadDay();
+  }
+}
+
+function prevDay(){
+  if(currentDay > 1){
+    currentDay--;
+    loadDay();
+  }
+}
+</script>
+{% endblock %}
