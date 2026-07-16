@@ -98,7 +98,7 @@
 
 {% block css %}
 <style>
-/* Modern CSS Custom Variables for Clean Theming */
+/* ... (Aapki CSS bilkul sahi aur clean hai, isko bina badle waisa hi rakhein) ... */
 :root {
     --primary-color: #2563eb;
     --primary-hover: #1d4ed8;
@@ -115,7 +115,6 @@ body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
-/* Master Grid Layout */
 .course-dashboard {
     display: grid;
     grid-template-columns: 280px 1fr;
@@ -125,7 +124,6 @@ body {
     padding: 0 20px;
 }
 
-/* Sidebar Styling */
 .sidebar {
     background: var(--card-bg);
     border-radius: 16px;
@@ -162,7 +160,6 @@ body {
     padding-right: 5px;
 }
 
-/* Custom Scrollbar for Sidebar */
 .days-list::-webkit-scrollbar {
     width: 6px;
 }
@@ -204,7 +201,6 @@ body {
     font-size: 0.85rem;
 }
 
-/* Main Viewer Layout */
 .course-viewer {
     display: flex;
     flex-direction: column;
@@ -240,7 +236,6 @@ body {
     text-transform: uppercase;
 }
 
-/* Progress Section */
 .progress-container {
     width: 250px;
 }
@@ -269,7 +264,6 @@ body {
     transition: width 0.4s ease-out;
 }
 
-/* Course Card Area */
 .course-card {
     background: var(--card-bg);
     padding: 35px;
@@ -298,7 +292,6 @@ body {
     font-weight: 700;
 }
 
-/* Tab Component Styling */
 .tab-navigation {
     display: flex;
     gap: 10px;
@@ -329,7 +322,6 @@ body {
     color: white;
 }
 
-/* Tab panes logic styling */
 .tab-pane {
     display: none;
 }
@@ -350,7 +342,6 @@ body {
     color: #334155;
 }
 
-/* Terminal Mockup styling for Code View */
 .terminal-mock {
     background: #0f172a;
     border-radius: 12px;
@@ -392,7 +383,6 @@ body {
     margin: 0;
 }
 
-/* Challenge Task Block */
 .challenge-box {
     background: #f0fdf4;
     border-left: 4px solid var(--emerald-green);
@@ -411,7 +401,6 @@ body {
     line-height: 1.6;
 }
 
-/* Nav Actions style */
 .nav-buttons {
     display: flex;
     justify-content: space-between;
@@ -445,7 +434,6 @@ body {
     box-shadow: none;
 }
 
-/* Completion Screen */
 .completion-screen {
     text-align: center;
     padding: 40px 0;
@@ -491,7 +479,6 @@ body {
     display: none !important;
 }
 
-/* Responsive Styles for smaller viewports */
 @media(max-width: 900px) {
     .course-dashboard {
         grid-template-columns: 1fr;
@@ -507,31 +494,13 @@ body {
 
 {% block scripts %}
 <script>
-// Backend dynamics config variables
-const totalDays = parseInt("{{ day_count }}") || 10;
+// 1. Backend Configuration Variables (Passed via Jinja2 safely)
+const totalDays = parseInt("{{ day_count }}") || 30;
 let currentDay = 1;
 
-// Har din ka real content mapping object (Aap is list ko badha sakte ho dynamically)
-const courseData = {
-    1: {
-        title: "Introduction & Ecosystem Setup",
-        notes: "<p>Java ek secure, robust aur platform-independent programming language hai. Aaj hum Java virtual machine (JVM) ko samjhenge aur pehle basic environment set up karenge.</p><ul><li>Java Development Kit (JDK) 17+ install karein.</li><li>InelliJ ya VS Code configure karein.</li><li>Pehla hello world program construct karein.</li></ul>",
-        code: `public class Main {\n    public static void main(String[] args) {\n        System.out.println("Hello, World!");\n    }\n}`,
-        task: "Pehle setup ko verify karne ke liye terminal par 'Hello World' compile karke run karein aur output confirm karein."
-    },
-    2: {
-        title: "Variables and Primitive Types",
-        notes: "<p>Variables memory memory spaces ke local labels hote hai. Java static-typed language hai, jiska matlab hume type declare karna mandatory hota hai.</p>",
-        code: `int age = 22;\ndouble salary = 45000.50;\nchar grade = 'A';\nboolean isJavaFun = true;`,
-        task: "Chaar primitive data types banaye aur usko System.out.println() se terminal par custom style me render karein."
-    },
-    3: {
-        title: "Conditional Branches (If-Else)",
-        notes: "<p>Program execution decisions ko validate karne ke liye conditional statements ka use karte hai.</p>",
-        code: `int number = 10;\nif (number > 0) {\n    System.out.println("Positive Number");\n} else {\n    System.out.println("Zero or Negative");\n}`,
-        task: "Ek loop structure ke andar check karein ki user dynamic logic positive hai ya non-positive."
-    }
-};
+// 2. Load TiDB dynamic data directly injected into a safe JavaScript variable!
+// Backend should pass a variable named 'course_data_json' from server controller.
+const courseData = JSON.parse('{{ course_data_json | safe }}');
 
 // Local storage progress recovery logic
 if(localStorage.getItem("JavaDay")){
@@ -564,33 +533,33 @@ function loadDay() {
     const btnPrev = document.getElementById("btn-prev");
     const btnNext = document.getElementById("btn-next");
 
-    // Dynamic Save
+    // Dynamic Save local state
     localStorage.setItem("JavaDay", currentDay);
 
     // Sidebar highlight sync
     buildSidebar();
 
-    // Progress percentage
+    // Progress percentage calculation
     let progressPercent = Math.round((currentDay / totalDays) * 100);
     document.getElementById("progress").style.width = progressPercent + "%";
     document.getElementById("progress-text").innerText = progressPercent + "%";
 
-    // Workspace and buttons refresh
+    // Workspace and buttons reset
     workspace.classList.remove("hidden");
     completionScreen.classList.add("hidden");
     btnPrev.disabled = currentDay === 1;
 
-    // Normalizing views
+    // Normalizing Day tag text
     document.getElementById("day-tag").innerText = "Day " + currentDay;
     
-    // Check local database for content
+    // Check if dynamic database content has record for this day
     if(courseData[currentDay]) {
         document.getElementById("day-title").innerText = courseData[currentDay].title;
         document.getElementById("day-notes").innerHTML = courseData[currentDay].notes;
-        document.getElementById("day-code-snippet").innerText = courseData[currentDay].code;
-        document.getElementById("day-task-desc").innerText = courseData[currentDay].task;
+        document.getElementById("day-code-snippet").innerText = courseData[currentDay].code_snippet;
+        document.getElementById("day-task-desc").innerText = courseData[currentDay].practice_task;
     } else {
-        // Fallback layout state
+        // Fallback default structure if day's database row isn't written yet
         document.getElementById("day-title").innerText = "Under Construction - Day " + currentDay;
         document.getElementById("day-notes").innerHTML = `<p>Notes for Day ${currentDay} will update shortly. Keep learning!</p>`;
         document.getElementById("day-code-snippet").innerText = `// Day ${currentDay} challenge code is coming soon...`;
@@ -642,20 +611,17 @@ function resetProgress() {
 
 // Simple Tab Switch Functionality
 function switchTab(evt, tabId) {
-    // Hide all tab panes
     const panes = document.querySelectorAll(".tab-pane");
     panes.forEach(pane => pane.classList.remove("active"));
 
-    // Deactivate all tab buttons
     const buttons = document.querySelectorAll(".tab-btn");
     buttons.forEach(btn => btn.classList.remove("active"));
 
-    // Activate selected tab pane and button
     document.getElementById(tabId).classList.add("active");
     evt.currentTarget.classList.add("active");
 }
 
-// Initial Call to build and render
+// Initial Call
 buildSidebar();
 loadDay();
 </script>
