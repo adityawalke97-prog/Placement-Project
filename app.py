@@ -479,6 +479,37 @@ def mock_test_history():
     conn.close()
 
     return render_template('mock_history.html', history=history)
+
+
+@app.route("/courses")
+def courses():
+    return render_template("courses.html")
+
+@app.route("/courses/java")
+def java_course():
+    return render_template("java.html")
+
+@app.route("/courses/python")
+def python_course():
+    return render_template("python.html")
+
+@app.route("/courses/html")
+def html_course():
+    return render_template("html.html")
+
+@app.route("/courses/css")
+def css_course():
+    return render_template("css.html")
+
+@app.route("/courses/fullstack-java")
+def fullstack_java():
+    return render_template("fullstack_java.html")
+
+@app.route("/courses/fullstack-python")
+def fullstack_python():
+    return render_template("fullstack_python.html")
+
+
 # ---------------- LOGOUT ----------------
 @app.route('/logout')
 def logout():
