@@ -39,30 +39,30 @@ def home():
 
 
 # ---------------- SIGNUP ----------------
-@app.route('/signup', methods=['GET', 'POST'])
+@app.route("/signup", methods=["GET", "POST"])
 def signup():
-    if request.method == 'POST':
-        name = request.form['name']
-        email = request.form['email']
-        password = request.form['password']
+    if request.method == "POST":
+        name = request.form["name"]
+        email = request.form["email"]
+        password = request.form["password"]
 
-        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+        hashed_password = bcrypt.generate_password_hash(password).decode("utf-8")
 
         conn = get_db_connection()
         cur = conn.cursor()
+
         cur.execute(
-            "INSERT INTO users(name, email, password) VALUES(%s,%s,%s)",
+            "INSERT INTO users (name, email, password) VALUES (%s, %s, %s)",
             (name, email, hashed_password)
         )
+
         conn.commit()
         cur.close()
         conn.close()
 
-        flash("Account created successfully!")
-        return redirect('/login')
+        return redirect("/login")
 
-    return render_template('signup.html')
-
+    return render_template("signup.html")
 
 # ---------------- LOGIN ----------------
 @app.route('/login', methods=['GET', 'POST'])
