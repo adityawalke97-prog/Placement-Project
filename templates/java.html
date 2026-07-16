@@ -19,7 +19,7 @@
         <div class="course-header">
             <div class="title-meta">
                 <span class="badge">Active Challenge</span>
-                <h2>Java - {{ day_count }} Day Challenge</h2>
+                <h2>Java - {{ day_count if day_count else '30' }} Day Challenge</h2>
             </div>
             <!-- Progress Tracker Circle/Percentage -->
             <div class="progress-container">
@@ -44,9 +44,9 @@
 
                 <!-- Tabs: Switch between Notes, Code & Task -->
                 <div class="tab-navigation">
-                    <button class="tab-btn active" onclick="switchTab(event, 'tab-notes')">📖 Theory Notes</button>
-                    <button class="tab-btn" onclick="switchTab(event, 'tab-code')">💻 Code Snippet</button>
-                    <button class="tab-btn" onclick="switchTab(event, 'tab-task')">🎯 Practice Task</button>
+                    <button id="btn-tab-notes" class="tab-btn active" onclick="switchTab(event, 'tab-notes')">📖 Theory Notes</button>
+                    <button id="btn-tab-code" class="tab-btn" onclick="switchTab(event, 'tab-code')">💻 Code Snippet</button>
+                    <button id="btn-tab-task" class="tab-btn" onclick="switchTab(event, 'tab-task')">🎯 Practice Task</button>
                 </div>
 
                 <!-- Tabs Content Container -->
@@ -98,7 +98,6 @@
 
 {% block css %}
 <style>
-/* ... (Aapki CSS bilkul sahi aur clean hai, isko bina badle waisa hi rakhein) ... */
 :root {
     --primary-color: #2563eb;
     --primary-hover: #1d4ed8;
@@ -494,18 +493,71 @@ body {
 
 {% block scripts %}
 <script>
-// 1. Backend Configuration Variables (Passed via Jinja2 safely)
-const totalDays = parseInt("{{ day_count }}") || 30;
+// 1. Dynamic check for Jinja2 engine
+let totalDays = 5; // Default for static view
+let courseData = {};
+
+const templateDays = "{{ day_count }}";
+const templateJson = '{{ course_data_json | safe }}';
+
+// Fallback Mock Data so the design runs without errors in direct browser double-click
+const fallbackData = {
+    1: {
+        title: "Introduction to Java",
+        notes: "<p>Welcome to Day 1! Java is a class-based, object-oriented programming language designed to have as few implementation dependencies as possible. It runs on the WORA principle (Write Once, Run Anywhere).</p>",
+        code_snippet: "public class Main {\n    public static void main(String[] args) {\n        System.out.println(\"Hello, Java Developers!\");\n    }\n}",
+        practice_task: "Write a program that prints your name and your coding goal for this month."
+    },
+    2: {
+        title: "Variables and Primitive Data Types",
+        notes: "<p>Variables are containers for storing data values. In Java, there are different types of variables, such as: String, int, float, char, and boolean.</p>",
+        code_snippet: "int myNum = 15;\nfloat myFloat = 5.99f;\nchar myLetter = 'J';\nboolean myBool = true;\nString myText = \"Hello World\";",
+        practice_task: "Create different variables storing your age, initial of your surname, and whether you love code. Print all values."
+    },
+    3: {
+        title: "Control Statements - If/Else",
+        notes: "<p>Use conditional statements to perform different decisions based on different conditions. Java supports standard logical math conditions.</p>",
+        code_snippet: "int time = 20;\nif (time < 18) {\n    System.out.println(\"Good day.\");\n} else {\n    System.out.println(\"Good evening.\");\n}",
+        practice_task: "Write an if-else check that checks if a number is even or odd."
+    },
+    4: {
+        title: "Understanding Loops (For & While)",
+        notes: "<p>Loops can execute a block of code as long as a specified condition is reached. Loops are handy because they save time, reduce errors, and make code more readable.</p>",
+        code_snippet: "for (int i = 1; i <= 5; i++) {\n    System.out.println(\"Loop Step: \" + i);\n}",
+        practice_task: "Write a loop that prints numbers from 10 down to 1."
+    },
+    5: {
+        title: "Introduction to Arrays",
+        notes: "<p>Arrays are used to store multiple values in a single variable, instead of declaring separate variables for each value.</p>",
+        code_snippet: "String[] cars = {\"Volvo\", \"BMW\", \"Ford\", \"Mazda\"};\nSystem.out.println(cars[0]); // Outputs Volvo",
+        practice_task: "Create an array of your top 3 favorite dishes and print the second item."
+    }
+};
+
+// Determine source of data: Backend Server or Static Local
+if (templateDays.startsWith("{{") || templateDays === "") {
+    console.log("Running in LOCAL static fallback mode.");
+    totalDays = 5;
+    courseData = fallbackData;
+} else {
+    console.log("Running in SERVER-side Jinja2 mode.");
+    totalDays = parseInt(templateDays) || 30;
+    try {
+        courseData = JSON.parse(templateJson);
+    } catch (e) {
+        console.error("Error parsing backend JSON, using fallback data", e);
+        courseData = fallbackData;
+    }
+}
+
 let currentDay = 1;
 
-// 2. Load TiDB dynamic data directly injected into a safe JavaScript variable!
-// Backend should pass a variable named 'course_data_json' from server controller.
-const courseData = JSON.parse('{{ course_data_json | safe }}');
-
-// Local storage progress recovery logic
+// Progress recovery logic
 if(localStorage.getItem("JavaDay")){
-    currentDay = parseInt(localStorage.getItem("JavaDay"));
-    if (currentDay > totalDays) currentDay = totalDays;
+    let savedDay = parseInt(localStorage.getItem("JavaDay"));
+    if (savedDay <= totalDays) {
+        currentDay = savedDay;
+    }
 }
 
 // Generate Dynamic Sidebar Days List
@@ -533,37 +585,34 @@ function loadDay() {
     const btnPrev = document.getElementById("btn-prev");
     const btnNext = document.getElementById("btn-next");
 
-    // Dynamic Save local state
+    // Save local progress state
     localStorage.setItem("JavaDay", currentDay);
 
-    // Sidebar highlight sync
+    // Sync sidebar
     buildSidebar();
 
-    // Progress percentage calculation
+    // Progress bar calculations
     let progressPercent = Math.round((currentDay / totalDays) * 100);
     document.getElementById("progress").style.width = progressPercent + "%";
     document.getElementById("progress-text").innerText = progressPercent + "%";
 
-    // Workspace and buttons reset
     workspace.classList.remove("hidden");
     completionScreen.classList.add("hidden");
     btnPrev.disabled = currentDay === 1;
 
-    // Normalizing Day tag text
     document.getElementById("day-tag").innerText = "Day " + currentDay;
     
-    // Check if dynamic database content has record for this day
+    // Load active day's content safely
     if(courseData[currentDay]) {
         document.getElementById("day-title").innerText = courseData[currentDay].title;
         document.getElementById("day-notes").innerHTML = courseData[currentDay].notes;
         document.getElementById("day-code-snippet").innerText = courseData[currentDay].code_snippet;
         document.getElementById("day-task-desc").innerText = courseData[currentDay].practice_task;
     } else {
-        // Fallback default structure if day's database row isn't written yet
-        document.getElementById("day-title").innerText = "Under Construction - Day " + currentDay;
-        document.getElementById("day-notes").innerHTML = `<p>Notes for Day ${currentDay} will update shortly. Keep learning!</p>`;
-        document.getElementById("day-code-snippet").innerText = `// Day ${currentDay} challenge code is coming soon...`;
-        document.getElementById("day-task-desc").innerText = "Self practice exercises for this module are arriving.";
+        document.getElementById("day-title").innerText = "Coming Soon - Day " + currentDay;
+        document.getElementById("day-notes").innerHTML = `<p>Notes for Day ${currentDay} are currently being drafted. Stay tuned!</p>`;
+        document.getElementById("day-code-snippet").innerText = `// Code challenge for Day ${currentDay} will be live soon...`;
+        document.getElementById("day-task-desc").innerText = "No exercises registered for this module yet.";
     }
 
     if (currentDay === totalDays) {
@@ -578,7 +627,7 @@ function nextDay() {
         currentDay++;
         loadDay();
     } else if (currentDay === totalDays) {
-        // Trigger completion screen view state
+        // Complete state
         document.getElementById("day-workspace").classList.add("hidden");
         document.getElementById("completion-screen").classList.remove("hidden");
         document.getElementById("btn-next").disabled = true;
@@ -602,14 +651,14 @@ function jumpToDay(dayNumber) {
 }
 
 function resetProgress() {
-    if(confirm("Do you want to clear progress and restart?")) {
+    if(confirm("Do you want to reset your progress and restart?")) {
         currentDay = 1;
         document.getElementById("btn-next").disabled = false;
         loadDay();
     }
 }
 
-// Simple Tab Switch Functionality
+// Interactive Tab Switching
 function switchTab(evt, tabId) {
     const panes = document.querySelectorAll(".tab-pane");
     panes.forEach(pane => pane.classList.remove("active"));
@@ -621,7 +670,7 @@ function switchTab(evt, tabId) {
     evt.currentTarget.classList.add("active");
 }
 
-// Initial Call
+// Trigger Application Engine
 buildSidebar();
 loadDay();
 </script>
