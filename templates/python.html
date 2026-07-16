@@ -2,39 +2,672 @@
 {% block title %}Python Course{% endblock %}
 
 {% block content %}
-<div class="course-section">
-    <h2>Python - {{ day_count }} Day Challenge</h2>
-    <div id="day-content">
-        <h3 id="day-title">Day 1</h3>
-        <p id="day-notes">Notes for Day 1</p>
-    </div>
-    <div class="nav-buttons">
-        <button onclick="prevDay()">⬅ Yesterday</button>
-        <button onclick="nextDay()">Next ➡</button>
-    </div>
-    <div class="progress-bar">
-        <div class="progress" id="progress"></div>
-    </div>
+<div class="course-dashboard">
+    <!-- Sidebar Navigation for Days -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h3>Python Roadmap</h3>
+            <p>Select a day to jump</p>
+        </div>
+        <div class="days-list" id="sidebar-days-list">
+            <!-- Sidebar links dynamically load here -->
+        </div>
+    </aside>
+
+    <!-- Main Course Viewer Area -->
+    <main class="course-viewer">
+        <div class="course-header">
+            <div class="title-meta">
+                <span class="badge">Active Challenge</span>
+                <h2>Python - {{ day_count }} Day Challenge</h2>
+            </div>
+            <!-- Progress Tracker Circle/Percentage -->
+            <div class="progress-container">
+                <div class="progress-meta">
+                    <span>Course Progress</span>
+                    <strong id="progress-text">0%</strong>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress" id="progress"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Card Workspace -->
+        <div class="course-card">
+            <!-- Active Normal Day State -->
+            <div id="day-workspace">
+                <div class="workspace-header">
+                    <div class="day-indicator" id="day-tag">Day 1</div>
+                    <h3 id="day-title" class="section-title">Loading...</h3>
+                </div>
+
+                <!-- Tabs: Switch between Notes, Code & Task -->
+                <div class="tab-navigation">
+                    <button class="tab-btn active" onclick="switchTab(event, 'tab-notes')">📖 Theory Notes</button>
+                    <button class="tab-btn" onclick="switchTab(event, 'tab-code')">💻 Code Snippet</button>
+                    <button class="tab-btn" onclick="switchTab(event, 'tab-task')">🎯 Practice Task</button>
+                </div>
+
+                <!-- Tabs Content Container -->
+                <div class="tab-content-container">
+                    <div id="tab-notes" class="tab-pane active">
+                        <div id="day-notes" class="content-body">
+                            <!-- Dynamic Notes -->
+                        </div>
+                    </div>
+                    <div id="tab-code" class="tab-pane">
+                        <div class="terminal-mock">
+                            <div class="terminal-header">
+                                <span class="dot red"></span>
+                                <span class="dot yellow"></span>
+                                <span class="dot green"></span>
+                                <span class="file-name">main.py</span>
+                            </div>
+                            <pre><code id="day-code-snippet"># Code will load here</code></pre>
+                        </div>
+                    </div>
+                    <div id="tab-task" class="tab-pane">
+                        <div class="challenge-box">
+                            <h4>🚀 Today's Practice Challenge</h4>
+                            <p id="day-task-desc">Task description loads here...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Congratulatory Finished Screen (Hidden) -->
+            <div id="completion-screen" class="completion-screen hidden">
+                <div class="trophy-animation">🐍🏆</div>
+                <h3>Incredible Effort!</h3>
+                <p>You have successfully finished the absolute Python Masterclass Challenge.</p>
+                <div class="completion-actions">
+                    <button class="btn-primary" onclick="resetProgress()">Restart Challenge</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Nav Buttons Footer -->
+        <div class="nav-buttons">
+            <button id="btn-prev" onclick="prevDay()">⬅ Previous Day</button>
+            <button id="btn-next" onclick="nextDay()">Next Day ➡</button>
+        </div>
+    </main>
 </div>
+{% endblock %}
+
+{% block css %}
+<style>
+/* Python Theme Custom CSS Variables */
+:root {
+    --primary-color: #306998; /* Python Blue */
+    --accent-color: #ffe082; /* Python Gold/Yellow */
+    --primary-hover: #1e3d59;
+    --background-gray: #f8fafc;
+    --card-bg: #ffffff;
+    --text-primary: #0f172a;
+    --text-muted: #475569;
+    --border-light: #e2e8f0;
+    --emerald-green: #10b981;
+}
+
+body {
+    background-color: var(--background-gray);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+/* Master Grid Layout */
+.course-dashboard {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 30px;
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+/* Sidebar Styling */
+.sidebar {
+    background: var(--card-bg);
+    border-radius: 16px;
+    border: 1px solid var(--border-light);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    padding: 20px;
+    height: calc(100vh - 120px);
+    position: sticky;
+    top: 30px;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-header {
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.sidebar-header h3 {
+    font-size: 1.15rem;
+    color: var(--text-primary);
+    font-weight: 700;
+}
+
+.sidebar-header p {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.days-list {
+    overflow-y: auto;
+    flex-grow: 1;
+    padding-right: 5px;
+}
+
+/* Custom Scrollbar for Sidebar */
+.days-list::-webkit-scrollbar {
+    width: 6px;
+}
+.days-list::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 4px;
+}
+
+.day-link-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 12px 16px;
+    margin-bottom: 8px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--text-muted);
+    font-weight: 500;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.day-link-btn:hover {
+    background: #f1f5f9;
+    color: var(--text-primary);
+}
+
+.day-link-btn.active {
+    background: #eff6ff;
+    color: var(--primary-color);
+    border-color: #bfdbfe;
+    font-weight: 600;
+}
+
+.day-status-indicator {
+    font-size: 0.85rem;
+}
+
+/* Main Viewer Layout */
+.course-viewer {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.course-header {
+    background: var(--card-bg);
+    padding: 24px;
+    border-radius: 16px;
+    border: 1px solid var(--border-light);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+}
+
+.title-meta h2 {
+    font-size: 1.5rem;
+    color: var(--text-primary);
+    font-weight: 800;
+    margin-top: 4px;
+}
+
+.badge {
+    background: #eff6ff;
+    color: var(--primary-color);
+    padding: 4px 10px;
+    border-radius: 60px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border: 1px solid #bfdbfe;
+    text-transform: uppercase;
+}
+
+/* Progress Section */
+.progress-container {
+    width: 250px;
+}
+
+.progress-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: #e2e8f0;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-color) 0%, #ffd43b 100%);
+    width: 0%;
+    border-radius: 10px;
+    transition: width 0.4s ease-out;
+}
+
+/* Course Card Area */
+.course-card {
+    background: var(--card-bg);
+    padding: 35px;
+    border-radius: 20px;
+    border: 1px solid var(--border-light);
+    box-shadow: 0 10px 30px -5px rgba(0,0,0,0.04);
+    min-height: 400px;
+    display: flex;
+    flex-direction: column;
+}
+
+.day-indicator {
+    background: #f1f5f9;
+    color: var(--text-muted);
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    display: inline-block;
+    margin-bottom: 12px;
+}
+
+.section-title {
+    font-size: 1.75rem;
+    color: var(--text-primary);
+    font-weight: 700;
+}
+
+/* Tab Component Styling */
+.tab-navigation {
+    display: flex;
+    gap: 10px;
+    margin: 25px 0 20px 0;
+    border-bottom: 1px solid var(--border-light);
+    padding-bottom: 10px;
+}
+
+.tab-btn {
+    background: transparent;
+    border: none;
+    padding: 10px 18px;
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.tab-btn:hover {
+    background: #f8fafc;
+    color: var(--text-primary);
+}
+
+.tab-btn.active {
+    background: var(--primary-color);
+    color: white;
+}
+
+/* Tab panes logic styling */
+.tab-pane {
+    display: none;
+}
+
+.tab-pane.active {
+    display: block;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.content-body {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: #334155;
+}
+
+.content-body code {
+    background: #f1f5f9;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 0.9em;
+    color: #0f172a;
+}
+
+/* Terminal Mockup styling for Code View */
+.terminal-mock {
+    background: #0f172a;
+    border-radius: 12px;
+    padding: 20px;
+    font-family: 'Fira Code', 'Courier New', Courier, monospace;
+    color: #cbd5e1;
+    overflow-x: auto;
+    border: 1px solid #1e293b;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.terminal-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #1e293b;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.dot.red { background: #ef4444; }
+.dot.yellow { background: #f59e0b; }
+.dot.green { background: #10b981; }
+
+.file-name {
+    color: #64748b;
+    font-size: 0.85rem;
+    margin-left: 10px;
+}
+
+.terminal-mock pre {
+    margin: 0;
+}
+
+/* Challenge Task Block */
+.challenge-box {
+    background: #f0fdf4;
+    border-left: 4px solid var(--emerald-green);
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.challenge-box h4 {
+    color: #065f46;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.challenge-box p {
+    color: #047857;
+    line-height: 1.6;
+}
+
+/* Nav Actions style */
+.nav-buttons {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.nav-buttons button {
+    flex: 1;
+    background: var(--primary-color);
+    color: white;
+    padding: 14px 28px;
+    border: none;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(48, 105, 152, 0.15);
+    transition: all 0.2s ease;
+}
+
+.nav-buttons button:hover {
+    background: var(--primary-hover);
+    transform: translateY(-1px);
+}
+
+.nav-buttons button:disabled {
+    background: #cbd5e1;
+    color: #94a3b8;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Completion Screen */
+.completion-screen {
+    text-align: center;
+    padding: 40px 0;
+}
+
+.trophy-animation {
+    font-size: 4.5rem;
+    animation: floating 3s ease-in-out infinite;
+}
+
+@keyframes floating {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.completion-screen h3 {
+    font-size: 1.8rem;
+    color: var(--text-primary);
+    margin-bottom: 10px;
+}
+
+.completion-screen p {
+    color: var(--text-muted);
+    margin-bottom: 25px;
+}
+
+.btn-primary {
+    background: var(--emerald-green);
+    color: white;
+    border: none;
+    padding: 12px 28px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-primary:hover {
+    background: #059669;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Responsive Styles */
+@media(max-width: 900px) {
+    .course-dashboard {
+        grid-template-columns: 1fr;
+    }
+    .sidebar {
+        height: auto;
+        max-height: 200px;
+        position: static;
+    }
+}
+</style>
 {% endblock %}
 
 {% block scripts %}
 <script>
+// Backend dynamics variables config
+const totalDays = parseInt("{{ day_count }}") || 10;
 let currentDay = 1;
-const totalDays = {{ day_count }};
-if(localStorage.getItem("PythonDay")){
-  currentDay = parseInt(localStorage.getItem("PythonDay"));
-  loadDay();
-} else { loadDay(); }
 
-function loadDay(){
-  document.getElementById("day-title").innerText = "Day " + currentDay;
-  document.getElementById("day-notes").innerText = "Notes for Day " + currentDay;
-  localStorage.setItem("PythonDay", currentDay);
-  let progressPercent = (currentDay/totalDays)*100;
-  document.getElementById("progress").style.width = progressPercent + "%";
+// Python specific local course data structure
+const courseData = {
+    1: {
+        title: "Python Intro & Environmental Setup",
+        notes: "<p>Python ek elegant, readable aur dynamic multi-purpose programming language hai. Is video/module me hum Python dynamic typing aur runtime processes ko samjhenge.</p><ul><li>Official website se <code>Python 3.10+</code> install karein.</li><li>Check terminal logic: <code>python --version</code></li><li>Write and run your first <code>print('Hello Python!')</code> script.</li></ul>",
+        code: `# Running our first program\nprint("Hello, Python!")\n\n# Dynamic type assignment\nx = 10\ny = "Coding"\nprint(f"Data: {x}, {y}")`,
+        task: "Python code console setup create karein aur use local IDE par command lines check karke execute karein."
+    },
+    2: {
+        title: "Dynamic Variables & List Datatypes",
+        notes: "<p>Python variables block scopes ko hold nahi karte. Variables runtime initialization se evaluate hote hain.</p><ul><li>Lists: mutable dynamic index collections <code>[1, 2, 3]</code></li><li>Tuples: immutable data structures <code>(1, 2, 3)</code></li></ul>",
+        code: `# Python lists methods\nfruits = ["Apple", "Mango", "Banana"]\nfruits.append("Orange")\nprint(fruits) # Output includes Orange`,
+        task: "Ek blank list banayein, user se 3 fruits dynamic insert karayein, aur complete update output check karein."
+    },
+    3: {
+        title: "Indentations & Control Flows",
+        notes: "<p>Python brackets <code>{}</code> use nahi karta, isme loops aur conditional flow control ke liye absolute indentation block rules ka use hota hai.</p>",
+        code: `age = 18\nif age >= 18:\n    print("Eligible to Vote")\nelse:\n    print("Underage")`,
+        task: "Ek loop validation structure generate karein jo standard positive ranges determine karta ho."
+    }
+};
+
+// Local storage logic using Python specific state identifier keys
+const storageKey = "PythonDay";
+if(localStorage.getItem(storageKey)){
+    currentDay = parseInt(localStorage.getItem(storageKey));
+    if (currentDay > totalDays) currentDay = totalDays;
 }
-function nextDay(){ if(currentDay < totalDays){ currentDay++; loadDay(); } }
-function prevDay(){ if(currentDay > 1){ currentDay--; loadDay(); } }
+
+// Generate Dynamic Sidebar Days List
+function buildSidebar() {
+    const listContainer = document.getElementById("sidebar-days-list");
+    listContainer.innerHTML = "";
+    
+    for (let i = 1; i <= totalDays; i++) {
+        const btn = document.createElement("button");
+        btn.classList.add("day-link-btn");
+        if (i === currentDay) btn.classList.add("active");
+        
+        btn.onclick = () => jumpToDay(i);
+        btn.innerHTML = `
+            <span>Day ${i}</span>
+            <span class="day-status-indicator">${i < currentDay ? '✅' : '⏳'}</span>
+        `;
+        listContainer.appendChild(btn);
+    }
+}
+
+function loadDay() {
+    const workspace = document.getElementById("day-workspace");
+    const completionScreen = document.getElementById("completion-screen");
+    const btnPrev = document.getElementById("btn-prev");
+    const btnNext = document.getElementById("btn-next");
+
+    // Dynamic Save
+    localStorage.setItem(storageKey, currentDay);
+
+    // Sidebar highlight sync
+    buildSidebar();
+
+    // Progress percentage
+    let progressPercent = Math.round((currentDay / totalDays) * 100);
+    document.getElementById("progress").style.width = progressPercent + "%";
+    document.getElementById("progress-text").innerText = progressPercent + "%";
+
+    // Workspace and buttons refresh
+    workspace.classList.remove("hidden");
+    completionScreen.classList.add("hidden");
+    btnPrev.disabled = currentDay === 1;
+
+    // Normalizing views
+    document.getElementById("day-tag").innerText = "Day " + currentDay;
+    
+    // Check local database for content
+    if(courseData[currentDay]) {
+        document.getElementById("day-title").innerText = courseData[currentDay].title;
+        document.getElementById("day-notes").innerHTML = courseData[currentDay].notes;
+        document.getElementById("day-code-snippet").innerText = courseData[currentDay].code;
+        document.getElementById("day-task-desc").innerText = courseData[currentDay].task;
+    } else {
+        // Fallback layout state
+        document.getElementById("day-title").innerText = "Python Core - Day " + currentDay;
+        document.getElementById("day-notes").innerHTML = `<p>Advanced custom chapters for Day ${currentDay} will update shortly. Keep coding in Python!</p>`;
+        document.getElementById("day-code-snippet").innerText = `# Python Challenge Day ${currentDay} scripts returning soon...`;
+        document.getElementById("day-task-desc").innerText = "Challenge structures are under configuration phase.";
+    }
+
+    if (currentDay === totalDays) {
+        btnNext.innerText = "Complete Challenge! 🏆";
+    } else {
+        btnNext.innerText = "Next Day ➡";
+    }
+}
+
+function nextDay() {
+    if (currentDay < totalDays) {
+        currentDay++;
+        loadDay();
+    } else if (currentDay === totalDays) {
+        // Trigger completion screen view state
+        document.getElementById("day-workspace").classList.add("hidden");
+        document.getElementById("completion-screen").classList.remove("hidden");
+        document.getElementById("btn-next").disabled = true;
+        document.getElementById("progress").style.width = "100%";
+        document.getElementById("progress-text").innerText = "100%";
+    }
+}
+
+function prevDay() {
+    if (currentDay > 1) {
+        currentDay--;
+        document.getElementById("btn-next").disabled = false;
+        loadDay();
+    }
+}
+
+function jumpToDay(dayNumber) {
+    currentDay = dayNumber;
+    document.getElementById("btn-next").disabled = false;
+    loadDay();
+}
+
+function resetProgress() {
+    if(confirm("Do you want to clear progress and restart?")) {
+        currentDay = 1;
+        document.getElementById("btn-next").disabled = false;
+        loadDay();
+    }
+}
+
+// Simple Tab Switch Functionality
+function switchTab(evt, tabId) {
+    // Hide all tab panes
+    const panes = document.querySelectorAll(".tab-pane");
+    panes.forEach(pane => pane.classList.remove("active"));
+
+    // Deactivate all tab buttons
+    const buttons = document.querySelectorAll(".tab-btn");
+    buttons.forEach(btn => btn.classList.remove("active"));
+
+    // Activate selected tab pane and button
+    document.getElementById(tabId).classList.add("active");
+    evt.currentTarget.classList.add("active");
+}
+
+// Initial Call to build and render
+buildSidebar();
+loadDay();
 </script>
 {% endblock %}
