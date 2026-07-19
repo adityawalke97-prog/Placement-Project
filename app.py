@@ -152,21 +152,43 @@ print(cur.fetchone())
         page=page,
         total_pages=total_pages
     )
-@app.route("/mock_test")
+@app.route('/mock_test')
 def mock_test():
 
-    conn = get_db_connection()  
+    if 'user_id' not in session:
+        return redirect('/login')
 
-    cur = conn.cursor()
 
-    cur.execute("SELECT * FROM questions")
+    conn = get_db_connection()
+    cur = conn.cursor(dictionary=True)
 
-    data = cur.fetchall()
+
+    cur.execute("""
+        SELECT 
+            id,
+            question,
+            option1,
+            option2,
+            option3,
+            option4,
+            category
+        FROM mock_questions
+        ORDER BY RAND()
+        LIMIT 20
+    """)
+
+
+    questions = cur.fetchall()
+
 
     cur.close()
     conn.close()
 
-    return render_template("mock_test.html", questions=data)
+
+    return render_template(
+        'mock_test.html',
+        questions=questions
+    )
 @app.route('/submit_test', methods=['POST'])
 def submit_test():
 
