@@ -124,9 +124,9 @@ def interview_questions():
     cur = conn.cursor()
 
     # Total Questions
-    cur.execute("SELECT COUNT(*) FROM interview_questions")
-    total_questions = cur.fetchone()[0]
+    cur.execute("SELECT COUNT(*) AS total FROM interview_questions")
 
+print(cur.fetchone())
     total_pages = math.ceil(total_questions / per_page)
 
     # Fetch 20 Questions
