@@ -119,33 +119,26 @@ def interview_questions():
     page = request.args.get("page",1,type=int)
 
     per_page = 20
-
     offset = (page-1)*per_page
 
 
     conn = get_db_connection()
+    cur = conn.cursor()
 
-    cur = conn.cursor(dictionary=True)
-
-
-    # Total Questions
 
     cur.execute("""
-        SELECT COUNT(*) AS total
+        SELECT COUNT(*) 
         FROM interview_questions
     """)
 
 
-    total_questions = cur.fetchone()['total']
+    total_questions = cur.fetchone()[0]
 
 
     total_pages = math.ceil(
-        total_questions/per_page
+        total_questions / per_page
     )
 
-
-
-    # Fetch Questions
 
     cur.execute("""
         SELECT
@@ -156,8 +149,7 @@ def interview_questions():
         FROM interview_questions
         ORDER BY id
         LIMIT %s OFFSET %s
-    """,
-    (per_page,offset))
+    """,(per_page,offset))
     questions = cur.fetchall()
     cur.close()
     conn.close()
@@ -172,7 +164,7 @@ def mock_test():
     if 'user_id' not in session:
         return redirect('/login')
     conn = get_db_connection()
-    cur = conn.cursor(dictionary=True)
+    cur = conn.cursor()
     cur.execute("""
         SELECT 
             id,
@@ -186,22 +178,15 @@ def mock_test():
         ORDER BY RAND()
         LIMIT 20
     """)
-
-
     questions = cur.fetchall()
-
-
     cur.close()
     conn.close()
-
-
     return render_template(
         'mock_test.html',
         questions=questions
     )
 @app.route('/submit_test', methods=['POST'])
 def submit_test():
-
     score = 0
     total = 0
 
