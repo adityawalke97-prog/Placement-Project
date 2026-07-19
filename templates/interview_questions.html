@@ -51,25 +51,31 @@ Interview Preparation
     <!-- Questions -->
   <div class="container">
 
-    {% for q in questions %}
+   {% for q in questions %}
 
-    <div class="question-card">
-        <h5>Q{{ q[0] }}. {{ q[1] }}</h5>
+<div class="question-card">
 
-        <button onclick="toggleAnswer('{{ q[0] }}')">
-            Show Answer
-        </button>
+<h3>
+Q{{ loop.index }}. {{ q.question }}
+</h3>
 
-        <div id="ans{{ q[0] }}" style="display:none;">
-            <b>Answer:</b>
-            <p>{{ q[2] }}</p>
+<button onclick="toggleAnswer({{ loop.index }})">
+Show Answer
+</button>
 
-            <small>{{ q[3] }}</small>
-        </div>
 
-    </div>
+<div id="answer{{ loop.index }}" style="display:none;">
 
-    {% endfor %}
+<p>
+{{ q.answer }}
+</p>
+
+</div>
+
+
+</div>
+
+{% endfor %}
 
 </div>
 
