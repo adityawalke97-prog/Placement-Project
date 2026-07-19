@@ -50,27 +50,27 @@ Interview Preparation
 
     <!-- Questions -->
   <div class="container">
-
- {% for q in questions %}
+{% for q in questions %}
 
 <div class="question-card">
 
-<h3>
-Q{{ loop.index }}. {{ q.question }}
-</h3>
+    <h3>
+        Q{{ loop.index }}. {{ q.question }}
+    </h3>
 
-<button onclick="showAnswer({{loop.index}})">
-Show Answer
-</button>
 
-<div id="answer-{{loop.index}}" class="answer-box">
-{{ q.answer }}
-</div>
+    <button class="answer-btn" onclick="toggleAnswer({{loop.index}})">
+        Show Answer
+    </button>
+
+
+    <div id="answer-{{loop.index}}" class="answer-box">
+        {{ q.answer }}
+    </div>
 
 </div>
 
 {% endfor %}
-
 </div>
 
 <div class="pagination">
@@ -117,14 +117,23 @@ function showAnswer(id){
 
 function toggleAnswer(id){
 
-    var x=document.getElementById("ans"+id);
+    let answer = document.getElementById(
+        "answer-"+id
+    );
 
-    if(x.style.display=="none")
-        x.style.display="block";
-    else
-        x.style.display="none";
-}
-</script>
+
+    if(answer.style.display === "block"){
+
+        answer.style.display="none";
+
+    }
+    else{
+
+        answer.style.display="block";
+
+    }
+
+}</script>
 {% endblock %}
 
 {% block js %}
