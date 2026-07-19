@@ -116,9 +116,13 @@ def interview_questions():
     cur = conn.cursor(pymysql.cursors.DictCursor)
 
     cur.execute("""
-        SELECT *
-        FROM java_notes(content)
-        ORDER BY category
+        SELECT
+            id,
+            content AS question,
+            '' AS answer,
+            'Java Notes' AS category
+        FROM java_notes
+        ORDER BY id
     """)
 
     questions = cur.fetchall()
