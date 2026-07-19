@@ -586,112 +586,53 @@ Skipped
 </p>
 
 </div>
-
-
-
 <div class="stat-box">
-
 <h3 id="timeTaken">
 00:00
 </h3>
-
 <p>
 Time
 </p>
-
 </div>
-
-
 </div>
-
-
 </div>
-
-
-
-
 <!-- AI Analysis -->
-
 <div class="ai-analysis-card">
-
-
 <h2>
 🤖 AI Performance Analysis
 </h2>
-
-
 <div class="analysis-item">
-
 <h4>
 Strong Topics
 </h4>
-
 <p id="strongTopics">
 Java Basics, OOP
 </p>
-
 </div>
-
-
-
 <div class="analysis-item">
-
 <h4>
 Need Improvement
 </h4>
-
 <p id="weakTopics">
 Collections, Multithreading
 </p>
-
 </div>
-
-
-
 <button>
 Generate Practice Plan
 </button>
-
-
 </div>
-
-
-
 </section>
-
-
-
-
-
-
 <!-- Question Data For JavaScript -->
-
-
 <script>
-
 const totalQuestions = {{questions|length}};
-
 const questionIds = [
-
 {% for q in questions %}
 "{{q.id}}",
 {% endfor %}
-
 ];
-
-
 </script>
-
-
-
-
 <!-- External JS -->
-
 <script src="{{ url_for('static',
 filename='js/mock_test.js') }}">
 </script>
-
-
-
-{% endblock %}
 {% endblock %}
