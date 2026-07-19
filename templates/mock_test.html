@@ -1,317 +1,697 @@
 {% extends 'layout.html' %}
 
-{% block title %}Mock Test{% endblock %}
+{% block title %}Advanced Mock Test{% endblock %}
 
 {% block content %}
-<style>
-    /* Premium Glassmorphism & UI Design */
-    :root {
-        --primary-color: #4f46e5;
-        --primary-hover: #4338ca;
-        --bg-glass: rgba(255, 255, 255, 0.08);
-        --border-glass: rgba(255, 255, 255, 0.15);
-        --text-color: #f3f4f6;
-    }
 
-    .test-container {
-        max-width: 850px;
-        margin: 2rem auto;
-        padding: 0 1rem;
-    }
+<link rel="stylesheet" href="{{ url_for('static', filename='css/mock_test.css') }}">
 
-    /* Sticky Header containing Timer & Progress */
-    .test-header {
-        position: sticky;
-        top: 1rem;
-        z-index: 100;
-        background: rgba(15, 23, 42, 0.85); /* Adjust based on your layout's dark theme */
-        backdrop-filter: blur(12px);
-        border: 1px solid var(--border-glass);
-        border-radius: 16px;
-        padding: 1rem 1.5rem;
-        margin-bottom: 2rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-    }
+<div class="exam-container">
 
-    .timer-box {
-        font-size: 1.2rem;
-        font-weight: 700;
-        color: #ef4444;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .progress-container {
-        flex-grow: 0.6;
-    }
-
-    .progress-bar-bg {
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 8px;
-        height: 8px;
-        overflow: hidden;
-    }
-
-    .progress-bar-fill {
-        background: linear-gradient(90deg, #3b82f6, #10b981);
-        width: 0%;
-        height: 100%;
-        transition: width 0.3s ease;
-    }
-
-    .progress-text {
-        font-size: 0.85rem;
-        margin-top: 0.3rem;
-        opacity: 0.8;
-    }
-
-    /* Beautiful Question Cards */
-    .question-card {
-        background: var(--bg-glass);
-        backdrop-filter: blur(8px);
-        border: 1px solid var(--border-glass);
-        border-radius: 16px;
-        padding: 2rem;
-        margin-bottom: 1.8rem;
-        transition: transform 0.2s, box-shadow 0.2s;
-    }
-
-    .question-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-        color: black;    }
-
-    .question-title {
-        font-size: 1.25rem;
-        margin-bottom: 1.5rem;
-        color: var(--text-color);
-        font-weight: 600;
-    }
-
-    /* Premium Custom Radio Options */
-    .option-wrapper {
-        position: relative;
-        margin-bottom: 1rem;
-    }
-
-    .option-wrapper input[type="radio"] {
-        position: absolute;
-        opacity: 0;
-        width: 100%;
-        height: 100%;
-        cursor: pointer;
-        z-index: 2;
-    }
-
-    .option-label {
-        display: flex;
-        align-items: center;
-        padding: 1rem 1.25rem;
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid var(--border-glass);
-        border-radius: 10px;
-        font-size: 1rem;
-        color: var(--text-color);
-        transition: all 0.2s ease;
-        cursor: pointer;
-    }
-
-    /* Checkmark circle indicator */
-    .option-label::before {
-        content: '';
-        width: 18px;
-        height: 18px;
-        border: 2px solid var(--border-glass);
-        border-radius: 50%;
-        margin-right: 12px;
-        display: inline-block;
-        flex-shrink: 0;
-        transition: all 0.2s ease;
-    }
-
-    /* Hover effect */
-    .option-wrapper:hover .option-label {
-        background: rgba(255, 255, 255, 0.08);
-        border-color: rgba(255, 255, 255, 0.3);
-    }
-
-    /* Selected State */
-    .option-wrapper input[type="radio"]:checked + .option-label {
-        background: rgba(79, 70, 229, 0.15);
-        border-color: var(--primary-color);
-        box-shadow: 0 0 10px rgba(79, 70, 229, 0.2);
-    }
-
-    .option-wrapper input[type="radio"]:checked + .option-label::before {
-        border-color: var(--primary-color);
-        background: var(--primary-color);
-        box-shadow: inset 0 0 0 3px #1e1b4b; /* Ring effect */
-    }
-
-    /* Submit Button styling */
-    .btn-submit-container {
-        display: flex;
-        justify-content: flex-end;
-        margin-top: 2rem;
-    }
-
-    .btn-submit {
-        background: linear-gradient(135deg, #4f46e5, #6366f1);
-        color: white;
-        border: none;
-        padding: 1rem 2.5rem;
-        font-size: 1.1rem;
-        font-weight: 600;
-        border-radius: 12px;
-        cursor: pointer;
-        transition: all 0.2s;
-        box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);
-    }
-
-    .btn-submit:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(79, 70, 229, 0.6);
-        background: linear-gradient(135deg, #4338ca, #4f46e5);
-    }
-</style>
-
-<div class="test-container">
-    <div class="test-header">
-    <h2>Active Mock Test</h2>
-    <!-- Yeh link user ko direct history page par bhej degi -->
-    <a href="{{ url_for('mock_test_history') }}" class="btn-history">
-        <span class="icon">🕒</span> View Test History
-    </a>
-</div>
-    <!-- Sticky HUD: Timer & Progress -->
-    <div class="test-header">
-        <div class="progress-container">
-            <div class="progress-bar-bg">
-                <div class="progress-bar-fill" id="progressBar"></div>
-            </div>
-            <div class="progress-text" id="progressText">Attempted: 0 / {{ questions|length }}</div>
-        </div>
-        <div class="timer-box">
-            ⏱️ <span id="timerDisplay">20:00</span>
-        </div>
+<header class="exam-header">
+    <div class="exam-title">
+        <h2>🚀 Placement Mock Test</h2>
+        <p>Java | OOP | SQL | Programming</p>
     </div>
 
-    <h1 class="page-title" style="margin-bottom: 1.5rem;">📝 Placement Mock Test</h1>
-
-    <!-- Form -->
-    <form method="POST" action="/submit_test" id="mockTestForm">
-        
-        {% for q in questions %}
-        <div class="question-card" data-q-id="{{ q.id }}">
-            <h3 class="question-title">Q{{ loop.index }}. {{ q.question }}</h3>
-
-            <!-- Option 1 -->
-            <div class="option-wrapper">
-                <input type="radio" name="q{{ q.id }}" value="{{ q.option1 }}" class="test-option">
-                <label class="option-label">{{ q.option1 }}</label>
-            </div>
-
-            <!-- Option 2 -->
-            <div class="option-wrapper">
-                <input type="radio" name="q{{ q.id }}" value="{{ q.option2 }}" class="test-option">
-                <label class="option-label">{{ q.option2 }}</label>
-            </div>
-
-            <!-- Option 3 -->
-            <div class="option-wrapper">
-                <input type="radio" name="q{{ q.id }}" value="{{ q.option3 }}" class="test-option">
-                <label class="option-label">{{ q.option3 }}</label>
-            </div>
-
-            <!-- Option 4 -->
-            <div class="option-wrapper">
-                <input type="radio" name="q{{ q.id }}" value="{{ q.option4 }}" class="test-option">
-                <label class="option-label">{{ q.option4 }}</label>
-            </div>
+    <div class="exam-tools">
+        <button onclick="toggleFullscreen()">⛶</button>
+        <button onclick="showInstruction()">ℹ</button>
+        <div class="timer">
+            ⏱ <span id="timer">20:00</span>
         </div>
-        {% endfor %}
+    </div>
+</header>
 
-        <div class="btn-submit-container">
-            <button type="submit" class="btn-submit">
-                Submit Test
-            </button>
-        </div>
 
-    </form>
+<div class="exam-layout">
+
+<aside class="question-sidebar">
+
+<h3>Question Palette</h3>
+
+<div class="question-grid">
+
+{% for q in questions %}
+<button 
+class="palette-btn not-visited"
+id="palette-{{loop.index}}"
+onclick="openQuestion({{loop.index}})">
+{{loop.index}}
+</button>
+{% endfor %}
+
 </div>
 
+
+<div class="legend">
+
+<div>
+<span class="dot answered"></span>
+Answered
+</div>
+
+<div>
+<span class="dot review"></span>
+Review
+</div>
+
+<div>
+<span class="dot skipped"></span>
+Skipped
+</div>
+
+<div>
+<span class="dot unvisited"></span>
+Not Visited
+</div>
+
+</div>
+
+</aside>
+
+
+
+<main class="question-area">
+
+<form method="POST" action="/submit_test" id="mockTestForm">
+
+
+{% for q in questions %}
+
+<div class="question-card"
+id="question-{{loop.index}}"
+{% if not loop.first %}style="display:none"{% endif %}>
+
+
+<div class="question-header">
+
+<h3>
+Question {{loop.index}} / {{questions|length}}
+</h3>
+
+<span>
+{{q.category}}
+</span>
+
+</div>
+
+
+<div class="question-text">
+
+<h2>
+{{q.question}}
+</h2>
+
+</div>
+
+
+<div class="options">
+
+
+<label>
+<input type="radio"
+name="q{{q.id}}"
+value="{{q.option1}}"
+onclick="answerSelected({{loop.index}})">
+<span>{{q.option1}}</span>
+</label>
+
+
+<label>
+<input type="radio"
+name="q{{q.id}}"
+value="{{q.option2}}"
+onclick="answerSelected({{loop.index}})">
+<span>{{q.option2}}</span>
+</label>
+
+
+<label>
+<input type="radio"
+name="q{{q.id}}"
+value="{{q.option3}}"
+onclick="answerSelected({{loop.index}})">
+<span>{{q.option3}}</span>
+</label>
+
+
+<label>
+<input type="radio"
+name="q{{q.id}}"
+value="{{q.option4}}"
+onclick="answerSelected({{loop.index}})">
+<span>{{q.option4}}</span>
+</label>
+
+
+</div>
+
+
+<div class="question-actions">
+
+<button type="button"
+onclick="clearAnswer({{loop.index}})">
+❌ Clear
+</button>
+
+<button type="button"
+onclick="markQuestion({{loop.index}})">
+⭐ Mark Review
+</button>
+
+</div>
+
+
+</div>
+
+{% endfor %}
+
+
+<div class="navigation">
+
+<button type="button"
+onclick="previousQuestion()">
+⬅ Previous
+</button>
+
+<button type="button"
+onclick="nextQuestion()">
+Next ➡
+</button>
+
+</div>
+
+
+<button type="submit" class="submit-btn">
+Submit Test
+</button>
+
+
+</form>
+
+</main>
+
+
+<aside class="right-sidebar">
+
+<div class="summary-card">
+
+<h3>Test Summary</h3>
+
+<p>
+Answered:
+<span id="answeredCount">0</span>
+</p>
+
+<p>
+Marked:
+<span id="markedCount">0</span>
+</p>
+
+<p>
+Remaining:
+<span id="remainingCount">{{questions|length}}</span>
+</p>
+
+</div>
+
+
+<div class="progress-card">
+
+<h3>Progress</h3>
+
+<div class="progress-bg">
+
+<div class="progress-fill"
+id="progressFill">
+</div>
+
+</div>
+
+<p id="progressText">
+0% Completed
+</p>
+
+</div>
+
+
+</aside>
+
+
+</div>
+
+</div>
+<!-- Instructions Modal -->
+
+<div class="modal" id="instructionModal">
+
+<div class="modal-box">
+
+<button class="close-modal"
+onclick="closeInstruction()">
+✖
+</button>
+
+<h2>📌 Test Instructions</h2>
+
+<ul>
+<li>Total questions: {{questions|length}}</li>
+<li>Each question has one correct answer</li>
+<li>Timer will automatically submit the test</li>
+<li>You can mark questions for review</li>
+<li>You can navigate using question palette</li>
+<li>Do not refresh the page during the test</li>
+</ul>
+
+<button class="modal-btn"
+onclick="closeInstruction()">
+Start Test
+</button>
+
+</div>
+
+</div>
+
+
+
+<!-- Submit Confirmation Modal -->
+
+<div class="modal" id="submitModal">
+
+<div class="modal-box">
+
+<h2>⚠ Submit Test?</h2>
+
+<p>
+Are you sure you want to submit your test?
+</p>
+
+
+<div class="submit-summary">
+
+<div>
+Answered:
+<strong id="submitAnswered">
+0
+</strong>
+</div>
+
+<div>
+Not Answered:
+<strong id="submitNotAnswered">
+0
+</strong>
+</div>
+
+<div>
+Marked:
+<strong id="submitMarked">
+0
+</strong>
+</div>
+
+</div>
+
+
+<div class="modal-actions">
+
+<button onclick="closeSubmitModal()">
+Cancel
+</button>
+
+<button onclick="finalSubmit()">
+Submit
+</button>
+
+</div>
+
+
+</div>
+
+</div>
+
+
+
+
+<!-- Time Warning Modal -->
+
+<div class="modal" id="timeModal">
+
+<div class="modal-box warning">
+
+<h2>⏰ Time Running Out</h2>
+
+<p>
+Only 1 minute remaining.
+</p>
+
+<button onclick="closeTimeModal()">
+Continue Test
+</button>
+
+</div>
+
+</div>
+
+
+
+
+
+<!-- Exit Warning Modal -->
+
+<div class="modal" id="exitModal">
+
+<div class="modal-box">
+
+<h2>⚠ Leave Test?</h2>
+
+<p>
+Your progress may be lost.
+</p>
+
+
+<div class="modal-actions">
+
+<button onclick="closeExitModal()">
+Stay
+</button>
+
+<button onclick="exitTest()">
+Exit
+</button>
+
+</div>
+
+
+</div>
+
+</div>
+
+
+
+
+
+<!-- Mobile Bottom Navigation -->
+
+<div class="mobile-navigation">
+
+<button onclick="previousQuestion()">
+⬅
+</button>
+
+
+<button onclick="openPaletteMobile()">
+☰
+</button>
+
+
+<button onclick="nextQuestion()">
+➡
+</button>
+
+</div>
+
+
+
+
+<!-- Keyboard Shortcuts Info -->
+
+<div class="shortcut-box">
+
+<h3>⌨ Keyboard Controls</h3>
+
+<p>
+← Previous Question
+</p>
+
+<p>
+→ Next Question
+</p>
+
+<p>
+M Mark Review
+</p>
+
+<p>
+C Clear Answer
+</p>
+
+</div>
+
+
+
+
 <script>
-    // 1. Timer Logic (e.g., 20 Minutes)
-    let totalTime = 20 * 60; // 20 mins in seconds
-    const timerDisplay = document.getElementById('timerDisplay');
-    const testForm = document.getElementById('mockTestForm');
 
-    const countdown = setInterval(() => {
-        let minutes = Math.floor(totalTime / 60);
-        let seconds = totalTime % 60;
+function showInstruction(){
+document.getElementById("instructionModal").style.display="flex";
+}
 
-        // Formatting double digits
-        minutes = minutes < 10 ? '0' + minutes : minutes;
-        seconds = seconds < 10 ? '0' + seconds : seconds;
+function closeInstruction(){
+document.getElementById("instructionModal").style.display="none";
+}
 
-        timerDisplay.textContent = `${minutes}:${seconds}`;
 
-        if (totalTime <= 60) {
-            timerDisplay.style.color = '#f87171'; // Pulse red in last minute
-        }
+function openSubmitModal(){
 
-        if (totalTime <= 0) {
-            clearInterval(countdown);
-            alert("Time's up! Your test is being automatically submitted.");
-            testForm.submit(); // Auto submit
-        }
-        totalTime--;
-    }, 1000);
+document.getElementById("submitModal").style.display="flex";
 
-    // 2. Progress Tracker Logic
-    const totalQuestions = {{ questions|length }};
-    const options = document.querySelectorAll('.test-option');
-    const progressBar = document.getElementById('progressBar');
-    const progressText = document.getElementById('progressText');
+}
 
-    function updateProgress() {
-        // Find unique names of radio groups that have a checked option
-        const checkedNames = new Set();
-        options.forEach(opt => {
-            if (opt.checked) {
-                checkedNames.add(opt.name);
-            }
-        });
 
-        const answeredCount = checkedNames.size;
-        const percentage = (answeredCount / totalQuestions) * 100;
+function closeSubmitModal(){
 
-        progressBar.style.width = `${percentage}%`;
-        progressText.textContent = `Attempted: ${answeredCount} / ${totalQuestions}`;
-    }
+document.getElementById("submitModal").style.display="none";
 
-    // Attach event listeners to update progress bar whenever user selects an answer
-    options.forEach(opt => {
-        opt.addEventListener('change', updateProgress);
-    });
+}
 
-    // 3. Warning on incomplete test submit
-    testForm.addEventListener('submit', function(e) {
-        const checkedNames = new Set();
-        options.forEach(opt => {
-            if (opt.checked) checkedNames.add(opt.name);
-        });
 
-        if (checkedNames.size < totalQuestions) {
-            const confirmSubmit = confirm(`You have only answered ${checkedNames.size} out of ${totalQuestions} questions. Are you sure you want to submit?`);
-            if (!confirmSubmit) {
-                e.preventDefault(); // Stop submission
-            }
-        }
-    });
+function finalSubmit(){
+
+document.getElementById("mockTestForm").submit();
+
+}
+
+
+function closeTimeModal(){
+
+document.getElementById("timeModal").style.display="none";
+
+}
+
+
+function closeExitModal(){
+
+document.getElementById("exitModal").style.display="none";
+
+}
+
+
+function exitTest(){
+
+window.location.href="/dashboard";
+
+}
+
+
 </script>
+<!-- Auto Save Indicator -->
+
+<div class="autosave-box" id="autosaveBox">
+    💾 Saving...
+</div>
+
+
+
+
+<!-- Bookmark Panel -->
+
+<div class="bookmark-panel" id="bookmarkPanel">
+
+<h3>⭐ Bookmarked Questions</h3>
+
+<div id="bookmarkList">
+
+<p>No bookmarked questions</p>
+
+</div>
+
+</div>
+
+
+
+
+
+<!-- Result Preview Section -->
+
+<section class="result-preview" id="resultPreview">
+
+
+<div class="result-card">
+
+
+<h2>
+🎯 Test Completed
+</h2>
+
+
+<div class="score-circle">
+
+<span id="finalScore">
+0%
+</span>
+
+</div>
+
+
+<div class="result-stats">
+
+
+<div class="stat-box">
+
+<h3 id="correctCount">
+0
+</h3>
+
+<p>
+Correct
+</p>
+
+</div>
+
+
+<div class="stat-box">
+
+<h3 id="wrongCount">
+0
+</h3>
+
+<p>
+Wrong
+</p>
+
+</div>
+
+
+
+<div class="stat-box">
+
+<h3 id="skipCount">
+0
+</h3>
+
+<p>
+Skipped
+</p>
+
+</div>
+
+
+
+<div class="stat-box">
+
+<h3 id="timeTaken">
+00:00
+</h3>
+
+<p>
+Time
+</p>
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
+
+
+<!-- AI Analysis -->
+
+<div class="ai-analysis-card">
+
+
+<h2>
+🤖 AI Performance Analysis
+</h2>
+
+
+<div class="analysis-item">
+
+<h4>
+Strong Topics
+</h4>
+
+<p id="strongTopics">
+Java Basics, OOP
+</p>
+
+</div>
+
+
+
+<div class="analysis-item">
+
+<h4>
+Need Improvement
+</h4>
+
+<p id="weakTopics">
+Collections, Multithreading
+</p>
+
+</div>
+
+
+
+<button>
+Generate Practice Plan
+</button>
+
+
+</div>
+
+
+
+</section>
+
+
+
+
+
+
+<!-- Question Data For JavaScript -->
+
+
+<script>
+
+const totalQuestions = {{questions|length}};
+
+const questionIds = [
+
+{% for q in questions %}
+"{{q.id}}",
+{% endfor %}
+
+];
+
+
+</script>
+
+
+
+
+<!-- External JS -->
+
+<script src="{{ url_for('static',
+filename='js/mock_test.js') }}">
+</script>
+
+
+
+{% endblock %}
 {% endblock %}
