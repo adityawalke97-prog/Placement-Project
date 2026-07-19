@@ -117,11 +117,12 @@ def interview_questions():
 
     cur.execute("""
         SELECT *
-        FROM questions
+        FROM interview_questions
         ORDER BY category
     """)
 
     questions = cur.fetchall()
+
     cur.close()
     conn.close()
 
@@ -129,23 +130,6 @@ def interview_questions():
         'interview_questions.html',
         questions=questions
     )
-
-# ---------------- COMMUNICATION ----------------
-@app.route('/communication')
-def communication():
-    if 'user_id' not in session:
-        return redirect('/login')
-
-    return render_template('communication.html')
-
-
-# ---------------- RESUME BUILDER ----------------
-@app.route('/resume_builder')
-def resume_builder():
-    if 'user_id' not in session:
-        return redirect('/login')
-
-    return render_template('resume_builder.html')
 @app.route("/mock_test")
 def mock_test():
 
