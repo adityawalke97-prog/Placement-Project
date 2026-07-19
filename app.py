@@ -167,10 +167,15 @@ def interview_questions():
     )
 @app.route('/mock_test')
 def mock_test():
+
     if 'user_id' not in session:
         return redirect('/login')
+
+
     conn = get_db_connection()
     cur = conn.cursor()
+
+
     cur.execute("""
         SELECT 
             id,
@@ -184,28 +189,46 @@ def mock_test():
         ORDER BY RAND()
         LIMIT 20
     """)
+
+
     questions = cur.fetchall()
+
+
     cur.close()
     conn.close()
+
+
     return render_template(
         'mock_test.html',
         questions=questions
     )
+
+
+
 @app.route('/submit_test', methods=['POST'])
 def submit_test():
+
+    print("SUBMIT CLICKED")
+    print(request.form)
+
+
     score = 0
     total = 0
 
 
     conn = get_db_connection()
-    cur = conn.cursor(dictionary=True)
+    cur = conn.cursor()
+
 
 
     cur.execute("""
-        SELECT id, correct_answer
+        SELECT 
+            id,
+            correct_answer
         FROM mock_questions
         LIMIT 20
     """)
+
 
 
     answers = cur.fetchall()
@@ -214,14 +237,17 @@ def submit_test():
 
     for q in answers:
 
+
         total += 1
 
+
         user_answer = request.form.get(
-            "q"+str(q['id'])
+            "q"+str(q[0])
         )
 
 
-        if user_answer == q['correct_answer']:
+
+        if user_answer == q[1]:
 
             score += 1
 
@@ -246,17 +272,11 @@ def submit_test():
         score,
         percentage
     ))
-
-
     conn.commit()
-
     cur.close()
     conn.close()
-
-
-
     return render_template(
-        'result.html',
+        "result.html",
         score=score,
         total=total,
         percentage=percentage
