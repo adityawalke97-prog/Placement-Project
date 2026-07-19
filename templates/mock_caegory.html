@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<h2>Mock Test Categories</h2>
+
+{% for c in categories %}
+<div class="card">
+    <h3>{{ c.category_name }}</h3>
+    <p>{{ c.description }}</p>
+</div>
+{% endfor %}
+
+{% endblock %}
