@@ -121,22 +121,22 @@ def interview_questions():
     per_page = 20
     offset = (page-1)*per_page
 
-
     conn = get_db_connection()
     cur = conn.cursor()
 
 
     cur.execute("""
-        SELECT COUNT(*) 
+        SELECT COUNT(*) AS total
         FROM interview_questions
     """)
 
+    result = cur.fetchone()
 
-    total_questions = cur.fetchone()[0]
+    total_questions = result["total"]
 
 
     total_pages = math.ceil(
-        total_questions / per_page
+        total_questions/per_page
     )
 
 
@@ -150,9 +150,15 @@ def interview_questions():
         ORDER BY id
         LIMIT %s OFFSET %s
     """,(per_page,offset))
+
+
     questions = cur.fetchall()
+
+
     cur.close()
     conn.close()
+
+
     return render_template(
         "interview_questions.html",
         questions=questions,
