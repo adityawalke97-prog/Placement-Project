@@ -612,7 +612,12 @@ def course_day(course_name, day):
         notes = "No notes available for this day."
 
     return render_template("course_day.html", course_name=course_name, day=day, notes=notes)
+@app.route("/mock_categories")
+def mock_categories():
+    if "user_id" not in session:
+        return redirect("/login")
 
+    return render_template("mock_categories.html")
 # ---------------- LOGOUT ----------------
 @app.route('/logout')
 def logout():
