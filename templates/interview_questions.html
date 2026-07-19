@@ -51,7 +51,7 @@ Interview Preparation
     <!-- Questions -->
   <div class="container">
 
-   {% for q in questions %}
+ {% for q in questions %}
 
 <div class="question-card">
 
@@ -59,19 +59,13 @@ Interview Preparation
 Q{{ loop.index }}. {{ q.question }}
 </h3>
 
-<button onclick="toggleAnswer({{ loop.index }})">
+<button onclick="showAnswer({{loop.index}})">
 Show Answer
 </button>
 
-
-<div id="answer{{ loop.index }}" style="display:none;">
-
-<p>
+<div id="answer-{{loop.index}}" class="answer-box">
 {{ q.answer }}
-</p>
-
 </div>
-
 
 </div>
 
@@ -98,6 +92,29 @@ Show Answer
 </div>
 
 <script>
+
+
+function showAnswer(id){
+
+    let answer = document.getElementById(
+        "answer-"+id
+    );
+
+
+    if(answer.style.display==="block"){
+
+        answer.style.display="none";
+
+    }
+    else{
+
+        answer.style.display="block";
+
+    }
+
+}
+
+
 function toggleAnswer(id){
 
     var x=document.getElementById("ans"+id);
