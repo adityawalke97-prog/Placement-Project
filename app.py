@@ -46,13 +46,23 @@ def signup():
         email = request.form["email"]
         password = request.form["password"]
 
-        hashed_password = bcrypt.generate_password_hash(password).decode("utf-8")
-
         conn = get_db_connection()
         cur = conn.cursor()
 
+        # Check email
+        cur.execute("SELECT id FROM users WHERE email=%s", (email,))
+        existing = cur.fetchone()
+
+        if existing:
+            flash("Email already registered. Please login.", "danger")
+            cur.close()
+            conn.close()
+            return redirect("/login")
+
+        hashed_password = bcrypt.generate_password_hash(password).decode("utf-8")
+
         cur.execute(
-            "INSERT INTO users (name, email, password) VALUES (%s, %s, %s)",
+            "INSERT INTO users (name, email, password) VALUES (%s,%s,%s)",
             (name, email, hashed_password)
         )
 
@@ -60,10 +70,10 @@ def signup():
         cur.close()
         conn.close()
 
+        flash("Account created successfully.", "success")
         return redirect("/login")
 
     return render_template("signup.html")
-
 # ---------------- LOGIN ----------------
 @app.route('/login', methods=['GET', 'POST'])
 def login():
