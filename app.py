@@ -192,41 +192,72 @@ def mock_test():
 @app.route('/submit_test', methods=['POST'])
 def submit_test():
 
-    if 'user_id' not in session:
-        return redirect('/login')
-
-    conn = get_db_connection()   # ✅ Add this line
-
-    cur = conn.cursor()
-
-    cur.execute("SELECT * FROM questions LIMIT 10")
-    questions = cur.fetchall()
-
     score = 0
+    total = 0
 
-    for q in questions:
-        selected = request.form.get(f'q{q["id"]}')
 
-        if selected == q['answer']:
+    conn = get_db_connection()
+    cur = conn.cursor(dictionary=True)
+
+
+    cur.execute("""
+        SELECT id, correct_answer
+        FROM mock_questions
+    """)
+
+
+    answers = cur.fetchall()
+
+
+
+    for q in answers:
+
+        total += 1
+
+        user_answer = request.form.get(
+            "q"+str(q['id'])
+        )
+
+
+        if user_answer == q['correct_answer']:
+
             score += 1
 
-    cur.execute(
-        """
-        INSERT INTO results(user_id, score, total_questions)
-        VALUES(%s,%s,%s)
-        """,
-        (session['user_id'], score, len(questions))
+
+
+    percentage = (
+        score / total * 100
+        if total > 0
+        else 0
     )
+
+
+
+    cur.execute("""
+        INSERT INTO results
+        (user_id,total_questions,score,percentage)
+        VALUES(%s,%s,%s,%s)
+    """,
+    (
+        session['user_id'],
+        total,
+        score,
+        percentage
+    ))
+
 
     conn.commit()
 
     cur.close()
-    conn.close()   
+    conn.close()
+
+
 
     return render_template(
         'result.html',
         score=score,
-        total=len(questions)
+        total=total,
+        percentage=percentage
     )
 @app.route('/save_resume', methods=['POST'])
 def save_resume():
