@@ -257,3 +257,12 @@ label{
 .btn-submit:hover{
     background:#1d4ed8;
 }
+
+
+.answer-box{
+    display:none;
+    margin-top:15px;
+    padding:15px;
+    background:rgba(255,255,255,0.08);
+    border-radius:10px;
+}
