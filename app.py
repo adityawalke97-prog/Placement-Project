@@ -614,10 +614,21 @@ def course_day(course_name, day):
     return render_template("course_day.html", course_name=course_name, day=day, notes=notes)
 @app.route("/mock_categories")
 def mock_categories():
-    if "user_id" not in session:
-        return redirect("/login")
 
-    return render_template("mock_categories.html")
+    conn = get_db_connection()
+    cur = conn.cursor()
+
+    cur.execute("SELECT * FROM mock_category ORDER BY category_name")
+
+    categories = cur.fetchall()
+
+    cur.close()
+    conn.close()
+
+    return render_template(
+        "mock_categories.html",
+        categories=categories
+    )
 # ---------------- LOGOUT ----------------
 @app.route('/logout')
 def logout():
