@@ -117,7 +117,7 @@ def interview_questions():
 
     cur.execute("""
         SELECT *
-        FROM java_notes
+        FROM java_notes(content)
         ORDER BY category
     """)
 
