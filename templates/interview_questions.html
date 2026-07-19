@@ -49,70 +49,59 @@ Interview Preparation
     </div>
 
     <!-- Questions -->
-    <div id="questionList">
+  <div class="container">
 
-        {% if questions %}
+    {% for q in questions %}
 
-            {% for q in questions %}
+    <div class="question-card">
+        <h5>Q{{ q[0] }}. {{ q[1] }}</h5>
 
-            <div class="question-card">
+        <button onclick="toggleAnswer('{{ q[0] }}')">
+            Show Answer
+        </button>
 
-                <div class="question-header">
+        <div id="ans{{ q[0] }}" style="display:none;">
+            <b>Answer:</b>
+            <p>{{ q[2] }}</p>
 
-                    <span class="category">
-                        {{ q.category or "General" }}
-                    </span>
-
-                    <button class="bookmark" data-id="{{ loop.index }}">
-                        <i class="far fa-bookmark"></i>
-                    </button>
-
-                </div>
-
-                <h3>
-                    <span class="number">
-                        {{ loop.index }}.
-                    </span>
-
-                    {{ q.question }}
-
-                </h3>
-
-                {% if q.answer %}
-
-                <button
-                    class="answer-btn"
-                    onclick="toggleAnswer(this)"
-                >
-                    <i class="fas fa-lightbulb"></i>
-                    Show Answer
-                </button>
-
-                <div
-                    class="answer"
-                    style="display:none;"
-                >
-                    {{ q.answer }}
-                </div>
-
-                {% endif %}
-
-            </div>
-
-            {% endfor %}
-
-        {% else %}
-
-        <div class="question-card">
-            <h3>No interview questions available.</h3>
+            <small>{{ q[3] }}</small>
         </div>
-
-        {% endif %}
 
     </div>
 
+    {% endfor %}
+
 </div>
 
+<div class="pagination">
+
+    {% if page > 1 %}
+    <a href="{{ url_for('interview_questions', page=page-1) }}">
+        ⬅ Previous
+    </a>
+    {% endif %}
+
+    <span>Page {{ page }} of {{ total_pages }}</span>
+
+    {% if page < total_pages %}
+    <a href="{{ url_for('interview_questions', page=page+1) }}">
+        Next ➡
+    </a>
+    {% endif %}
+
+</div>
+
+<script>
+function toggleAnswer(id){
+
+    var x=document.getElementById("ans"+id);
+
+    if(x.style.display=="none")
+        x.style.display="block";
+    else
+        x.style.display="none";
+}
+</script>
 {% endblock %}
 
 {% block js %}
