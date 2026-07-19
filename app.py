@@ -112,24 +112,41 @@ def dashboard():
 from flask import render_template, request
 import math
 
+
 @app.route("/interview_questions")
 def interview_questions():
 
-    page = request.args.get("page", 1, type=int)
+    page = request.args.get("page",1,type=int)
 
     per_page = 20
-    offset = (page - 1) * per_page
+
+    offset = (page-1)*per_page
+
 
     conn = get_db_connection()
-    cur = conn.cursor()
+
+    cur = conn.cursor(dictionary=True)
+
 
     # Total Questions
-    cur.execute("SELECT COUNT(*) AS total FROM interview_questions")
 
-print(cur.fetchone())
-    total_pages = math.ceil(total_questions / per_page)
+    cur.execute("""
+        SELECT COUNT(*) AS total
+        FROM interview_questions
+    """)
 
-    # Fetch 20 Questions
+
+    total_questions = cur.fetchone()['total']
+
+
+    total_pages = math.ceil(
+        total_questions/per_page
+    )
+
+
+
+    # Fetch Questions
+
     cur.execute("""
         SELECT
             id,
@@ -139,13 +156,11 @@ print(cur.fetchone())
         FROM interview_questions
         ORDER BY id
         LIMIT %s OFFSET %s
-    """, (per_page, offset))
-
+    """,
+    (per_page,offset))
     questions = cur.fetchall()
-
     cur.close()
     conn.close()
-
     return render_template(
         "interview_questions.html",
         questions=questions,
@@ -154,15 +169,10 @@ print(cur.fetchone())
     )
 @app.route('/mock_test')
 def mock_test():
-
     if 'user_id' not in session:
         return redirect('/login')
-
-
     conn = get_db_connection()
     cur = conn.cursor(dictionary=True)
-
-
     cur.execute("""
         SELECT 
             id,
@@ -203,6 +213,7 @@ def submit_test():
     cur.execute("""
         SELECT id, correct_answer
         FROM mock_questions
+        LIMIT 20
     """)
 
 
