@@ -109,12 +109,27 @@ def dashboard():
     )
 
 # ---------------- INTERVIEW QUESTIONS ----------------
-@app.route('/interview_questions')
+from flask import render_template, request
+import math
+
+@app.route("/interview_questions")
 def interview_questions():
 
-    conn = get_db_connection()
-    cur = conn.cursor(pymysql.cursors.DictCursor)
+    page = request.args.get("page", 1, type=int)
 
+    per_page = 20
+    offset = (page - 1) * per_page
+
+    conn = get_db_connection()
+    cur = conn.cursor()
+
+    # Total Questions
+    cur.execute("SELECT COUNT(*) FROM interview_questions")
+    total_questions = cur.fetchone()[0]
+
+    total_pages = math.ceil(total_questions / per_page)
+
+    # Fetch 20 Questions
     cur.execute("""
         SELECT
             id,
@@ -123,7 +138,8 @@ def interview_questions():
             category
         FROM interview_questions
         ORDER BY id
-    """)
+        LIMIT %s OFFSET %s
+    """, (per_page, offset))
 
     questions = cur.fetchall()
 
@@ -132,7 +148,9 @@ def interview_questions():
 
     return render_template(
         "interview_questions.html",
-        questions=questions
+        questions=questions,
+        page=page,
+        total_pages=total_pages
     )
 @app.route("/mock_test")
 def mock_test():
