@@ -118,10 +118,10 @@ def interview_questions():
     cur.execute("""
         SELECT
             id,
-            content AS question,
-            '' AS answer,
-            'Java Notes' AS category
-        FROM java_notes
+            question,
+            answer,
+            category
+        FROM interview_questions
         ORDER BY id
     """)
 
@@ -131,7 +131,7 @@ def interview_questions():
     conn.close()
 
     return render_template(
-        'interview_questions.html',
+        "interview_questions.html",
         questions=questions
     )
 @app.route("/mock_test")
