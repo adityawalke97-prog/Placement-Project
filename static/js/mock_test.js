@@ -659,3 +659,64 @@ function clearTestData(){
     );
 
 }
+let currentQuestion = 1;
+const totalQuestions = document.querySelectorAll(".question-card").length;
+
+// Open specific question
+function openQuestion(index) {
+    document.querySelectorAll(".question-card").forEach((card, i) => {
+        card.style.display = (i + 1 === index) ? "block" : "none";
+    });
+    currentQuestion = index;
+}
+
+// Next Question
+function nextQuestion() {
+    if (currentQuestion < totalQuestions) {
+        openQuestion(currentQuestion + 1);
+    }
+}
+
+// Previous Question
+function previousQuestion() {
+    if (currentQuestion > 1) {
+        openQuestion(currentQuestion - 1);
+    }
+}
+
+// Answer Selected
+function answerSelected(index) {
+    document.getElementById(`palette-${index}`).classList.remove("not-visited");
+    document.getElementById(`palette-${index}`).classList.add("answered");
+    updateSummary();
+}
+
+// Clear Answer
+function clearAnswer(index) {
+    const radios = document.querySelectorAll(`#question-${index} input[type="radio"]`);
+    radios.forEach(r => r.checked = false);
+    document.getElementById(`palette-${index}`).classList.remove("answered");
+    document.getElementById(`palette-${index}`).classList.add("skipped");
+    updateSummary();
+}
+
+// Mark Question
+function markQuestion(index) {
+    document.getElementById(`palette-${index}`).classList.add("review");
+    updateSummary();
+}
+
+// Update Summary + Progress
+function updateSummary() {
+    const answered = document.querySelectorAll(".palette-btn.answered").length;
+    const marked = document.querySelectorAll(".palette-btn.review").length;
+    const remaining = totalQuestions - answered;
+
+    document.getElementById("answeredCount").innerText = answered;
+    document.getElementById("markedCount").innerText = marked;
+    document.getElementById("remainingCount").innerText = remaining;
+
+    const progress = Math.round((answered / totalQuestions) * 100);
+    document.getElementById("progressFill").style.width = progress + "%";
+    document.getElementById("progressText").innerText = progress + "% Completed";
+}
