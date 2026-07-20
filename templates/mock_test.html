@@ -1,707 +1,938 @@
-{% extends 'layout.html' %}
+{% extends "layout.html" %}
 
-{% block title %}Advanced Mock Test{% endblock %}
+{% block title %}Placement Mock Test{% endblock %}
 
 {% block content %}
 
-<link rel="stylesheet" href="{{ url_for('static', filename='css/mock_test.css') }}">
+<link rel="stylesheet"
+href="{{ url_for('static', filename='css/mock_test.css') }}">
 
 <div class="exam-container">
 
-<header class="exam-header">
-    <div class="exam-title">
-        <h2>🚀 Placement Mock Test</h2>
-        <p>Java | OOP | SQL | Programming</p>
-    </div>
+    <!-- ================= HEADER ================= -->
 
-    <div class="exam-tools">
-        <button onclick="toggleFullscreen()">⛶</button>
-        <button onclick="showInstruction()">ℹ</button>
-        <div class="timer">
-            ⏱ <span id="timer">20:00</span>
+    <header class="exam-header">
+
+        <div class="left-header">
+
+            <h2>🚀 Placement Mock Test</h2>
+
+            <p>
+                Java | Python | DBMS | Aptitude
+            </p>
+
         </div>
-        <a href="/mock_categories">View</a>
-        <select name="category">
-    <option value="Java">Java</option>
-    <option value="Python">Python</option>
-    <option value="Frontend">Frontend</option>
-    <option value="Backend">Backend</option>
-    <option value="DBMS">DBMS</option>
-</select>
+
+        <div class="right-header">
+
+            <button
+            class="icon-btn"
+            onclick="toggleFullscreen()">
+
+                ⛶
+
+            </button>
+
+            <button
+            class="icon-btn"
+            onclick="showInstruction()">
+
+                ℹ
+
+            </button>
+
+            <div class="timer-box">
+
+                ⏱
+                <span id="timer">
+
+                    20:00
+
+                </span>
+
+            </div>
+
+            <a
+            class="view-btn"
+            href="/mock_categories">
+
+                Categories
+
+            </a>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- ================= MAIN LAYOUT ================= -->
+
+    <div class="exam-layout">
+
+
+
+
+        <!-- ================= LEFT SIDEBAR ================= -->
+
+        <aside class="question-sidebar">
+
+            <h3>
+
+                Question Palette
+
+            </h3>
+
+            <div class="question-grid">
+
+                {% for q in questions %}
+
+                <button
+
+                id="palette-{{ loop.index }}"
+
+                class="palette-btn not-visited"
+
+                onclick="openQuestion({{ loop.index }})">
+
+                    {{ loop.index }}
+
+                </button>
+
+                {% endfor %}
+
+            </div>
+
+
+
+            <div class="legend">
+
+                <div>
+
+                    <span class="dot answered"></span>
+
+                    Answered
+
+                </div>
+
+                <div>
+
+                    <span class="dot review"></span>
+
+                    Review
+
+                </div>
+
+                <div>
+
+                    <span class="dot skipped"></span>
+
+                    Skipped
+
+                </div>
+
+                <div>
+
+                    <span class="dot active"></span>
+
+                    Current
+
+                </div>
+
+            </div>
+
+        </aside>
+
+
+
+
+        <!-- ================= QUESTION AREA ================= -->
+
+        <main class="question-area">
+
+            <form
+            method="POST"
+            action="/submit_test"
+            id="mockTestForm">
+
+                {% for q in questions %}
+
+                <div
+
+                class="question-card"
+
+                id="question-{{ loop.index }}"
+
+                {% if not loop.first %}
+                style="display:none"
+                {% endif %}>
+
+                    <div class="question-header">
+
+                        <h3>
+
+                            Question
+
+                            {{ loop.index }}
+
+                            /
+
+                            {{ questions|length }}
+
+                        </h3>
+
+                        <span class="category">
+
+                            {{ q.category }}
+
+                        </span>
+
+                    </div>
+
+
+
+                    <div class="question-text">
+
+                        {{ q.question }}
+
+                    </div>
+
+
+
+                    <div class="options">
+
+                        <label>
+
+                            <input
+                            type="radio"
+                            name="q{{ q.id }}"
+                            value="{{ q.option1 }}"
+                            onclick="answerSelected({{ loop.index }})">
+
+                            <span>
+
+                                {{ q.option1 }}
+
+                            </span>
+
+                        </label>
+
+
+
+                        <label>
+
+                            <input
+                            type="radio"
+                            name="q{{ q.id }}"
+                            value="{{ q.option2 }}"
+                            onclick="answerSelected({{ loop.index }})">
+
+                            <span>
+
+                                {{ q.option2 }}
+
+                            </span>
+
+                        </label>
+
+
+
+                        <label>
+
+                            <input
+                            type="radio"
+                            name="q{{ q.id }}"
+                            value="{{ q.option3 }}"
+                            onclick="answerSelected({{ loop.index }})">
+
+                            <span>
+
+                                {{ q.option3 }}
+
+                            </span>
+
+                        </label>
+
+
+
+                        <label>
+
+                            <input
+                            type="radio"
+                            name="q{{ q.id }}"
+                            value="{{ q.option4 }}"
+                            onclick="answerSelected({{ loop.index }})">
+
+                            <span>
+
+                                {{ q.option4 }}
+
+                            </span>
+
+                        </label>
+
+                    </div>
+
+
+
+                    <div class="question-actions">
+
+                        <button
+
+                        type="button"
+
+                        class="clear-btn"
+
+                        onclick="clearAnswer({{ loop.index }})">
+
+                            ❌ Clear
+
+                        </button>
+
+                        <button
+
+                        type="button"
+
+                        class="review-btn"
+
+                        onclick="markQuestion({{ loop.index }})">
+
+                            ⭐ Mark Review
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+                {% endfor %}
+
+                                <!-- ================= NAVIGATION ================= -->
+
+                <div class="navigation">
+
+                    <button
+                    type="button"
+                    class="nav-btn"
+                    onclick="previousQuestion()">
+
+                        ⬅ Previous
+
+                    </button>
+
+                    <button
+                    type="button"
+                    class="nav-btn"
+                    onclick="nextQuestion()">
+
+                        Next ➜
+
+                    </button>
+
+                </div>
+
+                <div class="submit-area">
+
+                    <button
+                    type="button"
+                    class="submit-btn"
+                    onclick="openSubmitModal()">
+
+                        ✅ Submit Test
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </main>
+
+
+
+        <!-- ================= RIGHT SIDEBAR ================= -->
+
+        <aside class="right-sidebar">
+
+            <div class="summary-card">
+
+                <h3>Test Summary</h3>
+
+                <p>
+                    Answered :
+                    <span id="answeredCount">0</span>
+                </p>
+
+                <p>
+                    Review :
+                    <span id="markedCount">0</span>
+                </p>
+
+                <p>
+                    Remaining :
+                    <span id="remainingCount">
+                        {{ questions|length }}
+                    </span>
+                </p>
+
+            </div>
+
+
+
+            <div class="progress-card">
+
+                <h3>Progress</h3>
+
+                <div class="progress-bg">
+
+                    <div
+                    id="progressFill"
+                    class="progress-fill">
+
+                    </div>
+
+                </div>
+
+                <p id="progressText">
+
+                    0% Completed
+
+                </p>
+
+            </div>
+
+        </aside>
+
     </div>
-</header>
-
-
-<div class="exam-layout">
-
-<aside class="question-sidebar">
-
-<h3>Question Palette</h3>
-
-<div class="question-grid">
-
-{% for q in questions %}
-<button 
-class="palette-btn not-visited"
-id="palette-{{loop.index}}"
-onclick="openQuestion({{loop.index}})">
-{{loop.index}}
-</button>
-{% endfor %}
 
 </div>
 
 
-<div class="legend">
 
-<div>
-<span class="dot answered"></span>
-Answered
-</div>
+<!-- ================= INSTRUCTION MODAL ================= -->
 
-<div>
-<span class="dot review"></span>
-Review
-</div>
+<div
+class="modal"
+id="instructionModal">
 
-<div>
-<span class="dot skipped"></span>
-Skipped
-</div>
+    <div class="modal-box">
 
-<div>
-<span class="dot unvisited"></span>
-Not Visited
-</div>
+        <button
+        class="close-modal"
+        onclick="closeInstruction()">
 
-</div>
+            ✖
 
-</aside>
+        </button>
 
+        <h2>
 
+            📋 Instructions
 
-<main class="question-area">
+        </h2>
 
-<form method="POST" action="/submit_test" id="mockTestForm">
+        <ul>
 
+            <li>Total Questions : {{ questions|length }}</li>
 
-{% for q in questions %}
+            <li>Each Question carries 1 mark.</li>
 
-<div class="question-card"
-id="question-{{loop.index}}"
-{% if not loop.first %}style="display:none"{% endif %}>
+            <li>No Negative Marking.</li>
 
+            <li>Timer will auto submit.</li>
 
-<div class="question-header">
+            <li>Use Question Palette.</li>
 
-<h3>
-Question {{loop.index}} / {{questions|length}}
-</h3>
+            <li>Do not refresh browser.</li>
 
-<span>
-{{q.category}}
-</span>
+        </ul>
 
-</div>
+        <button
+        class="modal-btn"
+        onclick="closeInstruction()">
 
+            Start Test
 
-<div class="question-text">
+        </button>
 
-<h2>
-{{q.question}}
-</h2>
-
-</div>
-
-
-<div class="options">
-
-
-<label>
-<input type="radio"
-name="q{{q.id}}"
-value="{{q.option1}}"
-onclick="answerSelected({{loop.index}})">
-<span>{{q.option1}}</span>
-</label>
-
-
-<label>
-<input type="radio"
-name="q{{q.id}}"
-value="{{q.option2}}"
-onclick="answerSelected({{loop.index}})">
-<span>{{q.option2}}</span>
-</label>
-
-
-<label>
-<input type="radio"
-name="q{{q.id}}"
-value="{{q.option3}}"
-onclick="answerSelected({{loop.index}})">
-<span>{{q.option3}}</span>
-</label>
-
-
-<label>
-<input type="radio"
-name="q{{q.id}}"
-value="{{q.option4}}"
-onclick="answerSelected({{loop.index}})">
-<span>{{q.option4}}</span>
-</label>
-
-
-</div>
-
-
-<div class="question-actions">
-
-<button type="button"
-onclick="clearAnswer({{loop.index}})">
-❌ Clear
-</button>
-
-<button type="button"
-onclick="markQuestion({{loop.index}})">
-⭐ Mark Review
-</button>
-
-</div>
-
-
-</div>
-
-{% endfor %}
-
-
-<div class="navigation">
-
-<button type="button"
-onclick="previousQuestion()">
-⬅ Previous
-</button>
-
-<button type="button"
-onclick="nextQuestion()">
-Next ➡
-</button>
-
-</div>
-
-
-<button type="submit" class="submit-btn">
-Submit Test
-</button>
-
-
-</form>
-
-</main>
-
-
-<aside class="right-sidebar">
-
-<div class="summary-card">
-
-<h3>Test Summary</h3>
-
-<p>
-Answered:
-<span id="answeredCount">0</span>
-</p>
-
-<p>
-Marked:
-<span id="markedCount">0</span>
-</p>
-
-<p>
-Remaining:
-<span id="remainingCount">{{questions|length}}</span>
-</p>
-
-</div>
-
-
-<div class="progress-card">
-
-<h3>Progress</h3>
-
-<div class="progress-bg">
-
-<div class="progress-fill"
-id="progressFill">
-</div>
-
-</div>
-
-<p id="progressText">
-0% Completed
-</p>
-
-</div>
-
-
-</aside>
-
-
-</div>
-
-</div>
-<!-- Instructions Modal -->
-
-<div class="modal" id="instructionModal">
-
-<div class="modal-box">
-
-<button class="close-modal"
-onclick="closeInstruction()">
-✖
-</button>
-
-<h2>📌 Test Instructions</h2>
-
-<ul>
-<li>Total questions: {{questions|length}}</li>
-<li>Each question has one correct answer</li>
-<li>Timer will automatically submit the test</li>
-<li>You can mark questions for review</li>
-<li>You can navigate using question palette</li>
-<li>Do not refresh the page during the test</li>
-</ul>
-
-<button class="modal-btn"
-onclick="closeInstruction()">
-Start Test
-</button>
-
-</div>
+    </div>
 
 </div>
 
 
 
-<!-- Submit Confirmation Modal -->
+<!-- ================= SUBMIT MODAL ================= -->
 
-<div class="modal" id="submitModal">
+<div
+class="modal"
+id="submitModal">
 
-<div class="modal-box">
+    <div class="modal-box">
 
-<h2>⚠ Submit Test?</h2>
+        <h2>
 
-<p>
-Are you sure you want to submit your test?
-</p>
+            Submit Test ?
 
+        </h2>
 
-<div class="submit-summary">
+        <p>
 
-<div>
-Answered:
-<strong id="submitAnswered">
-0
-</strong>
-</div>
+            Are you sure you want to submit?
 
-<div>
-Not Answered:
-<strong id="submitNotAnswered">
-0
-</strong>
-</div>
+        </p>
 
-<div>
-Marked:
-<strong id="submitMarked">
-0
-</strong>
-</div>
+        <div class="submit-summary">
 
-</div>
+            <p>
 
+                Answered :
 
-<div class="modal-actions">
+                <strong id="submitAnswered">
 
-<button onclick="closeSubmitModal()">
-Cancel
-</button>
+                    0
 
-<button onclick="finalSubmit()">
-Submit
-</button>
+                </strong>
 
-</div>
+            </p>
 
+            <p>
 
-</div>
+                Remaining :
 
-</div>
+                <strong id="submitNotAnswered">
 
+                    0
 
+                </strong>
 
+            </p>
 
-<!-- Time Warning Modal -->
+            <p>
 
-<div class="modal" id="timeModal">
+                Review :
 
-<div class="modal-box warning">
+                <strong id="submitMarked">
 
-<h2>⏰ Time Running Out</h2>
+                    0
 
-<p>
-Only 1 minute remaining.
-</p>
+                </strong>
 
-<button onclick="closeTimeModal()">
-Continue Test
-</button>
+            </p>
 
-</div>
+        </div>
 
-</div>
+        <div class="modal-actions">
 
+            <button
+            onclick="closeSubmitModal()">
 
+                Cancel
 
+            </button>
 
+            <button
+            onclick="finalSubmit()">
 
-<!-- Exit Warning Modal -->
+                Submit
 
-<div class="modal" id="exitModal">
+            </button>
 
-<div class="modal-box">
+        </div>
 
-<h2>⚠ Leave Test?</h2>
-
-<p>
-Your progress may be lost.
-</p>
-
-
-<div class="modal-actions">
-
-<button onclick="closeExitModal()">
-Stay
-</button>
-
-<button onclick="exitTest()">
-Exit
-</button>
-
-</div>
-
-
-</div>
+    </div>
 
 </div>
 
 
 
+<!-- ================= TIME WARNING ================= -->
+
+<div
+class="modal"
+id="timeModal">
+
+    <div class="modal-box warning">
+
+        <h2>
+
+            ⏰ Time Running Out
+
+        </h2>
+
+        <p>
+
+            Only 1 minute remaining.
+
+        </p>
+
+        <button
+        onclick="closeTimeModal()">
+
+            Continue
+
+        </button>
+
+    </div>
+
+</div>
 
 
-<!-- Mobile Bottom Navigation -->
+
+<!-- ================= EXIT MODAL ================= -->
+
+<div
+class="modal"
+id="exitModal">
+
+    <div class="modal-box">
+
+        <h2>
+
+            Exit Test?
+
+        </h2>
+
+        <p>
+
+            Your progress may be lost.
+
+        </p>
+
+        <div class="modal-actions">
+
+            <button
+            onclick="closeExitModal()">
+
+                Stay
+
+            </button>
+
+            <button
+            onclick="exitTest()">
+
+                Exit
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+<!-- ================= AUTO SAVE ================= -->
+
+<div
+class="autosave-box"
+id="autosaveBox">
+
+    💾 Saving...
+
+</div>
+
+
+
+<!-- ================= BOOKMARK PANEL ================= -->
+
+<div
+class="bookmark-panel"
+id="bookmarkPanel">
+
+    <h3>
+
+        ⭐ Bookmarked Questions
+
+    </h3>
+
+    <div id="bookmarkList">
+
+        <p>
+
+            No bookmarked questions
+
+        </p>
+
+    </div>
+
+</div>
+
+
+
+<!-- ================= RESULT PREVIEW ================= -->
+
+<section
+class="result-preview"
+id="resultPreview">
+
+    <div class="result-card">
+
+        <h2>
+
+            🎯 Test Completed
+
+        </h2>
+
+        <div class="score-circle">
+
+            <span id="finalScore">
+
+                0%
+
+            </span>
+
+        </div>
+
+        <div class="result-stats">
+
+            <div class="stat-box">
+
+                <h3 id="correctCount">
+
+                    0
+
+                </h3>
+
+                <p>
+
+                    Correct
+
+                </p>
+
+            </div>
+
+            <div class="stat-box">
+
+                <h3 id="wrongCount">
+
+                    0
+
+                </h3>
+
+                <p>
+
+                    Wrong
+
+                </p>
+
+            </div>
+
+            <div class="stat-box">
+
+                <h3 id="skipCount">
+
+                    0
+
+                </h3>
+
+                <p>
+
+                    Skipped
+
+                </p>
+
+            </div>
+
+            <div class="stat-box">
+
+                <h3 id="timeTaken">
+
+                    00:00
+
+                </h3>
+
+                <p>
+
+                    Time
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="ai-analysis-card">
+
+        <h2>
+
+            🤖 AI Performance Analysis
+
+        </h2>
+
+        <div class="analysis-item">
+
+            <h4>
+
+                Strong Topics
+
+            </h4>
+
+            <p id="strongTopics">
+
+                Java Basics
+
+            </p>
+
+        </div>
+
+        <div class="analysis-item">
+
+            <h4>
+
+                Need Improvement
+
+            </h4>
+
+            <p id="weakTopics">
+
+                Collections
+
+            </p>
+
+        </div>
+
+        <button>
+
+            Generate Practice Plan
+
+        </button>
+
+    </div>
+
+</section>
+
+
+
+<!-- ================= MOBILE NAVIGATION ================= -->
 
 <div class="mobile-navigation">
 
-<button onclick="previousQuestion()">
-⬅
-</button>
+    <button
+    type="button"
+    onclick="previousQuestion()">
 
+        ⬅
 
-<button onclick="openPaletteMobile()">
-☰
-</button>
+    </button>
 
+    <button
+    type="button"
+    onclick="openPaletteMobile()">
 
-<button onclick="nextQuestion()">
-➡
-</button>
+        ☰
+
+    </button>
+
+    <button
+    type="button"
+    onclick="nextQuestion()">
+
+        ➡
+
+    </button>
 
 </div>
 
 
 
-
-<!-- Keyboard Shortcuts Info -->
+<!-- ================= SHORTCUT INFO ================= -->
 
 <div class="shortcut-box">
 
-<h3>⌨ Keyboard Controls</h3>
+    <h3>
 
-<p>
-← Previous Question
-</p>
+        ⌨ Keyboard Shortcuts
 
-<p>
-→ Next Question
-</p>
+    </h3>
 
-<p>
-M Mark Review
-</p>
+    <p>← Previous</p>
 
-<p>
-C Clear Answer
-</p>
+    <p>→ Next</p>
+
+    <p>M = Mark Review</p>
+
+    <p>C = Clear Answer</p>
+
+    <p>F11 = Fullscreen</p>
 
 </div>
 
 
 
+<!-- ================= MODAL FUNCTIONS ================= -->
 
 <script>
 
-function showInstruction(){
-document.getElementById("instructionModal").style.display="flex";
+function showInstruction() {
+    document.getElementById("instructionModal").style.display = "flex";
 }
 
-function closeInstruction(){
-document.getElementById("instructionModal").style.display="none";
+function closeInstruction() {
+    document.getElementById("instructionModal").style.display = "none";
 }
 
+function openSubmitModal() {
 
-function openSubmitModal(){
+    document.getElementById("submitModal").style.display = "flex";
 
-document.getElementById("submitModal").style.display="flex";
+    document.getElementById("submitAnswered").innerHTML =
+        document.getElementById("answeredCount").innerHTML;
 
+    document.getElementById("submitMarked").innerHTML =
+        document.getElementById("markedCount").innerHTML;
+
+    document.getElementById("submitNotAnswered").innerHTML =
+        document.getElementById("remainingCount").innerHTML;
 }
 
-
-function closeSubmitModal(){
-
-document.getElementById("submitModal").style.display="none";
-
+function closeSubmitModal() {
+    document.getElementById("submitModal").style.display = "none";
 }
 
-
-function finalSubmit(){
-
-document.getElementById("mockTestForm").submit();
-
+function finalSubmit() {
+    document.getElementById("mockTestForm").submit();
 }
 
-
-function closeTimeModal(){
-
-document.getElementById("timeModal").style.display="none";
-
+function closeTimeModal() {
+    document.getElementById("timeModal").style.display = "none";
 }
 
-
-function closeExitModal(){
-
-document.getElementById("exitModal").style.display="none";
-
+function closeExitModal() {
+    document.getElementById("exitModal").style.display = "none";
 }
 
-
-function exitTest(){
-
-window.location.href="/dashboard";
-
+function exitTest() {
+    window.location.href = "/dashboard";
 }
-
 
 </script>
-<!-- Auto Save Indicator -->
-
-<div class="autosave-box" id="autosaveBox">
-    💾 Saving...
-</div>
 
 
 
+<!-- ================= DATA FOR JS ================= -->
 
-<!-- Bookmark Panel -->
-
-<div class="bookmark-panel" id="bookmarkPanel">
-
-<h3>⭐ Bookmarked Questions</h3>
-
-<div id="bookmarkList">
-
-<p>No bookmarked questions</p>
-
-</div>
-
-</div>
-
-
-
-
-
-<!-- Result Preview Section -->
-
-<section class="result-preview" id="resultPreview">
-
-
-<div class="result-card">
-
-
-<h2>
-🎯 Test Completed
-</h2>
-
-
-<div class="score-circle">
-
-<span id="finalScore">
-0%
-</span>
-
-</div>
-
-
-<div class="result-stats">
-
-
-<div class="stat-box">
-
-<h3 id="correctCount">
-0
-</h3>
-
-<p>
-Correct
-</p>
-
-</div>
-
-
-<div class="stat-box">
-
-<h3 id="wrongCount">
-0
-</h3>
-
-<p>
-Wrong
-</p>
-
-</div>
-
-
-
-<div class="stat-box">
-
-<h3 id="skipCount">
-0
-</h3>
-
-<p>
-Skipped
-</p>
-
-</div>
-<div class="stat-box">
-<h3 id="timeTaken">
-00:00
-</h3>
-<p>
-Time
-</p>
-</div>
-</div>
-</div>
-<!-- AI Analysis -->
-<div class="ai-analysis-card">
-<h2>
-🤖 AI Performance Analysis
-</h2>
-<div class="analysis-item">
-<h4>
-Strong Topics
-</h4>
-<p id="strongTopics">
-Java Basics, OOP
-</p>
-</div>
-<div class="analysis-item">
-<h4>
-Need Improvement
-</h4>
-<p id="weakTopics">
-Collections, Multithreading
-</p>
-</div>
-<button>
-Generate Practice Plan
-</button>
-</div>
-</section>
-<!-- Question Data For JavaScript -->
 <script>
-const totalQuestions = {{questions|length}};
-const questionIds = [
+
+window.totalQuestions = {{ questions|length }};
+
+window.questionIds = [
+
 {% for q in questions %}
-"{{q.id}}",
+
+"{{ q.id }}",
+
 {% endfor %}
+
 ];
+
 </script>
-<!-- External JS -->
-<script src="{{ url_for('static',
-filename='js/mock_test.js') }}">
-let currentQuestion = 1;
-const totalQuestions = document.querySelectorAll(".question-card").length;
 
-// Open specific question
-function openQuestion(index) {
-    document.querySelectorAll(".question-card").forEach((card, i) => {
-        card.style.display = (i + 1 === index) ? "block" : "none";
-    });
-    currentQuestion = index;
-}
 
-// Next Question
-function nextQuestion() {
-    if (currentQuestion < totalQuestions) {
-        openQuestion(currentQuestion + 1);
-    }
-}
 
-// Previous Question
-function previousQuestion() {
-    if (currentQuestion > 1) {
-        openQuestion(currentQuestion - 1);
-    }
-}
+<!-- ================= EXTERNAL JS ================= -->
 
-// Answer Selected
-function answerSelected(index) {
-    document.getElementById(`palette-${index}`).classList.remove("not-visited");
-    document.getElementById(`palette-${index}`).classList.add("answered");
-    updateSummary();
-}
+<script src="{{ url_for('static', filename='js/mock_test.js') }}"></script>
 
-// Clear Answer
-function clearAnswer(index) {
-    const radios = document.querySelectorAll(`#question-${index} input[type="radio"]`);
-    radios.forEach(r => r.checked = false);
-    document.getElementById(`palette-${index}`).classList.remove("answered");
-    document.getElementById(`palette-${index}`).classList.add("skipped");
-    updateSummary();
-}
-
-// Mark Question
-function markQuestion(index) {
-    document.getElementById(`palette-${index}`).classList.add("review");
-    updateSummary();
-}
-
-// Update Summary + Progress
-function updateSummary() {
-    const answered = document.querySelectorAll(".palette-btn.answered").length;
-    const marked = document.querySelectorAll(".palette-btn.review").length;
-    const remaining = totalQuestions - answered;
-
-    document.getElementById("answeredCount").innerText = answered;
-    document.getElementById("markedCount").innerText = marked;
-    document.getElementById("remainingCount").innerText = remaining;
-
-    const progress = Math.round((answered / totalQuestions) * 100);
-    document.getElementById("progressFill").style.width = progress + "%";
-    document.getElementById("progressText").innerText = progress + "% Completed";
-}
-</script>
 {% endblock %}
