@@ -203,83 +203,61 @@ def mock_test():
         questions=questions
     )
 
-
-
 @app.route('/submit_test', methods=['POST'])
 def submit_test():
 
     print("SUBMIT CLICKED")
     print(request.form)
 
-
     score = 0
     total = 0
-
 
     conn = get_db_connection()
     cur = conn.cursor()
 
-
-
     cur.execute("""
-        SELECT 
-            id,
-            correct_answer
+        SELECT id, correct_answer
         FROM mock_questions
         LIMIT 20
     """)
 
-
-
     answers = cur.fetchall()
-
-
 
     for q in answers:
 
-
         total += 1
 
+        # DictCursor returns a dictionary
+        question_id = q["id"]
+        correct_answer = q["correct_answer"]
 
-        user_answer = request.form.get(
-            "q"+str(q[0])
-        )
+        user_answer = request.form.get(f"q{question_id}")
 
-
-
-        if user_answer == q[1]:
-
+        if user_answer == correct_answer:
             score += 1
 
-
-
-    percentage = (
-        score / total * 100
-        if total > 0
-        else 0
-    )
-
-
+    percentage = (score / total * 100) if total > 0 else 0
 
     cur.execute("""
         INSERT INTO results
-        (user_id,total_questions,score,percentage)
-        VALUES(%s,%s,%s,%s)
-    """,
-    (
-        session['user_id'],
+        (user_id, total_questions, score, percentage)
+        VALUES (%s, %s, %s, %s)
+    """, (
+        session.get("user_id"),
         total,
         score,
         percentage
     ))
+
     conn.commit()
     cur.close()
     conn.close()
+
     return render_template(
         "result.html",
         score=score,
         total=total,
-        percentage=percentage
+        percentage=round(percentage, 2)
     )
 @app.route('/save_resume', methods=['POST'])
 def save_resume():
