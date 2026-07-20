@@ -1,47 +1,203 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Result</title>
-    <style>
-        body{
-            font-family:Arial;
-            background:#f4f4f4;
-            text-align:center;
-            margin-top:100px;
-        }
+```html
+{% extends "layout.html" %}
 
-        .box{
-            width:400px;
-            margin:auto;
-            background:white;
-            padding:40px;
-            border-radius:10px;
-            box-shadow:0 0 10px gray;
-        }
+{% block title %}Test Result{% endblock %}
 
-        h1{
-            color:#28a745;
-        }
+{% block content %}
 
-        a{
-            text-decoration:none;
-            background:#007bff;
-            color:white;
-            padding:10px 20px;
-            border-radius:5px;
-        }
-    </style>
-</head>
-<body>
+<style>
 
-<div class="box">
-    <h1>Your Score</h1>
-    <h2>{{ score }}/{{ total }}</h2>
+.result-container{
+    max-width:900px;
+    margin:40px auto;
+    padding:20px;
+}
 
-    <br>
+.result-card{
+    background:#fff;
+    border-radius:20px;
+    padding:40px;
+    text-align:center;
+    box-shadow:0 10px 30px rgba(0,0,0,.1);
+}
 
-    <a href="/dashboard">Back to Dashboard</a>
+.result-card h1{
+    color:#2c3e50;
+    margin-bottom:20px;
+}
+
+.score-circle{
+    width:180px;
+    height:180px;
+    margin:20px auto;
+    border-radius:50%;
+    background:linear-gradient(135deg,#0d6efd,#00c6ff);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#fff;
+    font-size:40px;
+    font-weight:bold;
+}
+
+.result-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:20px;
+    margin-top:40px;
+}
+
+.stat-card{
+    background:#f8f9fa;
+    padding:25px;
+    border-radius:15px;
+}
+
+.stat-card h2{
+    color:#0d6efd;
+    margin-bottom:10px;
+}
+
+.performance{
+    margin-top:35px;
+    font-size:22px;
+    font-weight:bold;
+}
+
+.good{
+    color:#28a745;
+}
+
+.average{
+    color:#ff9800;
+}
+
+.poor{
+    color:#dc3545;
+}
+
+.btn-group{
+    margin-top:40px;
+}
+
+.btn{
+    display:inline-block;
+    padding:12px 25px;
+    margin:10px;
+    border-radius:10px;
+    text-decoration:none;
+    color:#fff;
+    font-weight:bold;
+}
+
+.dashboard{
+    background:#0d6efd;
+}
+
+.retry{
+    background:#28a745;
+}
+
+</style>
+
+<div class="result-container">
+
+<div class="result-card">
+
+<h1>🎉 Mock Test Completed</h1>
+
+<div class="score-circle">
+
+{{ "%.0f"|format(percentage) }}%
+
 </div>
 
-</body>
-</html>
+<h2>
+
+Score :
+{{ score }}
+/
+{{ total }}
+
+</h2>
+
+<div class="result-grid">
+
+<div class="stat-card">
+
+<h2>{{ score }}</h2>
+
+<p>Correct Answers</p>
+
+</div>
+
+<div class="stat-card">
+
+<h2>{{ total-score }}</h2>
+
+<p>Wrong Answers</p>
+
+</div>
+
+<div class="stat-card">
+
+<h2>{{ "%.2f"|format(percentage) }}%</h2>
+
+<p>Accuracy</p>
+
+</div>
+
+</div>
+
+{% if percentage >= 80 %}
+
+<div class="performance good">
+
+🏆 Excellent Performance
+
+</div>
+
+{% elif percentage >= 50 %}
+
+<div class="performance average">
+
+👍 Good Job! Keep Practicing
+
+</div>
+
+{% else %}
+
+<div class="performance poor">
+
+📚 Need More Practice
+
+</div>
+
+{% endif %}
+
+<div class="btn-group">
+
+<a
+href="/dashboard"
+class="btn dashboard">
+
+🏠 Dashboard
+
+</a>
+
+<a
+href="/mock_test"
+class="btn retry">
+
+🔄 Retake Test
+
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+{% endblock %}
+```
