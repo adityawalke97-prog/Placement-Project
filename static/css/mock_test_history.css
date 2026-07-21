@@ -2,7 +2,262 @@
    MOCK TEST HISTORY - ADVANCED CSS
    PART A2.1
 ========================================== */
+/* ===========================
+   EXAM HEADER
+=========================== */
 
+.exam-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:20px;
+
+    padding:20px 30px;
+
+    margin-bottom:25px;
+
+    background:rgba(255,255,255,.06);
+
+    backdrop-filter:blur(15px);
+
+    border:1px solid rgba(255,255,255,.08);
+
+    border-radius:18px;
+
+    box-shadow:0 10px 30px rgba(0,0,0,.25);
+
+}
+
+/* ===========================
+LEFT HEADER
+=========================== */
+
+.left-header h2{
+
+    color:#fff;
+
+    font-size:30px;
+
+    font-weight:700;
+
+    margin-bottom:6px;
+
+}
+
+.left-header p{
+
+    color:#cbd5e1;
+
+    font-size:15px;
+
+}
+
+/* ===========================
+RIGHT HEADER
+=========================== */
+
+.right-header{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:15px;
+
+}
+
+/* ===========================
+ICON BUTTONS
+=========================== */
+
+.icon-btn{
+
+    width:46px;
+
+    height:46px;
+
+    border:none;
+
+    border-radius:12px;
+
+    background:#1e40af;
+
+    color:#fff;
+
+    cursor:pointer;
+
+    font-size:20px;
+
+    transition:.3s;
+
+}
+
+.icon-btn:hover{
+
+    background:#2563eb;
+
+    transform:translateY(-3px);
+
+}
+
+/* ===========================
+TIMER
+=========================== */
+
+.timer-box{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    padding:10px 18px;
+
+    border-radius:12px;
+
+    background:#dc2626;
+
+    color:#fff;
+
+    font-weight:700;
+
+    font-size:18px;
+
+    box-shadow:0 5px 15px rgba(220,38,38,.35);
+
+}
+
+/* ===========================
+CATEGORY BUTTON
+=========================== */
+
+.view-btn{
+
+    text-decoration:none;
+
+    background:linear-gradient(45deg,#2563eb,#7c3aed);
+
+    color:#fff;
+
+    padding:12px 22px;
+
+    border-radius:12px;
+
+    font-weight:600;
+
+    transition:.3s;
+
+}
+
+.view-btn:hover{
+
+    transform:translateY(-3px);
+
+    box-shadow:0 8px 20px rgba(37,99,235,.4);
+
+}
+
+/* ===========================
+HISTORY BUTTON
+=========================== */
+
+.history-btn{
+
+    text-decoration:none;
+
+    background:#16a34a;
+
+    color:#fff;
+
+    padding:12px 22px;
+
+    border-radius:12px;
+
+    font-weight:600;
+
+    transition:.3s;
+
+}
+
+.history-btn:hover{
+
+    background:#15803d;
+
+    transform:translateY(-3px);
+
+    box-shadow:0 8px 20px rgba(22,163,74,.4);
+
+}
+
+/* ===========================
+RESPONSIVE
+=========================== */
+
+@media(max-width:900px){
+
+.exam-header{
+
+    flex-direction:column;
+
+    align-items:flex-start;
+
+}
+
+.right-header{
+
+    width:100%;
+
+    flex-wrap:wrap;
+
+}
+
+}
+
+@media(max-width:600px){
+
+.left-header h2{
+
+    font-size:24px;
+
+}
+
+.left-header p{
+
+    font-size:14px;
+
+}
+
+.icon-btn{
+
+    width:42px;
+
+    height:42px;
+
+}
+
+.timer-box{
+
+    font-size:16px;
+
+    padding:8px 14px;
+
+}
+
+.history-btn,
+.view-btn{
+
+    flex:1;
+
+    text-align:center;
+
+}
+
+}
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
 
 :root{
