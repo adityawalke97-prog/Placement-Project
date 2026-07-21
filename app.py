@@ -532,7 +532,105 @@ def mock_test_history():
         return redirect("/login")
 
     conn = get_db_connection()
-    cur = conn.cursor()
+    cur = conn.cursor(pymysql.cursors.DictCursor)
+
+    try:
+
+        page = request.args.get("page", 1, type=int)
+        per_page = 10
+
+        search = request.args.get("search", "").strip()
+        subject = request.args.get("subject", "").strip()
+
+        where = "WHERE user_id=%s"
+        params = [session["user_id"]]
+
+        if search:
+            where += " AND subject LIKE %s"
+            params.append(f"%{search}%")
+
+        if subject:
+            where += " AND subject=%s"
+            params.append(subject)
+
+        # Count
+        cur.execute(
+            f"SELECT COUNT(*) AS total FROM results {where}",
+            tuple(params)
+        )
+
+        total_records = cur.fetchone()["total"]
+
+        total_pages = max(1, (total_records + per_page - 1) // per_page)
+
+        offset = (page - 1) * per_page
+
+        # History
+        history_sql = f"""
+            SELECT
+                id,
+                subject,
+                score,
+                total_questions,
+                percentage,
+                attempt_date
+            FROM results
+            {where}
+            ORDER BY attempt_date DESC
+            LIMIT %s OFFSET %s
+        """
+
+        history_params = params + [per_page, offset]
+
+        cur.execute(history_sql, tuple(history_params))
+
+        history = cur.fetchall()
+
+        # Statistics
+        cur.execute(f"""
+            SELECT
+                COUNT(*) total_tests,
+                SUM(CASE WHEN percentage>=40 THEN 1 ELSE 0 END) passed_tests,
+                SUM(CASE WHEN percentage<40 THEN 1 ELSE 0 END) failed_tests,
+                AVG(percentage) avg_percentage,
+                MAX(score) highest_score
+            FROM results
+            {where}
+        """, tuple(params))
+
+        stats = cur.fetchone()
+
+        return render_template(
+
+            "mock_test_history.html",
+
+            history=history,
+
+            total_tests=stats["total_tests"] or 0,
+            passed_tests=stats["passed_tests"] or 0,
+            failed_tests=stats["failed_tests"] or 0,
+            avg_percentage=stats["avg_percentage"] or 0,
+            highest_score=stats["highest_score"] or 0,
+
+            page=page,
+            total_pages=total_pages,
+            search=search,
+            subject=subject
+
+        )
+
+    finally:
+
+        cur.close()
+        conn.close()
+@app.route("/download_history")
+def download_history():
+
+    if "user_id" not in session:
+        return redirect("/login")
+
+    conn = get_db_connection()
+    cur = conn.cursor(pymysql.cursors.DictCursor)
 
     cur.execute("""
         SELECT
@@ -544,19 +642,47 @@ def mock_test_history():
         FROM results
         WHERE user_id=%s
         ORDER BY attempt_date DESC
-    """,(session["user_id"],))
+    """, (session["user_id"],))
 
     history = cur.fetchall()
 
-    cur.close()
-    conn.close()
+    output = io.StringIO()
 
-    return render_template(
-        "mock_test_history.html",
-        history=history
+    writer = csv.writer(output)
+
+    writer.writerow([
+        "Subject",
+        "Score",
+        "Total Questions",
+        "Percentage",
+        "Attempt Date"
+    ])
+
+    for row in history:
+
+        writer.writerow([
+            row["subject"],
+            row["score"],
+            row["total_questions"],
+            row["percentage"],
+            row["attempt_date"]
+        ])
+
+    csv_data = output.getvalue()
+    output.close()
+
+    return Response(
+
+        csv_data,
+
+        mimetype="text/csv",
+
+        headers={
+            "Content-Disposition":
+            "attachment; filename=mock_test_history.csv"
+        }
+
     )
-
-
 @app.route("/courses")
 def courses():
     return render_template("course.html")
