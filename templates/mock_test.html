@@ -6,103 +6,48 @@
 
 <link rel="stylesheet"
 href="{{ url_for('static', filename='css/mock_test.css') }}">
-
 <div class="exam-container">
-
     <!-- ================= HEADER ================= -->
-
     <header class="exam-header">
-
         <div class="left-header">
-
             <h2>🚀 Placement Mock Test</h2>
-
             <p>
                 Java | Python | DBMS | Aptitude
             </p>
-
         </div>
-
         <a href="/mock_history" class="history-btn">
     📊 History
 </a>
-
-        <div class="right-header">
-
-            <button
-            class="icon-btn"
-            onclick="toggleFullscreen()">
-
-                ⛶
-
-            </button>
-
-            <button
-            class="icon-btn"
-            onclick="showInstruction()">
-
-                ℹ
-
-            </button>
-
-            <div class="timer-box">
-
-                ⏱
-                <span id="timer">
-
-                    20:00
-
-                </span>
-
-            </div>
-
-            <a
-            class="view-btn"
-            href="/mock_categories">
-
-                Categories
-
-            </a>
-
-        </div>
-
+       <div class="right-header">
+    <a href="/mock_history" class="history-btn">
+        📊 History
+    </a>
+    <button class="icon-btn" onclick="toggleFullscreen()">⛶</button>
+    <button class="icon-btn" onclick="showInstruction()">ℹ</button>
+    <div class="timer-box">
+        ⏱ <span id="timer">20:00</span>
+    </div>
+    <a class="view-btn" href="/mock_categories">
+        Categories
+    </a>
+</div>
     </header>
-
-
-
-    <!-- ================= MAIN LAYOUT ================= -->
-
+   <!-- ================= MAIN LAYOUT ================= -->
     <div class="exam-layout">
-
-
-
-
         <!-- ================= LEFT SIDEBAR ================= -->
-
         <aside class="question-sidebar">
 
             <h3>
-
                 Question Palette
-
             </h3>
-
             <div class="question-grid">
-
                 {% for q in questions %}
-
                 <button
-
                 id="palette-{{ loop.index }}"
-
                 class="palette-btn not-visited"
-
                 onclick="openQuestion({{ loop.index }})">
-
                     {{ loop.index }}
-
                 </button>
-
                 {% endfor %}
 
             </div>
@@ -146,37 +91,21 @@ href="{{ url_for('static', filename='css/mock_test.css') }}">
             </div>
 
         </aside>
-
-
-
-
-        <!-- ================= QUESTION AREA ================= -->
-
+        <-- ================= QUESTION AREA ================= -->
         <main class="question-area">
-
             <form
-            method="POST"
+         method="POST"
             action="/submit_test"
             id="mockTestForm">
-
                 {% for q in questions %}
-
                 <div
-
-                class="question-card"
-
+             class="question-card"
                 id="question-{{ loop.index }}"
-
                 {% if not loop.first %}
                 style="display:none"
                 {% endif %}>
-
                     <div class="question-header">
-
-                        <h3>
-
-                            Question
-
+                        <h3>Question
                             {{ loop.index }}
 
                             /
