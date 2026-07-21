@@ -614,6 +614,245 @@ def mock_categories():
         "mock_categories.html",
         categories=categories
     )
+
+
+@app.route("/mock_test_history")
+def mock_test_history():
+
+    # -----------------------------
+    # Login Check
+    # -----------------------------
+    if "user_id" not in session:
+
+        flash("Please login first.", "warning")
+        return redirect("/login")
+
+    conn = None
+    cur = None
+
+    try:
+
+        conn = get_db_connection()
+
+        cur = conn.cursor(pymysql.cursors.DictCursor)
+
+        # -----------------------------
+        # History
+        # -----------------------------
+        cur.execute("""
+            SELECT
+                id,
+                subject,
+                score,
+                total_questions,
+                percentage,
+                attempt_date
+            FROM results
+            WHERE user_id=%s
+            ORDER BY attempt_date DESC
+        """, (session["user_id"],))
+
+        history = cur.fetchall()
+
+        # -----------------------------
+        # Statistics
+        # -----------------------------
+        cur.execute("""
+            SELECT
+
+                COUNT(*) AS total_tests,
+
+                SUM(
+                    CASE
+                        WHEN percentage>=40
+                        THEN 1
+                        ELSE 0
+                    END
+                ) AS passed_tests,
+
+                SUM(
+                    CASE
+                        WHEN percentage<40
+                        THEN 1
+                        ELSE 0
+                    END
+                ) AS failed_tests,
+
+                AVG(percentage) AS avg_percentage,
+
+                MAX(score) AS highest_score
+
+            FROM results
+
+            WHERE user_id=%s
+        """, (session["user_id"],))
+
+        stats = cur.fetchone()
+
+        # -----------------------------
+        # Default values
+        # -----------------------------
+        total_tests = stats["total_tests"] or 0
+
+        passed_tests = stats["passed_tests"] or 0
+
+        failed_tests = stats["failed_tests"] or 0
+
+        avg_percentage = stats["avg_percentage"] or 0
+
+        highest_score = stats["highest_score"] or 0
+
+        # -----------------------------
+        # Render Page
+        # -----------------------------
+        return render_template(
+
+            "mock_test_history.html",
+
+            history=history,
+
+            total_tests=total_tests,
+
+            passed_tests=passed_tests,
+
+            failed_tests=failed_tests,
+
+            avg_percentage=avg_percentage,
+
+            highest_score=highest_score
+
+        )
+
+    except Exception as e:
+
+        print("History Error:", e)
+
+        flash("Unable to load history.", "danger")
+
+        return redirect("/dashboard")
+
+    finally:
+
+        if cur:
+            cur.close()
+
+        if conn:
+            conn.close()
+
+
+# ==========================================
+# VIEW SINGLE RESULT
+# ==========================================
+
+@app.route("/result/<int:result_id>")
+def view_result(result_id):
+
+    if "user_id" not in session:
+        return redirect("/login")
+
+    conn = get_db_connection()
+    cur = conn.cursor(pymysql.cursors.DictCursor)
+
+    try:
+
+        cur.execute("""
+            SELECT
+                *
+            FROM results
+            WHERE id=%s
+            AND user_id=%s
+        """,(result_id,session["user_id"]))
+
+        result = cur.fetchone()
+
+        if not result:
+
+            flash("Result not found.","danger")
+
+            return redirect("/mock_test_history")
+
+        return render_template(
+
+            "result.html",
+
+            result=result
+
+        )
+
+    except Exception as e:
+
+        print(e)
+
+        flash("Unable to load result.","danger")
+
+        return redirect("/mock_test_history")
+
+    finally:
+
+        cur.close()
+
+        conn.close()
+
+
+# ==========================================
+# DELETE HISTORY
+# ==========================================
+
+@app.route("/delete_history/<int:result_id>")
+def delete_history(result_id):
+
+    if "user_id" not in session:
+        return redirect("/login")
+
+    conn = get_db_connection()
+    cur = conn.cursor()
+
+    try:
+
+        # Check ownership
+
+        cur.execute("""
+            SELECT id
+            FROM results
+            WHERE id=%s
+            AND user_id=%s
+        """,(result_id,session["user_id"]))
+
+        exists=cur.fetchone()
+
+        if not exists:
+
+            flash("History not found.","warning")
+
+            return redirect("/mock_test_history")
+
+
+        cur.execute("""
+            DELETE
+            FROM results
+            WHERE id=%s
+            AND user_id=%s
+        """,(result_id,session["user_id"]))
+
+        conn.commit()
+
+        flash("History deleted successfully.","success")
+
+    except Exception as e:
+
+        conn.rollback()
+
+        print(e)
+
+        flash("Delete failed.","danger")
+
+    finally:
+
+        cur.close()
+
+        conn.close()
+
+    return redirect("/mock_test_history")
 # ---------------- LOGOUT ----------------
 @app.route('/logout')
 def logout():
