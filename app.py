@@ -539,23 +539,16 @@ def mock_test_history():
         page = request.args.get("page", 1, type=int)
         per_page = 10
 
-        search = request.args.get("search", "").strip()
-        subject = request.args.get("subject", "").strip()
-
         where = "WHERE user_id=%s"
         params = [session["user_id"]]
 
-        if search:
-            where += " AND subject LIKE %s"
-            params.append(f"%{search}%")
-
-        if subject:
-            where += " AND subject=%s"
-            params.append(subject)
-
-        # Count
+        # Total Records
         cur.execute(
-            f"SELECT COUNT(*) AS total FROM results {where}",
+            f"""
+            SELECT COUNT(*) AS total
+            FROM results
+            {where}
+            """,
             tuple(params)
         )
 
@@ -566,34 +559,29 @@ def mock_test_history():
         offset = (page - 1) * per_page
 
         # History
-        history_sql = f"""
+        cur.execute(f"""
             SELECT
                 id,
-                subject,
                 score,
                 total_questions,
                 percentage,
-                attempt_date
+                test_date
             FROM results
             {where}
-            ORDER BY attempt_date DESC
+            ORDER BY test_date DESC
             LIMIT %s OFFSET %s
-        """
-
-        history_params = params + [per_page, offset]
-
-        cur.execute(history_sql, tuple(history_params))
+        """, tuple(params + [per_page, offset]))
 
         history = cur.fetchall()
 
         # Statistics
         cur.execute(f"""
             SELECT
-                COUNT(*) total_tests,
-                SUM(CASE WHEN percentage>=40 THEN 1 ELSE 0 END) passed_tests,
-                SUM(CASE WHEN percentage<40 THEN 1 ELSE 0 END) failed_tests,
-                AVG(percentage) avg_percentage,
-                MAX(score) highest_score
+                COUNT(*) AS total_tests,
+                SUM(CASE WHEN percentage >= 40 THEN 1 ELSE 0 END) AS passed_tests,
+                SUM(CASE WHEN percentage < 40 THEN 1 ELSE 0 END) AS failed_tests,
+                AVG(percentage) AS avg_percentage,
+                MAX(score) AS highest_score
             FROM results
             {where}
         """, tuple(params))
@@ -601,26 +589,23 @@ def mock_test_history():
         stats = cur.fetchone()
 
         return render_template(
-
             "mock_test_history.html",
-
             history=history,
-
             total_tests=stats["total_tests"] or 0,
             passed_tests=stats["passed_tests"] or 0,
             failed_tests=stats["failed_tests"] or 0,
             avg_percentage=stats["avg_percentage"] or 0,
             highest_score=stats["highest_score"] or 0,
-
             page=page,
-            total_pages=total_pages,
-            search=search,
-            subject=subject
-
+            total_pages=total_pages
         )
 
-    finally:
+    except Exception as e:
+        print("Mock History Error:", e)
+        flash("Unable to load history.", "danger")
+        return redirect("/dashboard")
 
+    finally:
         cur.close()
         conn.close()
 @app.route("/download_history")
