@@ -252,25 +252,7 @@
 
                     <td>
 
-                      <td>
-
-<a
-href="/result/{{test.id}}"
-class="btn-view">
-
-👁 View
-
-</a>
-
-<a
-href="/delete_history/{{test.id}}"
-class="btn-delete">
-
-🗑 Delete
-
-</a>
-
-</td>
+                      V
 
                     </td>
 
@@ -297,3 +279,44 @@ class="btn-delete">
         </table>
 
     </div>
+<div class="pagination">
+
+{% if page > 1 %}
+
+<a href="{{ url_for('mock_test_history',
+page=page-1,
+search=search,
+subject=subject) }}">
+
+⬅ Previous
+
+</a>
+
+{% endif %}
+
+<span>
+
+Page {{ page }} of {{ total_pages }}
+
+</span>
+
+{% if page < total_pages %}
+
+<a href="{{ url_for('mock_test_history',
+page=page+1,
+search=search,
+subject=subject) }}">
+
+Next ➡
+
+</a>
+
+{% endif %}
+
+</div>
+</div>
+
+<script src="{{ url_for('static',
+filename='js/mock_test_history.js') }}"></script>
+
+{% endblock %}
