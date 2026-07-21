@@ -618,3 +618,485 @@ document.addEventListener("keydown",(e)=>{
     }
 
 });
+/* ==========================================
+   MOCK TEST HISTORY JS
+   PART A3.3.2a
+   Loading Overlay + Refresh + Animations
+========================================== */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    initializeLoading();
+
+    initializeRefreshButton();
+
+    animateCards();
+
+});
+
+
+/* ==========================================
+   LOADING OVERLAY
+========================================== */
+
+function initializeLoading(){
+
+    const loader=document.createElement("div");
+
+    loader.id="pageLoader";
+
+    loader.innerHTML=`
+        <div class="loader-box">
+            <div class="loader-circle"></div>
+            <p>Loading History...</p>
+        </div>
+    `;
+
+    document.body.appendChild(loader);
+
+    setTimeout(()=>{
+
+        loader.classList.add("hide");
+
+        setTimeout(()=>{
+
+            loader.remove();
+
+        },500);
+
+    },900);
+
+}
+
+
+/* ==========================================
+   REFRESH BUTTON
+========================================== */
+
+function initializeRefreshButton(){
+
+    const btn=document.getElementById("refreshHistory");
+
+    if(!btn) return;
+
+    btn.addEventListener("click",()=>{
+
+        showLoading();
+
+        setTimeout(()=>{
+
+            location.reload();
+
+        },800);
+
+    });
+
+}
+
+
+/* ==========================================
+   SHOW LOADER
+========================================== */
+
+function showLoading(){
+
+    const loader=document.createElement("div");
+
+    loader.className="loading-overlay";
+
+    loader.innerHTML=`
+        <div class="loader-box">
+            <div class="loader-circle"></div>
+            <p>Please wait...</p>
+        </div>
+    `;
+
+    document.body.appendChild(loader);
+
+}
+
+
+/* ==========================================
+   CARD ANIMATION
+========================================== */
+
+function animateCards(){
+
+    const cards=document.querySelectorAll(".stat-card");
+
+    cards.forEach((card,index)=>{
+
+        card.style.opacity="0";
+
+        card.style.transform="translateY(40px)";
+
+        setTimeout(()=>{
+
+            card.style.transition=".6s ease";
+
+            card.style.opacity="1";
+
+            card.style.transform="translateY(0)";
+
+        },index*120);
+
+    });
+
+}
+
+
+/* ==========================================
+   TABLE ANIMATION
+========================================== */
+
+window.addEventListener("load",()=>{
+
+    const rows=document.querySelectorAll("#historyTable tbody tr");
+
+    rows.forEach((row,index)=>{
+
+        row.style.opacity="0";
+
+        row.style.transform="translateX(-20px)";
+
+        setTimeout(()=>{
+
+            row.style.transition=".4s ease";
+
+            row.style.opacity="1";
+
+            row.style.transform="translateX(0)";
+
+        },index*40);
+
+    });
+
+});
+
+
+/* ==========================================
+   SCROLL TO TOP
+========================================== */
+
+const scrollButton=document.createElement("button");
+
+scrollButton.innerHTML="⬆";
+
+scrollButton.id="scrollTopBtn";
+
+document.body.appendChild(scrollButton);
+
+window.addEventListener("scroll",()=>{
+
+    if(window.scrollY>250){
+
+        scrollButton.style.display="flex";
+
+    }else{
+
+        scrollButton.style.display="none";
+
+    }
+
+});
+
+scrollButton.onclick=()=>{
+
+    window.scrollTo({
+
+        top:0,
+
+        behavior:"smooth"
+
+    });
+
+};
+/* ==========================================
+   MOCK TEST HISTORY JS
+   PART A3.3.2b
+   Keyboard Shortcuts + Utilities
+========================================== */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    initializeKeyboardShortcuts();
+
+    initializeTooltips();
+
+    focusSearchBox();
+
+});
+
+
+/* ==========================================
+   KEYBOARD SHORTCUTS
+========================================== */
+
+function initializeKeyboardShortcuts(){
+
+    document.addEventListener("keydown",(e)=>{
+
+        // Ignore shortcuts while typing
+        const tag=document.activeElement.tagName;
+
+        if(tag==="INPUT" || tag==="TEXTAREA")
+            return;
+
+        switch(e.key.toLowerCase()){
+
+            case "/":
+
+                e.preventDefault();
+
+                document.getElementById("searchInput")?.focus();
+
+                break;
+
+            case "p":
+
+                e.preventDefault();
+
+                document.getElementById("printHistory")?.click();
+
+                break;
+
+            case "e":
+
+                e.preventDefault();
+
+                document.getElementById("exportCSV")?.click();
+
+                break;
+
+            case "r":
+
+                e.preventDefault();
+
+                document.getElementById("refreshHistory")?.click();
+
+                break;
+
+            case "home":
+
+                window.scrollTo({
+                    top:0,
+                    behavior:"smooth"
+                });
+
+                break;
+
+            case "end":
+
+                window.scrollTo({
+                    top:document.body.scrollHeight,
+                    behavior:"smooth"
+                });
+
+                break;
+
+        }
+
+    });
+
+}
+
+
+/* ==========================================
+   AUTO FOCUS
+========================================== */
+
+function focusSearchBox(){
+
+    const input=document.getElementById("searchInput");
+
+    if(!input) return;
+
+    setTimeout(()=>{
+
+        input.focus();
+
+    },500);
+
+}
+
+
+/* ==========================================
+   TOOLTIP
+========================================== */
+
+function initializeTooltips(){
+
+    document.querySelectorAll("[title]").forEach(item=>{
+
+        item.addEventListener("mouseenter",()=>{
+
+            item.style.cursor="pointer";
+
+        });
+
+    });
+
+}
+
+
+/* ==========================================
+   COPY TEXT
+========================================== */
+
+function copyText(text){
+
+    navigator.clipboard.writeText(text);
+
+    if(typeof showToast==="function"){
+
+        showToast("Copied Successfully");
+
+    }
+
+}
+
+
+/* ==========================================
+   DOWNLOAD FILE
+========================================== */
+
+function downloadFile(filename,content,type){
+
+    const blob=new Blob([content],{type:type});
+
+    const a=document.createElement("a");
+
+    a.href=URL.createObjectURL(blob);
+
+    a.download=filename;
+
+    a.click();
+
+}
+
+
+/* ==========================================
+   FORMAT DATE
+========================================== */
+
+function formatDate(date){
+
+    const d=new Date(date);
+
+    return d.toLocaleDateString("en-IN",{
+
+        day:"2-digit",
+
+        month:"short",
+
+        year:"numeric"
+
+    });
+
+}
+
+
+/* ==========================================
+   LOADING BUTTON
+========================================== */
+
+function buttonLoading(button,text="Loading..."){
+
+    if(!button) return;
+
+    button.dataset.original=button.innerHTML;
+
+    button.disabled=true;
+
+    button.innerHTML=`
+        ⏳ ${text}
+    `;
+
+}
+
+
+function resetButton(button){
+
+    if(!button) return;
+
+    button.disabled=false;
+
+    button.innerHTML=button.dataset.original;
+
+}
+
+
+/* ==========================================
+   SMOOTH FADE
+========================================== */
+
+function fadeIn(element){
+
+    element.style.opacity=0;
+
+    element.style.display="block";
+
+    let opacity=0;
+
+    const timer=setInterval(()=>{
+
+        opacity+=0.1;
+
+        element.style.opacity=opacity;
+
+        if(opacity>=1){
+
+            clearInterval(timer);
+
+        }
+
+    },30);
+
+}
+
+
+/* ==========================================
+   ELEMENT SHOW/HIDE
+========================================== */
+
+function hideElement(id){
+
+    const el=document.getElementById(id);
+
+    if(el){
+
+        el.style.display="none";
+
+    }
+
+}
+
+
+function showElement(id){
+
+    const el=document.getElementById(id);
+
+    if(el){
+
+        el.style.display="block";
+
+    }
+
+}
+
+
+/* ==========================================
+   PAGE READY
+========================================== */
+
+window.addEventListener("load",()=>{
+
+    console.log("✅ Mock Test History Loaded");
+
+    if(typeof showToast==="function"){
+
+        showToast("Welcome Back!");
+
+    }
+
+});
