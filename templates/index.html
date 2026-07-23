@@ -6,53 +6,37 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif;}
-        body{background:#f4f6f9;color:#333;}
+        *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
+        body{background:#f4f6f9;color:#333;scroll-behavior:smooth;}
 
         /* Navbar */
-        .navbar{
-            background:#007bff;
-            color:white;
-            padding:15px 50px;
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-            position:sticky;
-            top:0;
-            z-index:1000;
-        }
+        .navbar{background:linear-gradient(90deg,#007bff,#00c6ff);color:white;padding:15px 50px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:1000;}
         .navbar h2{font-size:26px;}
         .navbar a{color:white;text-decoration:none;margin-left:20px;font-size:18px;transition:.3s;}
         .navbar a:hover{color:#ffdd57;}
 
-        /* Hero Section */
-        .hero{
-            height:85vh;
-            display:flex;
-            justify-content:center;
-            align-items:center;
-            text-align:center;
-            flex-direction:column;
-            background:linear-gradient(rgba(0,0,0,.4),rgba(0,0,0,.4)),url('https://source.unsplash.com/1600x900/?students,library') no-repeat center/cover;
-            color:white;
-            animation:fadeIn 2s ease-in;
-        }
-        @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
-        .hero h1{font-size:50px;margin-bottom:20px;}
+        /* Hero */
+        .hero{height:90vh;display:flex;justify-content:center;align-items:center;text-align:center;flex-direction:column;background:url('https://source.unsplash.com/1600x900/?students,success') no-repeat center/cover;color:white;position:relative;}
+        .hero::after{content:"";position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);}
+        .hero h1,.hero p,.hero div{position:relative;z-index:1;}
+        .hero h1{font-size:55px;margin-bottom:20px;animation:slideIn 2s ease;}
         .hero p{font-size:22px;margin-bottom:30px;}
-        .btn{padding:15px 30px;background:#ffdd57;color:#333;text-decoration:none;border-radius:5px;margin:10px;font-size:18px;transition:.3s;}
-        .btn:hover{background:#ffc107;}
+        @keyframes slideIn{from{transform:translateY(-50px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+        .btn{padding:15px 30px;background:#ffdd57;color:#333;text-decoration:none;border-radius:30px;margin:10px;font-size:18px;transition:.3s;}
+        .btn:hover{background:#ffc107;transform:scale(1.05);}
 
         /* Features */
         .features{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;width:90%;margin:auto;padding:50px 0;}
-        .card{background:white;padding:30px;border-radius:10px;text-align:center;box-shadow:0 2px 10px rgba(0,0,0,0.1);transition:.3s;}
-        .card:hover{transform:translateY(-5px);box-shadow:0 5px 15px rgba(0,0,0,0.2);}
+        .card{background:white;padding:30px;border-radius:15px;text-align:center;box-shadow:0 4px 15px rgba(0,0,0,0.1);transition:.3s;}
+        .card:hover{transform:translateY(-10px);box-shadow:0 6px 20px rgba(0,0,0,0.2);}
         .card h3{color:#007bff;margin-bottom:15px;}
 
-        /* Dashboard Preview */
-        .dashboard-preview{width:90%;margin:auto;padding:40px;background:white;border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,0.1);}
-        .progress-bar{height:20px;background:#ddd;border-radius:10px;overflow:hidden;margin:10px 0;}
-        .progress-fill{height:100%;background:#007bff;width:70%;}
+        /* Leaderboard */
+        .leaderboard{width:90%;margin:auto;background:white;padding:30px;border-radius:15px;box-shadow:0 4px 15px rgba(0,0,0,0.1);}
+        .leaderboard h2{margin-bottom:20px;text-align:center;color:#007bff;}
+        table{width:100%;border-collapse:collapse;}
+        th,td{padding:12px;border-bottom:1px solid #ddd;text-align:center;}
+        tr:hover{background:#f1f1f1;}
 
         /* Footer */
         footer{background:#222;color:white;text-align:center;padding:20px;margin-top:40px;}
@@ -84,29 +68,24 @@
     <div class="card"><h3>📄 Resume Builder</h3><p>Create and download professional resumes.</p></div>
 </div>
 
-<!-- Dashboard Preview -->
-<div class="dashboard-preview">
-    <h2>📊 Dashboard Preview</h2>
-    <p>Course Progress:</p>
-    <div class="progress-bar"><div class="progress-fill"></div></div>
-    <canvas id="scoreChart"></canvas>
+<!-- Real-Time Leaderboard -->
+<div class="leaderboard">
+    <h2>🏆 Top Performers</h2>
+    <table>
+        <tr><th>Rank</th><th>Name</th><th>Score</th></tr>
+        {% for student in top_students %}
+        <tr>
+            <td>{{ loop.index }}</td>
+            <td>{{ student.name }}</td>
+            <td>{{ student.score }}</td>
+        </tr>
+        {% endfor %}
+    </table>
 </div>
 
 <footer>
     © 2026 Placement Training Portal | Developed using Python Flask & MySQL
 </footer>
-
-<script>
-    // Chart.js Example
-    const ctx = document.getElementById('scoreChart').getContext('2d');
-    new Chart(ctx,{
-        type:'line',
-        data:{
-            labels:['Day 1','Day 2','Day 3','Day 4','Day 5'],
-            datasets:[{label:'Scores',data:[60,70,80,75,90],borderColor:'#007bff',fill:true}]
-        }
-    });
-</script>
 
 </body>
 </html>
