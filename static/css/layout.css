@@ -360,3 +360,45 @@ footer{
     }
 
 }
+.menu-toggle{
+    display:none;
+}
+
+@media (max-width:768px){
+
+    .navbar{
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        flex-wrap:wrap;
+        position:relative;
+    }
+
+    .menu-toggle{
+        display:block;
+        font-size:30px;
+        color:#fff;
+        cursor:pointer;
+    }
+
+    .nav-links{
+        display:none;
+        width:100%;
+        flex-direction:column;
+        background:#111827;
+    }
+
+    .nav-links.show{
+        display:flex;
+    }
+
+    .nav-links li{
+        width:100%;
+        text-align:center;
+    }
+
+    .nav-links a{
+        display:block;
+        padding:15px;
+    }
+}
