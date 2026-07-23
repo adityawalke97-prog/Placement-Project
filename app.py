@@ -98,16 +98,14 @@ def login():
 
 
 # ---------------- DASHBOARD ----------------
-@app.route('/dashboard')
+@app.route("/")
+@app.route("/dashboard")
 def dashboard():
-    if 'user_id' not in session:
-        return redirect('/login')
-
     return render_template(
-        'dashboard.html',
-        name=session['name']
+        "dashboard.html",
+        logged_in=("user_id" in session),
+        name=session.get("name")
     )
-
 # ---------------- INTERVIEW QUESTIONS ----------------
 from flask import render_template, request
 import math
@@ -165,19 +163,19 @@ def interview_questions():
         page=page,
         total_pages=total_pages
     )
+from flask import url_for
+
 @app.route('/mock_test')
 def mock_test():
 
     if 'user_id' not in session:
-        return redirect('/login')
-
+        return redirect(url_for("login", next=request.url))
 
     conn = get_db_connection()
     cur = conn.cursor()
 
-
     cur.execute("""
-        SELECT 
+        SELECT
             id,
             question,
             option1,
@@ -190,19 +188,15 @@ def mock_test():
         LIMIT 20
     """)
 
-
     questions = cur.fetchall()
-
 
     cur.close()
     conn.close()
 
-
     return render_template(
-        'mock_test.html',
+        "mock_test.html",
         questions=questions
     )
-
 @app.route('/submit_test', methods=['POST'])
 def submit_test():
 
