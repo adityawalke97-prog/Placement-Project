@@ -119,71 +119,127 @@ footer{
 
 
 /* ===========================
-   Mobile Responsive Design
+   Mobile Responsive CSS
 =========================== */
 
-@media (max-width: 768px){
+@media screen and (max-width:768px){
+
+    body{
+        margin:0;
+        padding:0;
+        width:100%;
+        overflow-x:hidden;
+    }
 
     .navbar{
-        flex-direction: column;
-        align-items: center;
-        padding:15px 20px;
+        padding:15px;
+        flex-direction:column;
+        align-items:center;
         gap:15px;
     }
 
     .logo{
         font-size:24px;
+        text-align:center;
     }
 
     .nav-links{
         width:100%;
         display:flex;
         flex-direction:column;
-        gap:12px;
+        gap:10px;
         align-items:center;
+        padding:0;
     }
 
     .nav-links li{
         width:100%;
+        list-style:none;
     }
 
     .nav-links a{
         display:block;
         width:100%;
         text-align:center;
-        padding:10px;
-        border-radius:8px;
-        background:rgba(255,255,255,0.08);
+        padding:12px;
+        border-radius:10px;
+        background:#1f2937;
+        color:white;
+        font-size:16px;
     }
 
     .hero{
         padding:60px 20px;
+        text-align:center;
     }
 
     .hero h1{
         font-size:32px;
         line-height:1.3;
+        margin-bottom:15px;
     }
 
     .hero p{
         font-size:16px;
         line-height:1.6;
+        margin-bottom:25px;
     }
 
     .hero-btn{
-        display:inline-block;
+        display:block;
         width:100%;
-        max-width:260px;
+        max-width:250px;
+        margin:auto;
         padding:14px;
+        font-size:16px;
     }
 
     .container{
         width:95%;
-        margin:25px auto;
+        margin:20px auto;
+    }
+
+    .flash{
+        font-size:15px;
+        padding:12px;
+    }
+
+    img{
+        max-width:100%;
+        height:auto;
+    }
+
+    table{
+        width:100%;
+        display:block;
+        overflow-x:auto;
+    }
+
+    input,
+    select,
+    textarea,
+    button{
+        width:100%;
+        font-size:16px;
+    }
+
+    button{
+        padding:12px;
+    }
+
+    .card{
+        width:100%;
+        margin-bottom:20px;
+    }
+
+    .dashboard-card{
+        width:100%;
+        margin-bottom:15px;
     }
 
     footer{
         padding:25px 15px;
+        text-align:center;
     }
 
     .social{
@@ -197,20 +253,23 @@ footer{
 
 }
 
-/* Extra Small Devices */
 
-@media (max-width:480px){
+/* ===========================
+   Extra Small Phones
+=========================== */
+
+@media screen and (max-width:480px){
 
     .logo{
         font-size:20px;
     }
 
     .hero{
-        padding:50px 15px;
+        padding:45px 15px;
     }
 
     .hero h1{
-        font-size:28px;
+        font-size:26px;
     }
 
     .hero p{
@@ -218,13 +277,17 @@ footer{
     }
 
     .hero-btn{
+        max-width:100%;
         font-size:15px;
-        padding:12px;
     }
 
-    .flash{
-        font-size:14px;
-        padding:12px;
+    .nav-links a{
+        font-size:15px;
+        padding:10px;
+    }
+
+    .container{
+        width:96%;
     }
 
     footer{
