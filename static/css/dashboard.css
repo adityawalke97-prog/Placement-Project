@@ -1,0 +1,1283 @@
+/* ==========================================================
+        ADVANCED DASHBOARD CSS - PART 1
+========================================================== */
+
+:root{
+
+    --primary:#2563eb;
+    --secondary:#1e40af;
+    --purple:#7c3aed;
+    --green:#16a34a;
+    --orange:#f59e0b;
+    --red:#ef4444;
+
+    --text:#1e293b;
+    --light:#64748b;
+
+    --card:#ffffff;
+
+    --bg:#f4f7fc;
+
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI',sans-serif;
+}
+
+body{
+
+    background:var(--bg);
+
+    overflow-x:hidden;
+
+}
+
+/* ===================================
+        Animated Background
+=================================== */
+
+body::before{
+
+    content:"";
+
+    position:fixed;
+
+    width:550px;
+    height:550px;
+
+    background:rgba(37,99,235,.10);
+
+    border-radius:50%;
+
+    top:-200px;
+    right:-150px;
+
+    filter:blur(70px);
+
+    animation:blob1 12s infinite alternate;
+
+    z-index:-1;
+
+}
+
+body::after{
+
+    content:"";
+
+    position:fixed;
+
+    width:450px;
+    height:450px;
+
+    background:rgba(124,58,237,.10);
+
+    border-radius:50%;
+
+    left:-150px;
+    bottom:-150px;
+
+    filter:blur(80px);
+
+    animation:blob2 14s infinite alternate;
+
+    z-index:-1;
+
+}
+
+@keyframes blob1{
+
+    from{
+
+        transform:translateY(0px) scale(1);
+
+    }
+
+    to{
+
+        transform:translateY(80px) scale(1.2);
+
+    }
+
+}
+
+@keyframes blob2{
+
+    from{
+
+        transform:translateX(0);
+
+    }
+
+    to{
+
+        transform:translateX(120px);
+
+    }
+
+}
+
+/* ===================================
+        Header
+=================================== */
+
+.dashboard-header{
+
+    background:
+
+    linear-gradient(135deg,#2563eb,#7c3aed);
+
+    color:#fff;
+
+    padding:40px;
+
+    border-radius:24px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    flex-wrap:wrap;
+
+    gap:30px;
+
+    box-shadow:
+
+    0 20px 45px rgba(37,99,235,.28);
+
+    position:relative;
+
+    overflow:hidden;
+
+    margin-bottom:35px;
+
+}
+
+.dashboard-header::before{
+
+    content:"";
+
+    position:absolute;
+
+    width:250px;
+    height:250px;
+
+    background:rgba(255,255,255,.12);
+
+    border-radius:50%;
+
+    right:-60px;
+    top:-60px;
+
+}
+
+.dashboard-header::after{
+
+    content:"";
+
+    position:absolute;
+
+    width:150px;
+    height:150px;
+
+    background:rgba(255,255,255,.10);
+
+    left:40%;
+
+    bottom:-70px;
+
+    border-radius:50%;
+
+}
+
+.dashboard-header h1{
+
+    font-size:40px;
+
+    margin-bottom:12px;
+
+    font-weight:700;
+
+}
+
+.dashboard-header p{
+
+    font-size:17px;
+
+    color:#e2e8f0;
+
+}
+
+/* ===================================
+      Certificate Button
+=================================== */
+
+.certificate-btn{
+
+    background:white;
+
+    color:#2563eb;
+
+    padding:15px 30px;
+
+    border-radius:14px;
+
+    text-decoration:none;
+
+    font-size:17px;
+
+    font-weight:700;
+
+    transition:.35s;
+
+    box-shadow:
+
+    0 10px 25px rgba(0,0,0,.18);
+
+}
+
+.certificate-btn:hover{
+
+    transform:
+
+    translateY(-5px);
+
+    background:#0f172a;
+
+    color:white;
+
+}
+
+/* ===================================
+         Stats Section
+=================================== */
+
+.stats{
+
+    display:grid;
+
+    grid-template-columns:
+
+    repeat(auto-fit,minmax(280px,1fr));
+
+    gap:28px;
+
+    margin-bottom:40px;
+
+}
+
+/* ===================================
+         Stat Card
+=================================== */
+
+.stat-card{
+
+    background:white;
+
+    border-radius:22px;
+
+    padding:35px;
+
+    text-align:center;
+
+    position:relative;
+
+    overflow:hidden;
+
+    transition:.35s;
+
+    box-shadow:
+
+    0 12px 30px rgba(0,0,0,.08);
+
+}
+
+.stat-card:hover{
+
+    transform:
+
+    translateY(-8px);
+
+    box-shadow:
+
+    0 20px 40px rgba(0,0,0,.12);
+
+}
+
+/* top line */
+
+.stat-card::before{
+
+    content:"";
+
+    position:absolute;
+
+    top:0;
+
+    left:0;
+
+    width:100%;
+
+    height:6px;
+
+    background:
+
+    linear-gradient(90deg,#2563eb,#7c3aed);
+
+}
+
+/* glowing circle */
+
+.stat-card::after{
+
+    content:"";
+
+    position:absolute;
+
+    width:180px;
+
+    height:180px;
+
+    background:
+
+    rgba(37,99,235,.06);
+
+    border-radius:50%;
+
+    right:-70px;
+
+    top:-70px;
+
+}
+
+/* icon */
+
+.stat-card i{
+
+    width:80px;
+
+    height:80px;
+
+    background:
+
+    linear-gradient(135deg,#2563eb,#7c3aed);
+
+    color:white;
+
+    border-radius:50%;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    font-size:34px;
+
+    margin:auto;
+
+    margin-bottom:18px;
+
+    box-shadow:
+
+    0 12px 28px rgba(37,99,235,.30);
+
+}
+
+.stat-card h2{
+
+    font-size:40px;
+
+    color:#1e293b;
+
+    margin-bottom:10px;
+
+    font-weight:700;
+
+}
+
+.stat-card p{
+
+    font-size:17px;
+
+    color:#64748b;
+
+}
+
+/* ==========================================================
+        ADVANCED DASHBOARD CSS - PART 2
+        Premium Feature Cards
+========================================================== */
+
+.cards{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+    gap:30px;
+    margin-top:35px;
+}
+
+/* ==========================
+        Premium Card
+========================== */
+
+.card{
+
+    position:relative;
+
+    background:rgba(255,255,255,.92);
+
+    backdrop-filter:blur(18px);
+
+    border-radius:25px;
+
+    padding:35px;
+
+    min-height:310px;
+
+    overflow:hidden;
+
+    border:1px solid rgba(255,255,255,.5);
+
+    box-shadow:
+        0 18px 45px rgba(0,0,0,.08);
+
+    transition:.45s ease;
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+.card:hover{
+
+    transform:
+        translateY(-12px);
+
+    box-shadow:
+        0 30px 60px rgba(37,99,235,.20);
+
+}
+
+/* Animated Glow */
+
+.card::before{
+
+    content:"";
+
+    position:absolute;
+
+    width:180px;
+    height:180px;
+
+    border-radius:50%;
+
+    top:-80px;
+    right:-80px;
+
+    opacity:.15;
+
+    transition:.5s;
+
+}
+
+.card:hover::before{
+
+    transform:scale(1.3);
+
+}
+
+/* Shine Animation */
+
+.card::after{
+
+    content:"";
+
+    position:absolute;
+
+    top:-120%;
+
+    left:-40%;
+
+    width:70%;
+
+    height:320%;
+
+    background:
+        linear-gradient(
+            rgba(255,255,255,0),
+            rgba(255,255,255,.45),
+            rgba(255,255,255,0)
+        );
+
+    transform:rotate(25deg);
+
+}
+
+.card:hover::after{
+
+    animation:shine 1.2s;
+
+}
+
+@keyframes shine{
+
+    100%{
+
+        top:120%;
+
+        left:120%;
+
+    }
+
+}
+
+/* ==========================
+      Icon Circle
+========================== */
+
+.card i{
+
+    width:78px;
+
+    height:78px;
+
+    border-radius:20px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    color:white;
+
+    font-size:34px;
+
+    margin-bottom:22px;
+
+    transition:.35s;
+
+}
+
+.card:hover i{
+
+    transform:
+        rotate(-8deg)
+        scale(1.12);
+
+}
+
+/* ==========================
+      Heading
+========================== */
+
+.card h2{
+
+    font-size:25px;
+
+    color:#0f172a;
+
+    margin-bottom:15px;
+
+    font-weight:700;
+
+}
+
+/* ==========================
+      Description
+========================== */
+
+.card p{
+
+    flex:1;
+
+    color:#64748b;
+
+    font-size:16px;
+
+    line-height:1.8;
+
+    margin-bottom:28px;
+
+}
+
+/* ==========================
+      Button
+========================== */
+
+.card a{
+
+    align-self:flex-start;
+
+    text-decoration:none;
+
+    padding:13px 28px;
+
+    border-radius:12px;
+
+    color:#fff;
+
+    font-weight:700;
+
+    transition:.35s;
+
+    position:relative;
+
+    overflow:hidden;
+
+}
+
+.card a::before{
+
+    content:"";
+
+    position:absolute;
+
+    inset:0;
+
+    background:rgba(255,255,255,.15);
+
+    transform:translateX(-100%);
+
+    transition:.4s;
+
+}
+
+.card a:hover::before{
+
+    transform:translateX(0);
+
+}
+
+.card a:hover{
+
+    transform:translateY(-3px);
+
+}
+
+/* ==================================================
+        Individual Card Colors
+================================================== */
+
+/* Courses */
+
+.card:nth-child(1)::before{
+    background:#3b82f6;
+}
+
+.card:nth-child(1) i{
+    background:linear-gradient(135deg,#2563eb,#60a5fa);
+}
+
+.card:nth-child(1) a{
+    background:linear-gradient(135deg,#2563eb,#1d4ed8);
+}
+
+/* Mock Test */
+
+.card:nth-child(2)::before{
+    background:#10b981;
+}
+
+.card:nth-child(2) i{
+    background:linear-gradient(135deg,#10b981,#34d399);
+}
+
+.card:nth-child(2) a{
+    background:linear-gradient(135deg,#10b981,#059669);
+}
+
+/* Interview */
+
+.card:nth-child(3)::before{
+    background:#8b5cf6;
+}
+
+.card:nth-child(3) i{
+    background:linear-gradient(135deg,#7c3aed,#a855f7);
+}
+
+.card:nth-child(3) a{
+    background:linear-gradient(135deg,#7c3aed,#6d28d9);
+}
+
+/* Communication */
+
+.card:nth-child(4)::before{
+    background:#f59e0b;
+}
+
+.card:nth-child(4) i{
+    background:linear-gradient(135deg,#f59e0b,#fbbf24);
+}
+
+.card:nth-child(4) a{
+    background:linear-gradient(135deg,#f59e0b,#d97706);
+}
+
+/* Resume */
+
+.card:nth-child(5)::before{
+    background:#ef4444;
+}
+
+.card:nth-child(5) i{
+    background:linear-gradient(135deg,#ef4444,#f87171);
+}
+
+.card:nth-child(5) a{
+    background:linear-gradient(135deg,#ef4444,#dc2626);
+}
+
+/* Leaderboard */
+
+.card:nth-child(6)::before{
+    background:#0ea5e9;
+}
+
+.card:nth-child(6) i{
+    background:linear-gradient(135deg,#0ea5e9,#38bdf8);
+}
+
+.card:nth-child(6) a{
+    background:linear-gradient(135deg,#0ea5e9,#0284c7);
+}
+
+/* Floating Animation */
+
+.card{
+
+    animation:floatCard 5s ease-in-out infinite;
+
+}
+
+.card:nth-child(even){
+
+    animation-delay:.8s;
+
+}
+
+@keyframes floatCard{
+
+    0%,100%{
+
+        transform:translateY(0);
+
+    }
+
+    50%{
+
+        transform:translateY(-4px);
+
+    }
+
+}
+
+.card:hover{
+
+    animation:none;
+
+}
+
+/* Ripple on Button */
+
+.card a:active{
+
+    transform:scale(.96);
+
+}
+
+/* ==========================================================
+        ADVANCED DASHBOARD CSS - PART 3
+        Responsive + Dark Mode + Animations
+========================================================== */
+
+/* ===========================
+      Scroll Animation
+=========================== */
+
+.fade-up{
+    opacity:0;
+    transform:translateY(40px);
+    transition:all .8s ease;
+}
+
+.fade-up.show{
+    opacity:1;
+    transform:translateY(0);
+}
+
+/* ===========================
+      Floating Background
+=========================== */
+
+.bg-circle{
+
+    position:fixed;
+
+    border-radius:50%;
+
+    filter:blur(90px);
+
+    opacity:.18;
+
+    z-index:-10;
+
+    animation:floatBg 15s infinite alternate;
+
+}
+
+.bg1{
+
+    width:350px;
+    height:350px;
+
+    background:#2563eb;
+
+    top:-100px;
+    right:-100px;
+
+}
+
+.bg2{
+
+    width:280px;
+    height:280px;
+
+    background:#7c3aed;
+
+    bottom:-80px;
+    left:-80px;
+
+}
+
+.bg3{
+
+    width:220px;
+    height:220px;
+
+    background:#10b981;
+
+    top:50%;
+    left:45%;
+
+}
+
+@keyframes floatBg{
+
+    from{
+
+        transform:translateY(0) scale(1);
+
+    }
+
+    to{
+
+        transform:translateY(60px) scale(1.2);
+
+    }
+
+}
+
+/* ===========================
+      Hover Border Glow
+=========================== */
+
+.card:hover{
+
+    border:1px solid rgba(37,99,235,.25);
+
+}
+
+.stat-card:hover{
+
+    border:1px solid rgba(37,99,235,.20);
+
+}
+
+/* ===========================
+      Icon Animation
+=========================== */
+
+.card i,
+.stat-card i{
+
+    transition:.4s;
+
+}
+
+.card:hover i{
+
+    transform:rotate(-8deg) scale(1.15);
+
+}
+
+.stat-card:hover i{
+
+    transform:scale(1.12);
+
+}
+
+/* ===========================
+      Number Animation
+=========================== */
+
+.stat-card h2{
+
+    transition:.3s;
+
+}
+
+.stat-card:hover h2{
+
+    color:#2563eb;
+
+    transform:scale(1.08);
+
+}
+
+/* ===========================
+      Button Hover
+=========================== */
+
+.certificate-btn:hover,
+.card a:hover{
+
+    letter-spacing:.5px;
+
+}
+
+/* ===========================
+      Scrollbar
+=========================== */
+
+::-webkit-scrollbar{
+
+    width:10px;
+
+}
+
+::-webkit-scrollbar-track{
+
+    background:#edf2f7;
+
+}
+
+::-webkit-scrollbar-thumb{
+
+    background:#2563eb;
+
+    border-radius:20px;
+
+}
+
+::-webkit-scrollbar-thumb:hover{
+
+    background:#1d4ed8;
+
+}
+
+/* ===========================
+      Glass Effect
+=========================== */
+
+.dashboard-header{
+
+    backdrop-filter:blur(20px);
+
+}
+
+.card{
+
+    backdrop-filter:blur(15px);
+
+}
+
+.stat-card{
+
+    backdrop-filter:blur(15px);
+
+}
+
+/* ===========================
+      Mobile
+=========================== */
+
+@media(max-width:992px){
+
+.dashboard-header{
+
+    flex-direction:column;
+
+    text-align:center;
+
+}
+
+.dashboard-header h1{
+
+    font-size:32px;
+
+}
+
+.cards{
+
+    grid-template-columns:repeat(2,1fr);
+
+}
+
+.stats{
+
+    grid-template-columns:repeat(2,1fr);
+
+}
+
+}
+
+@media(max-width:768px){
+
+.cards{
+
+    grid-template-columns:1fr;
+
+}
+
+.stats{
+
+    grid-template-columns:1fr;
+
+}
+
+.dashboard-header{
+
+    padding:30px 20px;
+
+}
+
+.dashboard-header h1{
+
+    font-size:28px;
+
+}
+
+.dashboard-header p{
+
+    font-size:15px;
+
+}
+
+.card{
+
+    min-height:260px;
+
+    padding:28px;
+
+}
+
+.card i{
+
+    width:65px;
+    height:65px;
+
+    font-size:28px;
+
+}
+
+.card h2{
+
+    font-size:22px;
+
+}
+
+.card p{
+
+    font-size:15px;
+
+}
+
+.stat-card{
+
+    padding:30px;
+
+}
+
+.stat-card h2{
+
+    font-size:34px;
+
+}
+
+.certificate-btn{
+
+    width:100%;
+
+    text-align:center;
+
+}
+
+}
+
+@media(max-width:480px){
+
+.dashboard-header{
+
+    border-radius:18px;
+
+}
+
+.dashboard-header h1{
+
+    font-size:24px;
+
+}
+
+.card{
+
+    padding:22px;
+
+    min-height:240px;
+
+}
+
+.card h2{
+
+    font-size:20px;
+
+}
+
+.card p{
+
+    font-size:14px;
+
+}
+
+.card a{
+
+    width:100%;
+
+    text-align:center;
+
+}
+
+.stat-card{
+
+    padding:25px;
+
+}
+
+}
+
+/* ===========================
+      Dark Mode
+=========================== */
+
+body.dark{
+
+    background:#0f172a;
+
+}
+
+body.dark .dashboard-header{
+
+    background:linear-gradient(135deg,#1e293b,#0f172a);
+
+}
+
+body.dark .card,
+body.dark .stat-card{
+
+    background:#1e293b;
+
+    color:#fff;
+
+}
+
+body.dark .card h2,
+body.dark .stat-card h2{
+
+    color:#fff;
+
+}
+
+body.dark .card p,
+body.dark .stat-card p{
+
+    color:#cbd5e1;
+
+}
+
+body.dark .certificate-btn{
+
+    background:#2563eb;
+
+    color:#fff;
+
+}
+
+/* ===========================
+      Pulse Animation
+=========================== */
+
+@keyframes pulse{
+
+    0%{
+
+        transform:scale(1);
+
+    }
+
+    50%{
+
+        transform:scale(1.05);
+
+    }
+
+    100%{
+
+        transform:scale(1);
+
+    }
+
+}
+
+.certificate-btn{
+
+    animation:pulse 3s infinite;
+
+}
+
+/* ===========================
+      Page Load Animation
+=========================== */
+
+.dashboard-header,
+.stat-card,
+.card{
+
+    animation:pageLoad .8s ease;
+
+}
+
+@keyframes pageLoad{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(30px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+}
