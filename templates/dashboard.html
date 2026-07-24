@@ -137,4 +137,17 @@
     background:#1d4ed8;
 }
 </style>
+<script>
+   const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add("show");
+        }
+    });
+});
+
+document.querySelectorAll(".fade-up").forEach(el => {
+    observer.observe(el);
+});
+</script>
 {% endblock %}
