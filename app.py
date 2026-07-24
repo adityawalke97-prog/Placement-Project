@@ -587,7 +587,7 @@ def courses():
 @app.route("/courses/java")
 def java_course():
     conn = get_db_connection()
-    cursor = import sqlite3
+   
 
 conn.row_factory = sqlite3.Row
 cursor = conn.cursor()
