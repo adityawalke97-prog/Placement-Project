@@ -587,7 +587,10 @@ def courses():
 @app.route("/courses/java")
 def java_course():
     conn = get_db_connection()
-    cursor = conn.cursor(dictionary=True)
+    cursor = import sqlite3
+
+conn.row_factory = sqlite3.Row
+cursor = conn.cursor()
 
     cursor.execute("""
         SELECT day, title, notes, code_snippet, practice_task
