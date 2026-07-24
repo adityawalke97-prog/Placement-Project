@@ -8,31 +8,38 @@
 href="{{ url_for('static', filename='css/mock_test.css') }}">
 <div class="exam-container">
     <!-- ================= HEADER ================= -->
-    <header class="exam-header">
-        <div class="left-header">
-            <h2>🚀 Placement Mock Test</h2>
-            <p>
-                Java | Python | DBMS | Aptitude
-            </p>
-        </div>
-        <a href="/mock_history" class="history-btn">
-    📊 History
-</a>
-       <div class="right-header">
-    <a href="/mock_history" class="history-btn">
-        📊 History
-    </a>
-    <button class="icon-btn" onclick="toggleFullscreen()">⛶</button>
-    <button class="icon-btn" onclick="showInstruction()">ℹ</button>
-    <div class="timer-box">
-        ⏱ <span id="timer">20:00</span>
+   <header class="exam-header">
+
+    <div class="left-header">
+        <h2>🚀 Placement Mock Test</h2>
+        <p>Java • Python • DBMS • Aptitude</p>
     </div>
-    <a class="view-btn" href="/mock_categories">
-        Categories
-    </a>
-</div>
-    </header>
-   <!-- ================= MAIN LAYOUT ================= -->
+
+    <div class="right-header">
+
+        <div class="timer-box">
+            ⏱ <span id="timer">20:00</span>
+        </div>
+
+        <a href="/mock_test_history" class="history-btn">
+            📊 History
+        </a>
+
+        <a href="/mock_categories" class="view-btn">
+            📚 Categories
+        </a>
+
+        <button class="icon-btn" onclick="showInstruction()">
+            ℹ Instructions
+        </button>
+
+        <button class="icon-btn" onclick="toggleFullscreen()">
+            ⛶ Full Screen
+        </button>
+
+    </div>
+
+</header>   <!-- ================= MAIN LAYOUT ================= -->
     <div class="exam-layout">
         <!-- ================= LEFT SIDEBAR ================= -->
         <aside class="question-sidebar">
