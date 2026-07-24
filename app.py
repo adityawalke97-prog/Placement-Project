@@ -107,10 +107,10 @@ def login():
 
         flash("Invalid Email or Password")
 
-    return render_template('login.html')
-
 cur.close()
 conn.close()
+    return render_template('login.html')
+
 # ---------------- DASHBOARD ----------------
 @app.route("/")
 @app.route("/dashboard")
