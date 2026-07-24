@@ -583,9 +583,38 @@ def download_history():
 def courses():
     return render_template("course.html")
 
+
 @app.route("/courses/java")
 def java_course():
-    return render_template("java.html")
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    cursor.execute("""
+        SELECT day, title, notes, code_snippet, practice_task
+        FROM java_course
+        ORDER BY day
+    """)
+
+    rows = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    course_data = {}
+
+    for row in rows:
+        course_data[row["day"]] = {
+            "title": row["title"],
+            "notes": row["notes"],
+            "code_snippet": row["code_snippet"],
+            "practice_task": row["practice_task"]
+        }
+
+    return render_template(
+        "java.html",
+        day_count=len(course_data),
+        course_data_json=json.dumps(course_data)
+    )
 
 @app.route("/courses/python")
 def python_course():
