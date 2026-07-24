@@ -586,14 +586,12 @@ def courses():
 
 @app.route("/courses/java")
 def java_course():
-    conn = get_db_connection()
-   
 
-conn.row_factory = sqlite3.Row
-cursor = conn.cursor()
+    conn = get_db_connection()
+    cursor = conn.cursor()
 
     cursor.execute("""
-        SELECT day, title, notes, code_snippet, practice_task
+        SELECT day,title,notes,code_snippet,practice_task
         FROM java_course
         ORDER BY day
     """)
@@ -618,7 +616,6 @@ cursor = conn.cursor()
         day_count=len(course_data),
         course_data_json=json.dumps(course_data)
     )
-
 
 @app.route("/courses/python")
 def python_course():
