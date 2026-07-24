@@ -1,11 +1,20 @@
-from flask import Flask, render_template, request, redirect, session, flash, send_file, response
+from flask import (
+    Flask,
+    render_template,
+    request,
+    redirect,
+    session,
+    flash,
+    send_file,
+    Response
+)
+
 from flask_bcrypt import Bcrypt
 import pymysql
-import io
+import os
 import json
 import csv
-
-import os
+import io
 from dotenv import load_dotenv
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
