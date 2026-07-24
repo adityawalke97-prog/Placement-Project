@@ -1,6 +1,10 @@
-from flask import Flask, render_template, request, redirect, session, flash, send_file
+from flask import Flask, render_template, request, redirect, session, flash, send_file, response
 from flask_bcrypt import Bcrypt
 import pymysql
+import io
+import json
+import csv
+
 import os
 from dotenv import load_dotenv
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
@@ -96,7 +100,8 @@ def login():
 
     return render_template('login.html')
 
-
+cur.close()
+conn.close()
 # ---------------- DASHBOARD ----------------
 @app.route("/")
 @app.route("/dashboard")
@@ -289,6 +294,7 @@ def save_resume():
 
     conn.commit()
     cur.close()
+    conn.close()
 
     flash("Resume Saved Successfully")
     return redirect('/dashboard')
@@ -325,11 +331,13 @@ def admin_questions():
 
         conn.commit()
         cur.close()
+        coon.close()
 
         flash("Question Added Successfully")
         return redirect('/admin/questions')
 
     return render_template('admin_questions.html')
+
 @app.route('/leaderboard')
 def leaderboard():
 
@@ -465,8 +473,7 @@ def certificate(user_id):
     if not user:
         return "User not found"
 
-    score = result[0] if result[0] else 0
-
+    score = result["MAX(score)"] if result["MAX(score)"] else 0
     filename = f"certificate_{user_id}.pdf"
     filepath = os.path.join(
         "uploads",
@@ -489,7 +496,7 @@ def certificate(user_id):
 
     elements.append(
         Paragraph(
-            f"This certificate is awarded to <b>{user[0]}</b>",
+            f"This certificate is awarded to <b>{user["name"]}</b>",
             styles['Heading2']
         )
     )
@@ -638,17 +645,33 @@ def fullstack_python():
     return render_template("fullstack_python.html")
 @app.route("/courses/<course_name>/<int:day>")
 def course_day(course_name, day):
-    cursor = mysql.connection.cursor()
-    cursor.execute("SELECT notes FROM course_notes WHERE course_name=%s AND day_number=%s", (course_name, day))
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT notes
+        FROM course_notes
+        WHERE course_name=%s
+        AND day_number=%s
+    """, (course_name, day))
+
     result = cursor.fetchone()
+
     cursor.close()
+    conn.close()
 
     if result:
-        notes = result[0]
+        notes = result["notes"]
     else:
         notes = "No notes available for this day."
 
-    return render_template("course_day.html", course_name=course_name, day=day, notes=notes)
+    return render_template(
+        "course_day.html",
+        course_name=course_name,
+        day=day,
+        notes=notes
+    )
 @app.route("/mock_categories")
 def mock_categories():
 
