@@ -90,25 +90,30 @@ def signup():
 # ---------------- LOGIN ----------------
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+
     if request.method == 'POST':
+
         email = request.form['email']
         password = request.form['password']
 
         conn = get_db_connection()
         cur = conn.cursor()
-        cur.execute("SELECT * FROM users WHERE email=%s", (email,))
-        user = cur.fetchone()
-        cur.close()
 
-        if user and bcrypt.check_password_hash(user['password'], password):
-            session['user_id'] = user['id']
-            session['name'] = user['name']
-            return redirect('/dashboard')
+        try:
+            cur.execute("SELECT * FROM users WHERE email=%s", (email,))
+            user = cur.fetchone()
 
-        flash("Invalid Email or Password")
+            if user and bcrypt.check_password_hash(user['password'], password):
+                session['user_id'] = user['id']
+                session['name'] = user['name']
+                return redirect('/dashboard')
 
-cur.close()
-conn.close()
+            flash("Invalid Email or Password", "danger")
+
+        finally:
+            cur.close()
+            conn.close()
+
     return render_template('login.html')
 
 # ---------------- DASHBOARD ----------------
