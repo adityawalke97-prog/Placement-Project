@@ -619,6 +619,7 @@ cursor = conn.cursor()
         course_data_json=json.dumps(course_data)
     )
 
+
 @app.route("/courses/python")
 def python_course():
     return render_template("python.html")
