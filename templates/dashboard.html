@@ -1,114 +1,76 @@
 {% extends 'layout.html' %}
-
 {% block title %}Dashboard{% endblock %}
-
-
 {% block content %}
-
 <div class="dashboard-header">
-
     <div>
         <h1>Welcome, {{ name }} 👋</h1>
         <p>Track your placement preparation and improve your skills.</p>
     </div>
-
     <a href="/certificate/{{ session['user_id'] }}"
        class="certificate-btn">
         <i class="fas fa-download"></i>
         Certificate
     </a>
-
 </div>
-
-
 <div class="stats">
-
     <div class="stat-card">
         <i class="fas fa-file-circle-question"></i>
         <h2>{{ total_tests or 0 }}</h2>
         <p>Mock Tests</p>
     </div>
-
-
     <div class="stat-card">
         <i class="fas fa-trophy"></i>
         <h2>{{ best_score or 0 }}</h2>
         <p>Best Score</p>
     </div>
-
-
     <div class="stat-card">
         <i class="fas fa-book"></i>
         <h2>{{ materials or 0 }}</h2>
         <p>Study Materials</p>
     </div>
-
 </div>
-
-
-
 <!-- Features Cards -->
-
 <div class="cards">
-
     <div class="card">
         <i class="fas fa-book-open"></i>
         <h2>Courses</h2>
         <p>Explore Java, Python, HTML, CSS and Full Stack courses.</p>
         <a href="/courses">View</a>
     </div>
-
-
     <div class="card">
         <i class="fas fa-clipboard-check"></i>
         <h2>Mock Test</h2>
         <p>Practice coding and technical MCQ tests for placement preparation.</p>
         <a href="/mock_test">View</a>
     </div>
-
-
     <div class="card">
         <i class="fas fa-user-tie"></i>
         <h2>Interview Questions</h2>
         <p>Java, DBMS, OS and HR questions with answers.</p>
         <a href="/interview_questions">View</a>
     </div>
-
-
     <div class="card">
         <i class="fas fa-comments"></i>
         <h2>Communication</h2>
         <p>Improve English speaking and communication.</p>
         <a href="/communication">View</a>
     </div>
-
-
     <div class="card">
         <i class="fas fa-file-lines"></i>
         <h2>Resume Builder</h2>
         <p>Create and download professional resume.</p>
         <a href="/resume_builder">Build Resume</a>
     </div>
-
-
     <div class="card">
         <i class="fas fa-trophy"></i>
         <h2>Leaderboard</h2>
         <p>Check your rank among students.</p>
         <a href="/leaderboard">View</a>
     </div>
-
 </div>
-
-
 {% endblock %}
-
-
-
 {% block css %}
-
 <style>
-
 .dashboard-header{
     display:flex;
     justify-content:space-between;
@@ -117,12 +79,9 @@
     flex-wrap:wrap;
     gap:20px;
 }
-
 .dashboard-header h1{
     color:#1e293b;
 }
-
-
 .certificate-btn{
     background:#2563eb;
     color:white;
@@ -130,16 +89,12 @@
     border-radius:10px;
     text-decoration:none;
 }
-
-
 .stats{
     display:grid;
     grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
     gap:20px;
     margin-bottom:40px;
 }
-
-
 .stat-card{
     background:white;
     padding:30px;
@@ -147,21 +102,15 @@
     text-align:center;
     box-shadow:0 5px 20px rgba(0,0,0,0.08);
 }
-
-
 .stat-card i{
     font-size:35px;
     color:#2563eb;
 }
-
-
 .cards{
     display:grid;
     grid-template-columns:repeat(auto-fit,minmax(270px,1fr));
     gap:25px;
 }
-
-
 .card{
     background:white;
     padding:35px;
@@ -170,19 +119,13 @@
     box-shadow:0 5px 20px rgba(0,0,0,0.08);
     transition:0.3s;
 }
-
-
 .card:hover{
     transform:translateY(-10px);
 }
-
-
 .card i{
     font-size:45px;
     color:#2563eb;
 }
-
-
 .card a{
     background:#2563eb;
     color:white;
@@ -190,7 +133,5 @@
     border-radius:10px;
     text-decoration:none;
 }
-
 </style>
-
 {% endblock %}
