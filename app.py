@@ -60,6 +60,11 @@ google = oauth.register(
         "scope": "openid email profile"
     }
 )
+
+@app.route("/login/google")
+def google_login():
+    redirect_uri = url_for("google_callback", _external=True)
+    return google.authorize_redirect(redirect_uri)
 # ---------------- HOME ----------------
 @app.route('/')
 def home():
@@ -144,7 +149,101 @@ def google_callback():
     flash("Google Login Successful!", "success")
 
     return redirect(url_for("dashboard"))
+@app.route("/login/google/callback")
+def google_callback():
 
+    token = google.authorize_access_token()
+
+    user = token.get("userinfo")
+
+    if not user:
+        flash("Google Login Failed")
+        return redirect(url_for("login"))
+
+    name = user.get("name")
+    email = user.get("email")
+    picture = user.get("picture")
+    google_id = user.get("sub")
+    verified = user.get("email_verified")
+
+    conn = get_db_connection()
+    cur = conn.cursor()
+
+    # Check existing user
+    cur.execute(
+        "SELECT * FROM users WHERE email=%s",
+        (email,)
+    )
+
+    existing = cur.fetchone()
+
+    if existing:
+
+        cur.execute("""
+        UPDATE users
+        SET
+            google_id=%s,
+            profile_pic=%s,
+            email_verified=%s,
+            login_type='google'
+        WHERE email=%s
+        """,
+        (
+            google_id,
+            picture,
+            verified,
+            email
+        ))
+
+        conn.commit()
+
+        session["user_id"] = existing["id"]
+        session["name"] = existing["name"]
+        session["email"] = existing["email"]
+        session["profile_pic"] = picture
+
+    else:
+
+        password = bcrypt.generate_password_hash(
+            secrets.token_hex(16)
+        ).decode("utf-8")
+
+        cur.execute("""
+        INSERT INTO users
+        (
+            name,
+            email,
+            password,
+            google_id,
+            profile_pic,
+            email_verified,
+            login_type
+        )
+        VALUES
+        (%s,%s,%s,%s,%s,%s,'google')
+        """,
+        (
+            name,
+            email,
+            password,
+            google_id,
+            picture,
+            verified
+        ))
+
+        conn.commit()
+
+        user_id = cur.lastrowid
+
+        session["user_id"] = user_id
+        session["name"] = name
+        session["email"] = email
+        session["profile_pic"] = picture
+
+    cur.close()
+    conn.close()
+
+    return redirect(url_for("dashboard"))
 # ---------------- SIGNUP ----------------
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
