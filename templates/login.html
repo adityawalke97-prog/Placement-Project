@@ -85,6 +85,60 @@
             text-align:center;
             margin-bottom:15px;
         }
+        .divider{
+    display:flex;
+    align-items:center;
+    margin:25px 0;
+}
+
+.divider::before,
+.divider::after{
+    content:"";
+    flex:1;
+    height:1px;
+    background:#ddd;
+}
+
+.divider span{
+    margin:0 15px;
+    color:#666;
+    font-weight:600;
+    font-size:14px;
+}
+
+.google-btn{
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:12px;
+
+    padding:13px;
+
+    background:#fff;
+    border:1px solid #dadce0;
+    border-radius:8px;
+
+    text-decoration:none;
+    color:#444;
+    font-weight:600;
+    font-size:15px;
+
+    transition:.3s;
+}
+
+.google-btn img{
+    width:22px;
+    height:22px;
+}
+
+.google-btn:hover{
+    background:#f8f9fa;
+    border-color:#4285F4;
+    color:#4285F4;
+    transform:translateY(-2px);
+    box-shadow:0 6px 15px rgba(0,0,0,.08);
+}
     </style>
 </head>
 <body>
@@ -105,20 +159,30 @@
 
     <form action="/login" method="POST">
 
-        <label>Email</label>
-        <input type="email" name="email" required>
+    <label>Email</label>
+    <input type="email" name="email" required>
 
-        <label>Password</label>
-        <input type="password" name="password" required>
+    <label>Password</label>
+    <input type="password" name="password" required>
 
-        <button type="submit">Login</button>
+    <button type="submit">Login</button>
 
-    </form>
+</form>
 
-    <p>
-        Don't have an account?
-        <a href="/signup">Create Account</a>
-    </p>
+<div class="divider">
+    <span>OR</span>
+</div>
+
+<a href="{{ url_for('google_login') }}" class="google-btn">
+    <img src="https://developers.google.com/identity/images/g-logo.png"
+         alt="Google">
+    Continue with Google
+</a>
+
+<p>
+    Don't have an account?
+    <a href="/signup">Create Account</a>
+</p>
 
 </div>
 
