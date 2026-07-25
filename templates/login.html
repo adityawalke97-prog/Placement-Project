@@ -1,191 +1,188 @@
+{% extends "layout.html" %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Placement Training Portal{% endblock %}</title>
+{% block title %}Login{% endblock %}
 
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='css/style.css') }}">
+{% block content %}
 
-    <style>
-        *{
-            margin:0;
-            padding:0;
-            box-sizing:border-box;
-            font-family:Arial, sans-serif;
-        }
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='css/login.css') }}">
 
-        body{
-            background:#f4f6f9;
-            display:flex;
-            justify-content:center;
-            align-items:center;
-            height:100vh;
-        }
+<div class="login-page">
 
-        .container{
-            width:400px;
-            background:#fff;
-            padding:40px;
-            border-radius:10px;
-            box-shadow:0 0 15px rgba(0,0,0,0.1);
-        }
+    <!-- Left Section -->
+    <div class="login-left">
 
-        h1{
-            text-align:center;
-            color:#007bff;
-            margin-bottom:30px;
-        }
+        <div class="brand">
 
-        label{
-            display:block;
-            margin-top:15px;
-            font-weight:bold;
-        }
+            <div class="brand-logo">
+                🎓
+            </div>
 
-        input{
-            width:100%;
-            padding:12px;
-            margin-top:5px;
-            border:1px solid #ccc;
-            border-radius:5px;
-            font-size:15px;
-        }
+            <h1>Placement Training Portal</h1>
 
-        button{
-            width:100%;
-            padding:12px;
-            margin-top:25px;
-            background:#007bff;
-            color:white;
-            border:none;
-            border-radius:5px;
-            cursor:pointer;
-            font-size:16px;
-        }
+            <p>
+                Learn • Practice • Crack Your Dream Job
+            </p>
 
-        button:hover{
-            background:#0056b3;
-        }
+        </div>
 
-        p{
-            text-align:center;
-            margin-top:20px;
-        }
+        <div class="feature-list">
 
-        a{
-            color:#007bff;
-            text-decoration:none;
-        }
+            <div class="feature-item">
+                <i class="fas fa-circle-check"></i>
+                <span>1000+ Mock Tests</span>
+            </div>
 
-        .flash{
-            color:red;
-            text-align:center;
-            margin-bottom:15px;
-        }
-        .divider{
-    display:flex;
-    align-items:center;
-    margin:25px 0;
-}
+            <div class="feature-item">
+                <i class="fas fa-circle-check"></i>
+                <span>Interview Questions</span>
+            </div>
 
-.divider::before,
-.divider::after{
-    content:"";
-    flex:1;
-    height:1px;
-    background:#ddd;
-}
+            <div class="feature-item">
+                <i class="fas fa-circle-check"></i>
+                <span>Resume Builder</span>
+            </div>
 
-.divider span{
-    margin:0 15px;
-    color:#666;
-    font-weight:600;
-    font-size:14px;
-}
+            <div class="feature-item">
+                <i class="fas fa-circle-check"></i>
+                <span>AI Performance Analysis</span>
+            </div>
 
-.google-btn{
-    width:100%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:12px;
+            <div class="feature-item">
+                <i class="fas fa-circle-check"></i>
+                <span>Placement Dashboard</span>
+            </div>
 
-    padding:13px;
+        </div>
 
-    background:#fff;
-    border:1px solid #dadce0;
-    border-radius:8px;
+    </div>
 
-    text-decoration:none;
-    color:#444;
-    font-weight:600;
-    font-size:15px;
 
-    transition:.3s;
-}
+    <!-- Right Section -->
+    <div class="login-right">
 
-.google-btn img{
-    width:22px;
-    height:22px;
-}
+        <div class="login-card">
 
-.google-btn:hover{
-    background:#f8f9fa;
-    border-color:#4285F4;
-    color:#4285F4;
-    transform:translateY(-2px);
-    box-shadow:0 6px 15px rgba(0,0,0,.08);
-}
-    </style>
-</head>
-<body>
+            <h2>Welcome Back 👋</h2>
 
-<div class="container">
+            <p class="subtitle">
+                Login to continue your placement journey
+            </p>
 
-    <h1>Login</h1>
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="flash-message">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
 
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            {% for message in messages %}
-                <div class="flash">
-                    {{ message }}
+            <!-- Google Login -->
+
+            <a href="{{ url_for('google_login') }}" class="google-btn">
+
+                <img src="https://developers.google.com/identity/images/g-logo.png">
+
+                Continue with Google
+
+            </a>
+
+            <div class="divider">
+
+                <span>OR</span>
+
+            </div>
+
+            <!-- Email Login -->
+
+            <form action="/login" method="POST">
+
+                <div class="input-group">
+
+                    <label>Email Address</label>
+
+                    <div class="input-box">
+
+                        <i class="fas fa-envelope"></i>
+
+                        <input
+                            type="email"
+                            name="email"
+                            placeholder="Enter your email"
+                            required>
+
+                    </div>
+
                 </div>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
 
-    <form action="/login" method="POST">
+                <div class="input-group">
 
-    <label>Email</label>
-    <input type="email" name="email" required>
+                    <label>Password</label>
 
-    <label>Password</label>
-    <input type="password" name="password" required>
+                    <div class="input-box">
 
-    <button type="submit">Login</button>
+                        <i class="fas fa-lock"></i>
 
-</form>
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            placeholder="Enter password"
+                            required>
 
-<div class="divider">
-    <span>OR</span>
+                        <i class="fas fa-eye toggle-password"
+                           onclick="togglePassword()"></i>
+
+                    </div>
+
+                </div>
+
+                <div class="login-options">
+
+                    <label class="remember">
+
+                        <input type="checkbox">
+
+                        Remember Me
+
+                    </label>
+
+                    <a href="/forgot_password">
+
+                        Forgot Password?
+
+                    </a>
+
+                </div>
+
+                <button class="login-btn">
+
+                    Login
+
+                </button>
+
+            </form>
+
+            <div class="bottom-links">
+
+                Don't have an account?
+
+                <a href="/signup">
+
+                    Create Account
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
 </div>
 
-<a href="{{ url_for('google_login') }}" class="google-btn">
-    <img src="https://developers.google.com/identity/images/g-logo.png"
-         alt="Google">
-    Continue with Google
-</a>
+<script src="{{ url_for('static', filename='js/login.js') }}"></script>
 
-<p>
-    Don't have an account?
-    <a href="/signup">Create Account</a>
-</p>
-
-</div>
-
-</body>
-</html>
-
+{% endblock %}
