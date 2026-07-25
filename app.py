@@ -8,7 +8,8 @@ from flask import (
     send_file,
     Response
 )
-
+from authlib.integrations.flask_client import OAuth
+from dotenv import load_dotenv
 from flask_bcrypt import Bcrypt
 import pymysql
 import os
@@ -44,12 +45,105 @@ def get_db_connection():
         cursorclass=pymysql.cursors.DictCursor
     )
 
+# ---------------- GOOGLE OAUTH ---------------- #
 
+from authlib.integrations.flask_client import OAuth
+
+oauth = OAuth(app)
+
+google = oauth.register(
+    name="google",
+    client_id=os.getenv("GOOGLE_CLIENT_ID"),
+    client_secret=os.getenv("GOOGLE_CLIENT_SECRET"),
+    server_metadata_url="https://accounts.google.com/.well-known/openid-configuration",
+    client_kwargs={
+        "scope": "openid email profile"
+    }
+)
 # ---------------- HOME ----------------
 @app.route('/')
 def home():
     return render_template('index.html')
+@app.route("/google/callback")
+def google_callback():
+    token = google.authorize_access_token()
 
+    user = token.get("userinfo")
+
+    if not user:
+        user = google.userinfo()
+
+    name = user["name"]
+    email = user["email"]
+    picture = user["picture"]
+    google_id = user["sub"]
+    verified = user["email_verified"]
+
+    conn = get_db_connection()
+    cur = conn.cursor()
+
+    cur.execute("SELECT * FROM users WHERE email=%s", (email,))
+    existing_user = cur.fetchone()
+
+    if existing_user:
+        # Existing user update
+        cur.execute("""
+            UPDATE users
+            SET
+                google_id=%s,
+                profile_pic=%s,
+                email_verified=%s,
+                login_type='google'
+            WHERE email=%s
+        """, (
+            google_id,
+            picture,
+            verified,
+            email
+        ))
+
+        user_id = existing_user["id"]
+
+    else:
+        # New user create
+        cur.execute("""
+            INSERT INTO users
+            (
+                name,
+                email,
+                password,
+                google_id,
+                profile_pic,
+                email_verified,
+                login_type
+            )
+            VALUES
+            (%s,%s,%s,%s,%s,%s,'google')
+        """, (
+            name,
+            email,
+            "",
+            google_id,
+            picture,
+            verified
+        ))
+
+        user_id = cur.lastrowid
+
+    conn.commit()
+
+    session["user_id"] = user_id
+    session["name"] = name
+    session["email"] = email
+    session["profile_pic"] = picture
+    session["login_type"] = "google"
+
+    cur.close()
+    conn.close()
+
+    flash("Google Login Successful!", "success")
+
+    return redirect(url_for("dashboard"))
 
 # ---------------- SIGNUP ----------------
 @app.route("/signup", methods=["GET", "POST"])
