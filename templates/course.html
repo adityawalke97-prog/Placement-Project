@@ -1,167 +1,428 @@
-{% extends 'layout.html' %}
+{% extends "layout.html" %}
 
 {% block title %}
-{{ course_name }} | Learning Portal
+{{ course_name }} Learning
 {% endblock %}
 
 
+{% block css %}
+
+<style>
+
+*{
+box-sizing:border-box;
+}
+
+
+.course-wrapper{
+
+max-width:1200px;
+margin:auto;
+padding:25px;
+
+font-family:
+'Segoe UI',
+sans-serif;
+
+}
+
+
+/* HEADER */
+
+.course-header{
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+
+background:
+linear-gradient(
+135deg,
+#2563eb,
+#06b6d4
+);
+
+color:white;
+
+padding:30px;
+
+border-radius:25px;
+
+box-shadow:
+0 15px 40px #0003;
+
+}
+
+
+.course-header h1{
+
+font-size:38px;
+margin:0;
+
+}
+
+
+.course-header p{
+
+opacity:.9;
+font-size:18px;
+
+}
+
+
+
+/* STATS */
+
+
+.stats{
+
+display:flex;
+gap:15px;
+
+}
+
+
+.stat{
+
+background:white;
+
+color:#111827;
+
+padding:15px 20px;
+
+border-radius:18px;
+
+min-width:110px;
+
+text-align:center;
+
+}
+
+
+.stat b{
+
+display:block;
+
+font-size:28px;
+
+color:#2563eb;
+
+}
+
+
+.stat span{
+
+font-size:13px;
+
+color:#6b7280;
+
+}
+
+
+
+/* PROGRESS */
+
+
+.progress-card{
+
+margin-top:25px;
+
+background:white;
+
+padding:25px;
+
+border-radius:22px;
+
+box-shadow:
+0 10px 30px #0002;
+
+}
+
+
+.progress-title{
+
+display:flex;
+
+justify-content:space-between;
+
+font-size:18px;
+
+font-weight:600;
+
+}
+
+
+.progress-container{
+
+height:15px;
+
+background:#e5e7eb;
+
+border-radius:20px;
+
+overflow:hidden;
+
+margin-top:15px;
+
+}
+
+
+.progress-fill{
+
+height:100%;
+
+width:0%;
+
+background:
+linear-gradient(
+90deg,
+#2563eb,
+#10b981
+);
+
+transition:.5s;
+
+}
+
+
+
+/* LEARNING */
+
+
+.learning-box{
+
+margin-top:25px;
+
+background:white;
+
+padding:30px;
+
+border-radius:25px;
+
+box-shadow:
+0 10px 30px #0002;
+
+}
+
+
+
+.day-title{
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+}
+
+
+.day-badge{
+
+background:#2563eb;
+
+color:white;
+
+padding:10px 18px;
+
+border-radius:20px;
+
+}
+
+
+.bookmark-btn{
+
+border:none;
+
+background:#fef3c7;
+
+padding:12px 20px;
+
+border-radius:15px;
+
+cursor:pointer;
+
+}
+
+
+
+.notes{
+
+margin-top:20px;
+
+font-size:17px;
+
+line-height:1.8;
+
+color:#374151;
+
+}
+
+
+
+
+/* TASK */
+
+
+.task-box{
+
+margin-top:30px;
+
+background:#f9fafb;
+
+padding:20px;
+
+border-radius:20px;
+
+}
+
+
+.task-box label{
+
+display:block;
+
+padding:12px;
+
+cursor:pointer;
+
+}
+
+
+
+/* BUTTONS */
+
+
+.buttons{
+
+display:flex;
+
+gap:15px;
+
+margin-top:25px;
+
+}
+
+
+.btn{
+
+padding:14px 25px;
+
+border:none;
+
+border-radius:15px;
+
+cursor:pointer;
+
+font-weight:600;
+
+}
+
+
+.next{
+
+background:#2563eb;
+
+color:white;
+
+}
+
+
+.prev{
+
+background:#6b7280;
+
+color:white;
+
+}
+
+
+.quiz{
+
+background:#7c3aed;
+
+color:white;
+
+}
+
+
+.download{
+
+background:#059669;
+
+color:white;
+
+}
+
+
+
+</style>
+
+{% endblock %}
 {% block content %}
 
-<div class="lms-container">
+<div class="course-wrapper">
 
 
-<!-- ================= HERO SECTION ================= -->
+<!-- COURSE HEADER -->
 
-<section class="course-hero">
-
-    <div class="hero-left">
-
-        <div class="course-tag">
-            🚀 Premium Course
-        </div>
-
-        <h1>
-            {{ course_name }}
-        </h1>
-
-        <p>
-            Master {{ course_name }} with practical coding,
-            projects and interview preparation.
-        </p>
-
-
-        <div class="hero-buttons">
-
-            <button class="continue-btn" onclick="nextDay()">
-                ▶ Continue Learning
-            </button>
-
-
-            <button class="outline-btn" onclick="toggleDarkMode()">
-                🌙 Dark Mode
-            </button>
-
-        </div>
-
-
-    </div>
-
-
-
-    <div class="hero-right">
-
-
-        <div class="course-image">
-
-            💻
-
-        </div>
-
-
-    </div>
-
-
-</section>
-
-
-
-
-
-<!-- ================= STUDENT STATS ================= -->
-
-
-<section class="stats-grid">
-
-
-<div class="stat-card">
-
-<span>
-🔥
-</span>
+<div class="course-header">
 
 <div>
-<h3 id="streak">
-0
-</h3>
+
+<h1>
+{{ course_name }} 🚀
+</h1>
 
 <p>
-Day Streak
+Master {{ course_name }} with practical learning
 </p>
 
 </div>
 
 
-</div>
+<div class="stats">
 
 
+<div class="stat">
 
-
-
-<div class="stat-card">
+<b id="xp">
+250
+</b>
 
 <span>
-⭐
-</span>
-
-<div>
-
-<h3 id="xp">
-0
-</h3>
-
-<p>
 XP Points
-</p>
-
-</div>
-
-</div>
-
-
-
-
-
-
-<div class="stat-card">
-
-<span>
-🏆
 </span>
 
-<div>
+</div>
 
-<h3 id="level">
+
+
+<div class="stat">
+
+<b id="level">
 1
-</h3>
-
-<p>
-Current Level
-</p>
-
-</div>
-
-</div>
-
-
-
-
-
-
-<div class="stat-card">
+</b>
 
 <span>
-📚
+Level
 </span>
 
-<div>
+</div>
 
-<h3 id="completed">
-0
-</h3>
 
-<p>
-Completed
-</p>
+
+<div class="stat">
+
+<b id="streak">
+1
+</b>
+
+<span>
+Day Streak
+</span>
+
+</div>
+
 
 </div>
 
@@ -169,27 +430,21 @@ Completed
 
 
 
-</section>
 
 
+<!-- PROGRESS -->
 
-
-
-
-<!-- ================= PROGRESS ================= -->
-
-
-<section class="progress-card">
+<div class="progress-card">
 
 
 <div class="progress-title">
 
-<h2>
-Course Progress
-</h2>
+<span>
+Learning Progress
+</span>
 
 
-<span id="progress-text">
+<span id="progressText">
 0%
 </span>
 
@@ -198,91 +453,79 @@ Course Progress
 
 
 
-<div class="progress-track">
+<div class="progress-container">
 
-<div id="progress-bar">
+<div 
+id="progressBar"
+class="progress-fill">
 
 </div>
 
 </div>
 
 
-
-<div class="progress-info">
-
-
-<span>
-Day <b id="current-day">1</b>
-</span>
-
-
-<span>
-Total {{day_count}} Days
-</span>
+<p>
+Complete lessons and unlock next chapters 🔓
+</p>
 
 
 </div>
 
 
 
-</section>
 
 
 
+<!-- MAIN LEARNING -->
+
+<div class="learning-box">
 
 
 
+<div class="day-title">
 
 
-
-<!-- ================= MAIN AREA ================= -->
-
-<div class="learning-layout">
-
-
-
-
-
-<!-- LEFT CONTENT -->
-
-<div class="lesson-area">
-
-
-
-
-
-<div class="lesson-header">
-
-
-<div>
-
-<span class="day-pill" id="day-tag">
+<span 
+class="day-badge"
+id="dayNumber">
 
 Day 1
 
 </span>
 
 
-<h2 id="day-title">
-
-Loading Topic...
-
-</h2>
-
-
-</div>
-
-
 
 <button 
 class="bookmark-btn"
-onclick="bookmarkTopic()">
+onclick="bookmarkLesson()">
 
 ⭐ Bookmark
 
 </button>
 
 
+</div>
+
+
+
+
+
+<h2 id="topicTitle">
+
+Loading Topic...
+
+</h2>
+
+
+
+
+
+<div 
+id="lessonContent"
+class="notes">
+
+
+Loading lesson...
 
 </div>
 
@@ -292,76 +535,22 @@ onclick="bookmarkTopic()">
 
 
 
-<div id="day-notes" class="lesson-content">
+<!-- TASK SECTION -->
 
 
-Loading course content...
-
-
-</div>
-
-
-
-
-
-
-
-
-<!-- CODE PRACTICE -->
-
-<div class="practice-box">
+<div class="task-box">
 
 
 <h3>
-💻 Practice Area
-</h3>
-
-
-<textarea 
-id="code-editor"
-placeholder="Write your code here...">
-
-</textarea>
-
-
-<button onclick="runCode()">
-
-▶ Run Code
-
-</button>
-
-
-
-<pre id="output-box">
-
-Output will appear here...
-
-</pre>
-
-
-</div>
-
-
-
-
-
-
-
-<!-- DAILY CHECKLIST -->
-
-
-<div class="task-section">
-
-
-<h3>
-Today's Goals ✅
+Today's Tasks ✅
 </h3>
 
 
 
 <label>
 
-<input type="checkbox"
+<input 
+type="checkbox"
 class="task">
 
 Understand Concept
@@ -372,22 +561,23 @@ Understand Concept
 
 <label>
 
-<input type="checkbox"
+<input 
+type="checkbox"
 class="task">
 
-Practice Coding
+Write Practice Code
 
 </label>
-
 
 
 
 <label>
 
-<input type="checkbox"
+<input 
+type="checkbox"
 class="task">
 
-Solve Interview Questions
+Solve Interview Question
 
 </label>
 
@@ -402,173 +592,16 @@ Solve Interview Questions
 
 
 
-<div class="lesson-actions">
 
+<!-- ACTION BUTTONS -->
 
-<button onclick="downloadNotes()">
 
-📄 Download Notes
-
-</button>
-
-
-
-<button onclick="startQuiz()">
-
-📝 Take Quiz
-
-</button>
-
-
-<button onclick="showInterview()">
-
-🎯 Interview Questions
-
-</button>
-
-
-</div>
-
-
-
-
-
-
-</div>
-
-
-
-
-
-
-
-
-
-<!-- RIGHT SIDEBAR -->
-
-
-<aside class="course-sidebar">
-
-
-
-
-
-<div class="sidebar-card">
-
-
-<h3>
-📌 Course Menu
-</h3>
-
-
-<ul id="chapter-list">
-
-<li class="active">
-Day 1 Introduction
-</li>
-
-
-<li>
-Day 2 Variables
-</li>
-
-
-<li>
-Day 3 Operators
-</li>
-
-
-</ul>
-
-
-</div>
-
-
-
-
-
-
-
-<div class="sidebar-card">
-
-
-<h3>
-🏅 Achievements
-</h3>
-
-
-
-<div class="badge">
-
-🔥 First Day
-
-</div>
-
-
-<div class="badge">
-
-⭐ 100 XP
-
-</div>
-
-
-<div class="badge">
-
-🏆 Course Master
-
-</div>
-
-
-
-</div>
-
-
-
-
-
-<div class="sidebar-card">
-
-
-<h3>
-🔖 Bookmarks
-</h3>
-
-
-<div id="bookmark-list">
-
-No bookmarks
-
-</div>
-
-
-</div>
-
-
-
-
-</aside>
-
-
-
-</div>
-
-
-
-
-
-
-
-
-
-<!-- ================= NAVIGATION ================= -->
-
-
-<div class="navigation-buttons">
+<div class="buttons">
 
 
 <button 
-id="prev-btn"
-onclick="prevDay()">
+class="btn prev"
+onclick="previousDay()">
 
 ⬅ Previous
 
@@ -577,13 +610,34 @@ onclick="prevDay()">
 
 
 <button 
-id="next-btn"
-onclick="nextDay()">
+class="btn download"
+onclick="downloadNotes()">
 
-Next Chapter ➡
+📄 Notes
 
 </button>
 
+
+
+
+<button 
+class="btn quiz"
+onclick="startQuiz()">
+
+📝 Quiz
+
+</button>
+
+
+
+
+<button 
+class="btn next"
+onclick="nextDay()">
+
+Next ➡
+
+</button>
 
 
 </div>
@@ -593,30 +647,29 @@ Next Chapter ➡
 
 
 
-
-
-
-<!-- ================= CERTIFICATE ================= -->
-
-
+<!-- CERTIFICATE -->
 
 <div 
-id="certificate-box"
-class="certificate hidden">
+id="certificate"
+style="display:none;
+margin-top:30px;
+text-align:center;">
 
 
 <h2>
-🎉 Congratulations!
+🏆 Congratulations
 </h2>
 
 
 <p>
-You have completed {{course_name}}
+You completed {{course_name}}
 </p>
 
 
 
-<button onclick="generateCertificate()">
+<button
+class="btn download"
+onclick="generateCertificate()">
 
 Download Certificate
 
@@ -627,16 +680,18 @@ Download Certificate
 
 
 
+</div>
 
 
 
 
 
-<!-- ================= AI ASSISTANT ================= -->
+
+<!-- AI ASSISTANT -->
 
 
-<button 
-class="ai-floating"
+<button
+class="ai-button"
 onclick="openAI()">
 
 🤖 Ask AI
@@ -646,43 +701,64 @@ onclick="openAI()">
 
 
 
-
 <div 
-id="ai-box"
-class="ai-box hidden">
+id="aiBox"
+style="
+display:none;
+position:fixed;
+right:25px;
+bottom:90px;
+background:white;
+width:330px;
+padding:20px;
+border-radius:20px;
+box-shadow:0 10px 40px #0004;
+">
 
 
-<div class="ai-header">
+<h3>
+🤖 AI Assistant
 
-AI Course Assistant
-
-<button onclick="closeAI()">
+<span 
+onclick="closeAI()"
+style="cursor:pointer">
 
 ✖
 
-</button>
+</span>
 
+</h3>
+
+
+
+<div 
+id="aiReply">
+
+Hello 👋  
+Ask your doubt.
 
 </div>
 
 
 
 
-<div id="ai-response">
-
-Ask your doubt...
-
-</div>
-
-
-
-<input 
-id="ai-question"
-placeholder="Ask anything...">
-
+<input
+id="aiQuestion"
+placeholder="Ask question..."
+style="
+width:100%;
+padding:10px;
+margin-top:10px;
+border-radius:10px;
+border:1px solid #ddd;
+">
 
 
-<button onclick="askAI()">
+
+<button
+onclick="askAI()"
+class="btn next"
+style="margin-top:10px;width:100%;">
 
 Send
 
@@ -695,20 +771,1109 @@ Send
 
 
 
-
 </div>
 
 
-
 {% endblock %}
-
-
-
 {% block scripts %}
 
-<script src="{{ url_for('static',filename='js/course.js') }}"></script>
+<script>
 
-{% endblock %}
-{% block css %}
-<link rel="stylesheet" href="{{ url_for('static',filename='css/course.css') }}">
+
+const courseName = "{{ course_name }}";
+
+const totalDays = Number("{{ day_count }}") || 30;
+
+
+
+let currentDay =
+Number(
+localStorage.getItem(courseName+"_day")
+) || 1;
+
+
+
+let xp =
+Number(
+localStorage.getItem(courseName+"_xp")
+) || 250;
+
+
+
+let streak =
+Number(
+localStorage.getItem(courseName+"_streak")
+) || 1;
+
+
+
+let bookmarks =
+JSON.parse(
+localStorage.getItem(courseName+"_bookmarks")
+) || [];
+
+
+
+
+
+/*
+ COURSE CONTENT DATABASE
+*/
+
+
+const lessons = {
+
+
+1:{
+
+title:"Introduction & Setup",
+
+content:`
+
+<h3>
+Welcome to ${courseName}
+</h3>
+
+<p>
+Today you will understand the course roadmap.
+</p>
+
+
+<ul>
+
+<li>
+Install required tools
+</li>
+
+<li>
+Understand basics
+</li>
+
+<li>
+Create first practice program
+</li>
+
+</ul>
+
+`
+
+},
+
+
+
+
+2:{
+
+title:"Variables and Data Types",
+
+content:`
+
+<h3>
+Variables
+</h3>
+
+
+<p>
+Learn how data is stored inside programs.
+</p>
+
+
+<ul>
+
+<li>
+Variables
+</li>
+
+<li>
+Data Types
+</li>
+
+<li>
+Memory Concept
+</li>
+
+</ul>
+
+`
+
+},
+
+
+
+
+3:{
+
+title:"Operators and Conditions",
+
+content:`
+
+<h3>
+Decision Making
+</h3>
+
+
+<p>
+Control program flow using operators.
+</p>
+
+
+<ul>
+
+<li>
+Arithmetic Operators
+</li>
+
+<li>
+Logical Operators
+</li>
+
+<li>
+If Else Statement
+</li>
+
+
+</ul>
+
+
+`
+
+},
+
+
+
+
+4:{
+
+title:"Loops",
+
+content:`
+
+<h3>
+Iteration Concept
+</h3>
+
+
+<p>
+Repeat tasks using loops.
+</p>
+
+
+<ul>
+
+<li>
+For Loop
+</li>
+
+<li>
+While Loop
+</li>
+
+<li>
+Nested Loop
+</li>
+
+</ul>
+
+`
+
+},
+
+
+
+
+5:{
+
+title:"Functions",
+
+content:`
+
+<h3>
+Reusable Code
+
+</h3>
+
+
+<p>
+Create modular and clean programs.
+</p>
+
+
+<ul>
+
+<li>
+Function Creation
+</li>
+
+<li>
+Parameters
+</li>
+
+<li>
+Return Values
+</li>
+
+</ul>
+
+
+`
+
+}
+
+
+};
+
+
+
+
+
+
+function loadLesson(){
+
+
+
+// Save Current Day
+
+localStorage.setItem(
+courseName+"_day",
+currentDay
+);
+
+
+
+
+
+// Progress
+
+let percentage =
+Math.floor(
+(currentDay / totalDays)*100
+);
+
+
+
+document.getElementById(
+"progressBar"
+).style.width =
+percentage+"%";
+
+
+
+document.getElementById(
+"progressText"
+).innerHTML =
+percentage+"%";
+
+
+
+
+
+document.getElementById(
+"dayNumber"
+).innerHTML =
+"Day "+currentDay;
+
+
+
+
+
+// Load Topic
+
+
+if(lessons[currentDay]){
+
+
+document.getElementById(
+"topicTitle"
+).innerHTML =
+lessons[currentDay].title;
+
+
+
+document.getElementById(
+"lessonContent"
+).innerHTML =
+lessons[currentDay].content;
+
+
+
+}
+
+else{
+
+
+document.getElementById(
+"topicTitle"
+).innerHTML =
+"Advanced Practice Day "+currentDay;
+
+
+
+document.getElementById(
+"lessonContent"
+).innerHTML =
+
+`
+
+<h3>
+Real World Practice
+</h3>
+
+
+<p>
+Solve projects and interview problems.
+</p>
+
+`;
+
+
+
+}
+
+
+
+
+
+
+// Stats
+
+
+document.getElementById(
+"xp"
+).innerHTML=xp;
+
+
+
+document.getElementById(
+"streak"
+).innerHTML=streak;
+
+
+
+document.getElementById(
+"level"
+).innerHTML=
+
+Math.floor(xp/500)+1;
+
+
+
+}
+
+
+
+
+
+
+/*
+ NEXT DAY
+*/
+
+
+function nextDay(){
+
+
+
+if(currentDay < totalDays){
+
+
+currentDay++;
+
+
+increaseXP();
+
+
+
+loadLesson();
+
+
+
+}
+
+
+else{
+
+
+document.getElementById(
+"certificate"
+).style.display="block";
+
+
+alert(
+"🎉 Course Completed"
+);
+
+
+}
+
+}
+
+
+
+
+
+/*
+ PREVIOUS DAY
+*/
+
+
+function previousDay(){
+
+
+if(currentDay>1){
+
+
+currentDay--;
+
+
+loadLesson();
+
+
+}
+
+
+}
+
+
+
+
+
+
+
+/*
+ XP SYSTEM
+*/
+
+
+function increaseXP(){
+
+
+xp += 50;
+
+
+streak +=1;
+
+
+
+localStorage.setItem(
+courseName+"_xp",
+xp
+);
+
+
+
+localStorage.setItem(
+courseName+"_streak",
+streak
+);
+
+
+
+}
+
+
+
+
+
+/*
+ TASK BONUS
+*/
+
+
+document
+.querySelectorAll(".task")
+.forEach(task=>{
+
+
+task.addEventListener(
+"change",
+function(){
+
+
+
+if(this.checked){
+
+
+xp +=10;
+
+
+
+localStorage.setItem(
+courseName+"_xp",
+xp
+);
+
+
+
+document.getElementById(
+"xp"
+).innerHTML=xp;
+
+
+
+}
+
+
+
+});
+
+
+});
+
+
+
+
+
+
+
+/*
+ BOOKMARK
+*/
+
+
+function bookmarkLesson(){
+
+
+let title =
+lessons[currentDay]?.title
+||
+"Day "+currentDay;
+
+
+
+if(
+!bookmarks.includes(title)
+){
+
+
+bookmarks.push(title);
+
+
+alert(
+"⭐ Added to Bookmark"
+);
+
+
+}
+
+else{
+
+
+alert(
+"Already Bookmarked"
+);
+
+
+}
+
+
+
+localStorage.setItem(
+
+courseName+"_bookmarks",
+
+JSON.stringify(bookmarks)
+
+);
+
+
+
+}
+
+
+
+
+
+
+/*
+ NOTES DOWNLOAD
+*/
+
+
+function downloadNotes(){
+
+
+
+let title =
+document.getElementById(
+"topicTitle"
+).innerText;
+
+
+
+let notes =
+document.getElementById(
+"lessonContent"
+).innerText;
+
+
+
+let text =
+
+`
+
+${courseName}
+
+${title}
+
+
+${notes}
+
+
+Generated by Placement Training Portal
+
+`;
+
+
+
+
+let file =
+new Blob(
+[text],
+{
+type:"text/plain"
+}
+);
+
+
+
+let link =
+document.createElement("a");
+
+
+
+link.href =
+URL.createObjectURL(file);
+
+
+
+link.download =
+title+".txt";
+
+
+
+link.click();
+
+
+
+}
+
+
+
+
+
+
+/*
+ QUIZ
+*/
+
+
+function startQuiz(){
+
+
+window.location.href =
+"/quiz/"+courseName+"/"+currentDay;
+
+
+
+}
+
+
+
+
+
+
+loadLesson();
+
+
+
+</script>
+/* =========================
+   AI ASSISTANT
+========================= */
+
+
+function openAI(){
+
+
+document.getElementById(
+"aiBox"
+).style.display="block";
+
+
+}
+
+
+
+function closeAI(){
+
+
+document.getElementById(
+"aiBox"
+).style.display="none";
+
+
+}
+
+
+
+
+
+function askAI(){
+
+
+let question =
+document.getElementById(
+"aiQuestion"
+).value.trim();
+
+
+
+if(question==""){
+
+alert(
+"Please enter your question"
+);
+
+return;
+
+}
+
+
+
+
+let reply =
+document.getElementById(
+"aiReply"
+);
+
+
+
+reply.innerHTML =
+
+`
+<b>You:</b>
+${question}
+
+<br><br>
+
+<span>
+🤖 AI:
+</span>
+
+<br>
+
+Keep practicing this topic daily.
+Understand the concept,
+write code examples and solve interview questions.
+
+`;
+
+
+
+document.getElementById(
+"aiQuestion"
+).value="";
+
+
+}
+
+
+
+
+
+
+/* =========================
+   CERTIFICATE GENERATOR
+========================= */
+
+
+
+function generateCertificate(){
+
+
+let certificateText =
+
+`
+
+================================
+
+CERTIFICATE OF COMPLETION
+
+================================
+
+
+Congratulations!
+
+
+This certificate is awarded to
+
+
+Student
+
+
+For successfully completing
+
+
+${courseName}
+
+
+Placement Training Portal
+
+
+
+Date:
+${new Date().toLocaleDateString()}
+
+
+
+================================
+
+`;
+
+
+
+
+
+let blob =
+new Blob(
+[
+certificateText
+],
+{
+type:
+"text/plain"
+}
+);
+
+
+
+
+let link =
+document.createElement("a");
+
+
+
+link.href =
+URL.createObjectURL(blob);
+
+
+
+link.download =
+courseName+"_Certificate.txt";
+
+
+
+link.click();
+
+
+
+}
+
+
+
+
+
+
+
+/* =========================
+   SAVE PROGRESS DATABASE
+========================= */
+
+
+
+function saveProgress(){
+
+
+
+fetch(
+"/save-progress",
+{
+
+method:"POST",
+
+headers:
+{
+
+"Content-Type":
+"application/json"
+
+},
+
+
+body:
+JSON.stringify(
+{
+
+course:
+courseName,
+
+
+day:
+currentDay,
+
+
+xp:
+xp,
+
+
+streak:
+streak
+
+}
+
+)
+
+}
+
+)
+
+.then(
+response=>response.json()
+)
+
+.then(
+data=>{
+
+
+console.log(
+"Progress Saved",
+data
+);
+
+
+}
+
+)
+
+.catch(
+error=>{
+
+
+console.log(
+"Save Error",
+error
+);
+
+
+}
+
+);
+
+
+
+}
+
+
+
+
+
+
+
+/* =========================
+   AUTO SAVE
+========================= */
+
+
+setInterval(
+function(){
+
+
+saveProgress();
+
+
+},
+30000
+);
+
+
+
+
+
+
+/* =========================
+   BUTTON ANIMATION
+========================= */
+
+
+document
+.querySelectorAll(".btn")
+.forEach(
+button=>{
+
+
+button.addEventListener(
+"mouseenter",
+()=>{
+
+
+button.style.transform=
+"translateY(-3px)";
+
+
+button.style.transition=
+".3s";
+
+
+}
+
+);
+
+
+
+button.addEventListener(
+"mouseleave",
+()=>{
+
+
+button.style.transform=
+"translateY(0)";
+
+
+}
+
+);
+
+
+
+}
+);
+
+
+
+
+
+/* =========================
+   COMPLETE COURSE CHECK
+========================= */
+
+
+function checkCourseComplete(){
+
+
+if(
+currentDay>=totalDays
+){
+
+
+document.getElementById(
+"certificate"
+).style.display=
+"block";
+
+
+}
+
+
+
+}
+
+
+
+
+checkCourseComplete();
+
+
+
+</script>
+
 {% endblock %}
