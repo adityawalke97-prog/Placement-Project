@@ -1,8 +1,196 @@
 {% extends 'layout.html' %}
-
 {% block title %}{{ course_name }} Course{% endblock %}
-
 {% block content %}
+<div class="course-wrapper">
+
+<!-- Top Course Header -->
+<div class="course-top">
+    <div>
+        <h1>{{ course_name }} 🚀</h1>
+        <p>Master {{ course_name }} with daily practical learning</p>
+    </div>
+
+    <div class="student-stats">
+        <div class="stat-card">
+            🔥
+            <span>
+                <b id="streak">7</b>
+                <small>Day Streak</small>
+            </span>
+        </div>
+
+        <div class="stat-card">
+            ⭐
+            <span>
+                <b id="xp">250</b>
+                <small>XP Points</small>
+            </span>
+        </div>
+
+        <div class="stat-card">
+            🏆
+            <span>
+                <b id="level">3</b>
+                <small>Level</small>
+            </span>
+        </div>
+    </div>
+</div>
+
+
+<!-- Progress -->
+<div class="progress-box">
+
+<div class="progress-header">
+<h3>Your Learning Progress</h3>
+<span id="progress-text">0%</span>
+</div>
+
+<div class="progress-bar">
+<div id="progress"></div>
+</div>
+
+<p>
+Complete daily tasks and unlock next chapters 🔓
+</p>
+
+</div>
+
+
+<!-- Main Learning Card -->
+
+<div class="learning-card">
+
+<div class="day-header">
+
+<span id="day-tag">
+Day 1
+</span>
+
+<button onclick="bookmarkTopic()" class="bookmark">
+⭐ Bookmark
+</button>
+
+</div>
+
+
+<h2 id="day-title">
+Loading Topic...
+</h2>
+
+
+<div id="day-notes" class="notes-area">
+
+</div>
+
+
+<!-- Daily Task -->
+
+<div class="task-box">
+
+<h3>Today's Task ✅</h3>
+
+<label>
+<input type="checkbox">
+ Understand Concept
+</label>
+
+<label>
+<input type="checkbox">
+ Write Practice Code
+</label>
+
+<label>
+<input type="checkbox">
+ Solve Interview Question
+</label>
+
+</div>
+
+
+<div class="action-buttons">
+
+<button onclick="downloadNotes()" class="notes-btn">
+📄 Download Notes
+</button>
+
+<button onclick="startQuiz()" class="quiz-btn">
+📝 Start Quiz
+</button>
+
+</div>
+
+
+<div id="certificate-box" class="certificate-box hidden">
+
+<h2>🏆 Congratulations!</h2>
+
+<p>
+You have completed {{course_name}}
+</p>
+
+<button onclick="generateCertificate()">
+Download Certificate
+</button>
+
+</div>
+
+
+<!-- AI Popup -->
+
+<div id="ai-chat" class="ai-chat hidden">
+
+<div class="ai-header">
+🤖 AI Course Assistant
+<span onclick="closeAI()">✖</span>
+</div>
+
+
+<div id="chat-message">
+
+Hello! Ask your {{course_name}} doubts.
+
+</div>
+
+
+<input id="ai-input"
+placeholder="Ask your doubt...">
+
+
+<button onclick="askAI()">
+Send
+</button>
+
+
+</div>
+
+
+</div>
+
+
+<!-- Navigation -->
+
+<div class="navigation">
+
+<button id="btn-prev" onclick="prevDay()">
+⬅ Previous
+</button>
+
+<button id="btn-next" onclick="nextDay()">
+Next Day ➡
+</button>
+
+</div>
+
+
+<!-- AI Button -->
+
+<button onclick="openAI()" class="ai-button">
+🤖 Ask AI Doubt
+</button>
+
+
+</div>
 {% block css %}
 <style>
 
@@ -285,196 +473,6 @@ display:none;
 
 </style>
 {% endblock %}
-<div class="course-wrapper">
-
-<!-- Top Course Header -->
-<div class="course-top">
-    <div>
-        <h1>{{ course_name }} 🚀</h1>
-        <p>Master {{ course_name }} with daily practical learning</p>
-    </div>
-
-    <div class="student-stats">
-        <div class="stat-card">
-            🔥
-            <span>
-                <b id="streak">7</b>
-                <small>Day Streak</small>
-            </span>
-        </div>
-
-        <div class="stat-card">
-            ⭐
-            <span>
-                <b id="xp">250</b>
-                <small>XP Points</small>
-            </span>
-        </div>
-
-        <div class="stat-card">
-            🏆
-            <span>
-                <b id="level">3</b>
-                <small>Level</small>
-            </span>
-        </div>
-    </div>
-</div>
-
-
-<!-- Progress -->
-<div class="progress-box">
-
-<div class="progress-header">
-<h3>Your Learning Progress</h3>
-<span id="progress-text">0%</span>
-</div>
-
-<div class="progress-bar">
-<div id="progress"></div>
-</div>
-
-<p>
-Complete daily tasks and unlock next chapters 🔓
-</p>
-
-</div>
-
-
-<!-- Main Learning Card -->
-
-<div class="learning-card">
-
-<div class="day-header">
-
-<span id="day-tag">
-Day 1
-</span>
-
-<button onclick="bookmarkTopic()" class="bookmark">
-⭐ Bookmark
-</button>
-
-</div>
-
-
-<h2 id="day-title">
-Loading Topic...
-</h2>
-
-
-<div id="day-notes" class="notes-area">
-
-</div>
-
-
-<!-- Daily Task -->
-
-<div class="task-box">
-
-<h3>Today's Task ✅</h3>
-
-<label>
-<input type="checkbox">
- Understand Concept
-</label>
-
-<label>
-<input type="checkbox">
- Write Practice Code
-</label>
-
-<label>
-<input type="checkbox">
- Solve Interview Question
-</label>
-
-</div>
-
-
-<div class="action-buttons">
-
-<button onclick="downloadNotes()" class="notes-btn">
-📄 Download Notes
-</button>
-
-<button onclick="startQuiz()" class="quiz-btn">
-📝 Start Quiz
-</button>
-
-</div>
-
-
-<div id="certificate-box" class="certificate-box hidden">
-
-<h2>🏆 Congratulations!</h2>
-
-<p>
-You have completed {{course_name}}
-</p>
-
-<button onclick="generateCertificate()">
-Download Certificate
-</button>
-
-</div>
-
-
-<!-- AI Popup -->
-
-<div id="ai-chat" class="ai-chat hidden">
-
-<div class="ai-header">
-🤖 AI Course Assistant
-<span onclick="closeAI()">✖</span>
-</div>
-
-
-<div id="chat-message">
-
-Hello! Ask your {{course_name}} doubts.
-
-</div>
-
-
-<input id="ai-input"
-placeholder="Ask your doubt...">
-
-
-<button onclick="askAI()">
-Send
-</button>
-
-
-</div>
-
-
-</div>
-
-
-<!-- Navigation -->
-
-<div class="navigation">
-
-<button id="btn-prev" onclick="prevDay()">
-⬅ Previous
-</button>
-
-<button id="btn-next" onclick="nextDay()">
-Next Day ➡
-</button>
-
-</div>
-
-
-<!-- AI Button -->
-
-<button onclick="openAI()" class="ai-button">
-🤖 Ask AI Doubt
-</button>
-
-
-</div>
 {% block scripts %}
 <script>
 
