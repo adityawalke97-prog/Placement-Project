@@ -81,20 +81,20 @@ def home():
 
 @app.route("/login/google/callback")
 def google_callback():
-
     token = google.authorize_access_token()
-
-    user = token.get("userinfo")
+    user = google.parse_id_token(token)
 
     if not user:
         flash("Google Login Failed")
         return redirect(url_for("login"))
 
-    name = user.get("name")
-    email = user.get("email")
+    name = user["name"]
+    email = user["email"]
     picture = user.get("picture")
-    google_id = user.get("sub")
-    verified = user.get("email_verified")
+    google_id = user["sub"]
+    verified = user.get("email_verified", False)
+
+    # baaki tumhara existing database code
 
     conn = get_db_connection()
     cur = conn.cursor()
