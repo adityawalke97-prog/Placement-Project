@@ -9,7 +9,6 @@ from flask import (
     Response,
     url_for
 )
-import secret
 from authlib.integrations.flask_client import OAuth
 from dotenv import load_dotenv
 from flask_bcrypt import Bcrypt
