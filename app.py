@@ -406,7 +406,8 @@ def dashboard():
     )
 # ---------------- INTERVIEW QUESTIONS ----------------
 
-from flask import render_template, requestimport math
+from flask import render_template, requestimport
+import math
 
 @app.route("/interview_questions")def interview_questions():
 
