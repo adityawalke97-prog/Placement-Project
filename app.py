@@ -118,8 +118,6 @@ def home():
 @app.route("/login/google")
 def google_login():
 
-    # Fresh Session
-    session.clear()
     session.permanent = True
 
     redirect_uri = url_for(
@@ -155,8 +153,20 @@ def google_callback():
 
     try:
         token = google.authorize_access_token()
+        print(token)        
 
-        user = google.parse_id_token(token)
+userinfo = token.get("userinfo")
+
+if not userinfo:
+    userinfo = google.get(
+        "https://openidconnect.googleapis.com/v1/userinfo"
+    ).json()
+
+name = userinfo["name"]
+email = userinfo["email"]
+picture = userinfo.get("picture")
+google_id = userinfo["sub"]
+verified = userinfo.get("email_verified", False)
 
         if not user:
             flash("Google Login Failed", "danger")
