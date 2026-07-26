@@ -411,57 +411,56 @@ import math
 
 @app.route("/interview_questions")
 def interview_questions():
-
-page = request.args.get("page",1,type=int)
-
-per_page = 20
-offset = (page-1)*per_page
-
-conn = get_db_connection()
-cur = conn.cursor()
-
-
-cur.execute("""
-    SELECT COUNT(*) AS total
-    FROM interview_questions
-""")
-
-result = cur.fetchone()
-
-total_questions = result["total"]
-
-
-total_pages = math.ceil(
-    total_questions/per_page
-)
-
-
-cur.execute("""
-    SELECT
-        id,
-        question,
-        answer,
-        category
-    FROM interview_questions
-    ORDER BY id
-    LIMIT %s OFFSET %s
-""",(per_page,offset))
-
-
-questions = cur.fetchall()
-
-
-cur.close()
-conn.close()
-
-
-return render_template(
-    "interview_questions.html",
-    questions=questions,
-    page=page,
-    total_pages=total_pages
-)
-
+    page = request.args.get("page",1,type=int)
+    
+    per_page = 20
+    offset = (page-1)*per_page
+    
+    conn = get_db_connection()
+    cur = conn.cursor()
+    
+    
+    cur.execute("""
+        SELECT COUNT(*) AS total
+        FROM interview_questions
+    """)
+    
+    result = cur.fetchone()
+    
+    total_questions = result["total"]
+    
+    
+    total_pages = math.ceil(
+        total_questions/per_page
+    )
+    
+    
+    cur.execute("""
+        SELECT
+            id,
+            question,
+            answer,
+            category
+        FROM interview_questions
+        ORDER BY id
+        LIMIT %s OFFSET %s
+    """,(per_page,offset))
+    
+    
+    questions = cur.fetchall()
+    
+    
+    cur.close()
+    conn.close()
+    
+    
+    return render_template(
+        "interview_questions.html",
+        questions=questions,
+        page=page,
+        total_pages=total_pages
+    )
+    
 from flask import url_for
 
 @app.route('/mock_test')def mock_test():
