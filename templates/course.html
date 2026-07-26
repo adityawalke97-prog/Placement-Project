@@ -670,26 +670,37 @@ loadDay();
 
 
 
+function saveProgress(){
+
+fetch("/save-progress",
+{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+
+course:courseName,
+day:currentDay,
+xp:xp,
+streak:streak
+
+})
+
+})
+
+}
 function completeTask(){
 
 xp+=50;
-
 streak++;
 
-localStorage.setItem(
-courseName+"_xp",
-xp
-);
+saveProgress();
 
-
-localStorage.setItem(
-courseName+"_streak",
-streak
-);
-
+document.getElementById("xp").innerHTML=xp;
 
 }
-
 
 
 function bookmarkTopic(){
