@@ -1,879 +1,711 @@
 {% extends 'layout.html' %}
-{% block title %}{{ course_name }} Course{% endblock %}
+
+{% block title %}
+{{ course_name }} | Learning Portal
+{% endblock %}
+
+
 {% block content %}
-<div class="course-wrapper">
 
-<!-- Top Course Header -->
-<div class="course-top">
-    <div>
-        <h1>{{ course_name }} 🚀</h1>
-        <p>Master {{ course_name }} with daily practical learning</p>
+<div class="lms-container">
+
+
+<!-- ================= HERO SECTION ================= -->
+
+<section class="course-hero">
+
+    <div class="hero-left">
+
+        <div class="course-tag">
+            🚀 Premium Course
+        </div>
+
+        <h1>
+            {{ course_name }}
+        </h1>
+
+        <p>
+            Master {{ course_name }} with practical coding,
+            projects and interview preparation.
+        </p>
+
+
+        <div class="hero-buttons">
+
+            <button class="continue-btn" onclick="nextDay()">
+                ▶ Continue Learning
+            </button>
+
+
+            <button class="outline-btn" onclick="toggleDarkMode()">
+                🌙 Dark Mode
+            </button>
+
+        </div>
+
+
     </div>
 
-    <div class="student-stats">
-        <div class="stat-card">
-            🔥
-            <span>
-                <b id="streak">7</b>
-                <small>Day Streak</small>
-            </span>
+
+
+    <div class="hero-right">
+
+
+        <div class="course-image">
+
+            💻
+
         </div>
 
-        <div class="stat-card">
-            ⭐
-            <span>
-                <b id="xp">250</b>
-                <small>XP Points</small>
-            </span>
-        </div>
 
-        <div class="stat-card">
-            🏆
-            <span>
-                <b id="level">3</b>
-                <small>Level</small>
-            </span>
-        </div>
     </div>
-</div>
 
 
-<!-- Progress -->
-<div class="progress-box">
+</section>
 
-<div class="progress-header">
-<h3>Your Learning Progress</h3>
-<span id="progress-text">0%</span>
-</div>
 
-<div class="progress-bar">
-<div id="progress"></div>
-</div>
+
+
+
+<!-- ================= STUDENT STATS ================= -->
+
+
+<section class="stats-grid">
+
+
+<div class="stat-card">
+
+<span>
+🔥
+</span>
+
+<div>
+<h3 id="streak">
+0
+</h3>
 
 <p>
-Complete daily tasks and unlock next chapters 🔓
+Day Streak
 </p>
 
 </div>
 
 
-<!-- Main Learning Card -->
+</div>
 
-<div class="learning-card">
 
-<div class="day-header">
 
-<span id="day-tag">
-Day 1
+
+
+<div class="stat-card">
+
+<span>
+⭐
 </span>
 
-<button onclick="bookmarkTopic()" class="bookmark">
-⭐ Bookmark
-</button>
+<div>
+
+<h3 id="xp">
+0
+</h3>
+
+<p>
+XP Points
+</p>
+
+</div>
 
 </div>
 
 
-<h2 id="day-title">
-Loading Topic...
+
+
+
+
+<div class="stat-card">
+
+<span>
+🏆
+</span>
+
+<div>
+
+<h3 id="level">
+1
+</h3>
+
+<p>
+Current Level
+</p>
+
+</div>
+
+</div>
+
+
+
+
+
+
+<div class="stat-card">
+
+<span>
+📚
+</span>
+
+<div>
+
+<h3 id="completed">
+0
+</h3>
+
+<p>
+Completed
+</p>
+
+</div>
+
+</div>
+
+
+
+</section>
+
+
+
+
+
+
+<!-- ================= PROGRESS ================= -->
+
+
+<section class="progress-card">
+
+
+<div class="progress-title">
+
+<h2>
+Course Progress
 </h2>
 
 
-<div id="day-notes" class="notes-area">
+<span id="progress-text">
+0%
+</span>
+
 
 </div>
 
 
-<!-- Daily Task -->
 
-<div class="task-box">
+<div class="progress-track">
 
-<h3>Today's Task ✅</h3>
+<div id="progress-bar">
 
-<label>
-<input type="checkbox">
- Understand Concept
-</label>
-
-<label>
-<input type="checkbox">
- Write Practice Code
-</label>
-
-<label>
-<input type="checkbox">
- Solve Interview Question
-</label>
+</div>
 
 </div>
 
 
-<div class="action-buttons">
 
-<button onclick="downloadNotes()" class="notes-btn">
+<div class="progress-info">
+
+
+<span>
+Day <b id="current-day">1</b>
+</span>
+
+
+<span>
+Total {{day_count}} Days
+</span>
+
+
+</div>
+
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<!-- ================= MAIN AREA ================= -->
+
+<div class="learning-layout">
+
+
+
+
+
+<!-- LEFT CONTENT -->
+
+<div class="lesson-area">
+
+
+
+
+
+<div class="lesson-header">
+
+
+<div>
+
+<span class="day-pill" id="day-tag">
+
+Day 1
+
+</span>
+
+
+<h2 id="day-title">
+
+Loading Topic...
+
+</h2>
+
+
+</div>
+
+
+
+<button 
+class="bookmark-btn"
+onclick="bookmarkTopic()">
+
+⭐ Bookmark
+
+</button>
+
+
+
+</div>
+
+
+
+
+
+
+
+<div id="day-notes" class="lesson-content">
+
+
+Loading course content...
+
+
+</div>
+
+
+
+
+
+
+
+
+<!-- CODE PRACTICE -->
+
+<div class="practice-box">
+
+
+<h3>
+💻 Practice Area
+</h3>
+
+
+<textarea 
+id="code-editor"
+placeholder="Write your code here...">
+
+</textarea>
+
+
+<button onclick="runCode()">
+
+▶ Run Code
+
+</button>
+
+
+
+<pre id="output-box">
+
+Output will appear here...
+
+</pre>
+
+
+</div>
+
+
+
+
+
+
+
+<!-- DAILY CHECKLIST -->
+
+
+<div class="task-section">
+
+
+<h3>
+Today's Goals ✅
+</h3>
+
+
+
+<label>
+
+<input type="checkbox"
+class="task">
+
+Understand Concept
+
+</label>
+
+
+
+<label>
+
+<input type="checkbox"
+class="task">
+
+Practice Coding
+
+</label>
+
+
+
+
+<label>
+
+<input type="checkbox"
+class="task">
+
+Solve Interview Questions
+
+</label>
+
+
+
+</div>
+
+
+
+
+
+
+
+
+<div class="lesson-actions">
+
+
+<button onclick="downloadNotes()">
+
 📄 Download Notes
+
 </button>
 
-<button onclick="startQuiz()" class="quiz-btn">
-📝 Start Quiz
+
+
+<button onclick="startQuiz()">
+
+📝 Take Quiz
+
 </button>
+
+
+<button onclick="showInterview()">
+
+🎯 Interview Questions
+
+</button>
+
 
 </div>
 
 
-<div id="certificate-box" class="certificate-box hidden">
 
-<h2>🏆 Congratulations!</h2>
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+<!-- RIGHT SIDEBAR -->
+
+
+<aside class="course-sidebar">
+
+
+
+
+
+<div class="sidebar-card">
+
+
+<h3>
+📌 Course Menu
+</h3>
+
+
+<ul id="chapter-list">
+
+<li class="active">
+Day 1 Introduction
+</li>
+
+
+<li>
+Day 2 Variables
+</li>
+
+
+<li>
+Day 3 Operators
+</li>
+
+
+</ul>
+
+
+</div>
+
+
+
+
+
+
+
+<div class="sidebar-card">
+
+
+<h3>
+🏅 Achievements
+</h3>
+
+
+
+<div class="badge">
+
+🔥 First Day
+
+</div>
+
+
+<div class="badge">
+
+⭐ 100 XP
+
+</div>
+
+
+<div class="badge">
+
+🏆 Course Master
+
+</div>
+
+
+
+</div>
+
+
+
+
+
+<div class="sidebar-card">
+
+
+<h3>
+🔖 Bookmarks
+</h3>
+
+
+<div id="bookmark-list">
+
+No bookmarks
+
+</div>
+
+
+</div>
+
+
+
+
+</aside>
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+<!-- ================= NAVIGATION ================= -->
+
+
+<div class="navigation-buttons">
+
+
+<button 
+id="prev-btn"
+onclick="prevDay()">
+
+⬅ Previous
+
+</button>
+
+
+
+<button 
+id="next-btn"
+onclick="nextDay()">
+
+Next Chapter ➡
+
+</button>
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+<!-- ================= CERTIFICATE ================= -->
+
+
+
+<div 
+id="certificate-box"
+class="certificate hidden">
+
+
+<h2>
+🎉 Congratulations!
+</h2>
+
 
 <p>
 You have completed {{course_name}}
 </p>
 
+
+
 <button onclick="generateCertificate()">
+
 Download Certificate
+
 </button>
 
+
 </div>
 
 
-<!-- AI Popup -->
 
-<div id="ai-chat" class="ai-chat hidden">
+
+
+
+
+
+<!-- ================= AI ASSISTANT ================= -->
+
+
+<button 
+class="ai-floating"
+onclick="openAI()">
+
+🤖 Ask AI
+
+</button>
+
+
+
+
+
+<div 
+id="ai-box"
+class="ai-box hidden">
+
 
 <div class="ai-header">
-🤖 AI Course Assistant
-<span onclick="closeAI()">✖</span>
+
+AI Course Assistant
+
+<button onclick="closeAI()">
+
+✖
+
+</button>
+
+
 </div>
 
 
-<div id="chat-message">
 
-Hello! Ask your {{course_name}} doubts.
+
+<div id="ai-response">
+
+Ask your doubt...
 
 </div>
 
 
-<input id="ai-input"
-placeholder="Ask your doubt...">
+
+<input 
+id="ai-question"
+placeholder="Ask anything...">
+
 
 
 <button onclick="askAI()">
+
 Send
+
 </button>
 
 
 </div>
 
 
-</div>
 
 
-<!-- Navigation -->
-
-<div class="navigation">
-
-<button id="btn-prev" onclick="prevDay()">
-⬅ Previous
-</button>
-
-<button id="btn-next" onclick="nextDay()">
-Next Day ➡
-</button>
-
-</div>
-
-
-<!-- AI Button -->
-
-<button onclick="openAI()" class="ai-button">
-🤖 Ask AI Doubt
-</button>
 
 
 </div>
+
+
+
 {% endblock %}
-{% block css %}
-<style>
 
-.course-wrapper{
-max-width:1100px;
-margin:30px auto;
-padding:20px;
-font-family:Inter,sans-serif;
-}
 
 
-.course-top{
-display:flex;
-justify-content:space-between;
-align-items:center;
-gap:20px;
-}
-
-
-.course-top h1{
-font-size:35px;
-color:#111827;
-}
-
-
-.course-top p{
-color:#6b7280;
-}
-
-
-.student-stats{
-display:flex;
-gap:15px;
-}
-
-
-.stat-card{
-background:white;
-padding:15px;
-border-radius:18px;
-display:flex;
-gap:10px;
-align-items:center;
-box-shadow:0 8px 20px #0001;
-}
-
-
-.stat-card span{
-display:flex;
-flex-direction:column;
-}
-
-
-.stat-card small{
-color:#6b7280;
-}
-
-
-.progress-box,
-.learning-card{
-background:white;
-padding:25px;
-border-radius:22px;
-margin-top:25px;
-box-shadow:0 10px 30px #0001;
-}
-
-
-.progress-header{
-display:flex;
-justify-content:space-between;
-}
-
-
-.progress-bar{
-height:12px;
-background:#e5e7eb;
-border-radius:20px;
-overflow:hidden;
-}
-
-
-#progress{
-height:100%;
-width:0%;
-background:linear-gradient(90deg,#2563eb,#06b6d4);
-transition:.5s;
-}
-
-
-.day-header{
-display:flex;
-justify-content:space-between;
-}
-
-
-#day-tag{
-background:#2563eb;
-color:white;
-padding:8px 15px;
-border-radius:20px;
-}
-
-
-.bookmark{
-border:none;
-background:#fef3c7;
-padding:10px 15px;
-border-radius:12px;
-cursor:pointer;
-}
-
-
-.notes-area{
-font-size:18px;
-line-height:1.8;
-color:#374151;
-}
-
-
-.task-box{
-margin-top:25px;
-background:#f9fafb;
-padding:20px;
-border-radius:15px;
-}
-
-
-.task-box label{
-display:block;
-margin:12px 0;
-}
-
-
-.action-buttons{
-display:flex;
-gap:15px;
-margin-top:20px;
-}
-
-
-.action-buttons button,
-.navigation button{
-padding:14px 25px;
-border:none;
-border-radius:12px;
-cursor:pointer;
-font-weight:600;
-}
-
-
-.notes-btn{
-background:#10b981;
-color:white;
-}
-
-
-.quiz-btn{
-background:#7c3aed;
-color:white;
-}
-
-
-.navigation{
-display:flex;
-justify-content:space-between;
-margin-top:20px;
-}
-
-
-.navigation button{
-background:#2563eb;
-color:white;
-}
-
-
-.ai-button{
-position:fixed;
-right:30px;
-bottom:30px;
-background:#111827;
-color:white;
-border:none;
-padding:16px 25px;
-border-radius:50px;
-font-size:16px;
-cursor:pointer;
-}
-
-
-@media(max-width:800px){
-
-.course-top{
-flex-direction:column;
-}
-
-.student-stats{
-flex-wrap:wrap;
-}
-
-}
-
-
-
-.ai-chat{
-
-position:fixed;
-right:30px;
-bottom:90px;
-width:320px;
-background:white;
-border-radius:20px;
-box-shadow:0 10px 40px #0003;
-padding:15px;
-}
-
-
-.ai-header{
-
-display:flex;
-justify-content:space-between;
-font-weight:bold;
-padding-bottom:10px;
-}
-
-
-#ai-input{
-
-width:100%;
-padding:10px;
-margin-top:10px;
-border-radius:10px;
-border:1px solid #ddd;
-
-}
-
-
-.ai-chat button{
-
-margin-top:10px;
-width:100%;
-padding:10px;
-background:#2563eb;
-color:white;
-border:none;
-border-radius:10px;
-
-}
-
-
-.certificate-box{
-
-margin-top:20px;
-padding:25px;
-background:#ecfdf5;
-border-radius:20px;
-text-align:center;
-
-}
-
-
-.certificate-box button{
-
-background:#059669;
-color:white;
-border:none;
-padding:12px 20px;
-border-radius:10px;
-
-}
-
-
-.hidden{
-
-display:none;
-
-}
-
-
-
-</style>
-{% endblock %}
 {% block scripts %}
-<script>
 
-const totalDays = parseInt("{{ day_count }}") || 30;
-const courseName = "{{ course_name }}";
-
-let currentDay = Number(localStorage.getItem(courseName+"_day")) || 1;
-
-let xp = Number(localStorage.getItem(courseName+"_xp")) || 250;
-let streak = Number(localStorage.getItem(courseName+"_streak")) || 1;
-
-let bookmarks = JSON.parse(localStorage.getItem(courseName+"_bookmark")) || [];
-
-
-/* Course Content */
-
-const courseContentMap = {
-
-1:{
-title:"Introduction & Setup",
-html:`
-<h3>Welcome to ${courseName}</h3>
-<p>Today you will setup your environment and understand course roadmap.</p>
-
-<ul>
-<li>Install Required Software</li>
-<li>Understand Course Structure</li>
-<li>Create First Program</li>
-</ul>
-`
-},
-
-2:{
-title:"Variables and Data Types",
-html:`
-<p>Learn how data is stored and managed.</p>
-
-<ul>
-<li>Variables</li>
-<li>Primitive Data Types</li>
-<li>Memory Concepts</li>
-</ul>
-`
-},
-
-3:{
-title:"Operators & Control Flow",
-html:`
-<p>Control your program using logical decisions.</p>
-
-<ul>
-<li>Operators</li>
-<li>If Else</li>
-<li>Loops</li>
-</ul>
-`
-}
-
-};
-
-
-
-function loadDay(){
-
-localStorage.setItem(courseName+"_day",currentDay);
-
-
-let percent=Math.round((currentDay/totalDays)*100);
-
-document.getElementById("progress").style.width=
-percent+"%";
-
-document.getElementById("progress-text").innerHTML=
-percent+"%";
-
-
-document.getElementById("day-tag").innerHTML=
-"Day "+currentDay;
-
-
-
-if(courseContentMap[currentDay]){
-
-document.getElementById("day-title").innerHTML=
-courseContentMap[currentDay].title;
-
-document.getElementById("day-notes").innerHTML=
-courseContentMap[currentDay].html;
-
-}
-
-else{
-
-document.getElementById("day-title").innerHTML=
-"Advanced Topic - Day "+currentDay;
-
-
-document.getElementById("day-notes").innerHTML=
-`
-<p>
-Practice advanced concepts and solve real world problems.
-</p>
-`;
-
-}
-
-
-
-document.getElementById("xp").innerHTML=xp;
-
-document.getElementById("streak").innerHTML=streak;
-
-document.getElementById("level").innerHTML=
-Math.floor(xp/100)+1;
-
-
-
-document.getElementById("btn-prev").disabled=
-currentDay===1;
-
-
-if(currentDay===totalDays){
-
-document.getElementById("btn-next").innerHTML=
-"Complete Course 🏆";
-
-}
-
-else{
-
-document.getElementById("btn-next").innerHTML=
-"Next Day ➡";
-
-}
-
-
-}
-
-
-
-function nextDay(){
-
-if(currentDay < totalDays){
-
-
-currentDay++;
-
-completeTask();
-
-
-loadDay();
-
-
-}
-
-else{
-
-
-alert(
-"🎉 Congratulations! Course Completed"
-);
-
-
-xp+=500;
-
-localStorage.setItem(
-courseName+"_xp",
-xp
-);
-
-
-loadDay();
-
-}
-
-}
-
-
-
-
-function prevDay(){
-
-if(currentDay>1){
-
-currentDay--;
-
-loadDay();
-
-}
-
-}
-
-
-
-
-function saveProgress(){
-
-fetch("/save-progress",
-{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-
-body:JSON.stringify({
-
-course:courseName,
-day:currentDay,
-xp:xp,
-streak:streak
-
-})
-
-})
-
-}
-function completeTask(){
-
-xp+=50;
-streak++;
-
-saveProgress();
-
-document.getElementById("xp").innerHTML=xp;
-
-}
-
-
-function bookmarkTopic(){
-
-
-let title=
-courseContentMap[currentDay]?.title ||
-"Day "+currentDay;
-
-
-
-if(!bookmarks.includes(title)){
-
-bookmarks.push(title);
-
-
-alert(
-"⭐ Topic Added to Bookmark"
-);
-
-
-}
-
-else{
-
-
-alert(
-"Already Bookmarked"
-);
-
-
-}
-
-
-localStorage.setItem(
-
-courseName+"_bookmark",
-
-JSON.stringify(bookmarks)
-
-);
-
-
-}
-
-
-
-document.querySelectorAll(
-".task-box input"
-).forEach(item=>{
-
-
-item.addEventListener(
-"change",
-function(){
-
-
-if(this.checked){
-
-
-xp+=10;
-
-
-localStorage.setItem(
-courseName+"_xp",
-xp
-);
-
-
-document.getElementById("xp")
-.innerHTML=xp;
-
-
-}
-
-
-});
-
-
-});
-
-
-
-loadDay();
-function downloadNotes(){
-
-let title =
-document.getElementById("day-title").innerText;
-
-
-let content =
-document.getElementById("day-notes").innerText;
-
-
-let file =
-`
-${courseName}
-
-${title}
-
-${content}
-
-Generated from Placement Training Portal
-`;
-
-
-let blob =
-new Blob([file],
-{type:"text/plain"});
-
-
-let link =
-document.createElement("a");
-
-
-link.href =
-URL.createObjectURL(blob);
-link.download =
-title+".txt";
-link.click();
-}
-function startQuiz(){
-window.location.href =
-"/quiz/"+courseName+"/"+currentDay;
-}
-function openAI(){
-document
-.getElementById("ai-chat")
-.classList.remove("hidden");
-}
-function closeAI(){
-document
-.getElementById("ai-chat")
-.classList.add("hidden");
-}
-function askAI(){
-let question =
-document.getElementById("ai-input").value;
-if(question=="")
-return;
-document.getElementById("chat-message")
-.innerHTML=
-`
-<b>You:</b> ${question}
-<br><br>
-<b>AI:</b> 
-Practice this topic daily and check examples from your notes.
-`;
-document.getElementById("ai-input").value="";
-}
-function showCertificate(){
-document
-.getElementById("certificate-box")
-.classList.remove("hidden");
-}
-function generateCertificate(){
-let text=
-`
-CERTIFICATE OF COMPLETION
-Congratulations!
-You have successfully completed
-${courseName}
-Placement Training Portal
-`;
-let blob =
-new Blob([text],
-{type:"text/plain"});
-let a=document.createElement("a");
-a.href=
-URL.createObjectURL(blob);
-a.download=
-"Certificate.txt";
-a.click();
-}
-</script>
+<script src="{{ url_for('static',filename='js/course.js') }}"></script>
 
 {% endblock %}
