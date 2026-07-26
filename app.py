@@ -152,31 +152,21 @@ def session_check():
 def google_callback():
 
     try:
+
         token = google.authorize_access_token()
-        print(token)        
 
-userinfo = token.get("userinfo")
+        userinfo = token.get("userinfo")
 
-if not userinfo:
-    userinfo = google.get(
-        "https://openidconnect.googleapis.com/v1/userinfo"
-    ).json()
+        if not userinfo:
+            userinfo = google.get(
+                "https://openidconnect.googleapis.com/v1/userinfo"
+            ).json()
 
-name = userinfo["name"]
-email = userinfo["email"]
-picture = userinfo.get("picture")
-google_id = userinfo["sub"]
-verified = userinfo.get("email_verified", False)
-
-        if not user:
-            flash("Google Login Failed", "danger")
-            return redirect(url_for("login"))
-
-        name = user.get("name")
-        email = user.get("email")
-        picture = user.get("picture")
-        google_id = user.get("sub")
-        verified = user.get("email_verified", False)
+        name = userinfo["name"]
+        email = userinfo["email"]
+        picture = userinfo.get("picture")
+        google_id = userinfo["sub"]
+        verified = userinfo.get("email_verified", False)
 
         conn = get_db_connection()
         cur = conn.cursor()
@@ -190,8 +180,7 @@ verified = userinfo.get("email_verified", False)
 
         if existing:
 
-            cur.execute(
-                """
+            cur.execute("""
                 UPDATE users
                 SET
                     google_id=%s,
@@ -199,32 +188,27 @@ verified = userinfo.get("email_verified", False)
                     email_verified=%s,
                     login_type='google'
                 WHERE email=%s
-                """,
-                (
-                    google_id,
-                    picture,
-                    verified,
-                    email
-                )
-            )
+            """,(
+                google_id,
+                picture,
+                verified,
+                email
+            ))
 
             conn.commit()
 
-            session["user_id"] = existing["id"]
-            session["name"] = existing["name"]
-            session["email"] = existing["email"]
-            session["profile_pic"] = picture
+            session["user_id"]=existing["id"]
+            session["name"]=existing["name"]
+            session["email"]=existing["email"]
+            session["profile_pic"]=picture
 
         else:
 
-            random_password = secrets.token_hex(16)
+            password=secrets.token_hex(16)
 
-            hashed_password = bcrypt.generate_password_hash(
-                random_password
-            ).decode("utf-8")
+            password=bcrypt.generate_password_hash(password).decode()
 
-            cur.execute(
-                """
+            cur.execute("""
                 INSERT INTO users
                 (
                     name,
@@ -235,25 +219,22 @@ verified = userinfo.get("email_verified", False)
                     email_verified,
                     login_type
                 )
-                VALUES
-                (%s,%s,%s,%s,%s,%s,'google')
-                """,
-                (
-                    name,
-                    email,
-                    hashed_password,
-                    google_id,
-                    picture,
-                    verified
-                )
-            )
+                VALUES(%s,%s,%s,%s,%s,%s,'google')
+            """,(
+                name,
+                email,
+                password,
+                google_id,
+                picture,
+                verified
+            ))
 
             conn.commit()
 
-            session["user_id"] = cur.lastrowid
-            session["name"] = name
-            session["email"] = email
-            session["profile_pic"] = picture
+            session["user_id"]=cur.lastrowid
+            session["name"]=name
+            session["email"]=email
+            session["profile_pic"]=picture
 
         cur.close()
         conn.close()
@@ -261,8 +242,9 @@ verified = userinfo.get("email_verified", False)
         return redirect(url_for("dashboard"))
 
     except Exception as e:
-        print("GOOGLE LOGIN ERROR:", e)
-        flash("Google Login Failed.", "danger")
+
+        print("GOOGLE LOGIN ERROR:",e)
+        flash(str(e),"danger")
         return redirect(url_for("login"))
 # ---------------- SIGNUP ---------------- #
 
