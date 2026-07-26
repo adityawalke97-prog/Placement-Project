@@ -409,7 +409,8 @@ def dashboard():
 from flask import render_template, requestimport
 import math
 
-@app.route("/interview_questions")def interview_questions():
+@app.route("/interview_questions")
+def interview_questions():
 
 page = request.args.get("page",1,type=int)
 
