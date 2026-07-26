@@ -1560,13 +1560,69 @@ def download_history():
 # ==============================
 
 
-@app.route("/courses")
-def courses():
+
+@app.route("/quiz/<course>/<int:day>")
+def course_quiz(course,day):
+
 
     return render_template(
-        "course.html"
+
+        "quiz.html",
+
+        course=course,
+
+        day=day
+
+    )
+@app.route("/my-learning")
+def my_learning():
+
+
+    if "user_id" not in session:
+
+        return redirect("/login")
+
+
+
+    conn=get_db_connection()
+
+    cursor=conn.cursor(
+        pymysql.cursors.DictCursor
     )
 
+
+    cursor.execute(
+
+    """
+    SELECT *
+    FROM learning_progress
+    WHERE user_id=%s
+
+    """,
+
+    (
+    session["user_id"],
+    )
+
+    )
+
+
+    progress=cursor.fetchall()
+
+
+    cursor.close()
+
+    conn.close()
+
+
+
+    return render_template(
+
+        "my_learning.html",
+
+        progress=progress
+
+    )
 @app.route("/course/<course_name>")
 def course_page(course_name):
 
@@ -1644,49 +1700,118 @@ def course_page(course_name):
         day_count=len(content)
     )
 
-@app.route("/save-progress",methods=["POST"])
+@app.route("/save-progress", methods=["POST"])
 def save_progress():
 
-    data=request.json
+    if "user_id" not in session:
+        return {
+            "status":"error",
+            "message":"Login required"
+        },401
 
 
-    user_id=session["user_id"]
+    data = request.get_json()
 
 
-    conn=get_db_connection()
-    cursor=conn.cursor()
+    user_id = session["user_id"]
 
+    course = data.get("course")
 
-    cursor.execute("""
-    UPDATE course_progress
+    day = data.get("day",1)
 
-    SET current_day=%s,
-    xp=%s,
-    streak=%s
+    xp = data.get("xp",0)
 
-    WHERE user_id=%s
-    AND course_name=%s
-
-    """,
-    (
-    data["day"],
-    data["xp"],
-    data["streak"],
-    user_id,
-    data["course"]
-    ))
+    streak = data.get("streak",1)
 
 
 
-    conn.commit()
+    try:
 
-    cursor.close()
-    conn.close()
+        conn = get_db_connection()
+
+        cursor = conn.cursor()
 
 
-    return {
-        "status":"success"
-    }
+
+        sql = """
+
+        INSERT INTO learning_progress
+        (
+        user_id,
+        course,
+        day,
+        xp,
+        streak
+        )
+
+        VALUES
+        (%s,%s,%s,%s,%s)
+
+
+        ON DUPLICATE KEY UPDATE
+
+        day=%s,
+        xp=%s,
+        streak=%s
+
+        """
+
+
+
+        cursor.execute(
+            sql,
+            (
+
+            user_id,
+            course,
+            day,
+            xp,
+            streak,
+
+
+            day,
+            xp,
+            streak
+
+            )
+        )
+
+
+        conn.commit()
+
+
+
+        cursor.close()
+
+        conn.close()
+
+
+
+        return {
+
+            "status":"success",
+
+            "message":
+            "Progress saved"
+
+        }
+
+
+
+    except Exception as e:
+
+
+        print(e)
+
+
+        return {
+
+            "status":"error",
+
+            "message":
+            str(e)
+
+        },500
 
 @app.route("/courses/java")
 def java_course():
