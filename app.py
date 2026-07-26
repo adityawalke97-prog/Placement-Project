@@ -30,97 +30,117 @@ from reportlab.platypus import (
 )
 from reportlab.lib.styles import getSampleStyleSheet
 
-# ----------------------------------------------------
-# LOAD ENVIRONMENT
-# ----------------------------------------------------
+# --------------------------------------------------
+# LOAD ENV
+# --------------------------------------------------
 
 load_dotenv()
 
-# ----------------------------------------------------
+# --------------------------------------------------
 # FLASK APP
-# ----------------------------------------------------
+# --------------------------------------------------
 
 app = Flask(__name__)
 
-# SECRET KEY
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 if not SECRET_KEY:
-    raise RuntimeError("SECRET_KEY not found in Render Environment Variables.")
+    raise RuntimeError("SECRET_KEY not found.")
 
 app.secret_key = SECRET_KEY
 
-print("SECRET_KEY Loaded Successfully")
+app.wsgi_app = ProxyFix(
+    app.wsgi_app,
+    x_proto=1,
+    x_host=1
+)
 
-# Required for Render HTTPS
-app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
-
-# Session Configuration
 app.config.update(
+
     SECRET_KEY=SECRET_KEY,
+
     SESSION_COOKIE_SECURE=True,
+
     SESSION_COOKIE_HTTPONLY=True,
+
     SESSION_COOKIE_SAMESITE="Lax",
+
     PERMANENT_SESSION_LIFETIME=timedelta(days=7),
+
     PREFERRED_URL_SCHEME="https"
+
 )
 
 bcrypt = Bcrypt(app)
 
-# ----------------------------------------------------
+# --------------------------------------------------
 # DATABASE
-# ----------------------------------------------------
+# --------------------------------------------------
 
 def get_db_connection():
+
     return pymysql.connect(
+
         host=os.getenv("DB_HOST"),
+
         user=os.getenv("DB_USER"),
+
         password=os.getenv("DB_PASSWORD"),
+
         database=os.getenv("DB_NAME"),
-        port=int(os.getenv("DB_PORT", "4000")),
+
+        port=int(os.getenv("DB_PORT",4000)),
+
         ssl={
-            "ca": "/etc/ssl/certs/ca-certificates.crt"
+            "ca":"/etc/ssl/certs/ca-certificates.crt"
         },
+
         connect_timeout=30,
+
         cursorclass=pymysql.cursors.DictCursor
+
     )
 
-# ----------------------------------------------------
+# --------------------------------------------------
 # GOOGLE OAUTH
-# ----------------------------------------------------
+# --------------------------------------------------
 
 oauth = OAuth(app)
 
 google = oauth.register(
+
     name="google",
+
     client_id=os.getenv("GOOGLE_CLIENT_ID"),
+
     client_secret=os.getenv("GOOGLE_CLIENT_SECRET"),
+
     server_metadata_url="https://accounts.google.com/.well-known/openid-configuration",
+
     client_kwargs={
-        "scope": "openid email profile"
+        "scope":"openid email profile"
     }
+
 )
 
-# ----------------------------------------------------
+# --------------------------------------------------
 # HOME
-# ----------------------------------------------------
+# --------------------------------------------------
 
 @app.route("/")
 def home():
     return render_template("index.html")
 
-# ---------------- GOOGLE LOGIN ---------------- #
-
-# ----------------------------------------------------
+# --------------------------------------------------
 # GOOGLE LOGIN
-# ----------------------------------------------------
+# --------------------------------------------------
 
 @app.route("/login/google")
 def google_login():
 
-    session.permanent = True
+    session.permanent=True
 
-    redirect_uri = url_for(
+    redirect_uri=url_for(
         "google_callback",
         _external=True,
         _scheme="https"
@@ -128,71 +148,71 @@ def google_login():
 
     return google.authorize_redirect(redirect_uri)
 
-
-# ----------------------------------------------------
-# SESSION TEST
-# ----------------------------------------------------
-
-@app.route("/session-test")
-def session_test():
-    session["test"] = "working"
-    return "Session Saved"
-
-
-@app.route("/session-check")
-def session_check():
-    return str(session.get("test"))
-
-
-# ----------------------------------------------------
+# --------------------------------------------------
 # GOOGLE CALLBACK
-# ----------------------------------------------------
+# --------------------------------------------------
 
 @app.route("/login/google/callback")
 def google_callback():
 
     try:
 
-        token = google.authorize_access_token()
+        token=google.authorize_access_token()
 
-        userinfo = token.get("userinfo")
+        userinfo=token.get("userinfo")
 
         if not userinfo:
-            userinfo = google.get(
+
+            userinfo=google.get(
                 "https://openidconnect.googleapis.com/v1/userinfo"
             ).json()
 
-        name = userinfo["name"]
-        email = userinfo["email"]
-        picture = userinfo.get("picture")
-        google_id = userinfo["sub"]
-        verified = userinfo.get("email_verified", False)
+        name=userinfo["name"]
+        email=userinfo["email"]
+        picture=userinfo.get("picture")
+        google_id=userinfo["sub"]
+        verified=userinfo.get("email_verified",False)
 
-        conn = get_db_connection()
-        cur = conn.cursor()
+        conn=get_db_connection()
+        cur=conn.cursor()
 
         cur.execute(
             "SELECT * FROM users WHERE email=%s",
             (email,)
         )
 
-        existing = cur.fetchone()
+        existing=cur.fetchone()
 
         if existing:
 
             cur.execute("""
-                UPDATE users
-                SET
-                    google_id=%s,
-                    profile_pic=%s,
-                    email_verified=%s,
-                    login_type='google'
-                WHERE email=%s
-            """,(
-                google_id,
-                picture,
-                verified,
-                email
+
+            UPDATE users
+
+            SET
+
+            google_id=%s,
+
+            profile_pic=%s,
+
+            email_verified=%s,
+
+            login_type='google'
+
+            WHERE email=%s
+
+            """,
+
+            (
+
+            google_id,
+
+            picture,
+
+            verified,
+
+            email
+
             ))
 
             conn.commit()
@@ -204,29 +224,44 @@ def google_callback():
 
         else:
 
-            password=secrets.token_hex(16)
+            random_password=secrets.token_hex(16)
 
-            password=bcrypt.generate_password_hash(password).decode()
+            hashed_password=bcrypt.generate_password_hash(
+                random_password
+            ).decode()
 
             cur.execute("""
-                INSERT INTO users
-                (
-                    name,
-                    email,
-                    password,
-                    google_id,
-                    profile_pic,
-                    email_verified,
-                    login_type
-                )
-                VALUES(%s,%s,%s,%s,%s,%s,'google')
-            """,(
+
+            INSERT INTO users
+            (
                 name,
                 email,
                 password,
                 google_id,
-                picture,
-                verified
+                profile_pic,
+                email_verified,
+                login_type
+            )
+
+            VALUES
+            (%s,%s,%s,%s,%s,%s,'google')
+
+            """,
+
+            (
+
+            name,
+
+            email,
+
+            hashed_password,
+
+            google_id,
+
+            picture,
+
+            verified
+
             ))
 
             conn.commit()
@@ -239,328 +274,137 @@ def google_callback():
         cur.close()
         conn.close()
 
-        return redirect(url_for("dashboard"))
+        return redirect("/dashboard")
 
     except Exception as e:
 
         print("GOOGLE LOGIN ERROR:",e)
-        flash(str(e),"danger")
-        return redirect(url_for("login"))
-# ---------------- SIGNUP ---------------- #
 
-@app.route("/signup", methods=["GET", "POST"])
+        flash("Google Login Failed","danger")
+
+        return redirect("/login")
+
+# --------------------------------------------------
+# SIGNUP
+# --------------------------------------------------
+
+@app.route("/signup",methods=["GET","POST"])
 def signup():
 
-    if request.method == "POST":
+    if request.method=="POST":
 
-        name = request.form["name"]
-        email = request.form["email"]
-        password = request.form["password"]
+        name=request.form["name"]
+        email=request.form["email"]
+        password=request.form["password"]
 
-        conn = get_db_connection()
-        cur = conn.cursor()
+        conn=get_db_connection()
+        cur=conn.cursor()
 
         cur.execute(
             "SELECT id FROM users WHERE email=%s",
             (email,)
         )
 
-        existing = cur.fetchone()
+        if cur.fetchone():
 
-        if existing:
-            flash("Email already exists.", "danger")
+            flash("Email already exists","danger")
+
             cur.close()
             conn.close()
+
             return redirect("/login")
 
-        hashed_password = bcrypt.generate_password_hash(
+        password=bcrypt.generate_password_hash(
             password
-        ).decode("utf-8")
+        ).decode()
 
-        cur.execute(
-            "INSERT INTO users(name,email,password) VALUES(%s,%s,%s)",
-            (
-                name,
-                email,
-                hashed_password
-            )
-        )
+        cur.execute("""
+
+        INSERT INTO users
+        (name,email,password)
+
+        VALUES(%s,%s,%s)
+
+        """,
+
+        (
+
+        name,
+
+        email,
+
+        password
+
+        ))
 
         conn.commit()
 
         cur.close()
         conn.close()
 
-        flash("Account Created Successfully", "success")
+        flash("Account Created Successfully","success")
 
         return redirect("/login")
 
     return render_template("signup.html")
-# ---------------- LOGIN ----------------
-@app.route('/login', methods=['GET', 'POST'])
+
+# --------------------------------------------------
+# LOGIN
+# --------------------------------------------------
+
+@app.route("/login",methods=["GET","POST"])
 def login():
 
-    if request.method == 'POST':
+    if request.method=="POST":
 
-        email = request.form['email']
-        password = request.form['password']
+        email=request.form["email"]
+        password=request.form["password"]
 
-        conn = get_db_connection()
-        cur = conn.cursor()
+        conn=get_db_connection()
+        cur=conn.cursor()
 
-        try:
-            cur.execute("SELECT * FROM users WHERE email=%s", (email,))
-            user = cur.fetchone()
+        cur.execute(
+            "SELECT * FROM users WHERE email=%s",
+            (email,)
+        )
 
-            if user and bcrypt.check_password_hash(user['password'], password):
-                session['user_id'] = user['id']
-                session['name'] = user['name']
-                return redirect('/dashboard')
+        user=cur.fetchone()
 
-            flash("Invalid Email or Password", "danger")
+        cur.close()
+        conn.close()
 
-        finally:
-            cur.close()
-            conn.close()
+        if user and bcrypt.check_password_hash(
+            user["password"],
+            password
+        ):
 
-    return render_template('login.html')
+            session["user_id"]=user["id"]
+            session["name"]=user["name"]
+            session["email"]=user["email"]
 
-# ---------------- DASHBOARD ----------------
-@app.route("/")
+            return redirect("/dashboard")
+
+        flash("Invalid Email or Password","danger")
+
+    return render_template("login.html")
+
+# --------------------------------------------------
+# DASHBOARD
+# --------------------------------------------------
+
 @app.route("/dashboard")
 def dashboard():
+
     return render_template(
+
         "dashboard.html",
+
         logged_in=("user_id" in session),
+
         name=session.get("name")
+
     )
 # ---------------- INTERVIEW QUESTIONS ----------------
-from flask import render_template, request
-import math
-
-
-@app.route("/interview_questions")
-def interview_questions():
-
-    page = request.args.get("page",1,type=int)
-
-    per_page = 20
-    offset = (page-1)*per_page
-
-    conn = get_db_connection()
-    cur = conn.cursor()
-
-
-    cur.execute("""
-        SELECT COUNT(*) AS total
-        FROM interview_questions
-    """)
-
-    result = cur.fetchone()
-
-    total_questions = result["total"]
-
-
-    total_pages = math.ceil(
-        total_questions/per_page
-    )
-
-
-    cur.execute("""
-        SELECT
-            id,
-            question,
-            answer,
-            category
-        FROM interview_questions
-        ORDER BY id
-        LIMIT %s OFFSET %s
-    """,(per_page,offset))
-
-
-    questions = cur.fetchall()
-
-
-    cur.close()
-    conn.close()
-
-
-    return render_template(
-        "interview_questions.html",
-        questions=questions,
-        page=page,
-        total_pages=total_pages
-    )
-from flask import url_for
-
-@app.route('/mock_test')
-def mock_test():
-
-    if 'user_id' not in session:
-        return redirect(url_for("login", next=request.url))
-
-    conn = get_db_connection()
-    cur = conn.cursor()
-
-    cur.execute("""
-        SELECT
-            id,
-            question,
-            option1,
-            option2,
-            option3,
-            option4,
-            category
-        FROM mock_questions
-        ORDER BY RAND()
-        LIMIT 20
-    """)
-
-    questions = cur.fetchall()
-
-    cur.close()
-    conn.close()
-
-    return render_template(
-        "mock_test.html",
-        questions=questions
-    )
-@app.route('/submit_test', methods=['POST'])
-def submit_test():
-
-    print("SUBMIT CLICKED")
-    print(request.form)
-
-    score = 0
-    total = 0
-
-    conn = get_db_connection()
-    cur = conn.cursor()
-
-    cur.execute("""
-        SELECT id, correct_answer
-        FROM mock_questions
-        LIMIT 20
-    """)
-
-    answers = cur.fetchall()
-
-    for q in answers:
-
-        total += 1
-
-        # DictCursor returns a dictionary
-        question_id = q["id"]
-        correct_answer = q["correct_answer"]
-
-        user_answer = request.form.get(f"q{question_id}")
-
-        if user_answer == correct_answer:
-            score += 1
-
-    percentage = (score / total * 100) if total > 0 else 0
-
-    cur.execute("""
-        INSERT INTO results
-        (user_id, total_questions, score, percentage)
-        VALUES (%s, %s, %s, %s)
-    """, (
-        session.get("user_id"),
-        total,
-        score,
-        percentage
-    ))
-
-    conn.commit()
-    cur.close()
-    conn.close()
-
-    return render_template(
-        "result.html",
-        score=score,
-        total=total,
-        percentage=round(percentage, 2)
-    )
-@app.route('/save_resume', methods=['POST'])
-def save_resume():
-    if 'user_id' not in session:
-        return redirect('/login')
-
-    name = request.form['name']
-    email = request.form['email']
-    mobile = request.form['mobile']
-    objective = request.form['objective']
-    education = request.form['education']
-    skills = request.form['skills']
-    projects = request.form['projects']
-    certifications = request.form['certifications']
-
-    conn = get_db_connection() 
-
-    cur = conn.cursor()
-    cur.execute("""
-        INSERT INTO resume
-        (user_id,name,email,mobile,objective,
-         education,skills,projects,certifications)
-        VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s)
-    """, (
-        session['user_id'],
-        name,
-        email,
-        mobile,
-        objective,
-        education,
-        skills,
-        projects,
-        certifications
-    ))
-
-    conn.commit()
-    cur.close()
-    conn.close()
-
-    flash("Resume Saved Successfully")
-    return redirect('/dashboard')
-
-@app.route('/admin/questions', methods=['GET', 'POST'])
-def admin_questions():
-
-    if request.method == 'POST':
-        question = request.form['question']
-        option1 = request.form['option1']
-        option2 = request.form['option2']
-        option3 = request.form['option3']
-        option4 = request.form['option4']
-        answer = request.form['answer']
-        category = request.form['category']
-
-        conn = get_db_connection()
-        cur = conn.cursor()
-
-        cur.execute("""
-            INSERT INTO questions
-            (question, option1, option2,
-             option3, option4, answer, category)
-            VALUES (%s,%s,%s,%s,%s,%s,%s)
-        """, (
-            question,
-            option1,
-            option2,
-            option3,
-            option4,
-            answer,
-            category
-        ))
-
-        conn.commit()
-        cur.close()
-        coon.close()
-
-        flash("Question Added Successfully")
-        return redirect('/admin/questions')
-
-    return render_template('admin_questions.html')
-
 @app.route('/leaderboard')
 def leaderboard():
 
