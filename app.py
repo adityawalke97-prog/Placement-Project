@@ -405,7 +405,6 @@ def dashboard():
 
     )
 # ---------------- INTERVIEW QUESTIONS ----------------
--------------- INTERVIEW QUESTIONS ----------------
 
 from flask import render_template, requestimport math
 
@@ -1083,12 +1082,6 @@ finally:
     if conn:
         conn.close()
 
-==========================================
-
-VIEW SINGLE RESULT
-
-==========================================
-
 @app.route("/result/int:result_id")def view_result(result_id):
 
 if "user_id" not in session:
@@ -1120,29 +1113,14 @@ try:
         "result.html",
 
         result=result
-
     )
-
 except Exception as e:
-
     print(e)
-
     flash("Unable to load result.","danger")
-
     return redirect("/mock_test_history")
-
 finally:
-
     cur.close()
-
     conn.close()
-
-==========================================
-
-DELETE HISTORY
-
-==========================================
-
 @app.route("/delete_history/int:result_id")def delete_history(result_id):
 
 if "user_id" not in session:
@@ -1198,7 +1176,6 @@ finally:
 
 return redirect("/mock_test_history")
 
----------------- LOGOUT ----------------
 
 @app.route('/logout')def logout():session.clear()return redirect('/')
 
