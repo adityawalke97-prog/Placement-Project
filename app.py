@@ -395,84 +395,156 @@ def login():
 @app.route("/dashboard")
 def dashboard():
 
+
     return render_template(
 
         "dashboard.html",
 
-        logged_in=("user_id" in session),
+        logged_in="user_id" in session,
 
-        name=session.get("name")
+        name=session.get("name"),
+
+        profile_pic=session.get(
+            "profile_pic"
+        )
 
     )
-# ---------------- INTERVIEW QUESTIONS ----------------
 
-from flask import render_template, requestimport
-import math
+
+
+
+# ==============================
+# INTERVIEW QUESTIONS
+# ==============================
+
 
 @app.route("/interview_questions")
 def interview_questions():
-    page = request.args.get("page",1,type=int)
-    
+
+
+    page = request.args.get(
+        "page",
+        1,
+        type=int
+    )
+
+
     per_page = 20
-    offset = (page-1)*per_page
-    
+
+    offset = (
+        page - 1
+    ) * per_page
+
+
+
     conn = get_db_connection()
+
     cur = conn.cursor()
-    
-    
+
+
+
     cur.execute("""
-        SELECT COUNT(*) AS total
-        FROM interview_questions
+
+    SELECT COUNT(*) AS total
+
+    FROM interview_questions
+
     """)
-    
-    result = cur.fetchone()
-    
-    total_questions = result["total"]
-    
-    
+
+
+    total = cur.fetchone()["total"]
+
+
+
     total_pages = math.ceil(
-        total_questions/per_page
+        total / per_page
     )
-    
-    
+
+
+
     cur.execute("""
-        SELECT
-            id,
-            question,
-            answer,
-            category
-        FROM interview_questions
-        ORDER BY id
-        LIMIT %s OFFSET %s
-    """,(per_page,offset))
-    
-    
-    questions = cur.fetchall()
-    
-    
-    cur.close()
-    conn.close()
-    
-    
-    return render_template(
-        "interview_questions.html",
-        questions=questions,
-        page=page,
-        total_pages=total_pages
-    )
-    
-from flask import url_for
 
-@app.route('/mock_test')def mock_test():
-
-if 'user_id' not in session:
-    return redirect(url_for("login", next=request.url))
-
-conn = get_db_connection()
-cur = conn.cursor()
-
-cur.execute("""
     SELECT
+
+        id,
+        question,
+        answer,
+        category
+
+
+    FROM interview_questions
+
+
+    ORDER BY id
+
+
+    LIMIT %s OFFSET %s
+
+
+    """,
+
+    (
+        per_page,
+        offset
+    ))
+
+
+
+    questions = cur.fetchall()
+
+
+
+    cur.close()
+
+    conn.close()
+
+
+
+    return render_template(
+
+        "interview_questions.html",
+
+        questions=questions,
+
+        page=page,
+
+        total_pages=total_pages
+
+    )
+
+
+
+
+
+# ==============================
+# MOCK TEST
+# ==============================
+
+
+@app.route("/mock_test")
+def mock_test():
+
+
+    if "user_id" not in session:
+
+        return redirect(
+            url_for(
+                "login"
+            )
+        )
+
+
+
+    conn = get_db_connection()
+
+    cur = conn.cursor()
+
+
+
+    cur.execute("""
+
+    SELECT
+
         id,
         question,
         option1,
@@ -480,704 +552,1580 @@ cur.execute("""
         option3,
         option4,
         category
+
+
     FROM mock_questions
+
+
     ORDER BY RAND()
+
+
     LIMIT 20
-""")
 
-questions = cur.fetchall()
 
-cur.close()
-conn.close()
+    """)
 
-return render_template(
-    "mock_test.html",
-    questions=questions
+
+
+    questions = cur.fetchall()
+
+
+
+    cur.close()
+
+    conn.close()
+
+
+
+    return render_template(
+
+        "mock_test.html",
+
+        questions=questions
+
+    )
+
+
+
+
+
+# ==============================
+# SUBMIT MOCK TEST
+# ==============================
+
+
+@app.route(
+    "/submit_test",
+    methods=["POST"]
 )
 
-@app.route('/submit_test', methods=['POST'])def submit_test():
+def submit_test():
 
-print("SUBMIT CLICKED")
-print(request.form)
 
-score = 0
-total = 0
+    if "user_id" not in session:
 
-conn = get_db_connection()
-cur = conn.cursor()
+        return redirect("/login")
 
-cur.execute("""
-    SELECT id, correct_answer
-    FROM mock_questions
-    LIMIT 20
-""")
 
-answers = cur.fetchall()
-
-for q in answers:
-
-    total += 1
-
-    # DictCursor returns a dictionary
-    question_id = q["id"]
-    correct_answer = q["correct_answer"]
-
-    user_answer = request.form.get(f"q{question_id}")
-
-    if user_answer == correct_answer:
-        score += 1
-
-percentage = (score / total * 100) if total > 0 else 0
-
-cur.execute("""
-    INSERT INTO results
-    (user_id, total_questions, score, percentage)
-    VALUES (%s, %s, %s, %s)
-""", (
-    session.get("user_id"),
-    total,
-    score,
-    percentage
-))
-
-conn.commit()
-cur.close()
-conn.close()
-
-return render_template(
-    "result.html",
-    score=score,
-    total=total,
-    percentage=round(percentage, 2)
-)
-
-@app.route('/save_resume', methods=['POST'])def save_resume():if 'user_id' not in session:return redirect('/login')
-
-name = request.form['name']
-email = request.form['email']
-mobile = request.form['mobile']
-objective = request.form['objective']
-education = request.form['education']
-skills = request.form['skills']
-projects = request.form['projects']
-certifications = request.form['certifications']
-
-conn = get_db_connection() 
-
-cur = conn.cursor()
-cur.execute("""
-    INSERT INTO resume
-    (user_id,name,email,mobile,objective,
-     education,skills,projects,certifications)
-    VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s)
-""", (
-    session['user_id'],
-    name,
-    email,
-    mobile,
-    objective,
-    education,
-    skills,
-    projects,
-    certifications
-))
-
-conn.commit()
-cur.close()
-conn.close()
-
-flash("Resume Saved Successfully")
-return redirect('/dashboard')
-
-@app.route('/admin/questions', methods=['GET', 'POST'])def admin_questions():
-
-if request.method == 'POST':
-    question = request.form['question']
-    option1 = request.form['option1']
-    option2 = request.form['option2']
-    option3 = request.form['option3']
-    option4 = request.form['option4']
-    answer = request.form['answer']
-    category = request.form['category']
 
     conn = get_db_connection()
+
     cur = conn.cursor()
 
+
+
     cur.execute("""
-        INSERT INTO questions
-        (question, option1, option2,
-         option3, option4, answer, category)
-        VALUES (%s,%s,%s,%s,%s,%s,%s)
-    """, (
-        question,
-        option1,
-        option2,
-        option3,
-        option4,
-        answer,
-        category
+
+    SELECT
+
+        id,
+
+        correct_answer
+
+
+    FROM mock_questions
+
+
+    LIMIT 20
+
+
+    """)
+
+
+
+    answers = cur.fetchall()
+
+
+
+    score = 0
+
+    total = len(answers)
+
+
+
+    for q in answers:
+
+
+        question_id = q["id"]
+
+        correct = q["correct_answer"]
+
+
+
+        user_answer = request.form.get(
+
+            f"q{question_id}"
+
+        )
+
+
+
+        if user_answer == correct:
+
+            score += 1
+
+
+
+    percentage = 0
+
+
+    if total > 0:
+
+        percentage = (
+            score / total
+        ) * 100
+
+
+
+
+    cur.execute("""
+
+    INSERT INTO results
+
+    (
+
+        user_id,
+
+        total_questions,
+
+        score,
+
+        percentage
+
+    )
+
+
+    VALUES
+
+    (%s,%s,%s,%s)
+
+
+    """,
+
+    (
+
+        session["user_id"],
+
+        total,
+
+        score,
+
+        percentage
+
     ))
 
+
+
     conn.commit()
+
+
+
     cur.close()
-    coon.close()
 
-    flash("Question Added Successfully")
-    return redirect('/admin/questions')
+    conn.close()
 
-return render_template('admin_questions.html')
 
-@app.route('/leaderboard')def leaderboard():
 
-conn = get_db_connection()   # ✅ Add this
+    return render_template(
 
-cur = conn.cursor()
+        "result.html",
 
-cur.execute("""
-    SELECT * FROM results
-    ORDER BY score DESC
-""")
+        score=score,
 
-data = cur.fetchall()
+        total=total,
 
-cur.close()
-conn.close()
+        percentage=round(
+            percentage,
+            2
+        )
 
-return render_template(
-    "leaderboard.html",
-    data=data
-
-)@app.route('/resume/pdf/int:user_id')def resume_pdf(user_id):
-
-cconn = get_db_connection() 
-cur = cconn.cursor()
-cur.execute("""
-    SELECT name, email, mobile,
-           objective, education,
-           skills, projects, certifications
-    FROM resume
-    WHERE user_id=%s
-""", (user_id,))
-
-resume = cur.fetchone()
-cur.close()    
-cconn.close()
-
-if not resume:
-    flash("Resume not found")
-    return redirect('/resume_builder')
-
-filename = f"resume_{user_id}.pdf"
-filepath = os.path.join("uploads", filename)
-
-doc = SimpleDocTemplate(filepath)
-styles = getSampleStyleSheet()
-
-elements = []
-
-elements.append(
-    Paragraph(f"<b>{resume['name']}</b>", styles['Title'])
-)
-elements.append(
-    Paragraph(f"Email: {resume['email']}", styles['Normal'])
-)
-elements.append(
-    Paragraph(f"Mobile: {resume['mobile']}", styles['Normal'])
-)
-
-elements.append(Spacer(1, 20))
-elements.append(
-    Paragraph("<b>Career Objective</b>",
-              styles['Heading2'])
-)
-elements.append(
-    Paragraph(resume['objective'], styles['Normal'])
-)
-
-elements.append(Spacer(1, 20))
-elements.append(
-    Paragraph("<b>Education</b>",
-              styles['Heading2'])
-)
-elements.append(
-    Paragraph(resume['education'], styles['Normal'])
-)
-
-elements.append(Spacer(1, 20))
-elements.append(
-    Paragraph("<b>Skills</b>",
-              styles['Heading2'])
-)
-elements.append(
-    Paragraph(resume[5], styles['Normal'])
-)
-
-elements.append(Spacer(1, 20))
-elements.append(
-    Paragraph("<b>Projects</b>",
-              styles['Heading2'])
-)
-elements.append(
-    Paragraph(resume[6], styles['Normal'])
-)
-
-elements.append(Spacer(1, 20))
-elements.append(
-    Paragraph("<b>Certifications</b>",
-              styles['Heading2'])
-)
-elements.append(
-    Paragraph(resume[7], styles['Normal'])
-)
-
-doc.build(elements)
-
-return send_file(
-    filepath,
-    as_attachment=True
-)
-
-@app.route('/certificate/int:user_id')def certificate(user_id):
-
-cconn = get_db_connection()
-cur = cconn.cursor()
-
-cur.execute(
-    "SELECT name FROM users WHERE id=%s",
-    (user_id,)
-)
-user = cur.fetchone()
-
-cur.execute("""
-    SELECT MAX(score)
-    FROM results
-    WHERE user_id=%s
-""", (user_id,))
-
-result = cur.fetchone()
-cur.close()
-
-if not user:
-    return "User not found"
-
-score = result["MAX(score)"] if result["MAX(score)"] else 0
-filename = f"certificate_{user_id}.pdf"
-filepath = os.path.join(
-    "uploads",
-    filename
-)
-
-doc = SimpleDocTemplate(filepath)
-styles = getSampleStyleSheet()
-
-elements = []
-
-elements.append(
-    Paragraph(
-        "<b>Certificate of Completion</b>",
-        styles['Title']
     )
-)
+    # ==============================
+# SAVE RESUME
+# ==============================
 
-elements.append(Spacer(1, 40))
+@app.route("/save_resume", methods=["POST"])
+def save_resume():
 
-elements.append(
-    Paragraph(
-        f"This certificate is awarded to <b>{user["name"]}</b>",
-        styles['Heading2']
+    if "user_id" not in session:
+        return redirect("/login")
+
+
+    name = request.form["name"]
+    email = request.form["email"]
+    mobile = request.form["mobile"]
+
+    objective = request.form["objective"]
+
+    education = request.form["education"]
+
+    skills = request.form["skills"]
+
+    projects = request.form["projects"]
+
+    certifications = request.form["certifications"]
+
+
+
+    conn = get_db_connection()
+
+    cur = conn.cursor()
+
+
+
+    cur.execute("""
+
+    INSERT INTO resume
+
+    (
+
+    user_id,
+
+    name,
+
+    email,
+
+    mobile,
+
+    objective,
+
+    education,
+
+    skills,
+
+    projects,
+
+    certifications
+
     )
-)
 
-elements.append(Spacer(1, 20))
 
-elements.append(
-    Paragraph(
-        f"For successfully completing the Placement Training Test with score <b>{score}</b>.",
-        styles['Normal']
+    VALUES
+
+    (%s,%s,%s,%s,%s,%s,%s,%s,%s)
+
+
+    """,
+
+    (
+
+        session["user_id"],
+
+        name,
+
+        email,
+
+        mobile,
+
+        objective,
+
+        education,
+
+        skills,
+
+        projects,
+
+        certifications
+
+    ))
+
+
+
+    conn.commit()
+
+    cur.close()
+
+    conn.close()
+
+
+
+    flash(
+        "Resume Saved Successfully",
+        "success"
     )
+
+
+    return redirect("/dashboard")
+
+
+
+
+
+# ==============================
+# ADMIN ADD QUESTIONS
+# ==============================
+
+
+@app.route(
+    "/admin/questions",
+    methods=["GET","POST"]
 )
 
-elements.append(Spacer(1, 30))
+def admin_questions():
 
-elements.append(
-    Paragraph(
-        "Placement Training Portal",
-        styles['Heading3']
+
+    if request.method == "POST":
+
+
+        question = request.form["question"]
+
+        option1 = request.form["option1"]
+
+        option2 = request.form["option2"]
+
+        option3 = request.form["option3"]
+
+        option4 = request.form["option4"]
+
+        answer = request.form["answer"]
+
+        category = request.form["category"]
+
+
+
+
+        conn = get_db_connection()
+
+        cur = conn.cursor()
+
+
+
+        cur.execute("""
+
+        INSERT INTO mock_questions
+
+        (
+
+        question,
+
+        option1,
+
+        option2,
+
+        option3,
+
+        option4,
+
+        correct_answer,
+
+        category
+
+        )
+
+
+        VALUES
+
+        (%s,%s,%s,%s,%s,%s,%s)
+
+
+        """,
+
+        (
+
+            question,
+
+            option1,
+
+            option2,
+
+            option3,
+
+            option4,
+
+            answer,
+
+            category
+
+        ))
+
+
+
+        conn.commit()
+
+
+        cur.close()
+
+        conn.close()
+
+
+
+        flash(
+            "Question Added Successfully",
+            "success"
+        )
+
+
+        return redirect(
+            "/admin/questions"
+        )
+
+
+
+    return render_template(
+        "admin_questions.html"
     )
-)
 
-doc.build(elements)
 
-return send_file(
-    filepath,
-    as_attachment=True
-)
 
-@app.route("/download_history")def download_history():
 
-if "user_id" not in session:
-    return redirect("/login")
 
-conn = get_db_connection()
-cur = conn.cursor(pymysql.cursors.DictCursor)
+# ==============================
+# LEADERBOARD
+# ==============================
 
-cur.execute("""
+
+@app.route("/leaderboard")
+def leaderboard():
+
+
+    conn = get_db_connection()
+
+    cur = conn.cursor()
+
+
+
+    cur.execute("""
+
     SELECT
+
+        users.name,
+
+        results.score,
+
+        results.percentage
+
+
+    FROM results
+
+
+    JOIN users
+
+    ON users.id = results.user_id
+
+
+    ORDER BY score DESC
+
+
+    """)
+
+
+
+    data = cur.fetchall()
+
+
+
+    cur.close()
+
+    conn.close()
+
+
+
+    return render_template(
+
+        "leaderboard.html",
+
+        data=data
+
+    )
+
+
+
+
+
+# ==============================
+# RESUME PDF
+# ==============================
+
+
+@app.route(
+    "/resume/pdf/<int:user_id>"
+)
+
+def resume_pdf(user_id):
+
+
+    conn = get_db_connection()
+
+    cur = conn.cursor()
+
+
+
+    cur.execute("""
+
+    SELECT
+
+        name,
+
+        email,
+
+        mobile,
+
+        objective,
+
+        education,
+
+        skills,
+
+        projects,
+
+        certifications
+
+
+    FROM resume
+
+
+    WHERE user_id=%s
+
+
+    """,
+
+    (user_id,))
+
+
+
+    resume = cur.fetchone()
+
+
+
+    cur.close()
+
+    conn.close()
+
+
+
+    if not resume:
+
+        flash(
+            "Resume not found",
+            "danger"
+        )
+
+        return redirect(
+            "/dashboard"
+        )
+
+
+
+    os.makedirs(
+        "uploads",
+        exist_ok=True
+    )
+
+
+
+    filename = f"resume_{user_id}.pdf"
+
+
+
+    filepath = os.path.join(
+
+        "uploads",
+
+        filename
+
+    )
+
+
+
+    doc = SimpleDocTemplate(
+        filepath
+    )
+
+
+    styles = getSampleStyleSheet()
+
+
+
+    elements = []
+
+
+
+    elements.append(
+
+        Paragraph(
+
+            resume["name"],
+
+            styles["Title"]
+
+        )
+
+    )
+
+
+
+    elements.append(
+
+        Paragraph(
+
+            "Email: " + resume["email"],
+
+            styles["Normal"]
+
+        )
+
+    )
+
+
+    elements.append(
+
+        Paragraph(
+
+            "Mobile: " + resume["mobile"],
+
+            styles["Normal"]
+
+        )
+
+    )
+
+
+
+    sections = [
+
+        ("Career Objective", resume["objective"]),
+
+        ("Education", resume["education"]),
+
+        ("Skills", resume["skills"]),
+
+        ("Projects", resume["projects"]),
+
+        ("Certifications", resume["certifications"])
+
+    ]
+
+
+
+    for title,text in sections:
+
+
+        elements.append(
+
+            Spacer(1,20)
+
+        )
+
+
+        elements.append(
+
+            Paragraph(
+
+                title,
+
+                styles["Heading2"]
+
+            )
+
+        )
+
+
+        elements.append(
+
+            Paragraph(
+
+                text,
+
+                styles["Normal"]
+
+            )
+
+        )
+
+
+
+    doc.build(elements)
+
+
+
+    return send_file(
+
+        filepath,
+
+        as_attachment=True
+
+    )
+
+
+
+
+
+
+# ==============================
+# CERTIFICATE PDF
+# ==============================
+
+
+@app.route(
+    "/certificate/<int:user_id>"
+)
+
+def certificate(user_id):
+
+
+    conn = get_db_connection()
+
+    cur = conn.cursor()
+
+
+
+    cur.execute(
+
+        "SELECT name FROM users WHERE id=%s",
+
+        (user_id,)
+
+    )
+
+
+    user = cur.fetchone()
+
+
+
+    cur.execute("""
+
+    SELECT MAX(score) AS score
+
+    FROM results
+
+    WHERE user_id=%s
+
+
+    """,
+
+    (user_id,))
+
+
+
+    result = cur.fetchone()
+
+
+
+    cur.close()
+
+    conn.close()
+
+
+
+    if not user:
+
+        return "User not found"
+
+
+
+    score = result["score"] or 0
+
+
+
+    os.makedirs(
+
+        "uploads",
+
+        exist_ok=True
+
+    )
+
+
+
+    filename = f"certificate_{user_id}.pdf"
+
+
+
+    filepath = os.path.join(
+
+        "uploads",
+
+        filename
+
+    )
+
+
+
+    doc = SimpleDocTemplate(
+        filepath
+    )
+
+
+    styles = getSampleStyleSheet()
+
+
+
+    elements = []
+
+
+
+    elements.append(
+
+        Paragraph(
+
+            "Certificate of Completion",
+
+            styles["Title"]
+
+        )
+
+    )
+
+
+    elements.append(
+
+        Spacer(1,40)
+
+    )
+
+
+    elements.append(
+
+        Paragraph(
+
+            f"This certificate is awarded to <b>{user['name']}</b>",
+
+            styles["Heading2"]
+
+        )
+
+    )
+
+
+
+    elements.append(
+
+        Spacer(1,20)
+
+    )
+
+
+
+    elements.append(
+
+        Paragraph(
+
+            f"Completed Placement Training Test with score <b>{score}</b>",
+
+            styles["Normal"]
+
+        )
+
+    )
+
+
+    elements.append(
+
+        Spacer(1,30)
+
+    )
+
+
+    elements.append(
+
+        Paragraph(
+
+            "Placement Training Portal",
+
+            styles["Heading3"]
+
+        )
+
+    )
+
+
+
+    doc.build(elements)
+
+
+
+    return send_file(
+
+        filepath,
+
+        as_attachment=True
+
+    )
+
+
+
+# ==============================
+# DOWNLOAD HISTORY CSV
+# ==============================
+
+@app.route("/download_history")
+def download_history():
+
+    if "user_id" not in session:
+
+        return redirect("/login")
+
+
+    conn = get_db_connection()
+
+    cur = conn.cursor()
+
+
+
+    cur.execute("""
+
+    SELECT
+
         subject,
         score,
         total_questions,
         percentage,
         attempt_date
+
+
     FROM results
+
+
     WHERE user_id=%s
+
+
     ORDER BY attempt_date DESC
-""", (session["user_id"],))
 
-history = cur.fetchall()
 
-output = io.StringIO()
+    """,
 
-writer = csv.writer(output)
+    (
+        session["user_id"],
+    ))
 
-writer.writerow([
-    "Subject",
-    "Score",
-    "Total Questions",
-    "Percentage",
-    "Attempt Date"
-])
 
-for row in history:
-
-    writer.writerow([
-        row["subject"],
-        row["score"],
-        row["total_questions"],
-        row["percentage"],
-        row["attempt_date"]
-    ])
-
-csv_data = output.getvalue()
-output.close()
-
-return Response(
-
-    csv_data,
-
-    mimetype="text/csv",
-
-    headers={
-        "Content-Disposition":
-        "attachment; filename=mock_test_history.csv"
-    }
-
-)
-
-@app.route("/courses")def courses():return render_template("course.html")
-
-@app.route("/courses/java")def java_course():
-
-conn = get_db_connection()
-cursor = conn.cursor()
-
-cursor.execute("""
-    SELECT day,title,notes,code_snippet,practice_task
-    FROM java_course
-    ORDER BY day
-""")
-
-rows = cursor.fetchall()
-
-cursor.close()
-conn.close()
-
-course_data = {}
-
-for row in rows:
-    course_data[row["day"]] = {
-        "title": row["title"],
-        "notes": row["notes"],
-        "code_snippet": row["code_snippet"],
-        "practice_task": row["practice_task"]
-    }
-
-return render_template(
-    "java.html",
-    day_count=len(course_data),
-    course_data_json=json.dumps(course_data)
-)
-
-@app.route("/courses/python")def python_course():return render_template("python.html")
-
-@app.route("/courses/html")def html_course():return render_template("html.html")
-
-@app.route("/courses/css")def css_course():return render_template("css.html")
-
-@app.route("/courses/fullstack-java")def fullstack_java():return render_template("fullstack_java.html")
-
-@app.route("/courses/fullstack-python")def fullstack_python():return render_template("fullstack_python.html")@app.route("/courses/<course_name>/int:day")def course_day(course_name, day):
-
-conn = get_db_connection()
-cursor = conn.cursor()
-
-cursor.execute("""
-    SELECT notes
-    FROM course_notes
-    WHERE course_name=%s
-    AND day_number=%s
-""", (course_name, day))
-
-result = cursor.fetchone()
-
-cursor.close()
-conn.close()
-
-if result:
-    notes = result["notes"]
-else:
-    notes = "No notes available for this day."
-
-return render_template(
-    "course_day.html",
-    course_name=course_name,
-    day=day,
-    notes=notes
-)
-
-@app.route("/mock_categories")def mock_categories():
-
-conn = get_db_connection()
-cur = conn.cursor()
-
-cur.execute("SELECT * FROM mock_category ORDER BY category_name")
-
-categories = cur.fetchall()
-
-cur.close()
-conn.close()
-
-return render_template(
-    "mock_categories.html",
-    categories=categories
-)
-
-@app.route("/mock_test_history")def mock_test_history():
-
-# -----------------------------
-# Login Check
-# -----------------------------
-if "user_id" not in session:
-
-    flash("Please login first.", "warning")
-    return redirect("/login")
-
-conn = None
-cur = None
-
-try:
-
-    conn = get_db_connection()
-
-    cur = conn.cursor(pymysql.cursors.DictCursor)
-
-    # -----------------------------
-    # History
-    # -----------------------------
-    cur.execute("""
-        SELECT
-            id,
-            subject,
-            score,
-            total_questions,
-            percentage,
-            attempt_date
-        FROM results
-        WHERE user_id=%s
-        ORDER BY attempt_date DESC
-    """, (session["user_id"],))
 
     history = cur.fetchall()
 
-    # -----------------------------
-    # Statistics
-    # -----------------------------
+
+
+    cur.close()
+
+    conn.close()
+
+
+
+    output = io.StringIO()
+
+
+    writer = csv.writer(output)
+
+
+
+    writer.writerow([
+
+        "Subject",
+
+        "Score",
+
+        "Total Questions",
+
+        "Percentage",
+
+        "Attempt Date"
+
+    ])
+
+
+
+    for row in history:
+
+
+        writer.writerow([
+
+            row.get("subject","Mock Test"),
+
+            row["score"],
+
+            row["total_questions"],
+
+            row["percentage"],
+
+            row["attempt_date"]
+
+        ])
+
+
+
+    return Response(
+
+        output.getvalue(),
+
+        mimetype="text/csv",
+
+        headers={
+
+            "Content-Disposition":
+
+            "attachment; filename=mock_test_history.csv"
+
+        }
+
+    )
+
+
+
+
+
+# ==============================
+# COURSES
+# ==============================
+
+
+@app.route("/courses")
+def courses():
+
+    return render_template(
+        "course.html"
+    )
+
+
+
+@app.route("/courses/java")
+def java_course():
+
+
+    conn = get_db_connection()
+
+    cur = conn.cursor()
+
+
+
     cur.execute("""
-        SELECT
 
-            COUNT(*) AS total_tests,
+    SELECT
 
-            SUM(
-                CASE
-                    WHEN percentage>=40
-                    THEN 1
-                    ELSE 0
-                END
-            ) AS passed_tests,
+        day,
 
-            SUM(
-                CASE
-                    WHEN percentage<40
-                    THEN 1
-                    ELSE 0
-                END
-            ) AS failed_tests,
+        title,
 
-            AVG(percentage) AS avg_percentage,
+        notes,
 
-            MAX(score) AS highest_score
+        code_snippet,
 
-        FROM results
+        practice_task
 
-        WHERE user_id=%s
-    """, (session["user_id"],))
+
+    FROM java_course
+
+
+    ORDER BY day
+
+
+    """)
+
+
+
+    rows = cur.fetchall()
+
+
+
+    cur.close()
+
+    conn.close()
+
+
+
+    course_data = {}
+
+
+
+    for row in rows:
+
+
+        course_data[row["day"]] = {
+
+
+            "title": row["title"],
+
+            "notes": row["notes"],
+
+            "code_snippet": row["code_snippet"],
+
+            "practice_task": row["practice_task"]
+
+        }
+
+
+
+    return render_template(
+
+        "java.html",
+
+        day_count=len(course_data),
+
+        course_data_json=json.dumps(course_data)
+
+    )
+
+
+
+
+
+@app.route("/courses/python")
+def python_course():
+
+    return render_template(
+        "python.html"
+    )
+
+
+
+@app.route("/courses/html")
+def html_course():
+
+    return render_template(
+        "html.html"
+    )
+
+
+
+@app.route("/courses/css")
+def css_course():
+
+    return render_template(
+        "css.html"
+    )
+
+
+
+@app.route("/courses/fullstack-java")
+def fullstack_java():
+
+    return render_template(
+        "fullstack_java.html"
+    )
+
+
+
+@app.route("/courses/fullstack-python")
+def fullstack_python():
+
+    return render_template(
+        "fullstack_python.html"
+    )
+
+
+
+
+
+@app.route(
+    "/courses/<course_name>/<int:day>"
+)
+
+def course_day(course_name,day):
+
+
+    conn = get_db_connection()
+
+    cur = conn.cursor()
+
+
+
+    cur.execute("""
+
+    SELECT notes
+
+    FROM course_notes
+
+
+    WHERE course_name=%s
+
+    AND day_number=%s
+
+
+    """,
+
+    (
+
+        course_name,
+
+        day
+
+    ))
+
+
+
+    result = cur.fetchone()
+
+
+
+    cur.close()
+
+    conn.close()
+
+
+
+    if result:
+
+        notes = result["notes"]
+
+    else:
+
+        notes = "No notes available."
+
+
+
+    return render_template(
+
+        "course_day.html",
+
+        course_name=course_name,
+
+        day=day,
+
+        notes=notes
+
+    )
+
+
+
+
+
+# ==============================
+# MOCK CATEGORY
+# ==============================
+
+
+@app.route("/mock_categories")
+def mock_categories():
+
+
+    conn = get_db_connection()
+
+    cur = conn.cursor()
+
+
+
+    cur.execute("""
+
+    SELECT *
+
+    FROM mock_category
+
+    ORDER BY category_name
+
+
+    """)
+
+
+
+    categories = cur.fetchall()
+
+
+
+    cur.close()
+
+    conn.close()
+
+
+
+    return render_template(
+
+        "mock_categories.html",
+
+        categories=categories
+
+    )
+
+
+
+
+
+# ==============================
+# MOCK TEST HISTORY
+# ==============================
+
+
+@app.route("/mock_test_history")
+def mock_test_history():
+
+
+    if "user_id" not in session:
+
+
+        flash(
+            "Please login first",
+            "warning"
+        )
+
+
+        return redirect("/login")
+
+
+
+    conn = get_db_connection()
+
+    cur = conn.cursor()
+
+
+
+    cur.execute("""
+
+    SELECT *
+
+    FROM results
+
+
+    WHERE user_id=%s
+
+
+    ORDER BY id DESC
+
+
+    """,
+
+    (
+
+        session["user_id"],
+
+    ))
+
+
+
+    history = cur.fetchall()
+
+
+
+    cur.execute("""
+
+    SELECT
+
+
+        COUNT(*) AS total_tests,
+
+        AVG(percentage) AS avg_percentage,
+
+        MAX(score) AS highest_score
+
+
+    FROM results
+
+
+    WHERE user_id=%s
+
+
+    """,
+
+    (
+
+        session["user_id"],
+
+    ))
+
+
 
     stats = cur.fetchone()
 
-    # -----------------------------
-    # Default values
-    # -----------------------------
-    total_tests = stats["total_tests"] or 0
 
-    passed_tests = stats["passed_tests"] or 0
 
-    failed_tests = stats["failed_tests"] or 0
+    cur.close()
 
-    avg_percentage = stats["avg_percentage"] or 0
+    conn.close()
 
-    highest_score = stats["highest_score"] or 0
 
-    # -----------------------------
-    # Render Page
-    # -----------------------------
+
     return render_template(
 
         "mock_test_history.html",
 
         history=history,
 
-        total_tests=total_tests,
+        total_tests=stats["total_tests"] or 0,
 
-        passed_tests=passed_tests,
+        avg_percentage=stats["avg_percentage"] or 0,
 
-        failed_tests=failed_tests,
-
-        avg_percentage=avg_percentage,
-
-        highest_score=highest_score
+        highest_score=stats["highest_score"] or 0
 
     )
 
-except Exception as e:
 
-    print("History Error:", e)
 
-    flash("Unable to load history.", "danger")
 
-    return redirect("/dashboard")
 
-finally:
+# ==============================
+# VIEW RESULT
+# ==============================
 
-    if cur:
-        cur.close()
 
-    if conn:
-        conn.close()
+@app.route(
+    "/result/<int:result_id>"
+)
 
-@app.route("/result/int:result_id")def view_result(result_id):
+def view_result(result_id):
 
-if "user_id" not in session:
-    return redirect("/login")
 
-conn = get_db_connection()
-cur = conn.cursor(pymysql.cursors.DictCursor)
+    if "user_id" not in session:
 
-try:
+        return redirect("/login")
+
+
+
+    conn = get_db_connection()
+
+    cur = conn.cursor()
+
+
 
     cur.execute("""
-        SELECT
-            *
-        FROM results
-        WHERE id=%s
-        AND user_id=%s
-    """,(result_id,session["user_id"]))
+
+    SELECT *
+
+    FROM results
+
+
+    WHERE id=%s
+
+    AND user_id=%s
+
+
+    """,
+
+    (
+
+        result_id,
+
+        session["user_id"]
+
+    ))
+
+
 
     result = cur.fetchone()
 
+
+
+    cur.close()
+
+    conn.close()
+
+
+
     if not result:
 
-        flash("Result not found.","danger")
+        flash(
+            "Result not found",
+            "danger"
+        )
 
-        return redirect("/mock_test_history")
+        return redirect(
+            "/mock_test_history"
+        )
+
+
 
     return render_template(
 
         "result.html",
 
         result=result
+
     )
-except Exception as e:
-    print(e)
-    flash("Unable to load result.","danger")
-    return redirect("/mock_test_history")
-finally:
-    cur.close()
-    conn.close()
-@app.route("/delete_history/int:result_id")def delete_history(result_id):
 
-if "user_id" not in session:
-    return redirect("/login")
 
-conn = get_db_connection()
-cur = conn.cursor()
 
-try:
 
-    # Check ownership
 
-    cur.execute("""
-        SELECT id
-        FROM results
-        WHERE id=%s
-        AND user_id=%s
-    """,(result_id,session["user_id"]))
+# ==============================
+# DELETE HISTORY
+# ==============================
 
-    exists=cur.fetchone()
 
-    if not exists:
+@app.route(
+    "/delete_history/<int:result_id>"
+)
 
-        flash("History not found.","warning")
+def delete_history(result_id):
 
-        return redirect("/mock_test_history")
+
+    if "user_id" not in session:
+
+        return redirect("/login")
+
+
+
+    conn = get_db_connection()
+
+    cur = conn.cursor()
+
 
 
     cur.execute("""
-        DELETE
-        FROM results
-        WHERE id=%s
-        AND user_id=%s
-    """,(result_id,session["user_id"]))
+
+    DELETE FROM results
+
+
+    WHERE id=%s
+
+    AND user_id=%s
+
+
+    """,
+
+    (
+
+        result_id,
+
+        session["user_id"]
+
+    ))
+
+
 
     conn.commit()
 
-    flash("History deleted successfully.","success")
 
-except Exception as e:
-
-    conn.rollback()
-
-    print(e)
-
-    flash("Delete failed.","danger")
-
-finally:
 
     cur.close()
 
     conn.close()
 
-return redirect("/mock_test_history")
 
 
-@app.route('/logout')def logout():session.clear()return redirect('/')
+    flash(
+        "History deleted",
+        "success"
+    )
 
-if name == "main":app.run(host="0.0.0.0",port=int(os.getenv("PORT", 5000)),debug=True)
+
+
+    return redirect(
+        "/mock_test_history"
+    )
+
+
+
+
+
+# ==============================
+# LOGOUT
+# ==============================
+
+
+@app.route("/logout")
+def logout():
+
+    session.clear()
+
+    return redirect("/")
+
+
+
+
+
+# ==============================
+# RUN APP
+# ==============================
+
+
+if __name__ == "__main__":
+
+    app.run(
+
+        host="0.0.0.0",
+
+        port=int(
+            os.getenv(
+                "PORT",
+                5000
+            )
+        ),
+
+        debug=True
+
+    )
