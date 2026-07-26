@@ -39,7 +39,7 @@ load_dotenv()
 
 app = Flask(__name__)
 
-app.secret_key = os.getenv("SECRET_KEY")
+print("SECRET_KEY:", os.getenv("SECRET_KEY"))
 
 # Render HTTPS Fix
 app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
@@ -107,7 +107,14 @@ def google_login():
     return google.authorize_redirect(redirect_uri)
 
 # ---------------- GOOGLE CALLBACK ---------------- #
+@app.route("/session-test")
+def session_test():
+    session["test"] = "working"
+    return "Session Saved"
 
+@app.route("/session-check")
+def session_check():
+    return str(session.get("test"))
 @app.route("/login/google/callback")
 def google_callback():
 
