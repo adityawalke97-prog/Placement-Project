@@ -9,6 +9,7 @@ from flask import (
     Response,
     url_for
 )
+import secret
 from authlib.integrations.flask_client import OAuth
 from dotenv import load_dotenv
 from flask_bcrypt import Bcrypt
@@ -27,7 +28,14 @@ load_dotenv()
 # Flask App
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY")
+from datetime import timedelta
 
+app.secret_key = os.getenv("SECRET_KEY")
+
+app.config["SESSION_COOKIE_SECURE"] = True
+app.config["SESSION_COOKIE_HTTPONLY"] = True
+app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(days=7)
 # Initialize Bcrypt
 bcrypt = Bcrypt(app)
 
