@@ -197,7 +197,7 @@ def google_callback():
 
             email_verified=%s,
 
-            login_type='google'
+            login_provider='google'
 
             WHERE email=%s
 
@@ -240,7 +240,7 @@ def google_callback():
                 google_id,
                 profile_pic,
                 email_verified,
-                login_type
+                login_provider
             )
 
             VALUES
