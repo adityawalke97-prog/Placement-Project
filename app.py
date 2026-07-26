@@ -1631,65 +1631,25 @@ def my_learning():
 @app.route("/course/<course_name>")
 def course_page(course_name):
 
-    if "user_id" not in session:
-        return redirect("/login")
+    conn = get_db_connection()
+
+    cursor = conn.cursor(
+        pymysql.cursors.DictCursor
+    )
 
 
-    user_id=session["user_id"]
-
-
-    conn=get_db_connection()
-    cursor=conn.cursor(pymysql.cursors.DictCursor)
-
-
-    # Course Content
-
-    cursor.execute("""
-    SELECT *
-    FROM course_content
-    WHERE course_name=%s
-    ORDER BY day_number
-    """,(course_name,))
-
-
-    content=cursor.fetchall()
-
-
-
-    # User Progress
-
-    cursor.execute("""
-    SELECT *
-    FROM course_progress
-    WHERE user_id=%s
-    AND course_name=%s
-    """,
-    (user_id,course_name))
-
-
-    progress=cursor.fetchone()
-
-
-
-    if not progress:
-
-        cursor.execute("""
-        INSERT INTO course_progress
-        (user_id,course_name)
-        VALUES(%s,%s)
+    cursor.execute(
+        """
+        SELECT *
+        FROM course_content
+        WHERE course_name=%s
+        ORDER BY day_number
         """,
-        (user_id,course_name))
+        (course_name,)
+    )
 
 
-        conn.commit()
-
-
-        progress={
-        "current_day":1,
-        "xp":0,
-        "streak":1
-        }
-
+    lessons = cursor.fetchall()
 
 
     cursor.close()
@@ -1700,11 +1660,9 @@ def course_page(course_name):
     return render_template(
         "course.html",
         course_name=course_name,
-        content=content,
-        progress=progress,
-        day_count=len(content)
+        lessons=lessons,
+        day_count=len(lessons)
     )
-
 @app.route("/save-progress", methods=["POST"])
 def save_progress():
 
