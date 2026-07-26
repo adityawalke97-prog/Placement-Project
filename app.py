@@ -14,7 +14,6 @@ from authlib.integrations.flask_client import OAuth
 from flask_bcrypt import Bcrypt
 from dotenv import load_dotenv
 from werkzeug.middleware.proxy_fix import ProxyFix
-
 from datetime import timedelta
 
 import pymysql
@@ -31,30 +30,46 @@ from reportlab.platypus import (
 )
 from reportlab.lib.styles import getSampleStyleSheet
 
-# ---------------- LOAD ENV ---------------- #
+# ----------------------------------------------------
+# LOAD ENVIRONMENT
+# ----------------------------------------------------
 
 load_dotenv()
 
-# ---------------- FLASK APP ---------------- #
+# ----------------------------------------------------
+# FLASK APP
+# ----------------------------------------------------
 
 app = Flask(__name__)
 
-print("SECRET_KEY:", os.getenv("SECRET_KEY"))
+# SECRET KEY
+SECRET_KEY = os.getenv("SECRET_KEY")
 
-# Render HTTPS Fix
+if not SECRET_KEY:
+    raise RuntimeError("SECRET_KEY not found in Render Environment Variables.")
+
+app.secret_key = SECRET_KEY
+
+print("SECRET_KEY Loaded Successfully")
+
+# Required for Render HTTPS
 app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 
+# Session Configuration
 app.config.update(
+    SECRET_KEY=SECRET_KEY,
     SESSION_COOKIE_SECURE=True,
     SESSION_COOKIE_HTTPONLY=True,
     SESSION_COOKIE_SAMESITE="Lax",
     PERMANENT_SESSION_LIFETIME=timedelta(days=7),
-    PREFERRED_URL_SCHEME="https",
+    PREFERRED_URL_SCHEME="https"
 )
 
 bcrypt = Bcrypt(app)
 
-# ---------------- DATABASE ---------------- #
+# ----------------------------------------------------
+# DATABASE
+# ----------------------------------------------------
 
 def get_db_connection():
     return pymysql.connect(
@@ -62,7 +77,7 @@ def get_db_connection():
         user=os.getenv("DB_USER"),
         password=os.getenv("DB_PASSWORD"),
         database=os.getenv("DB_NAME"),
-        port=int(os.getenv("DB_PORT", 4000)),
+        port=int(os.getenv("DB_PORT", "4000")),
         ssl={
             "ca": "/etc/ssl/certs/ca-certificates.crt"
         },
@@ -70,7 +85,9 @@ def get_db_connection():
         cursorclass=pymysql.cursors.DictCursor
     )
 
-# ---------------- GOOGLE OAUTH ---------------- #
+# ----------------------------------------------------
+# GOOGLE OAUTH
+# ----------------------------------------------------
 
 oauth = OAuth(app)
 
@@ -84,7 +101,9 @@ google = oauth.register(
     }
 )
 
-# ---------------- HOME ---------------- #
+# ----------------------------------------------------
+# HOME
+# ----------------------------------------------------
 
 @app.route("/")
 def home():
@@ -92,9 +111,14 @@ def home():
 
 # ---------------- GOOGLE LOGIN ---------------- #
 
+# ----------------------------------------------------
+# GOOGLE LOGIN
+# ----------------------------------------------------
+
 @app.route("/login/google")
 def google_login():
 
+    # Fresh Session
     session.clear()
     session.permanent = True
 
@@ -106,114 +130,130 @@ def google_login():
 
     return google.authorize_redirect(redirect_uri)
 
-# ---------------- GOOGLE CALLBACK ---------------- #
+
+# ----------------------------------------------------
+# SESSION TEST
+# ----------------------------------------------------
+
 @app.route("/session-test")
 def session_test():
     session["test"] = "working"
     return "Session Saved"
 
+
 @app.route("/session-check")
 def session_check():
     return str(session.get("test"))
+
+
+# ----------------------------------------------------
+# GOOGLE CALLBACK
+# ----------------------------------------------------
+
 @app.route("/login/google/callback")
 def google_callback():
 
-    token = google.authorize_access_token()
+    try:
+        token = google.authorize_access_token()
 
-    user = google.parse_id_token(token)
+        user = google.parse_id_token(token)
 
-    if not user:
-        flash("Google Login Failed", "danger")
+        if not user:
+            flash("Google Login Failed", "danger")
+            return redirect(url_for("login"))
+
+        name = user.get("name")
+        email = user.get("email")
+        picture = user.get("picture")
+        google_id = user.get("sub")
+        verified = user.get("email_verified", False)
+
+        conn = get_db_connection()
+        cur = conn.cursor()
+
+        cur.execute(
+            "SELECT * FROM users WHERE email=%s",
+            (email,)
+        )
+
+        existing = cur.fetchone()
+
+        if existing:
+
+            cur.execute(
+                """
+                UPDATE users
+                SET
+                    google_id=%s,
+                    profile_pic=%s,
+                    email_verified=%s,
+                    login_type='google'
+                WHERE email=%s
+                """,
+                (
+                    google_id,
+                    picture,
+                    verified,
+                    email
+                )
+            )
+
+            conn.commit()
+
+            session["user_id"] = existing["id"]
+            session["name"] = existing["name"]
+            session["email"] = existing["email"]
+            session["profile_pic"] = picture
+
+        else:
+
+            random_password = secrets.token_hex(16)
+
+            hashed_password = bcrypt.generate_password_hash(
+                random_password
+            ).decode("utf-8")
+
+            cur.execute(
+                """
+                INSERT INTO users
+                (
+                    name,
+                    email,
+                    password,
+                    google_id,
+                    profile_pic,
+                    email_verified,
+                    login_type
+                )
+                VALUES
+                (%s,%s,%s,%s,%s,%s,'google')
+                """,
+                (
+                    name,
+                    email,
+                    hashed_password,
+                    google_id,
+                    picture,
+                    verified
+                )
+            )
+
+            conn.commit()
+
+            session["user_id"] = cur.lastrowid
+            session["name"] = name
+            session["email"] = email
+            session["profile_pic"] = picture
+
+        cur.close()
+        conn.close()
+
+        return redirect(url_for("dashboard"))
+
+    except Exception as e:
+        print("GOOGLE LOGIN ERROR:", e)
+        flash("Google Login Failed.", "danger")
         return redirect(url_for("login"))
-
-    name = user.get("name")
-    email = user.get("email")
-    picture = user.get("picture")
-    google_id = user.get("sub")
-    verified = user.get("email_verified", False)
-
-    conn = get_db_connection()
-    cur = conn.cursor()
-
-    cur.execute(
-        "SELECT * FROM users WHERE email=%s",
-        (email,)
-    )
-
-    existing = cur.fetchone()
-
-    if existing:
-
-        cur.execute(
-            """
-            UPDATE users
-            SET
-                google_id=%s,
-                profile_pic=%s,
-                email_verified=%s,
-                login_type='google'
-            WHERE email=%s
-            """,
-            (
-                google_id,
-                picture,
-                verified,
-                email
-            )
-        )
-
-        conn.commit()
-
-        session["user_id"] = existing["id"]
-        session["name"] = existing["name"]
-        session["email"] = existing["email"]
-        session["profile_pic"] = picture
-
-    else:
-
-        random_password = secrets.token_hex(16)
-
-        hashed_password = bcrypt.generate_password_hash(
-            random_password
-        ).decode("utf-8")
-
-        cur.execute(
-            """
-            INSERT INTO users
-            (
-                name,
-                email,
-                password,
-                google_id,
-                profile_pic,
-                email_verified,
-                login_type
-            )
-            VALUES
-            (%s,%s,%s,%s,%s,%s,'google')
-            """,
-            (
-                name,
-                email,
-                hashed_password,
-                google_id,
-                picture,
-                verified
-            )
-        )
-
-        conn.commit()
-
-        session["user_id"] = cur.lastrowid
-        session["name"] = name
-        session["email"] = email
-        session["profile_pic"] = picture
-
-    cur.close()
-    conn.close()
-
-    return redirect(url_for("dashboard"))
-
 # ---------------- SIGNUP ---------------- #
 
 @app.route("/signup", methods=["GET", "POST"])
