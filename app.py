@@ -147,22 +147,15 @@ def google_login():
     )
 
     return google.authorize_redirect(redirect_uri)
-
 # --------------------------------------------------
 # GOOGLE CALLBACK
 # --------------------------------------------------
-
 @app.route("/login/google/callback")
 def google_callback():
-
     try:
-
         token=google.authorize_access_token()
-
         userinfo=token.get("userinfo")
-
         if not userinfo:
-
             userinfo=google.get(
                 "https://openidconnect.googleapis.com/v1/userinfo"
             ).json()
@@ -1574,7 +1567,126 @@ def courses():
         "course.html"
     )
 
+@app.route("/course/<course_name>")
+def course_page(course_name):
 
+    if "user_id" not in session:
+        return redirect("/login")
+
+
+    user_id=session["user_id"]
+
+
+    conn=get_db_connection()
+    cursor=conn.cursor(pymysql.cursors.DictCursor)
+
+
+    # Course Content
+
+    cursor.execute("""
+    SELECT *
+    FROM course_content
+    WHERE course_name=%s
+    ORDER BY day_number
+    """,(course_name,))
+
+
+    content=cursor.fetchall()
+
+
+
+    # User Progress
+
+    cursor.execute("""
+    SELECT *
+    FROM course_progress
+    WHERE user_id=%s
+    AND course_name=%s
+    """,
+    (user_id,course_name))
+
+
+    progress=cursor.fetchone()
+
+
+
+    if not progress:
+
+        cursor.execute("""
+        INSERT INTO course_progress
+        (user_id,course_name)
+        VALUES(%s,%s)
+        """,
+        (user_id,course_name))
+
+
+        conn.commit()
+
+
+        progress={
+        "current_day":1,
+        "xp":0,
+        "streak":1
+        }
+
+
+
+    cursor.close()
+    conn.close()
+
+
+
+    return render_template(
+        "course.html",
+        course_name=course_name,
+        content=content,
+        progress=progress,
+        day_count=len(content)
+    )
+
+@app.route("/save-progress",methods=["POST"])
+def save_progress():
+
+    data=request.json
+
+
+    user_id=session["user_id"]
+
+
+    conn=get_db_connection()
+    cursor=conn.cursor()
+
+
+    cursor.execute("""
+    UPDATE course_progress
+
+    SET current_day=%s,
+    xp=%s,
+    streak=%s
+
+    WHERE user_id=%s
+    AND course_name=%s
+
+    """,
+    (
+    data["day"],
+    data["xp"],
+    data["streak"],
+    user_id,
+    data["course"]
+    ))
+
+
+
+    conn.commit()
+
+    cursor.close()
+    conn.close()
+
+
+    return {
+        "status":"success"
+    }
 
 @app.route("/courses/java")
 def java_course():
