@@ -1,107 +1,207 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Sign Up - Placement Training Portal</title>
-    <style>
-        *{
-            margin:0;
-            padding:0;
-            box-sizing:border-box;
-            font-family:Arial, sans-serif;
-        }
+{% extends "layout.html" %}
 
-        body{
-            background:#f4f6f9;
-            display:flex;
-            justify-content:center;
-            align-items:center;
-            height:100vh;
-        }
+{% block title %}Sign Up{% endblock %}
 
-        .container{
-            width:400px;
-            background:#fff;
-            padding:40px;
-            border-radius:10px;
-            box-shadow:0 0 15px rgba(0,0,0,0.1);
-        }
+{% block content %}
 
-        h1{
-            text-align:center;
-            color:#007bff;
-            margin-bottom:30px;
-        }
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='css/login.css') }}">
 
-        label{
-            font-weight:bold;
-            display:block;
-            margin-top:15px;
-        }
+<div class="login-page">
 
-        input{
-            width:100%;
-            padding:12px;
-            margin-top:5px;
-            border:1px solid #ccc;
-            border-radius:5px;
-            font-size:15px;
-        }
+    <!-- Left Section -->
+    <div class="login-left">
 
-        button{
-            width:100%;
-            padding:12px;
-            margin-top:25px;
-            background:#007bff;
-            color:white;
-            border:none;
-            border-radius:5px;
-            font-size:16px;
-            cursor:pointer;
-        }
+        <div class="brand">
 
-        button:hover{
-            background:#0056b3;
-        }
+            <div class="brand-logo">
+                🎓
+            </div>
 
-        p{
-            text-align:center;
-            margin-top:20px;
-        }
+            <h1>Placement Training Portal</h1>
 
-        a{
-            text-decoration:none;
-            color:#007bff;
-        }
-    </style>
-</head>
-<body>
+            <p>
+                Build Your Skills • Get Placed • Achieve Your Dream Career
+            </p>
 
-<div class="container">
+        </div>
 
-    <h1>Create Account</h1>
+        <div class="feature-list">
 
-    <form action="/signup" method="POST">
+            <div class="feature-item">
+                <i class="fas fa-circle-check"></i>
+                <span>1000+ Mock Tests</span>
+            </div>
 
-        <label>Full Name</label>
-        <input type="text" name="name" required>
+            <div class="feature-item">
+                <i class="fas fa-circle-check"></i>
+                <span>Interview Preparation</span>
+            </div>
 
-        <label>Email</label>
-        <input type="email" name="email" required>
+            <div class="feature-item">
+                <i class="fas fa-circle-check"></i>
+                <span>AI Resume Builder</span>
+            </div>
 
-        <label>Password</label>
-        <input type="password" name="password" required>
+            <div class="feature-item">
+                <i class="fas fa-circle-check"></i>
+                <span>Communication Skills</span>
+            </div>
 
-        <button type="submit">Sign Up</button>
+            <div class="feature-item">
+                <i class="fas fa-circle-check"></i>
+                <span>Placement Dashboard</span>
+            </div>
 
-    </form>
+        </div>
 
-    <p>
-        Already have an account?
-        <a href="/login">Login</a>
-    </p>
+    </div>
+
+    <!-- Right Section -->
+
+    <div class="login-right">
+
+        <div class="login-card">
+
+            <h2>Create Account 🚀</h2>
+
+            <p class="subtitle">
+                Join now and start your placement journey
+            </p>
+
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="flash-message">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <!-- Google Signup -->
+
+            <a href="{{ url_for('google_login') }}" class="google-btn">
+
+                <img src="https://developers.google.com/identity/images/g-logo.png">
+
+                Continue with Google
+
+            </a>
+
+            <div class="divider">
+
+                <span>OR</span>
+
+            </div>
+
+            <!-- Signup Form -->
+
+            <form action="/signup" method="POST">
+
+                <div class="input-group">
+
+                    <label>Full Name</label>
+
+                    <div class="input-box">
+
+                        <i class="fas fa-user"></i>
+
+                        <input
+                            type="text"
+                            name="name"
+                            placeholder="Enter your full name"
+                            required>
+
+                    </div>
+
+                </div>
+
+                <div class="input-group">
+
+                    <label>Email Address</label>
+
+                    <div class="input-box">
+
+                        <i class="fas fa-envelope"></i>
+
+                        <input
+                            type="email"
+                            name="email"
+                            placeholder="Enter your email"
+                            required>
+
+                    </div>
+
+                </div>
+
+                <div class="input-group">
+
+                    <label>Password</label>
+
+                    <div class="input-box">
+
+                        <i class="fas fa-lock"></i>
+
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            placeholder="Create password"
+                            required>
+
+                        <i class="fas fa-eye toggle-password"
+                           onclick="togglePassword()"></i>
+
+                    </div>
+
+                </div>
+
+                <div class="input-group">
+
+                    <label>Confirm Password</label>
+
+                    <div class="input-box">
+
+                        <i class="fas fa-lock"></i>
+
+                        <input
+                            type="password"
+                            id="confirm_password"
+                            name="confirm_password"
+                            placeholder="Confirm password"
+                            required>
+
+                    </div>
+
+                </div>
+
+                <button class="login-btn">
+
+                    Create Account
+
+                </button>
+
+            </form>
+
+            <div class="bottom-links">
+
+                Already have an account?
+
+                <a href="/login">
+
+                    Login
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
 
 </div>
 
-</body>
-</html>
+<script src="{{ url_for('static', filename='js/login.js') }}"></script>
 
+{% endblock %}
