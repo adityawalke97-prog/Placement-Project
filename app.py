@@ -1559,7 +1559,12 @@ def download_history():
 # COURSES
 # ==============================
 
+@app.route("/courses")
+def courses():
 
+    return redirect(
+        "/course/Java"
+    )
 
 @app.route("/quiz/<course>/<int:day>")
 def course_quiz(course,day):
