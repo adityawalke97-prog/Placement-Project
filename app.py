@@ -9,36 +9,53 @@ from flask import (
     Response,
     url_for
 )
+
 from authlib.integrations.flask_client import OAuth
-from dotenv import load_dotenv
 from flask_bcrypt import Bcrypt
+from dotenv import load_dotenv
+from werkzeug.middleware.proxy_fix import ProxyFix
+
+from datetime import timedelta
+
 import pymysql
+import secrets
 import os
 import json
 import csv
 import io
-from dotenv import load_dotenv
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+
+from reportlab.platypus import (
+    SimpleDocTemplate,
+    Paragraph,
+    Spacer
+)
 from reportlab.lib.styles import getSampleStyleSheet
 
-# Load environment variables
+# ---------------- LOAD ENV ---------------- #
+
 load_dotenv()
 
-# Flask App
+# ---------------- FLASK APP ---------------- #
+
 app = Flask(__name__)
-app.secret_key = os.getenv("SECRET_KEY")
-from datetime import timedelta
 
 app.secret_key = os.getenv("SECRET_KEY")
 
-app.config["SESSION_COOKIE_SECURE"] = True
-app.config["SESSION_COOKIE_HTTPONLY"] = True
-app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
-app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(days=7)
-# Initialize Bcrypt
+# Render HTTPS Fix
+app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
+
+app.config.update(
+    SESSION_COOKIE_SECURE=True,
+    SESSION_COOKIE_HTTPONLY=True,
+    SESSION_COOKIE_SAMESITE="Lax",
+    PERMANENT_SESSION_LIFETIME=timedelta(days=7),
+    PREFERRED_URL_SCHEME="https",
+)
+
 bcrypt = Bcrypt(app)
 
-# Database Connection
+# ---------------- DATABASE ---------------- #
+
 def get_db_connection():
     return pymysql.connect(
         host=os.getenv("DB_HOST"),
@@ -55,8 +72,6 @@ def get_db_connection():
 
 # ---------------- GOOGLE OAUTH ---------------- #
 
-from authlib.integrations.flask_client import OAuth
-
 oauth = OAuth(app)
 
 google = oauth.register(
@@ -69,36 +84,50 @@ google = oauth.register(
     }
 )
 
+# ---------------- HOME ---------------- #
+
+@app.route("/")
+def home():
+    return render_template("index.html")
+
+# ---------------- GOOGLE LOGIN ---------------- #
+
 @app.route("/login/google")
 def google_login():
-    redirect_uri = url_for("google_callback", _external=True)
+
+    session.clear()
+    session.permanent = True
+
+    redirect_uri = url_for(
+        "google_callback",
+        _external=True,
+        _scheme="https"
+    )
+
     return google.authorize_redirect(redirect_uri)
-# ---------------- HOME ----------------
-@app.route('/')
-def home():
-    return render_template('index.html')
+
+# ---------------- GOOGLE CALLBACK ---------------- #
 
 @app.route("/login/google/callback")
 def google_callback():
+
     token = google.authorize_access_token()
+
     user = google.parse_id_token(token)
 
     if not user:
-        flash("Google Login Failed")
+        flash("Google Login Failed", "danger")
         return redirect(url_for("login"))
 
-    name = user["name"]
-    email = user["email"]
+    name = user.get("name")
+    email = user.get("email")
     picture = user.get("picture")
-    google_id = user["sub"]
+    google_id = user.get("sub")
     verified = user.get("email_verified", False)
-
-    # baaki tumhara existing database code
 
     conn = get_db_connection()
     cur = conn.cursor()
 
-    # Check existing user
     cur.execute(
         "SELECT * FROM users WHERE email=%s",
         (email,)
@@ -108,21 +137,23 @@ def google_callback():
 
     if existing:
 
-        cur.execute("""
-        UPDATE users
-        SET
-            google_id=%s,
-            profile_pic=%s,
-            email_verified=%s,
-            login_type='google'
-        WHERE email=%s
-        """,
-        (
-            google_id,
-            picture,
-            verified,
-            email
-        ))
+        cur.execute(
+            """
+            UPDATE users
+            SET
+                google_id=%s,
+                profile_pic=%s,
+                email_verified=%s,
+                login_type='google'
+            WHERE email=%s
+            """,
+            (
+                google_id,
+                picture,
+                verified,
+                email
+            )
+        )
 
         conn.commit()
 
@@ -133,38 +164,40 @@ def google_callback():
 
     else:
 
-        password = bcrypt.generate_password_hash(
-            secrets.token_hex(16)
+        random_password = secrets.token_hex(16)
+
+        hashed_password = bcrypt.generate_password_hash(
+            random_password
         ).decode("utf-8")
 
-        cur.execute("""
-        INSERT INTO users
-        (
-            name,
-            email,
-            password,
-            google_id,
-            profile_pic,
-            email_verified,
-            login_type
+        cur.execute(
+            """
+            INSERT INTO users
+            (
+                name,
+                email,
+                password,
+                google_id,
+                profile_pic,
+                email_verified,
+                login_type
+            )
+            VALUES
+            (%s,%s,%s,%s,%s,%s,'google')
+            """,
+            (
+                name,
+                email,
+                hashed_password,
+                google_id,
+                picture,
+                verified
+            )
         )
-        VALUES
-        (%s,%s,%s,%s,%s,%s,'google')
-        """,
-        (
-            name,
-            email,
-            password,
-            google_id,
-            picture,
-            verified
-        ))
 
         conn.commit()
 
-        user_id = cur.lastrowid
-
-        session["user_id"] = user_id
+        session["user_id"] = cur.lastrowid
         session["name"] = name
         session["email"] = email
         session["profile_pic"] = picture
@@ -173,10 +206,14 @@ def google_callback():
     conn.close()
 
     return redirect(url_for("dashboard"))
-# ---------------- SIGNUP ----------------
+
+# ---------------- SIGNUP ---------------- #
+
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
+
     if request.method == "POST":
+
         name = request.form["name"]
         email = request.form["email"]
         password = request.form["password"]
@@ -184,28 +221,39 @@ def signup():
         conn = get_db_connection()
         cur = conn.cursor()
 
-        # Check email
-        cur.execute("SELECT id FROM users WHERE email=%s", (email,))
+        cur.execute(
+            "SELECT id FROM users WHERE email=%s",
+            (email,)
+        )
+
         existing = cur.fetchone()
 
         if existing:
-            flash("Email already registered. Please login.", "danger")
+            flash("Email already exists.", "danger")
             cur.close()
             conn.close()
             return redirect("/login")
 
-        hashed_password = bcrypt.generate_password_hash(password).decode("utf-8")
+        hashed_password = bcrypt.generate_password_hash(
+            password
+        ).decode("utf-8")
 
         cur.execute(
-            "INSERT INTO users (name, email, password) VALUES (%s,%s,%s)",
-            (name, email, hashed_password)
+            "INSERT INTO users(name,email,password) VALUES(%s,%s,%s)",
+            (
+                name,
+                email,
+                hashed_password
+            )
         )
 
         conn.commit()
+
         cur.close()
         conn.close()
 
-        flash("Account created successfully.", "success")
+        flash("Account Created Successfully", "success")
+
         return redirect("/login")
 
     return render_template("signup.html")
