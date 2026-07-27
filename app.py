@@ -126,13 +126,24 @@ google = oauth.register(
 # --------------------------------------------------
 # HOME
 # --------------------------------------------------
+# --------------------------------------------------
+# HOME
+# --------------------------------------------------
 
-# @app.route("/")
-# def home():
-#     return render_template("index.html")
 @app.route("/")
-def google_callback():
-     return redirect("/login")
+def home():
+    return redirect("/login")
+
+
+# --------------------------------------------------
+# LOGIN PAGE
+# --------------------------------------------------
+
+@app.route("/login")
+def login():
+    return render_template("login.html")
+
+
 # --------------------------------------------------
 # GOOGLE LOGIN
 # --------------------------------------------------
@@ -140,131 +151,110 @@ def google_callback():
 @app.route("/login/google")
 def google_login():
 
-    session.permanent=True
+    session.permanent = True
 
-    redirect_uri=url_for(
+    redirect_uri = url_for(
         "google_callback",
         _external=True,
         _scheme="https"
     )
 
     return google.authorize_redirect(redirect_uri)
+
+
 # --------------------------------------------------
 # GOOGLE CALLBACK
 # --------------------------------------------------
+
 @app.route("/login/google/callback")
 def google_callback():
     try:
-        token=google.authorize_access_token()
-        userinfo=token.get("userinfo")
+
+        token = google.authorize_access_token()
+
+        userinfo = token.get("userinfo")
+
         if not userinfo:
-            userinfo=google.get(
+            userinfo = google.get(
                 "https://openidconnect.googleapis.com/v1/userinfo"
             ).json()
 
-        name=userinfo["name"]
-        email=userinfo["email"]
-        picture=userinfo.get("picture")
-        google_id=userinfo["sub"]
-        verified=userinfo.get("email_verified",False)
+        name = userinfo["name"]
+        email = userinfo["email"]
+        picture = userinfo.get("picture")
+        google_id = userinfo["sub"]
+        verified = userinfo.get("email_verified", False)
 
-        conn=get_db_connection()
-        cur=conn.cursor()
+        conn = get_db_connection()
+        cur = conn.cursor()
 
         cur.execute(
             "SELECT * FROM users WHERE email=%s",
             (email,)
         )
 
-        existing=cur.fetchone()
+        existing = cur.fetchone()
 
         if existing:
 
             cur.execute("""
-
-            UPDATE users
-
-            SET
-
-            google_id=%s,
-
-            profile_pic=%s,
-
-            email_verified=%s,
-
-            login_provider='google'
-
-            WHERE email=%s
-
-            """,
-
-            (
-
-            google_id,
-
-            picture,
-
-            verified,
-
-            email
-
+                UPDATE users
+                SET
+                    google_id=%s,
+                    profile_pic=%s,
+                    email_verified=%s,
+                    login_provider='google'
+                WHERE email=%s
+            """, (
+                google_id,
+                picture,
+                verified,
+                email
             ))
 
             conn.commit()
 
-            session["user_id"]=existing["id"]
-            session["name"]=existing["name"]
-            session["email"]=existing["email"]
-            session["profile_pic"]=picture
+            session["user_id"] = existing["id"]
+            session["name"] = existing["name"]
+            session["email"] = existing["email"]
+            session["profile_pic"] = picture
 
         else:
 
-            random_password=secrets.token_hex(16)
+            random_password = secrets.token_hex(16)
 
-            hashed_password=bcrypt.generate_password_hash(
+            hashed_password = bcrypt.generate_password_hash(
                 random_password
-            ).decode()
+            ).decode("utf-8")
 
             cur.execute("""
-
-            INSERT INTO users
-            (
+                INSERT INTO users
+                (
+                    name,
+                    email,
+                    password,
+                    google_id,
+                    profile_pic,
+                    email_verified,
+                    login_provider
+                )
+                VALUES
+                (%s,%s,%s,%s,%s,%s,'google')
+            """, (
                 name,
                 email,
-                password,
+                hashed_password,
                 google_id,
-                profile_pic,
-                email_verified,
-                login_provider
-            )
-
-            VALUES
-            (%s,%s,%s,%s,%s,%s,'google')
-
-            """,
-
-            (
-
-            name,
-
-            email,
-
-            hashed_password,
-
-            google_id,
-
-            picture,
-
-            verified
-
+                picture,
+                verified
             ))
 
             conn.commit()
 
-            session["user_id"]=cur.lastrowid
-            session["name"]=name
-            session["email"]=email
-            session["profile_pic"]=picture
+            session["user_id"] = cur.lastrowid
+            session["name"] = name
+            session["email"] = email
+            session["profile_pic"] = picture
 
         cur.close()
         conn.close()
@@ -273,12 +263,11 @@ def google_callback():
 
     except Exception as e:
 
-        print("GOOGLE LOGIN ERROR:",e)
+        print("GOOGLE LOGIN ERROR:", e)
 
-        flash("Google Login Failed","danger")
+        flash("Google Login Failed", "danger")
 
         return redirect("/login")
-
 # --------------------------------------------------
 # SIGNUP
 # --------------------------------------------------
