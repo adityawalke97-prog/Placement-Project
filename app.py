@@ -130,18 +130,13 @@ google = oauth.register(
 # HOME
 # --------------------------------------------------
 
+# --------------------------------------------------
+# HOME
+# --------------------------------------------------
+
 @app.route("/")
 def home():
     return redirect("/login")
-
-
-# --------------------------------------------------
-# LOGIN PAGE
-# --------------------------------------------------
-
-@app.route("/login")
-def login():
-    return render_template("login.html")
 
 
 # --------------------------------------------------
@@ -268,21 +263,23 @@ def google_callback():
         flash("Google Login Failed", "danger")
 
         return redirect("/login")
+
+
 # --------------------------------------------------
 # SIGNUP
 # --------------------------------------------------
 
-@app.route("/signup",methods=["GET","POST"])
+@app.route("/signup", methods=["GET", "POST"])
 def signup():
 
-    if request.method=="POST":
+    if request.method == "POST":
 
-        name=request.form["name"]
-        email=request.form["email"]
-        password=request.form["password"]
+        name = request.form["name"]
+        email = request.form["email"]
+        password = request.form["password"]
 
-        conn=get_db_connection()
-        cur=conn.cursor()
+        conn = get_db_connection()
+        cur = conn.cursor()
 
         cur.execute(
             "SELECT id FROM users WHERE email=%s",
@@ -291,34 +288,25 @@ def signup():
 
         if cur.fetchone():
 
-            flash("Email already exists","danger")
+            flash("Email already exists", "danger")
 
             cur.close()
             conn.close()
 
             return redirect("/login")
 
-        password=bcrypt.generate_password_hash(
+        password = bcrypt.generate_password_hash(
             password
-        ).decode()
+        ).decode("utf-8")
 
         cur.execute("""
-
-        INSERT INTO users
-        (name,email,password)
-
-        VALUES(%s,%s,%s)
-
-        """,
-
-        (
-
-        name,
-
-        email,
-
-        password
-
+            INSERT INTO users
+            (name,email,password)
+            VALUES(%s,%s,%s)
+        """, (
+            name,
+            email,
+            password
         ))
 
         conn.commit()
@@ -326,33 +314,34 @@ def signup():
         cur.close()
         conn.close()
 
-        flash("Account Created Successfully","success")
+        flash("Account Created Successfully", "success")
 
         return redirect("/login")
 
     return render_template("signup.html")
 
+
 # --------------------------------------------------
 # LOGIN
 # --------------------------------------------------
 
-@app.route("/login",methods=["GET","POST"])
+@app.route("/login", methods=["GET", "POST"])
 def login():
 
-    if request.method=="POST":
+    if request.method == "POST":
 
-        email=request.form["email"]
-        password=request.form["password"]
+        email = request.form["email"]
+        password = request.form["password"]
 
-        conn=get_db_connection()
-        cur=conn.cursor()
+        conn = get_db_connection()
+        cur = conn.cursor()
 
         cur.execute(
             "SELECT * FROM users WHERE email=%s",
             (email,)
         )
 
-        user=cur.fetchone()
+        user = cur.fetchone()
 
         cur.close()
         conn.close()
@@ -362,13 +351,14 @@ def login():
             password
         ):
 
-            session["user_id"]=user["id"]
-            session["name"]=user["name"]
-            session["email"]=user["email"]
+            session["user_id"] = user["id"]
+            session["name"] = user["name"]
+            session["email"] = user["email"]
+            session["profile_pic"] = user.get("profile_pic")
 
             return redirect("/dashboard")
 
-        flash("Invalid Email or Password","danger")
+        flash("Invalid Email or Password", "danger")
 
     return render_template("login.html")
 
