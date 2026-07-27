@@ -127,10 +127,12 @@ google = oauth.register(
 # HOME
 # --------------------------------------------------
 
+# @app.route("/")
+# def home():
+#     return render_template("index.html")
 @app.route("/")
-def home():
-    return render_template("index.html")
-
+def google_callback():
+     return redirect("/login")
 # --------------------------------------------------
 # GOOGLE LOGIN
 # --------------------------------------------------
