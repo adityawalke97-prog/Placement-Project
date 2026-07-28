@@ -1,11 +1,20 @@
-{% extends "layout.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
 
-{% block title %}Login{% endblock %}
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
-{% block content %}
+    <!-- Login CSS -->
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/login.css') }}">
+</head>
 
-<link rel="stylesheet"
-      href="{{ url_for('static', filename='css/login.css') }}">
+<body>
 
 <div class="login-page">
 
@@ -13,7 +22,6 @@
     <div class="login-left">
 
         <div class="brand">
-
             <div class="brand-logo">
                 🎓
             </div>
@@ -23,7 +31,6 @@
             <p>
                 Learn • Practice • Crack Your Dream Job
             </p>
-
         </div>
 
         <div class="feature-list">
@@ -57,7 +64,6 @@
 
     </div>
 
-
     <!-- Right Section -->
     <div class="login-right">
 
@@ -80,7 +86,6 @@
             {% endwith %}
 
             <!-- Google Login -->
-
             <a href="{{ url_for('google_login') }}" class="google-btn">
 
                 <img src="https://developers.google.com/identity/images/g-logo.png">
@@ -90,13 +95,10 @@
             </a>
 
             <div class="divider">
-
                 <span>OR</span>
-
             </div>
 
             <!-- Email Login -->
-
             <form action="/login" method="POST">
 
                 <div class="input-group">
@@ -142,25 +144,18 @@
                 <div class="login-options">
 
                     <label class="remember">
-
                         <input type="checkbox">
-
                         Remember Me
-
                     </label>
 
                     <a href="/forgot_password">
-
                         Forgot Password?
-
                     </a>
 
                 </div>
 
                 <button class="login-btn">
-
                     Login
-
                 </button>
 
             </form>
@@ -170,9 +165,7 @@
                 Don't have an account?
 
                 <a href="/signup">
-
                     Create Account
-
                 </a>
 
             </div>
@@ -185,4 +178,5 @@
 
 <script src="{{ url_for('static', filename='js/login.js') }}"></script>
 
-{% endblock %}
+</body>
+</html>
