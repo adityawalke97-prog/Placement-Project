@@ -720,3 +720,492 @@ function(){
     generateAIAnalysis();
 
 });
+
+
+/*==================================================
+        PLACEMENT MOCK TEST
+        PART 1
+        QUESTION ENGINE
+==================================================*/
+
+
+// ================================
+// QUESTION DATA
+// ================================
+
+
+const questions = [
+
+{
+    id:1,
+
+    category:"Java",
+
+    question:
+    "Which keyword is used to create an object in Java?",
+
+    options:[
+        "class",
+        "new",
+        "object",
+        "create"
+    ],
+
+    answer:"new"
+},
+
+
+{
+    id:2,
+
+    category:"Python",
+
+    question:
+    "Which data type stores True or False values?",
+
+    options:[
+        "Integer",
+        "String",
+        "Boolean",
+        "Float"
+    ],
+
+    answer:"Boolean"
+},
+
+
+{
+    id:3,
+
+    category:"DBMS",
+
+    question:
+    "Which SQL command is used to retrieve data?",
+
+    options:[
+        "INSERT",
+        "UPDATE",
+        "SELECT",
+        "DELETE"
+    ],
+
+    answer:"SELECT"
+},
+
+
+{
+    id:4,
+
+    category:"OS",
+
+    question:
+    "Which scheduling algorithm uses time quantum?",
+
+    options:[
+        "FCFS",
+        "Round Robin",
+        "SJF",
+        "Priority"
+    ],
+
+    answer:"Round Robin"
+}
+
+
+];
+
+
+
+// ================================
+// GLOBAL VARIABLES
+// ================================
+
+
+let currentQuestion = 0;
+
+
+let userAnswers = {};
+
+
+let questionStatus = {};
+
+
+
+questions.forEach(q=>{
+
+    questionStatus[q.id]="not-visited";
+
+});
+
+
+
+// ================================
+// LOAD FIRST QUESTION
+// ================================
+
+
+document.addEventListener(
+"DOMContentLoaded",
+()=>{
+
+
+    createPalette();
+
+
+    loadQuestion();
+
+
+});
+
+
+
+
+
+// ================================
+// CREATE QUESTION PALETTE
+// ================================
+
+
+function createPalette(){
+
+
+    const palette =
+    document.getElementById(
+        "questionGrid"
+    );
+
+
+    if(!palette)
+        return;
+
+
+
+    palette.innerHTML="";
+
+
+
+    questions.forEach((q,index)=>{
+
+
+        let btn =
+        document.createElement("button");
+
+
+
+        btn.className=
+        "palette-btn not-visited";
+
+
+
+        btn.innerText=
+        index+1;
+
+
+
+        btn.id=
+        `palette-${index}`;
+
+
+
+        btn.onclick=()=>{
+
+
+            currentQuestion=index;
+
+
+            loadQuestion();
+
+
+        };
+
+
+
+        palette.appendChild(btn);
+
+
+
+    });
+
+
+
+}
+
+
+
+
+
+// ================================
+// LOAD QUESTION
+// ================================
+
+
+function loadQuestion(){
+
+
+    let q =
+    questions[currentQuestion];
+
+
+
+    document.getElementById(
+        "questionNumber"
+    ).innerText =
+    `Question ${currentQuestion+1}`;
+
+
+
+    document.getElementById(
+        "category"
+    ).innerText =
+    q.category;
+
+
+
+    document.getElementById(
+        "questionText"
+    ).innerText =
+    q.question;
+
+
+
+    let optionBox =
+    document.getElementById(
+        "options"
+    );
+
+
+
+    optionBox.innerHTML="";
+
+
+
+    q.options.forEach(option=>{
+
+
+        let label =
+        document.createElement("label");
+
+
+
+        label.innerHTML=`
+
+        <input 
+        type="radio"
+        name="answer"
+        value="${option}"
+        >
+
+        <span>
+        ${option}
+        </span>
+
+        `;
+
+
+
+        optionBox.appendChild(label);
+
+
+
+    });
+
+
+
+    restoreAnswer();
+
+
+    updatePalette();
+
+
+
+}
+
+
+
+
+
+
+// ================================
+// RESTORE SELECTED ANSWER
+// ================================
+
+
+function restoreAnswer(){
+
+
+    let saved =
+    userAnswers[
+        currentQuestion
+    ];
+
+
+
+    if(!saved)
+        return;
+
+
+
+    let radio =
+    document.querySelector(
+    `input[value="${saved}"]`
+    );
+
+
+
+    if(radio)
+
+        radio.checked=true;
+
+
+}
+
+
+
+
+
+// ================================
+// SAVE ANSWER
+// ================================
+
+
+document.addEventListener(
+"change",
+function(e){
+
+
+if(
+e.target.type==="radio"
+){
+
+
+    userAnswers[
+        currentQuestion
+    ] =
+    e.target.value;
+
+
+
+    questionStatus[
+        currentQuestion+1
+    ] =
+    "answered";
+
+
+
+    updatePalette();
+
+
+
+}
+
+
+
+});
+
+
+
+
+
+// ================================
+// UPDATE PALETTE COLOR
+// ================================
+
+
+function updatePalette(){
+
+
+
+questions.forEach((q,index)=>{
+
+
+let btn =
+document.getElementById(
+`palette-${index}`
+);
+
+
+
+if(!btn)
+return;
+
+
+
+btn.className =
+"palette-btn " +
+questionStatus[q.id];
+
+
+
+if(index===currentQuestion){
+
+
+    btn.classList.add(
+        "active"
+    );
+
+
+}
+
+
+
+});
+
+
+
+}
+
+
+
+
+
+// ================================
+// NEXT QUESTION
+// ================================
+
+
+function nextQuestion(){
+
+
+if(
+currentQuestion <
+questions.length-1
+){
+
+
+    currentQuestion++;
+
+
+    loadQuestion();
+
+
+}
+
+
+}
+
+
+
+
+// ================================
+// PREVIOUS QUESTION
+// ================================
+
+
+function previousQuestion(){
+
+
+if(
+currentQuestion>0
+){
+
+
+    currentQuestion--;
+
+
+    loadQuestion();
+
+
+}
+
+
+}
