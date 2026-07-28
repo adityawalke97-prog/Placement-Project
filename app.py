@@ -495,74 +495,40 @@ def interview_questions():
 # ==============================
 
 
-@app.route("/mock_test")
+@app.route('/mock_test')
 def mock_test():
 
-
-    if "user_id" not in session:
-
-        return redirect(
-            url_for(
-                "login"
-            )
-        )
-
-
+    category = request.args.get('category')
 
     conn = get_db_connection()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
 
-    cur = conn.cursor()
+    if category:
+        cursor.execute("""
+            SELECT *
+            FROM mock_questions
+            WHERE category=%s
+            ORDER BY RAND()
+            LIMIT 20
+        """, (category,))
+    else:
+        cursor.execute("""
+            SELECT *
+            FROM mock_questions
+            ORDER BY RAND()
+            LIMIT 20
+        """)
 
+    questions = cursor.fetchall()
 
-
-    cur.execute("""
-
-    SELECT
-
-        id,
-        question,
-        option1,
-        option2,
-        option3,
-        option4,
-        category
-
-
-    FROM mock_questions
-
-
-    ORDER BY RAND()
-
-
-    LIMIT 20
-
-
-    """)
-
-
-
-    questions = cur.fetchall()
-
-
-
-    cur.close()
-
+    cursor.close()
     conn.close()
 
-
-
     return render_template(
-
-        "mock_test.html",
-
-        questions=questions
-
+        'mock_test.html',
+        questions=questions,
+        category=category
     )
-
-
-
-
-
 # ==============================
 # SUBMIT MOCK TEST
 # ==============================
