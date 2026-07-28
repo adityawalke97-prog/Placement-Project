@@ -4536,3 +4536,679 @@ a:active{
 
 
 }
+
+/*==================================================
+        MOBILE PREMIUM RESPONSIVE PATCH
+==================================================*/
+
+
+/* Large Mobile + Tablet */
+
+@media(max-width:768px){
+
+
+    body{
+
+        overflow-x:hidden;
+
+    }
+
+
+
+    .exam-container{
+
+        width:100%;
+
+        padding:10px;
+
+    }
+
+
+
+    /* HEADER */
+
+    .exam-header{
+
+        position:relative;
+
+        top:0;
+
+
+        border-radius:18px;
+
+        padding:18px;
+
+    }
+
+
+
+    .left-header h2{
+
+        font-size:22px;
+
+        line-height:1.3;
+
+    }
+
+
+
+    .left-header p{
+
+        font-size:13px;
+
+    }
+
+
+
+    .right-header{
+
+        width:100%;
+
+        justify-content:center;
+
+    }
+
+
+
+    .history-btn,
+    .view-btn,
+    .icon-btn{
+
+
+        width:100%;
+
+        padding:12px;
+
+        font-size:14px;
+
+    }
+
+
+
+
+    .timer-box{
+
+        width:100%;
+
+        justify-content:center;
+
+        font-size:15px;
+
+    }
+
+
+
+    #timer{
+
+        font-size:20px;
+
+    }
+
+
+
+
+
+    /* MAIN LAYOUT */
+
+    .exam-layout{
+
+
+        display:flex;
+
+        flex-direction:column;
+
+        gap:18px;
+
+
+    }
+
+
+
+
+    /* QUESTION SIDEBAR */
+
+    .question-sidebar{
+
+
+        order:1;
+
+        width:100%;
+
+        position:relative;
+
+        top:0;
+
+
+        padding:18px;
+
+
+    }
+
+
+
+
+    .question-grid{
+
+
+        grid-template-columns:
+        repeat(5,1fr);
+
+
+        gap:8px;
+
+
+    }
+
+
+
+
+    .palette-btn{
+
+
+        width:40px;
+
+        height:40px;
+
+
+        font-size:13px;
+
+
+    }
+
+
+
+
+
+    /* QUESTION AREA */
+
+
+    .question-area{
+
+
+        order:2;
+
+
+    }
+
+
+
+    .question-card{
+
+
+        padding:20px;
+
+        border-radius:20px;
+
+
+    }
+
+
+
+
+    .question-header h3{
+
+
+        font-size:22px;
+
+
+    }
+
+
+
+
+    .category{
+
+
+        font-size:12px;
+
+        padding:
+        8px 14px;
+
+
+    }
+
+
+
+
+
+    .question-text{
+
+
+        font-size:17px;
+
+
+        line-height:1.6;
+
+
+    }
+
+
+
+
+
+    /* OPTIONS */
+
+
+    .options{
+
+
+        gap:12px;
+
+
+    }
+
+
+
+
+    .options label{
+
+
+        padding:14px;
+
+
+        gap:12px;
+
+
+        border-radius:14px;
+
+
+    }
+
+
+
+
+    .options input[type="radio"]{
+
+
+        width:20px;
+
+        height:20px;
+
+
+    }
+
+
+
+
+    .options span{
+
+
+        font-size:14px;
+
+
+        padding-right:25px;
+
+
+    }
+
+
+
+
+    .options label::after{
+
+
+        width:28px;
+
+        height:28px;
+
+
+        right:10px;
+
+
+        font-size:12px;
+
+
+    }
+
+
+
+
+
+    /* BUTTONS */
+
+
+    .question-actions{
+
+
+        flex-direction:column;
+
+        width:100%;
+
+
+    }
+
+
+
+
+    .clear-btn,
+    .review-btn{
+
+
+        width:100%;
+
+
+        padding:14px;
+
+
+    }
+
+
+
+
+
+    .navigation{
+
+
+        flex-direction:column;
+
+        width:100%;
+
+
+    }
+
+
+
+
+    .nav-btn{
+
+
+        width:100%;
+
+        min-width:100%;
+
+
+    }
+
+
+
+
+    .submit-btn{
+
+
+        width:100%;
+
+        min-width:100%;
+
+
+        font-size:17px;
+
+
+    }
+
+
+
+
+
+    /* RESULT */
+
+
+    .result-preview{
+
+
+        grid-template-columns:
+        1fr;
+
+
+    }
+
+
+
+
+    .result-card h2{
+
+
+        font-size:26px;
+
+
+    }
+
+
+
+
+
+    .score-circle{
+
+
+        width:160px;
+
+        height:160px;
+
+
+    }
+
+
+
+
+    .score-circle span{
+
+
+        width:125px;
+
+        height:125px;
+
+
+        font-size:28px;
+
+
+    }
+
+
+
+
+
+    .stat-box h3{
+
+
+        font-size:28px;
+
+
+    }
+
+
+
+
+    /* MODAL */
+
+
+    .modal-box{
+
+
+        width:92%;
+
+
+        padding:22px;
+
+
+        border-radius:20px;
+
+
+    }
+
+
+
+
+    .modal-box h2{
+
+
+        font-size:24px;
+
+
+    }
+
+
+
+
+    .modal-actions{
+
+
+        flex-direction:column;
+
+
+    }
+
+
+
+
+    .modal-actions button{
+
+
+        width:100%;
+
+
+    }
+
+
+
+}
+
+
+
+
+
+/*==================================================
+        SMALL MOBILE 360px
+==================================================*/
+
+
+@media(max-width:400px){
+
+
+
+    .exam-container{
+
+
+        padding:8px;
+
+
+    }
+
+
+
+    .question-grid{
+
+
+        grid-template-columns:
+        repeat(4,1fr);
+
+
+    }
+
+
+
+
+    .palette-btn{
+
+
+        width:36px;
+
+        height:36px;
+
+
+        font-size:12px;
+
+
+    }
+
+
+
+
+    .question-card{
+
+
+        padding:16px;
+
+
+    }
+
+
+
+
+    .question-header h3{
+
+
+        font-size:20px;
+
+
+    }
+
+
+
+
+    .question-text{
+
+
+        font-size:16px;
+
+
+    }
+
+
+
+    .options span{
+
+
+        font-size:13px;
+
+
+    }
+
+
+
+
+    .timer-box{
+
+
+        padding:10px;
+
+
+    }
+
+
+
+
+}
+
+
+
+/*==================================================
+        LANDSCAPE MOBILE
+==================================================*/
+
+
+@media(max-width:900px) and (orientation:landscape){
+
+
+
+    .exam-header{
+
+
+        flex-direction:row;
+
+
+    }
+
+
+
+    .question-grid{
+
+
+        grid-template-columns:
+        repeat(8,1fr);
+
+
+    }
+
+
+
+
+    .question-card{
+
+
+        padding:20px;
+
+
+    }
+
+
+
+}
