@@ -1,464 +1,492 @@
-/* ===========================================
-   Placement Mock Test
-   Author : Aditya
-=========================================== */
+/*==================================================
+        PLACEMENT MOCK TEST
+        PART 1
+        VARIABLES + TIMER + NAVIGATION
+==================================================*/
 
-/* ---------- Global Variables ---------- */
+// ==========================
+// GLOBAL VARIABLES
+// ==========================
 
 let currentQuestion = 1;
 
-const totalQuestions =
-window.totalQuestions || 0;
+const totalQuestions = window.totalQuestions || 0;
 
-const answeredQuestions = new Set();
-
-const markedQuestions = new Set();
-
-let remainingTime = 20 * 60;
+let totalTime = 20 * 60; // 20 Minutes
 
 let timerInterval = null;
 
+// ==========================
+// START
+// ==========================
 
-/* ---------- Page Load ---------- */
+window.onload = function () {
 
-document.addEventListener("DOMContentLoaded", () => {
+    showInstruction();
 
-    openQuestion(1);
-
-    loadSavedAnswers();
-
-    updatePalette();
-
-    updateSummary();
+    updateQuestion();
 
     startTimer();
 
-});
-
-
-/* ---------- Open Question ---------- */
-
-function openQuestion(number){
-
-    const cards =
-    document.querySelectorAll(".question-card");
-
-    cards.forEach(card=>{
-
-        card.style.display="none";
-
-    });
-
-    const current =
-    document.getElementById(
-    "question-"+number);
-
-    if(current){
-
-        current.style.display="block";
-
-        currentQuestion=number;
-
-        updatePalette();
-
-    }
-
-}
-
-
-/* ---------- Navigation ---------- */
-
-function nextQuestion(){
-
-    if(currentQuestion<totalQuestions){
-
-        openQuestion(currentQuestion+1);
-
-    }
-
-}
-
-
-function previousQuestion(){
-
-    if(currentQuestion>1){
-
-        openQuestion(currentQuestion-1);
-
-    }
-
-}
-
-
-/* ---------- Answer ---------- */
-
-function answerSelected(number){
-
-    answeredQuestions.add(number);
-
-    saveAnswers();
-
-    updatePalette();
-
-    updateSummary();
-
-}
-
-
-/* ---------- Clear ---------- */
-
-function clearAnswer(number){
-
-    const card=document.getElementById(
-    "question-"+number);
-
-    if(!card) return;
-
-    card.querySelectorAll(
-    "input[type=radio]")
-
-    .forEach(r=>r.checked=false);
-
-    answeredQuestions.delete(number);
-
-    saveAnswers();
-
-    updatePalette();
-
-    updateSummary();
-
-}
-
-
-/* ---------- Review ---------- */
-
-function markQuestion(number){
-
-    if(markedQuestions.has(number))
-
-        markedQuestions.delete(number);
-
-    else
-
-        markedQuestions.add(number);
-
-    updatePalette();
-
-    updateSummary();
-
-}
-
-
-/* ---------- Palette ---------- */
-
-function updatePalette(){
-
-    for(let i=1;i<=totalQuestions;i++){
-
-        const btn=document.getElementById(
-        "palette-"+i);
-
-        if(!btn) continue;
-
-        btn.className="palette-btn";
-
-        if(answeredQuestions.has(i))
-
-            btn.classList.add("answered");
-
-        else
-
-            btn.classList.add("not-visited");
-
-        if(markedQuestions.has(i))
-
-            btn.classList.add("review");
-
-        if(i===currentQuestion)
-
-            btn.classList.add("active");
-
-    }
-
-}
-
-
-/* ---------- Summary ---------- */
-
-function updateSummary(){
-
-    const answered=
-
-    answeredQuestions.size;
-
-    const review=
-
-    markedQuestions.size;
-
-    const remaining=
-
-    totalQuestions-answered;
-
-    document.getElementById(
-    "answeredCount").innerHTML=
-    answered;
-
-    document.getElementById(
-    "markedCount").innerHTML=
-    review;
-
-    document.getElementById(
-    "remainingCount").innerHTML=
-    remaining;
-
-    const progress=
-    Math.round(
-    answered/totalQuestions*100);
-
-    document.getElementById(
-    "progressFill").style.width=
-    progress+"%";
-
-    document.getElementById(
-    "progressText").innerHTML=
-    progress+"% Completed";
-
-}
-/* ==========================================
-   TIMER
-========================================== */
+};
+
+// ==========================
+// TIMER
+// ==========================
 
 function startTimer() {
 
-    const timer =
-    document.getElementById("timer");
+    timerInterval = setInterval(function () {
 
-    if (!timer) return;
+        totalTime--;
 
-    timerInterval = setInterval(() => {
+        let minutes = Math.floor(totalTime / 60);
 
-        let minutes =
-        Math.floor(remainingTime / 60);
+        let seconds = totalTime % 60;
 
-        let seconds =
-        remainingTime % 60;
-
-        timer.innerHTML =
-            String(minutes).padStart(2, "0")
-            + ":" +
+        document.getElementById("timer").innerHTML =
+            String(minutes).padStart(2, "0") +
+            ":" +
             String(seconds).padStart(2, "0");
 
-        if (remainingTime === 60) {
+        // 1 minute warning
 
-            showTimeWarning();
+        if (totalTime === 60) {
+
+            document.getElementById("timeModal").style.display = "flex";
 
         }
 
-        if (remainingTime <= 0) {
+        // Auto Submit
+
+        if (totalTime <= 0) {
 
             clearInterval(timerInterval);
 
-            alert("Time Over!");
-
-            document.getElementById(
-                "mockTestForm"
-            ).submit();
-
-            return;
+            finalSubmit();
 
         }
-
-        remainingTime--;
 
     }, 1000);
 
 }
 
+// ==========================
+// SHOW QUESTION
+// ==========================
 
+function updateQuestion() {
 
-/* ==========================================
-   AUTO SAVE
-========================================== */
+    document
+        .querySelectorAll(".question-card")
+        .forEach(function (card) {
 
-function saveAnswers() {
+            card.style.display = "none";
 
-    const answers = {};
+        });
 
-    document.querySelectorAll(
-        "input[type=radio]:checked"
-    ).forEach(input => {
-
-        answers[input.name] = input.value;
-
-    });
-
-    localStorage.setItem(
-        "mock_answers",
-        JSON.stringify(answers)
-    );
-
-    showSaveMessage();
-
-}
-
-
-
-function loadSavedAnswers() {
-
-    const saved =
-    localStorage.getItem(
-        "mock_answers"
-    );
-
-    if (!saved) return;
-
-    const answers =
-    JSON.parse(saved);
-
-    Object.keys(answers).forEach(name => {
-
-        const input =
-        document.querySelector(
-
-            `input[name="${name}"][value="${answers[name]}"]`
-
-        );
-
-        if (input) {
-
-            input.checked = true;
-
-            const question =
-            input.closest(".question-card");
-
-            if (question) {
-
-                const number =
-                parseInt(
-
-                    question.id.replace(
-                        "question-",
-                        ""
-                    )
-
-                );
-
-                answeredQuestions.add(number);
-
-            }
-
-        }
-
-    });
-
-}
-
-
-
-/* ==========================================
-   SAVE MESSAGE
-========================================== */
-
-function showSaveMessage() {
-
-    const box =
     document.getElementById(
-        "autosaveBox"
-    );
+        "question-" + currentQuestion
+    ).style.display = "block";
 
-    if (!box) return;
+    document
+        .querySelectorAll(".palette-btn")
+        .forEach(function (btn) {
 
-    box.style.display = "block";
+            btn.classList.remove("active");
 
-    box.innerHTML = "💾 Saved";
+        });
 
-    setTimeout(() => {
-
-        box.style.display = "none";
-
-    }, 1500);
+    document
+        .getElementById("palette-" + currentQuestion)
+        .classList.add("active");
 
 }
 
+// ==========================
+// NEXT
+// ==========================
 
+function nextQuestion() {
 
-/* Auto Save Every 10 Seconds */
+    if (currentQuestion < totalQuestions) {
 
-setInterval(() => {
+        currentQuestion++;
 
-    saveAnswers();
+        updateQuestion();
 
-}, 10000);
+    }
 
+}
 
+// ==========================
+// PREVIOUS
+// ==========================
 
-/* ==========================================
-   FULLSCREEN
-========================================== */
+function previousQuestion() {
+
+    if (currentQuestion > 1) {
+
+        currentQuestion--;
+
+        updateQuestion();
+
+    }
+
+}
+
+// ==========================
+// OPEN QUESTION
+// ==========================
+
+function openQuestion(number) {
+
+    currentQuestion = number;
+
+    updateQuestion();
+
+}
+
+// ==========================
+// FULL SCREEN
+// ==========================
 
 function toggleFullscreen() {
 
     if (!document.fullscreenElement) {
 
-        document.documentElement
-        .requestFullscreen();
+        document.documentElement.requestFullscreen();
 
-    }
-
-    else {
+    } else {
 
         document.exitFullscreen();
 
     }
 
 }
+/*==================================================
+        PLACEMENT MOCK TEST
+        PART 2
+        ANSWERS + PALETTE + PROGRESS
+==================================================*/
 
+// ==========================
+// DATA
+// ==========================
 
+let answeredQuestions = new Set();
+let markedQuestions = new Set();
 
-/* ==========================================
-   MOBILE PALETTE
-========================================== */
+// ==========================
+// ANSWER SELECTED
+// ==========================
 
-function openPaletteMobile() {
+function answerSelected(questionNo){
 
-    const sidebar =
-    document.querySelector(
-        ".question-sidebar"
-    );
+    answeredQuestions.add(questionNo);
 
-    if (sidebar) {
+    const palette =
+        document.getElementById("palette-" + questionNo);
 
-        sidebar.classList.toggle(
-            "show"
+    if(palette){
+
+        palette.classList.remove(
+            "not-visited",
+            "skipped",
+            "review"
         );
 
+        palette.classList.add("answered");
+
     }
+
+    updateSummary();
 
 }
 
+// ==========================
+// UPDATE SUMMARY
+// ==========================
 
+function updateSummary(){
 
-/* ==========================================
-   TIME WARNING
-========================================== */
+    const answered = answeredQuestions.size;
 
-function showTimeWarning() {
+    const marked = markedQuestions.size;
 
-    const modal =
-    document.getElementById(
-        "timeModal"
+    const remaining =
+        totalQuestions - answered;
+
+    document.getElementById("answeredCount").innerText =
+        answered;
+
+    document.getElementById("markedCount").innerText =
+        marked;
+
+    document.getElementById("remainingCount").innerText =
+        remaining;
+
+    updateProgress();
+
+}
+
+// ==========================
+// PROGRESS BAR
+// ==========================
+
+function updateProgress(){
+
+    const percent =
+        totalQuestions === 0
+        ? 0
+        : Math.round(
+            (answeredQuestions.size / totalQuestions) * 100
+        );
+
+    document.getElementById("progressFill").style.width =
+        percent + "%";
+
+    document.getElementById("progressText").innerText =
+        percent + "% Completed";
+
+}
+
+// ==========================
+// MARK FOR REVIEW
+// ==========================
+
+function markQuestion(questionNo){
+
+    const palette =
+        document.getElementById("palette-" + questionNo);
+
+    if(markedQuestions.has(questionNo)){
+
+        markedQuestions.delete(questionNo);
+
+        if(answeredQuestions.has(questionNo)){
+
+            palette.className =
+                "palette-btn answered";
+
+        }else{
+
+            palette.className =
+                "palette-btn skipped";
+
+        }
+
+    }else{
+
+        markedQuestions.add(questionNo);
+
+        palette.className =
+            "palette-btn review";
+
+    }
+
+    updateSummary();
+
+}
+
+// ==========================
+// CLEAR ANSWER
+// ==========================
+
+function clearAnswer(questionNo){
+
+    const radios =
+        document.getElementsByName(
+            "q" + window.questionIds[questionNo-1]
+        );
+
+    radios.forEach(function(r){
+
+        r.checked = false;
+
+    });
+
+    answeredQuestions.delete(questionNo);
+
+    const palette =
+        document.getElementById("palette-" + questionNo);
+
+    if(markedQuestions.has(questionNo)){
+
+        palette.className =
+            "palette-btn review";
+
+    }else{
+
+        palette.className =
+            "palette-btn skipped";
+
+    }
+
+    updateSummary();
+
+}
+
+// ==========================
+// UPDATE SUBMIT MODAL
+// ==========================
+
+function openSubmitModal(){
+
+    document.getElementById("submitModal").style.display =
+        "flex";
+
+    document.getElementById("submitAnswered").innerText =
+        answeredQuestions.size;
+
+    document.getElementById("submitMarked").innerText =
+        markedQuestions.size;
+
+    document.getElementById("submitNotAnswered").innerText =
+        totalQuestions - answeredQuestions.size;
+
+}
+/*==================================================
+        PLACEMENT MOCK TEST
+        PART 3
+        AUTO SAVE + BOOKMARK + SHORTCUTS
+==================================================*/
+
+// ==========================
+// AUTO SAVE
+// ==========================
+
+function autoSave() {
+
+    const selectedAnswers = {};
+
+    document.querySelectorAll("input[type='radio']:checked").forEach(function (radio) {
+
+        selectedAnswers[radio.name] = radio.value;
+
+    });
+
+    localStorage.setItem(
+        "mock_answers",
+        JSON.stringify(selectedAnswers)
     );
 
-    if (modal) {
+    showAutoSave();
 
-        modal.style.display = "flex";
+}
+
+// Auto Save every 20 seconds
+
+setInterval(autoSave, 20000);
+
+// ==========================
+// SHOW AUTO SAVE MESSAGE
+// ==========================
+
+function showAutoSave() {
+
+    const box = document.getElementById("autosaveBox");
+
+    if (!box) return;
+
+    box.style.display = "block";
+
+    setTimeout(function () {
+
+        box.style.display = "none";
+
+    }, 2000);
+
+}
+
+// ==========================
+// RESTORE SAVED ANSWERS
+// ==========================
+
+function restoreAnswers() {
+
+    const saved =
+        JSON.parse(localStorage.getItem("mock_answers"));
+
+    if (!saved) return;
+
+    for (const name in saved) {
+
+        const radios =
+            document.getElementsByName(name);
+
+        radios.forEach(function (radio) {
+
+            if (radio.value === saved[name]) {
+
+                radio.checked = true;
+
+            }
+
+        });
 
     }
 
 }
-/* ==========================================
-   KEYBOARD SHORTCUTS
-========================================== */
+
+document.addEventListener("DOMContentLoaded", restoreAnswers);
+
+// ==========================
+// BOOKMARK SYSTEM
+// ==========================
+
+let bookmarks = [];
+
+function toggleBookmark(questionNo) {
+
+    if (bookmarks.includes(questionNo)) {
+
+        bookmarks =
+            bookmarks.filter(q => q !== questionNo);
+
+    } else {
+
+        bookmarks.push(questionNo);
+
+    }
+
+    updateBookmarks();
+
+}
+
+function updateBookmarks() {
+
+    const list =
+        document.getElementById("bookmarkList");
+
+    if (!list) return;
+
+    list.innerHTML = "";
+
+    if (bookmarks.length === 0) {
+
+        list.innerHTML =
+            "<p>No bookmarked questions.</p>";
+
+        return;
+
+    }
+
+    bookmarks.forEach(function (q) {
+
+        list.innerHTML +=
+        `<button class="bookmark-btn"
+        onclick="openQuestion(${q})">
+        Question ${q}
+        </button>`;
+
+    });
+
+}
+
+// ==========================
+// KEYBOARD SHORTCUTS
+// ==========================
 
 document.addEventListener("keydown", function (e) {
 
@@ -482,730 +510,313 @@ document.addEventListener("keydown", function (e) {
             clearAnswer(currentQuestion);
             break;
 
-        case "Escape":
-            closeInstruction();
-            closeSubmitModal();
-            closeTimeModal();
-            closeExitModal();
-            break;
-
     }
 
 });
 
+// ==========================
+// MOBILE PALETTE
+// ==========================
 
-/* ==========================================
-   SUBMIT CONFIRMATION
-========================================== */
+function openPaletteMobile() {
 
-const form = document.getElementById("mockTestForm");
+    const sidebar =
+        document.querySelector(".question-sidebar");
 
-if (form) {
+    if (!sidebar) return;
 
-    form.addEventListener("submit", function (e) {
+    if (sidebar.style.display === "block") {
 
-        const unanswered =
-        totalQuestions -
-        answeredQuestions.size;
+        sidebar.style.display = "none";
 
-        if (unanswered > 0) {
+    } else {
 
-            const ok = confirm(
+        sidebar.style.display = "block";
 
-                "You still have " +
-                unanswered +
-                " unanswered questions.\n\nSubmit Test?"
+    }
 
+}
+/*==================================================
+        PLACEMENT MOCK TEST
+        PART 4
+        SECURITY + AUTO SUBMIT + RESULT
+==================================================*/
+
+// ==========================
+// PREVENT REFRESH WARNING
+// ==========================
+
+window.addEventListener("beforeunload", function (e) {
+
+    e.preventDefault();
+
+    e.returnValue =
+        "Your test is still running.";
+
+});
+
+// ==========================
+// DISABLE RIGHT CLICK
+// ==========================
+
+document.addEventListener("contextmenu", function (e) {
+
+    e.preventDefault();
+
+});
+
+// ==========================
+// DISABLE COPY
+// ==========================
+
+document.addEventListener("copy", function (e) {
+
+    e.preventDefault();
+
+});
+
+// ==========================
+// DISABLE CUT
+// ==========================
+
+document.addEventListener("cut", function (e) {
+
+    e.preventDefault();
+
+});
+
+// ==========================
+// DISABLE SELECT
+// ==========================
+
+document.addEventListener("selectstart", function (e) {
+
+    e.preventDefault();
+
+});
+
+// ==========================
+// TAB CHANGE WARNING
+// ==========================
+
+let tabChanged = 0;
+
+document.addEventListener("visibilitychange", function () {
+
+    if (document.hidden) {
+
+        tabChanged++;
+
+        if (tabChanged >= 3) {
+
+            alert(
+                "You changed the tab multiple times. Test will be submitted."
             );
 
-            if (!ok) {
-
-                e.preventDefault();
-
-                return;
-
-            }
+            finalSubmit();
 
         }
 
-        clearSavedAnswers();
+    }
 
-    });
+});
 
-}
+// ==========================
+// RESULT PREVIEW
+// ==========================
 
+function showResultPreview(score, correct, wrong, skipped) {
 
-/* ==========================================
-   RESULT PREVIEW
-========================================== */
+    document.getElementById("resultPreview").style.display = "grid";
 
-function showResultPreview(
-correct = 0,
-wrong = 0,
-skipped = 0
-){
+    document.getElementById("finalScore").innerText =
+        score + "%";
 
-    const result =
-    document.getElementById(
-        "resultPreview"
-    );
+    document.getElementById("correctCount").innerText =
+        correct;
 
-    if(!result) return;
+    document.getElementById("wrongCount").innerText =
+        wrong;
 
-    result.style.display="block";
-
-    document.getElementById(
-        "correctCount"
-    ).innerHTML=correct;
-
-    document.getElementById(
-        "wrongCount"
-    ).innerHTML=wrong;
-
-    document.getElementById(
-        "skipCount"
-    ).innerHTML=skipped;
-
-    const score =
-    totalQuestions===0
-    ?0
-    :Math.round(
-        (correct/totalQuestions)*100
-    );
-
-    document.getElementById(
-        "finalScore"
-    ).innerHTML=
-    score+"%";
+    document.getElementById("skipCount").innerText =
+        skipped;
 
 }
 
+// ==========================
+// AI ANALYSIS
+// ==========================
 
-/* ==========================================
-   BOOKMARK PANEL
-========================================== */
+function generateAnalysis(score) {
 
-function updateBookmarkPanel(){
+    if (score >= 80) {
 
-    const list =
-    document.getElementById(
-        "bookmarkList"
-    );
+        document.getElementById("strongTopics").innerText =
+            "Excellent Performance";
 
-    if(!list) return;
-
-    if(markedQuestions.size===0){
-
-        list.innerHTML=
-        "<p>No bookmarked questions</p>";
-
-        return;
+        document.getElementById("weakTopics").innerText =
+            "Practice Mock Interviews";
 
     }
 
-    list.innerHTML="";
+    else if (score >= 60) {
 
-    markedQuestions.forEach(num=>{
+        document.getElementById("strongTopics").innerText =
+            "Good Fundamentals";
 
-        const btn=
-        document.createElement("button");
+        document.getElementById("weakTopics").innerText =
+            "Revise DBMS, Aptitude";
 
-        btn.innerHTML=
-        "Question "+num;
+    }
 
-        btn.onclick=()=>{
+    else {
 
-            openQuestion(num);
+        document.getElementById("strongTopics").innerText =
+            "Need More Practice";
 
-        };
+        document.getElementById("weakTopics").innerText =
+            "Java, Python, DBMS";
 
-        list.appendChild(btn);
-
-    });
+    }
 
 }
 
+// ==========================
+// EXIT TEST
+// ==========================
 
-/* Update bookmark whenever review changes */
+function exitTest() {
 
-const oldMarkQuestion =
-markQuestion;
+    if (confirm("Exit Test?")) {
 
-markQuestion=function(number){
+        localStorage.removeItem("mock_answers");
 
-    oldMarkQuestion(number);
+        window.location.href = "/dashboard";
 
-    updateBookmarkPanel();
+    }
+
+}
+/*==================================================
+        PLACEMENT MOCK TEST
+        PART 5 - FINAL INITIALIZATION
+==================================================*/
+
+// ==========================
+// INITIALIZE SUMMARY
+// ==========================
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    updateSummary();
+
+    updateProgress();
+
+});
+
+// ==========================
+// RESTORE CURRENT QUESTION
+// ==========================
+
+const savedQuestion = localStorage.getItem("current_question");
+
+if (savedQuestion) {
+
+    currentQuestion = parseInt(savedQuestion);
+
+    updateQuestion();
+
+}
+
+function saveCurrentQuestion() {
+
+    localStorage.setItem(
+        "current_question",
+        currentQuestion
+    );
+
+}
+
+// Save current question after navigation
+
+const oldNext = nextQuestion;
+
+nextQuestion = function () {
+
+    oldNext();
+
+    saveCurrentQuestion();
 
 };
 
+const oldPrevious = previousQuestion;
 
-/* ==========================================
-   AI ANALYSIS (Demo)
-========================================== */
+previousQuestion = function () {
 
-function generateAIAnalysis(){
+    oldPrevious();
 
-    const strong =
-    document.getElementById(
-        "strongTopics"
-    );
+    saveCurrentQuestion();
 
-    const weak =
-    document.getElementById(
-        "weakTopics"
-    );
+};
 
-    if(strong){
+// ==========================
+// RESET TEST DATA
+// ==========================
 
-        strong.innerHTML=
-        "Java Basics, OOP";
+function resetTest() {
 
-    }
+    localStorage.removeItem("mock_answers");
 
-    if(weak){
+    localStorage.removeItem("current_question");
 
-        weak.innerHTML=
-        "Collections, SQL Joins";
+    answeredQuestions.clear();
 
-    }
+    markedQuestions.clear();
 
 }
 
+// ==========================
+// FORM SUBMIT
+// ==========================
 
-/* ==========================================
-   LOCAL STORAGE
-========================================== */
+document
+.getElementById("mockTestForm")
+.addEventListener("submit", function () {
 
-function clearSavedAnswers(){
-
-    localStorage.removeItem(
-        "mock_answers"
-    );
-
-}
-
-
-/* ==========================================
-   BEFORE PAGE CLOSE
-========================================== */
-
-window.addEventListener(
-"beforeunload",
-
-function(e){
-
-    if(answeredQuestions.size>0){
-
-        e.preventDefault();
-
-        e.returnValue="";
-
-    }
+    resetTest();
 
 });
 
-
-/* ==========================================
-   INITIALIZE
-========================================== */
-
-document.addEventListener(
-"DOMContentLoaded",
-
-function(){
-
-    updateBookmarkPanel();
-
-    generateAIAnalysis();
-
-});
-
-
-/*==================================================
-        PLACEMENT MOCK TEST
-        PART 1
-        QUESTION ENGINE
-==================================================*/
-
-
-// ================================
-// QUESTION DATA
-// ================================
-
-
-const questions = [
-
-{
-    id:1,
-
-    category:"Java",
-
-    question:
-    "Which keyword is used to create an object in Java?",
-
-    options:[
-        "class",
-        "new",
-        "object",
-        "create"
-    ],
-
-    answer:"new"
-},
-
-
-{
-    id:2,
-
-    category:"Python",
-
-    question:
-    "Which data type stores True or False values?",
-
-    options:[
-        "Integer",
-        "String",
-        "Boolean",
-        "Float"
-    ],
-
-    answer:"Boolean"
-},
-
-
-{
-    id:3,
-
-    category:"DBMS",
-
-    question:
-    "Which SQL command is used to retrieve data?",
-
-    options:[
-        "INSERT",
-        "UPDATE",
-        "SELECT",
-        "DELETE"
-    ],
-
-    answer:"SELECT"
-},
-
-
-{
-    id:4,
-
-    category:"OS",
-
-    question:
-    "Which scheduling algorithm uses time quantum?",
-
-    options:[
-        "FCFS",
-        "Round Robin",
-        "SJF",
-        "Priority"
-    ],
-
-    answer:"Round Robin"
-}
-
-
-];
-
-
-
-// ================================
-// GLOBAL VARIABLES
-// ================================
-
-
-let currentQuestion = 0;
-
-
-let userAnswers = {};
-
-
-let questionStatus = {};
-
-
-
-questions.forEach(q=>{
-
-    questionStatus[q.id]="not-visited";
-
-});
-
-
-
-// ================================
-// LOAD FIRST QUESTION
-// ================================
-
-
-document.addEventListener(
-"DOMContentLoaded",
-()=>{
-
-
-    createPalette();
-
-
-    loadQuestion();
-
-
-});
-
-
-
-
-
-// ================================
-// CREATE QUESTION PALETTE
-// ================================
-
-
-function createPalette(){
-
-
-    const palette =
-    document.getElementById(
-        "questionGrid"
+// ==========================
+// ERROR HANDLING
+// ==========================
+
+window.onerror = function (message, source, line) {
+
+    console.error(
+        "Mock Test Error:",
+        message,
+        source,
+        line
     );
 
+};
 
-    if(!palette)
-        return;
+// ==========================
+// END
+// ==========================
 
+console.log("Placement Mock Test Loaded Successfully");
 
+// ==========================
+// FINAL SUBMIT
+// ==========================
 
-    palette.innerHTML="";
+function finalSubmit() {
 
+    clearInterval(timerInterval);
 
+    localStorage.removeItem("mock_answers");
 
-    questions.forEach((q,index)=>{
-
-
-        let btn =
-        document.createElement("button");
-
-
-
-        btn.className=
-        "palette-btn not-visited";
-
-
-
-        btn.innerText=
-        index+1;
-
-
-
-        btn.id=
-        `palette-${index}`;
-
-
-
-        btn.onclick=()=>{
-
-
-            currentQuestion=index;
-
-
-            loadQuestion();
-
-
-        };
-
-
-
-        palette.appendChild(btn);
-
-
-
-    });
-
-
-
-}
-
-
-
-
-
-// ================================
-// LOAD QUESTION
-// ================================
-
-
-function loadQuestion(){
-
-
-    let q =
-    questions[currentQuestion];
-
-
-
-    document.getElementById(
-        "questionNumber"
-    ).innerText =
-    `Question ${currentQuestion+1}`;
-
-
-
-    document.getElementById(
-        "category"
-    ).innerText =
-    q.category;
-
-
-
-    document.getElementById(
-        "questionText"
-    ).innerText =
-    q.question;
-
-
-
-    let optionBox =
-    document.getElementById(
-        "options"
-    );
-
-
-
-    optionBox.innerHTML="";
-
-
-
-    q.options.forEach(option=>{
-
-
-        let label =
-        document.createElement("label");
-
-
-
-        label.innerHTML=`
-
-        <input 
-        type="radio"
-        name="answer"
-        value="${option}"
-        >
-
-        <span>
-        ${option}
-        </span>
-
-        `;
-
-
-
-        optionBox.appendChild(label);
-
-
-
-    });
-
-
-
-    restoreAnswer();
-
-
-    updatePalette();
-
-
-
-}
-
-
-
-
-
-
-// ================================
-// RESTORE SELECTED ANSWER
-// ================================
-
-
-function restoreAnswer(){
-
-
-    let saved =
-    userAnswers[
-        currentQuestion
-    ];
-
-
-
-    if(!saved)
-        return;
-
-
-
-    let radio =
-    document.querySelector(
-    `input[value="${saved}"]`
-    );
-
-
-
-    if(radio)
-
-        radio.checked=true;
-
-
-}
-
-
-
-
-
-// ================================
-// SAVE ANSWER
-// ================================
-
-
-document.addEventListener(
-"change",
-function(e){
-
-
-if(
-e.target.type==="radio"
-){
-
-
-    userAnswers[
-        currentQuestion
-    ] =
-    e.target.value;
-
-
-
-    questionStatus[
-        currentQuestion+1
-    ] =
-    "answered";
-
-
-
-    updatePalette();
-
-
-
-}
-
-
-
-});
-
-
-
-
-
-// ================================
-// UPDATE PALETTE COLOR
-// ================================
-
-
-function updatePalette(){
-
-
-
-questions.forEach((q,index)=>{
-
-
-let btn =
-document.getElementById(
-`palette-${index}`
-);
-
-
-
-if(!btn)
-return;
-
-
-
-btn.className =
-"palette-btn " +
-questionStatus[q.id];
-
-
-
-if(index===currentQuestion){
-
-
-    btn.classList.add(
-        "active"
-    );
-
-
-}
-
-
-
-});
-
-
-
-}
-
-
-
-
-
-// ================================
-// NEXT QUESTION
-// ================================
-
-
-function nextQuestion(){
-
-
-if(
-currentQuestion <
-questions.length-1
-){
-
-
-    currentQuestion++;
-
-
-    loadQuestion();
-
-
-}
-
-
-}
-
-
-
-
-// ================================
-// PREVIOUS QUESTION
-// ================================
-
-
-function previousQuestion(){
-
-
-if(
-currentQuestion>0
-){
-
-
-    currentQuestion--;
-
-
-    loadQuestion();
-
-
-}
-
+    document.getElementById("mockTestForm").submit();
 
 }
