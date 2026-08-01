@@ -4,7 +4,17 @@
         GLOBAL + HEADER SYSTEM
 ==================================================*/
 
+.modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    justify-content:center;
+    align-items:center;
+}
 
+.modal.show{
+    display:flex;
+}
 /*==================================================
         GOOGLE FONT
 ==================================================*/
