@@ -20,16 +20,16 @@ let timerInterval = null;
 // START
 // ==========================
 
-window.onload = function () {
+document.addEventListener("DOMContentLoaded", function () {
 
     showInstruction();
-
     updateQuestion();
-
     startTimer();
+    updateSummary();
+    updateProgress();
+    restoreAnswers();
 
-};
-
+});
 // ==========================
 // TIMER
 // ==========================
