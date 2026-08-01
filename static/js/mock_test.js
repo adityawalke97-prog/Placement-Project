@@ -820,3 +820,10 @@ function finalSubmit() {
     document.getElementById("mockTestForm").submit();
 
 }
+function showInstruction() {
+    document.getElementById("instructionModal").style.display = "flex";
+}
+
+function closeInstruction() {
+    document.getElementById("instructionModal").style.display = "none";
+}
