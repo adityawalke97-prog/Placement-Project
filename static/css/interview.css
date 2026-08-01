@@ -1,210 +1,392 @@
-/* ===============================
-   INTERVIEW PAGE STYLE
-================================ */
+/*==================================================
+        INTERVIEW PREPARATION
+        PART 1
+        ROOT + GLOBAL + HERO + SEARCH
+==================================================*/
 
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
 
-.interview-container {
+/*=========================
+        ROOT
+=========================*/
 
-    width: 90%;
-    margin: 40px auto;
+:root{
 
-}
+    --primary:#2563eb;
+    --primary-dark:#1d4ed8;
 
+    --success:#10b981;
+    --warning:#f59e0b;
+    --danger:#ef4444;
 
+    --bg:#f5f7fb;
+    --card:#ffffff;
 
-/* Header */
+    --text:#1f2937;
+    --text-light:#6b7280;
 
-.interview-header {
+    --border:#e5e7eb;
 
-    text-align: center;
-    margin-bottom: 30px;
+    --shadow:0 10px 30px rgba(0,0,0,.08);
 
-}
-
-
-.page-title {
-
-    font-size: 38px;
-    font-weight: 700;
-    color: #1e293b;
-
-}
-
-
-.interview-header p {
-
-    color: #64748b;
-    font-size: 17px;
+    --radius:18px;
 
 }
 
+/*=========================
+        RESET
+=========================*/
 
+*{
 
-
-
-/* Search Box */
-
-.search-box {
-
-    width: 70%;
-    margin: 25px auto;
-
-    background: white;
-
-    display: flex;
-
-    align-items: center;
-
-    padding: 15px 20px;
-
-    border-radius: 15px;
-
-    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
 
 }
 
+body{
 
-.search-box i {
-
-    color: #2563eb;
-
-    font-size: 20px;
+    font-family:'Poppins',sans-serif;
+    background:var(--bg);
+    color:var(--text);
 
 }
 
+/*=========================
+        PAGE
+=========================*/
 
+.interview-page{
 
-.search-box input {
+    max-width:1400px;
+    margin:auto;
+    padding:30px;
+
+}
+
+/*=========================
+        HERO
+=========================*/
+
+.hero-section{
+
+    display:flex;
+    justify-content:space-between;
+    gap:30px;
+    align-items:center;
+
+    background:linear-gradient(
+        135deg,
+        #2563eb,
+        #4f46e5
+    );
+
+    color:#fff;
+
+    padding:40px;
+
+    border-radius:25px;
+
+    margin-bottom:30px;
+
+    box-shadow:var(--shadow);
+
+}
+
+.hero-left{
+
+    flex:1;
+
+}
+
+.hero-left h1{
+
+    font-size:42px;
+    font-weight:800;
+
+    margin-bottom:15px;
+
+}
+
+.hero-left p{
+
+    font-size:17px;
+
+    line-height:1.8;
+
+    opacity:.95;
+
+}
+
+/*=========================
+        HERO RIGHT
+=========================*/
+
+.hero-right{
+
+    width:420px;
+
+    display:grid;
+
+    grid-template-columns:repeat(2,1fr);
+
+    gap:18px;
+
+}
+
+.hero-card{
+
+    background:rgba(255,255,255,.15);
+
+    backdrop-filter:blur(12px);
+
+    border:1px solid rgba(255,255,255,.2);
+
+    border-radius:18px;
+
+    text-align:center;
+
+    padding:22px;
+
+}
+
+.hero-card h3{
+
+    font-size:14px;
+
+    font-weight:500;
+
+    margin-bottom:8px;
+
+}
+
+.hero-card h2{
+
+    font-size:30px;
+
+    font-weight:700;
+
+}
+
+/*=========================
+        SEARCH
+=========================*/
+
+.search-section{
+
+    margin-bottom:25px;
+
+}
+
+.search-box{
+
+    position:relative;
+
+}
+
+.search-box i{
+
+    position:absolute;
+
+    left:20px;
+
+    top:50%;
+
+    transform:translateY(-50%);
+
+    color:#9ca3af;
+
+}
+
+.search-box input{
 
     width:100%;
+
+    height:60px;
 
     border:none;
 
     outline:none;
 
+    border-radius:16px;
+
+    background:#fff;
+
+    box-shadow:var(--shadow);
+
+    padding-left:60px;
+
+    padding-right:20px;
+
     font-size:16px;
-
-    margin-left:15px;
-
-}
-
-
-
-
-
-
-/* Stats Cards */
-
-
-.interview-stats {
-
-    display:flex;
-
-    justify-content:center;
-
-    gap:25px;
-
-    margin:30px 0;
-
-}
-
-
-
-.stat-card {
-
-
-    width:220px;
-
-    background:linear-gradient(
-        135deg,
-        #2563eb,
-        #7c3aed
-    );
-
-
-    color:white;
-
-    padding:25px;
-
-    border-radius:20px;
-
-    text-align:center;
-
-    box-shadow:
-    0 15px 30px rgba(0,0,0,.15);
-
-}
-
-
-
-.stat-card i {
-
-    font-size:35px;
-
-}
-
-
-
-.stat-card h3 {
-
-    font-size:28px;
-
-    margin:10px 0;
-
-}
-
-
-
-
-
-
-/* Question Card */
-
-
-.question-card {
-
-
-    background:white;
-
-    margin:20px 0;
-
-    padding:25px;
-
-    border-radius:20px;
-
-
-    box-shadow:
-    0 8px 25px rgba(0,0,0,.08);
-
 
     transition:.3s;
 
+}
+
+.search-box input:focus{
+
+    border:2px solid var(--primary);
 
 }
 
+/*=========================
+        FILTER
+=========================*/
 
+.filter-section{
 
-.question-card:hover {
+    display:flex;
 
+    gap:15px;
 
-    transform:translateY(-5px);
+    flex-wrap:wrap;
 
-
-    box-shadow:
-    0 15px 35px rgba(0,0,0,.15);
-
+    margin-bottom:30px;
 
 }
 
+.filter-section select{
 
+    flex:1;
 
+    min-width:220px;
 
+    height:52px;
 
-/* Category */
+    border:1px solid var(--border);
 
+    border-radius:14px;
 
-.question-header {
+    padding:0 15px;
 
+    font-size:15px;
+
+    background:#fff;
+
+}
+
+.reset-btn{
+
+    border:none;
+
+    background:var(--danger);
+
+    color:#fff;
+
+    padding:0 25px;
+
+    border-radius:14px;
+
+    cursor:pointer;
+
+    font-weight:600;
+
+    transition:.3s;
+
+}
+
+.reset-btn:hover{
+
+    background:#dc2626;
+
+}
+/*==================================================
+        INTERVIEW PREPARATION
+        PART 2
+        DASHBOARD + PROGRESS + QUESTION CARD
+==================================================*/
+
+/*=========================
+        DASHBOARD
+=========================*/
+
+.dashboard-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+
+    gap:20px;
+
+    margin-bottom:30px;
+
+}
+
+.dashboard-card{
+
+    background:var(--card);
+
+    border-radius:20px;
+
+    padding:30px;
+
+    text-align:center;
+
+    box-shadow:var(--shadow);
+
+    transition:.35s;
+
+    border:1px solid var(--border);
+
+}
+
+.dashboard-card:hover{
+
+    transform:translateY(-8px);
+
+}
+
+.dashboard-card i{
+
+    font-size:38px;
+
+    color:var(--primary);
+
+    margin-bottom:15px;
+
+}
+
+.dashboard-card h3{
+
+    font-size:34px;
+
+    font-weight:700;
+
+    color:var(--text);
+
+    margin-bottom:8px;
+
+}
+
+.dashboard-card p{
+
+    color:var(--text-light);
+
+    font-size:15px;
+
+}
+
+/*=========================
+        PROGRESS
+=========================*/
+
+.progress-section{
+
+    background:#fff;
+
+    border-radius:20px;
+
+    padding:25px;
+
+    box-shadow:var(--shadow);
+
+    margin-bottom:35px;
+
+}
+
+.progress-header{
 
     display:flex;
 
@@ -212,263 +394,1425 @@
 
     align-items:center;
 
+    margin-bottom:15px;
 
 }
 
-
-
-.category {
-
-
-    background:#dbeafe;
-
-    color:#2563eb;
-
-    padding:7px 15px;
-
-    border-radius:20px;
-
-    font-weight:600;
-
-    font-size:14px;
-
-
-}
-
-
-
-
-
-
-/* Bookmark */
-
-
-.bookmark {
-
-
-    border:none;
-
-    background:none;
-
-    cursor:pointer;
+.progress-header h3{
 
     font-size:22px;
 
-    color:#94a3b8;
+}
 
+.progress-header span{
+
+    color:var(--primary);
+
+    font-weight:700;
 
 }
 
+.progress-bar{
 
+    width:100%;
 
-.bookmark.active {
+    height:14px;
 
+    background:#e5e7eb;
 
-    color:#f59e0b;
+    border-radius:50px;
 
+    overflow:hidden;
 
 }
 
+.progress-fill{
 
+    width:0%;
 
+    height:100%;
 
+    background:linear-gradient(
+        90deg,
+        #10b981,
+        #22c55e
+    );
 
-/* Question */
+    transition:.5s;
 
+}
 
-.question-card h3 {
+/*=========================
+        QUESTIONS
+=========================*/
 
+.questions-section{
 
-    margin-top:20px;
+    display:flex;
 
-    color:#1e293b;
+    flex-direction:column;
+
+    gap:30px;
+
+}
+
+/*=========================
+        QUESTION CARD
+=========================*/
+
+.question-card{
+
+    background:#fff;
+
+    border-radius:22px;
+
+    padding:28px;
+
+    border:1px solid var(--border);
+
+    box-shadow:var(--shadow);
+
+    transition:.35s;
+
+}
+
+.question-card:hover{
+
+    transform:translateY(-6px);
+
+}
+
+.question-top{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:flex-start;
+
+    gap:15px;
+
+    margin-bottom:20px;
+
+}
+
+.left-badges{
+
+    display:flex;
+
+    flex-wrap:wrap;
+
+    gap:10px;
+
+}
+
+.badge{
+
+    padding:7px 14px;
+
+    border-radius:50px;
+
+    font-size:13px;
+
+    font-weight:600;
+
+}
+
+/*=========================
+        BADGES
+=========================*/
+
+.category{
+
+    background:#dbeafe;
+
+    color:#1d4ed8;
+
+}
+
+.company{
+
+    background:#ede9fe;
+
+    color:#6d28d9;
+
+}
+
+.topic{
+
+    background:#f3f4f6;
+
+    color:#374151;
+
+}
+
+.level{
+
+    color:#fff;
+
+}
+
+.level.basic{
+
+    background:#10b981;
+
+}
+
+.level.intermediate{
+
+    background:#f59e0b;
+
+}
+
+.level.advanced{
+
+    background:#f97316;
+
+}
+
+.level.expert{
+
+    background:#ef4444;
+
+}
+
+/*=========================
+        BOOKMARK
+=========================*/
+
+.bookmark-btn{
+
+    width:48px;
+
+    height:48px;
+
+    border:none;
+
+    border-radius:50%;
+
+    background:#f3f4f6;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+.bookmark-btn:hover{
+
+    background:#fef3c7;
+
+}
+
+.bookmark-btn i{
 
     font-size:20px;
 
-
-    line-height:1.5;
-
+    color:#f59e0b;
 
 }
 
+/*=========================
+        QUESTION
+=========================*/
 
+.question-body h3{
 
+    font-size:24px;
 
-.number {
+    line-height:1.7;
 
+    margin-bottom:20px;
 
-    display:inline-flex;
+    color:var(--text);
+
+}
+
+.question-meta{
+
+    display:flex;
+
+    flex-wrap:wrap;
+
+    gap:20px;
+
+    color:var(--text-light);
+
+    font-size:14px;
+
+    margin-bottom:25px;
+
+}
+
+/*=========================
+        ACTIONS
+=========================*/
+
+.question-actions{
+
+    display:flex;
+
+    flex-wrap:wrap;
+
+    gap:12px;
+
+    margin-bottom:25px;
+
+}
+
+.primary-btn{
+
+    background:var(--primary);
+
+    color:#fff;
+
+    border:none;
+
+    padding:12px 22px;
+
+    border-radius:12px;
+
+    cursor:pointer;
+
+    font-size:15px;
+
+    font-weight:600;
+
+    transition:.3s;
+
+}
+
+.primary-btn:hover{
+
+    background:var(--primary-dark);
+
+}
+
+.secondary-btn{
+
+    background:#f3f4f6;
+
+    color:#374151;
+
+    border:none;
+
+    padding:12px 18px;
+
+    border-radius:12px;
+
+    cursor:pointer;
+
+    font-size:14px;
+
+    transition:.3s;
+
+}
+
+.secondary-btn:hover{
+
+    background:#e5e7eb;
+
+}
+/*==================================================
+        INTERVIEW PREPARATION
+        PART 3
+        ANSWER + PAGINATION + CONTINUE
+==================================================*/
+
+/*=========================
+        ANSWER BOX
+=========================*/
+
+.answer-box{
+
+    display:none;
+
+    margin-top:20px;
+
+    padding:25px;
+
+    background:#f8fafc;
+
+    border-left:5px solid var(--primary);
+
+    border-radius:16px;
+
+    animation:fadeIn .35s ease;
+
+}
+
+.answer-box h4{
+
+    font-size:18px;
+
+    color:var(--primary);
+
+    margin-bottom:12px;
+
+}
+
+.answer-box p{
+
+    line-height:1.8;
+
+    color:var(--text);
+
+}
+
+/*=========================
+        EXPLANATION
+=========================*/
+
+.explanation-box{
+
+    margin-top:20px;
+
+    padding:20px;
+
+    background:#eef6ff;
+
+    border-radius:14px;
+
+    border-left:4px solid #3b82f6;
+
+}
+
+.explanation-box h4{
+
+    color:#2563eb;
+
+    margin-bottom:10px;
+
+}
+
+/*=========================
+        FOLLOW UP
+=========================*/
+
+.followup-box{
+
+    margin-top:20px;
+
+    padding:20px;
+
+    background:#fff7ed;
+
+    border-radius:14px;
+
+    border-left:4px solid #f97316;
+
+}
+
+.followup-box h4{
+
+    color:#ea580c;
+
+    margin-bottom:10px;
+
+}
+
+/*=========================
+        TIPS
+=========================*/
+
+.tips-box{
+
+    margin-top:20px;
+
+    padding:20px;
+
+    background:#ecfdf5;
+
+    border-radius:14px;
+
+    border-left:4px solid #10b981;
+
+}
+
+.tips-box h4{
+
+    color:#059669;
+
+    margin-bottom:10px;
+
+}
+
+.tips-box ul{
+
+    margin-left:20px;
+
+}
+
+.tips-box li{
+
+    margin-bottom:8px;
+
+    line-height:1.7;
+
+}
+
+/*=========================
+        EMPTY STATE
+=========================*/
+
+.empty-state{
+
+    background:#fff;
+
+    border-radius:20px;
+
+    padding:60px;
+
+    text-align:center;
+
+    box-shadow:var(--shadow);
+
+}
+
+.empty-state i{
+
+    font-size:60px;
+
+    color:#9ca3af;
+
+    margin-bottom:20px;
+
+}
+
+.empty-state h2{
+
+    margin-bottom:10px;
+
+}
+
+.empty-state p{
+
+    color:var(--text-light);
+
+}
+
+/*=========================
+        PAGINATION
+=========================*/
+
+.pagination-section{
+
+    margin-top:40px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    flex-wrap:wrap;
+
+    gap:20px;
+
+}
+
+.pagination{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:15px;
+
+}
+
+.page-btn{
+
+    background:var(--primary);
+
+    color:#fff;
+
+    text-decoration:none;
+
+    padding:12px 22px;
+
+    border-radius:12px;
+
+    transition:.3s;
+
+}
+
+.page-btn:hover{
+
+    background:var(--primary-dark);
+
+}
+
+.page-number{
+
+    font-weight:700;
+
+}
+
+/*=========================
+        CONTINUE CARD
+=========================*/
+
+.continue-section{
+
+    margin-top:40px;
+
+}
+
+.continue-card{
+
+    background:linear-gradient(135deg,#2563eb,#4f46e5);
+
+    color:#fff;
+
+    border-radius:24px;
+
+    padding:35px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:20px;
+
+}
+
+.continue-card h2{
+
+    margin-bottom:10px;
+
+}
+
+.continue-card p{
+
+    line-height:1.7;
+
+    opacity:.95;
+
+}
+
+.continue-btn{
+
+    background:#fff;
+
+    color:#2563eb;
+
+    border:none;
+
+    padding:14px 28px;
+
+    border-radius:12px;
+
+    font-weight:700;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+.continue-btn:hover{
+
+    transform:translateY(-3px);
+
+}
+
+/*=========================
+        DAILY TIP
+=========================*/
+
+.tip-section{
+
+    margin-top:35px;
+
+}
+
+.tip-card{
+
+    background:#fff;
+
+    border-radius:20px;
+
+    padding:25px;
+
+    border-left:5px solid var(--warning);
+
+    box-shadow:var(--shadow);
+
+}
+
+.tip-card h3{
+
+    color:#d97706;
+
+    margin-bottom:12px;
+
+}
+
+.tip-card p{
+
+    line-height:1.8;
+
+}
+
+/*=========================
+        ANIMATION
+=========================*/
+
+@keyframes fadeIn{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(15px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+}
+
+/*==================================================
+        INTERVIEW PREPARATION
+        PART 4
+        FLOAT BUTTON + LOADER + TOAST +
+        RESPONSIVE DESIGN
+==================================================*/
+
+/*=========================
+        SCROLL TO TOP
+=========================*/
+
+.scroll-top{
+
+    position:fixed;
+
+    right:25px;
+
+    bottom:25px;
+
+    width:55px;
+
+    height:55px;
+
+    border:none;
+
+    border-radius:50%;
+
+    background:var(--primary);
+
+    color:#fff;
+
+    font-size:22px;
+
+    cursor:pointer;
+
+    display:none;
+
+    box-shadow:0 8px 20px rgba(37,99,235,.35);
+
+    transition:.3s;
+
+    z-index:999;
+
+}
+
+.scroll-top:hover{
+
+    transform:translateY(-5px);
+
+    background:var(--primary-dark);
+
+}
+
+/*=========================
+        LOADING
+=========================*/
+
+.loading-overlay{
+
+    position:fixed;
+
+    inset:0;
+
+    background:rgba(255,255,255,.9);
+
+    display:none;
 
     justify-content:center;
 
     align-items:center;
 
+    flex-direction:column;
 
-    width:35px;
+    z-index:9999;
 
-    height:35px;
+}
 
+.loader{
 
-    background:#2563eb;
+    width:60px;
 
-    color:white;
+    height:60px;
+
+    border:6px solid #e5e7eb;
+
+    border-top:6px solid var(--primary);
 
     border-radius:50%;
 
-
-    margin-right:10px;
-
+    animation:spin 1s linear infinite;
 
 }
 
-
-
-
-
-/* Answer Button */
-
-
-.answer-btn {
-
-
-    margin-top:15px;
-
-
-    background:#2563eb;
-
-    color:white;
-
-
-    border:none;
-
-
-    padding:10px 18px;
-
-
-    border-radius:10px;
-
-
-    cursor:pointer;
-
-
-    font-size:15px;
-
-
-    transition:.3s;
-
-
-}
-
-
-
-.answer-btn:hover {
-
-
-    background:#1d4ed8;
-
-
-}
-
-
-
-
-
-
-/* Answer Box */
-
-
-.answer {
-
-
-    display:none;
-
+.loading-overlay p{
 
     margin-top:20px;
 
+    font-size:16px;
 
-    padding:20px;
+    font-weight:600;
 
-
-    background:#f8fafc;
-
-
-    border-left:5px solid #2563eb;
-
-
-    border-radius:10px;
-
-
-    color:#334155;
-
-
-    line-height:1.6;
-
+    color:var(--text);
 
 }
 
+@keyframes spin{
 
+    from{
 
+        transform:rotate(0deg);
 
+    }
 
+    to{
 
-/* Responsive */
+        transform:rotate(360deg);
 
-
-@media(max-width:768px){
-
-
-.interview-container{
-
-    width:95%;
-
-}
-
-
-
-.page-title{
-
-    font-size:28px;
+    }
 
 }
 
+/*=========================
+        TOAST
+=========================*/
 
+.toast{
 
-.search-box{
+    position:fixed;
+
+    top:25px;
+
+    right:25px;
+
+    background:#111827;
+
+    color:#fff;
+
+    padding:15px 22px;
+
+    border-radius:12px;
+
+    font-weight:600;
+
+    display:none;
+
+    z-index:9999;
+
+    box-shadow:var(--shadow);
+
+    animation:slideToast .35s ease;
+
+}
+
+@keyframes slideToast{
+
+    from{
+
+        opacity:0;
+
+        transform:translateX(40px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateX(0);
+
+    }
+
+}
+
+/*=========================
+        TABLET
+=========================*/
+
+@media(max-width:1100px){
+
+.hero-section{
+
+    flex-direction:column;
+
+    align-items:flex-start;
+
+}
+
+.hero-right{
 
     width:100%;
 
 }
 
+.continue-card{
 
+    flex-direction:column;
 
-.interview-stats{
+    align-items:flex-start;
 
+}
+
+.question-top{
+
+    flex-direction:column;
+
+}
+
+}
+
+/*=========================
+        MOBILE
+=========================*/
+
+@media(max-width:768px){
+
+.interview-page{
+
+    padding:15px;
+
+}
+
+.hero-section{
+
+    padding:25px;
+
+}
+
+.hero-left h1{
+
+    font-size:28px;
+
+}
+
+.hero-left p{
+
+    font-size:15px;
+
+}
+
+.hero-right{
+
+    grid-template-columns:1fr;
+
+}
+
+.dashboard-grid{
+
+    grid-template-columns:1fr;
+
+}
+
+.filter-section{
+
+    flex-direction:column;
+
+}
+
+.filter-section select{
+
+    width:100%;
+
+}
+
+.reset-btn{
+
+    width:100%;
+
+    height:50px;
+
+}
+
+.question-card{
+
+    padding:20px;
+
+}
+
+.question-body h3{
+
+    font-size:19px;
+
+}
+
+.question-actions{
+
+    flex-direction:column;
+
+}
+
+.primary-btn,
+.secondary-btn{
+
+    width:100%;
+
+    justify-content:center;
+
+}
+
+.pagination-section{
 
     flex-direction:column;
 
     align-items:center;
 
+    text-align:center;
 
 }
 
+.pagination{
 
+    flex-wrap:wrap;
 
-.stat-card{
-
-
-    width:90%;
-
+    justify-content:center;
 
 }
 
+.continue-card{
 
+    padding:25px;
 
-.question-card h3{
+}
 
+.continue-btn{
+
+    width:100%;
+
+}
+
+.tip-card{
+
+    padding:20px;
+
+}
+
+.scroll-top{
+
+    right:18px;
+
+    bottom:18px;
+
+}
+
+}
+
+/*=========================
+        SMALL MOBILE
+=========================*/
+
+@media(max-width:480px){
+
+.hero-left h1{
+
+    font-size:24px;
+
+}
+
+.hero-card{
+
+    padding:18px;
+
+}
+
+.hero-card h2{
+
+    font-size:24px;
+
+}
+
+.search-box input{
+
+    height:54px;
+
+    font-size:14px;
+
+}
+
+.question-body h3{
 
     font-size:17px;
 
 }
 
+.badge{
+
+    font-size:11px;
+
+    padding:6px 10px;
 
 }
+
+.answer-box{
+
+    padding:18px;
+
+}
+
+.explanation-box,
+.followup-box,
+.tips-box{
+
+    padding:16px;
+
+}
+
+}
+/*==================================================
+        INTERVIEW PREPARATION
+        PART 5
+        FINAL POLISH
+==================================================*/
+
+/*=========================
+        SCROLLBAR
+=========================*/
+
+::-webkit-scrollbar{
+
+    width:10px;
+
+}
+
+::-webkit-scrollbar-track{
+
+    background:#eef2f7;
+
+}
+
+::-webkit-scrollbar-thumb{
+
+    background:var(--primary);
+
+    border-radius:20px;
+
+}
+
+::-webkit-scrollbar-thumb:hover{
+
+    background:var(--primary-dark);
+
+}
+
+/*=========================
+        TEXT SELECTION
+=========================*/
+
+::selection{
+
+    background:var(--primary);
+
+    color:#fff;
+
+}
+
+/*=========================
+        FOCUS
+=========================*/
+
+button:focus,
+input:focus,
+select:focus,
+textarea:focus{
+
+    outline:3px solid rgba(37,99,235,.25);
+
+    outline-offset:2px;
+
+}
+
+/*=========================
+        BUTTON ANIMATION
+=========================*/
+
+button{
+
+    transition:.30s;
+
+}
+
+button:hover{
+
+    transform:translateY(-2px);
+
+}
+
+button:active{
+
+    transform:scale(.98);
+
+}
+
+/*=========================
+        CARD ANIMATION
+=========================*/
+
+.question-card{
+
+    animation:fadeCard .45s ease;
+
+}
+
+@keyframes fadeCard{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(25px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+}
+
+/*=========================
+        BOOKMARK ACTIVE
+=========================*/
+
+.bookmark-btn.active{
+
+    background:#fef3c7;
+
+}
+
+.bookmark-btn.active i{
+
+    color:#f59e0b;
+
+}
+
+/*=========================
+        COMPLETED QUESTION
+=========================*/
+
+.question-card.completed{
+
+    border-left:6px solid var(--success);
+
+}
+
+.question-card.completed .question-body h3{
+
+    color:#6b7280;
+
+}
+
+/*=========================
+        COPY BUTTON
+=========================*/
+
+.copy-btn.copied{
+
+    background:var(--success);
+
+    color:#fff;
+
+}
+
+/*=========================
+        SHARE BUTTON
+=========================*/
+
+.share-btn:hover{
+
+    background:#2563eb;
+
+    color:#fff;
+
+}
+
+/*=========================
+        PAGINATION
+=========================*/
+
+.page-btn.active{
+
+    background:#111827;
+
+}
+
+/*=========================
+        LOADING EFFECT
+=========================*/
+
+.loading{
+
+    pointer-events:none;
+
+    opacity:.6;
+
+}
+
+/*=========================
+        TABLE HIGHLIGHT
+=========================*/
+
+table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+}
+
+table td,
+table th{
+
+    padding:12px;
+
+}
+
+/*=========================
+        IMAGE
+=========================*/
+
+img{
+
+    max-width:100%;
+
+    height:auto;
+
+}
+
+/*=========================
+        LINKS
+=========================*/
+
+a{
+
+    text-decoration:none;
+
+}
+
+a:hover{
+
+    text-decoration:none;
+
+}
+
+/*=========================
+        PRINT
+=========================*/
+
+@media print{
+
+.hero-section,
+.search-section,
+.filter-section,
+.question-actions,
+.pagination-section,
+.continue-section,
+.tip-section,
+.scroll-top,
+.loading-overlay,
+.toast{
+
+    display:none !important;
+
+}
+
+.question-card{
+
+    box-shadow:none;
+
+    border:1px solid #000;
+
+    margin-bottom:20px;
+
+}
+
+.answer-box{
+
+    display:block !important;
+
+}
+
+}
+
+/*=========================
+        DARK MODE READY
+=========================*/
+
+body.dark{
+
+    --bg:#0f172a;
+    --card:#1e293b;
+    --text:#f8fafc;
+    --text-light:#cbd5e1;
+    --border:#334155;
+
+}
+
+/*=========================
+        UTILITIES
+=========================*/
+
+.text-center{
+
+    text-align:center;
+
+}
+
+.mt-20{
+
+    margin-top:20px;
+
+}
+
+.mb-20{
+
+    margin-bottom:20px;
+
+}
+
+.hidden{
+
+    display:none !important;
+
+}
+
+.show{
+
+    display:block !important;
+
+}
+
+/*=========================
+        END
+=========================*/
