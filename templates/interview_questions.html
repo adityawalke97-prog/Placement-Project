@@ -1,234 +1,694 @@
-{% extends 'layout.html' %}
+{% extends "layout.html" %}
 
-{% block title %}
-Interview Preparation
-{% endblock %}
+{% block title %}Interview Preparation{% endblock %}
 
 {% block css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/interview.css') }}">
+<link rel="stylesheet"
+href="{{ url_for('static', filename='css/interview.css') }}">
 {% endblock %}
 
 {% block content %}
 
-<div class="interview-container">
+<div class="interview-page">
 
-    <!-- Header -->
-    <div class="interview-header">
-        <h1 class="page-title">
-            <i class="fas fa-user-tie"></i>
-            Interview Preparation
-        </h1>
-        <p>Practice HR, Technical and Coding Interview Questions</p>
-    </div>
+    <!-- ================= HERO ================= -->
 
-    <!-- Search -->
-    <div class="search-box">
-        <i class="fas fa-search"></i>
-        <input
-            type="text"
-            id="searchInput"
-            placeholder="Search interview questions..."
-        >
-    </div>
+    <section class="hero-section">
 
-    <!-- Stats -->
-    <div class="interview-stats">
+        <div class="hero-left">
 
-        <div class="stat-card">
-            <i class="fas fa-question-circle"></i>
-            <h3>{{ questions|default([], true)|length }}</h3>
-            <p>Questions</p>
+            <h1>
+                🚀 Interview Preparation Portal
+            </h1>
+
+            <p>
+                Practice real interview questions for top companies,
+                improve your technical knowledge,
+                and prepare for placements.
+            </p>
+
         </div>
 
-        <div class="stat-card">
-            <i class="fas fa-layer-group"></i>
-            <h3>Categories</h3>
-            <p>Practice Areas</p>
+        <div class="hero-right">
+
+            <div class="hero-card">
+
+                <h3>
+                    Total Questions
+                </h3>
+
+                <h2>
+                    {{ total_questions }}
+                </h2>
+
+            </div>
+
+            <div class="hero-card">
+
+                <h3>
+                    Categories
+                </h3>
+
+                <h2>
+                    {{ total_categories }}
+                </h2>
+
+            </div>
+
+            <div class="hero-card">
+
+                <h3>
+                    Companies
+                </h3>
+
+                <h2>
+                    {{ total_companies }}
+                </h2>
+
+            </div>
+
+            <div class="hero-card">
+
+                <h3>
+                    Difficulty Levels
+                </h3>
+
+                <h2>
+                    4
+                </h2>
+
+            </div>
+
         </div>
 
+    </section>
+
+    <!-- ================= SEARCH ================= -->
+
+    <section class="search-section">
+
+        <div class="search-box">
+
+            <i class="fas fa-search"></i>
+
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Search Interview Questions...">
+
+        </div>
+
+    </section>
+
+    <!-- ================= FILTERS ================= -->
+
+    <section class="filter-section">
+
+        <select id="categoryFilter">
+
+            <option value="">
+                All Categories
+            </option>
+
+            {% for c in categories %}
+            <option value="{{ c }}">
+                {{ c }}
+            </option>
+            {% endfor %}
+
+        </select>
+
+        <select id="levelFilter">
+
+            <option value="">
+                All Levels
+            </option>
+
+            <option value="Basic">
+                🟢 Basic
+            </option>
+
+            <option value="Intermediate">
+                🟡 Intermediate
+            </option>
+
+            <option value="Advanced">
+                🟠 Advanced
+            </option>
+
+            <option value="Expert">
+                🔴 Expert
+            </option>
+
+        </select>
+
+        <select id="companyFilter">
+
+            <option value="">
+                All Companies
+            </option>
+
+            {% for company in companies %}
+            <option value="{{ company }}">
+                {{ company }}
+            </option>
+            {% endfor %}
+
+        </select>
+
+        <button
+            type="button"
+            class="reset-btn"
+            onclick="resetFilters()">
+
+            Reset Filters
+
+        </button>
+
+    </section>
+
+    <!-- ================= DASHBOARD ================= -->
+
+    <section class="dashboard-grid">
+
+        <div class="dashboard-card">
+
+            <i class="fas fa-book-open"></i>
+
+            <h3>
+
+                {{ total_questions }}
+
+            </h3>
+
+            <p>
+
+                Interview Questions
+
+            </p>
+
+        </div>
+
+        <div class="dashboard-card">
+
+            <i class="fas fa-check-circle"></i>
+
+            <h3 id="completedCount">
+
+                0
+
+            </h3>
+
+            <p>
+
+                Completed
+
+            </p>
+
+        </div>
+
+        <div class="dashboard-card">
+
+            <i class="fas fa-bookmark"></i>
+
+            <h3 id="bookmarkCount">
+
+                0
+
+            </h3>
+
+            <p>
+
+                Bookmarked
+
+            </p>
+
+        </div>
+
+        <div class="dashboard-card">
+
+            <i class="fas fa-chart-line"></i>
+
+            <h3 id="progressPercent">
+
+                0%
+
+            </h3>
+
+            <p>
+
+                Progress
+
+            </p>
+
+        </div>
+
+    </section>
+
+    <!-- ================= PROGRESS ================= -->
+
+    <section class="progress-section">
+
+        <div class="progress-header">
+
+            <h3>
+
+                Learning Progress
+
+            </h3>
+
+            <span id="progressText">
+
+                0%
+
+            </span>
+
+        </div>
+
+        <div class="progress-bar">
+
+            <div
+                class="progress-fill"
+                id="progressFill">
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- ================= QUESTIONS START ================= -->
+
+    <section
+        class="questions-section"
+        id="questionsContainer">
+    {% if questions %}
+
+        {% for q in questions %}
+
+        <article class="question-card"
+                 data-category="{{ q.category }}"
+                 data-level="{{ q.level }}"
+                 data-company="{{ q.company }}">
+
+            <!-- ================= TOP ================= -->
+
+            <div class="question-top">
+
+                <div class="left-badges">
+
+                    <span class="badge category">
+
+                        {{ q.category }}
+
+                    </span>
+
+                    <span class="badge level {{ q.level|lower }}">
+
+                        {{ q.level }}
+
+                    </span>
+
+                    {% if q.company %}
+                    <span class="badge company">
+
+                        🏢 {{ q.company }}
+
+                    </span>
+                    {% endif %}
+
+                    {% if q.topic %}
+                    <span class="badge topic">
+
+                        📚 {{ q.topic }}
+
+                    </span>
+                    {% endif %}
+
+                </div>
+
+                <button
+                    class="bookmark-btn"
+                    data-id="{{ q.id }}"
+                    title="Bookmark">
+
+                    <i class="far fa-bookmark"></i>
+
+                </button>
+
+            </div>
+
+            <!-- ================= QUESTION ================= -->
+
+            <div class="question-body">
+
+                <h3>
+
+                    Q{{ loop.index + ((page-1)*20) }}.
+                    {{ q.question }}
+
+                </h3>
+
+            </div>
+
+            <!-- ================= INFO ================= -->
+
+            <div class="question-meta">
+
+                <span>
+
+                    ⏱ {{ q.expected_time or 2 }} min
+
+                </span>
+
+                <span>
+
+                    ⭐ {{ q.level }}
+
+                </span>
+
+                <span>
+
+                    📂 {{ q.category }}
+
+                </span>
+
+            </div>
+
+            <!-- ================= ACTIONS ================= -->
+
+            <div class="question-actions">
+
+                <button
+                    class="primary-btn"
+                    onclick="toggleAnswer(this)">
+
+                    <i class="fas fa-lightbulb"></i>
+
+                    Show Answer
+
+                </button>
+
+                <button
+                    class="secondary-btn copy-btn"
+                    data-question="{{ q.question }}">
+
+                    <i class="fas fa-copy"></i>
+
+                    Copy
+
+                </button>
+
+                <button
+                    class="secondary-btn share-btn">
+
+                    <i class="fas fa-share-alt"></i>
+
+                    Share
+
+                </button>
+
+                <button
+                    class="secondary-btn complete-btn">
+
+                    <i class="fas fa-check-circle"></i>
+
+                    Completed
+
+                </button>
+
+            </div>
+
+            <!-- ================= ANSWER ================= -->
+
+            <div class="answer-box">
+
+                <h4>
+
+                    ✅ Answer
+
+                </h4>
+
+                <p>
+
+                    {{ q.answer }}
+
+                </p>
+
+                {% if q.explanation %}
+
+                <div class="explanation-box">
+
+                    <h4>
+
+                        📘 Explanation
+
+                    </h4>
+
+                    <p>
+
+                        {{ q.explanation }}
+
+                    </p>
+
+                </div>
+
+                {% endif %}
+
+                {% if q.followup_question %}
+
+                <div class="followup-box">
+
+                    <h4>
+
+                        🎯 Follow-up Question
+
+                    </h4>
+
+                    <p>
+
+                        {{ q.followup_question }}
+
+                    </p>
+
+                </div>
+
+                {% endif %}
+
+                {% if q.tips %}
+
+                <div class="tips-box">
+
+                    <h4>
+
+                        💡 Interview Tips
+
+                    </h4>
+
+                    <ul>
+
+                        <li>
+
+                            {{ q.tips }}
+
+                        </li>
+
+                    </ul>
+
+                </div>
+
+                {% endif %}
+
+            </div>
+
+        </article>
+
+        {% endfor %}
+
+    {% else %}
+
+        <div class="empty-state">
+
+            <i class="fas fa-folder-open"></i>
+
+            <h2>
+
+                No Interview Questions Found
+
+            </h2>
+
+            <p>
+
+                Try changing your search or filter.
+
+            </p>
+
+        </div>
+
+    {% endif %}  
+    <!-- ================= PAGINATION ================= -->
+
+    <section class="pagination-section">
+
+        <div class="pagination-info">
+
+            Showing
+
+            <strong>
+
+                {{ questions|length }}
+
+            </strong>
+
+            Questions
+
+        </div>
+
+        <div class="pagination">
+
+            {% if page > 1 %}
+
+            <a
+                class="page-btn"
+                href="{{ url_for('interview_questions', page=page-1) }}">
+
+                ⬅ Previous
+
+            </a>
+
+            {% endif %}
+
+            <span class="page-number">
+
+                Page
+
+                {{ page }}
+
+                of
+
+                {{ total_pages }}
+
+            </span>
+
+            {% if page < total_pages %}
+
+            <a
+                class="page-btn"
+                href="{{ url_for('interview_questions', page=page+1) }}">
+
+                Next ➜
+
+            </a>
+
+            {% endif %}
+
+        </div>
+
+    </section>
+
+</section>
+
+<!-- ================= CONTINUE LEARNING ================= -->
+
+<section class="continue-section">
+
+    <div class="continue-card">
+
+        <div>
+
+            <h2>
+
+                📚 Continue Learning
+
+            </h2>
+
+            <p>
+
+                Keep practicing interview questions daily to improve
+                your confidence and increase placement success.
+
+            </p>
+
+        </div>
+
+        <button
+            id="continueBtn"
+            class="continue-btn">
+
+            Continue Practice
+
+        </button>
+
     </div>
 
-    <!-- Questions -->
-  <div class="container">
-{% for q in questions %}
+</section>
 
-<div class="question-card">
+<!-- ================= DAILY TIP ================= -->
 
-    <h3>
-        Q{{ loop.index }}. {{ q.question }}
-    </h3>
+<section class="tip-section">
 
+    <div class="tip-card">
 
-    <button class="answer-btn" onclick="toggleAnswer({{loop.index}})">
-        Show Answer
-    </button>
+        <h3>
 
+            💡 Today's Interview Tip
 
-    <div id="answer-{{loop.index}}" class="answer-box">
-        {{ q.answer }}
+        </h3>
+
+        <p>
+
+            While answering technical questions, first explain the
+            concept, then give a real-life example, and finally mention
+            where it is used in projects.
+
+        </p>
+
     </div>
 
+</section>
+
+<!-- ================= FLOAT BUTTON ================= -->
+
+<button
+    id="scrollTopBtn"
+    class="scroll-top">
+
+    ↑
+
+</button>
+
+<!-- ================= LOADING ================= -->
+
+<div
+    id="loadingOverlay"
+    class="loading-overlay">
+
+    <div class="loader"></div>
+
+    <p>
+
+        Loading Questions...
+
+    </p>
+
 </div>
 
-{% endfor %}
-</div>
+<!-- ================= TOAST ================= -->
 
-<div class="pagination">
+<div
+    id="toast"
+    class="toast">
 
-    {% if page > 1 %}
-    <a href="{{ url_for('interview_questions', page=page-1) }}">
-        ⬅ Previous
-    </a>
-    {% endif %}
-
-    <span>Page {{ page }} of {{ total_pages }}</span>
-
-    {% if page < total_pages %}
-    <a href="{{ url_for('interview_questions', page=page+1) }}">
-        Next ➡
-    </a>
-    {% endif %}
+    Action Completed
 
 </div>
 
-<script>
+</div>
 
-
-function showAnswer(id){
-
-    let answer = document.getElementById(
-        "answer-"+id
-    );
-
-
-    if(answer.style.display==="block"){
-
-        answer.style.display="none";
-
-    }
-    else{
-
-        answer.style.display="block";
-
-    }
-
-}
-
-
-function toggleAnswer(id){
-
-    let answer = document.getElementById(
-        "answer-"+id
-    );
-
-
-    if(answer.style.display === "block"){
-
-        answer.style.display="none";
-
-    }
-    else{
-
-        answer.style.display="block";
-
-    }
-
-}</script>
 {% endblock %}
 
 {% block js %}
 
-<script>
-
-// -------------------- Search --------------------
-
-const searchInput = document.getElementById("searchInput");
-
-if (searchInput) {
-
-    searchInput.addEventListener("keyup", function () {
-
-        const value = this.value.toLowerCase();
-
-        document.querySelectorAll(".question-card").forEach(card => {
-
-            const text = card.innerText.toLowerCase();
-
-            card.style.display = text.includes(value)
-                ? "block"
-                : "none";
-
-        });
-
-    });
-
-}
-
-// -------------------- Show / Hide Answer --------------------
-
-function toggleAnswer(btn) {
-
-    const answer = btn.nextElementSibling;
-
-    if (answer.style.display === "block") {
-
-        answer.style.display = "none";
-
-        btn.innerHTML =
-            '<i class="fas fa-lightbulb"></i> Show Answer';
-
-    }
-    else {
-
-        answer.style.display = "block";
-
-        btn.innerHTML =
-            '<i class="fas fa-eye-slash"></i> Hide Answer';
-
-    }
-
-}
-
-// -------------------- Bookmark --------------------
-
-document.querySelectorAll(".bookmark").forEach(btn => {
-
-    const id = btn.dataset.id;
-
-    if (localStorage.getItem("bookmark_" + id)) {
-
-        btn.classList.add("active");
-
-        btn.innerHTML =
-            '<i class="fas fa-bookmark"></i>';
-
-    }
-
-    btn.addEventListener("click", function () {
-
-        this.classList.toggle("active");
-
-        if (this.classList.contains("active")) {
-
-            localStorage.setItem("bookmark_" + id, "true");
-
-            this.innerHTML =
-                '<i class="fas fa-bookmark"></i>';
-
-        }
-        else {
-
-            localStorage.removeItem("bookmark_" + id);
-
-            this.innerHTML =
-                '<i class="far fa-bookmark"></i>';
-
-        }
-
-    });
-
-});
-
-</script>
+<script src="{{ url_for('static', filename='js/interview.js') }}"></script>
 
 {% endblock %}
