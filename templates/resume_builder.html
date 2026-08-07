@@ -1,148 +1,721 @@
-{% extends 'layout.html' %}
+{% extends "layout.html" %}
 
 {% block title %}Advanced Resume Builder{% endblock %}
 
 {% block content %}
-<style>/* General Page Styling */
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #f4f6f9;
-    margin: 0;
-    padding: 0;
-    color: #333;
-}
 
-/* Page Title */
-.page-title {
-    text-align: center;
-    font-size: 28px;
-    font-weight: bold;
-    margin: 30px 0;
-    color: #2c3e50;
-}
+<div class="resume-builder-page">
 
-/* Card Container */
-.card {
-    background: #fff;
-    max-width: 700px;
-    margin: 20px auto;
-    padding: 25px;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
+    <!-- ===========================
+            TOP HEADER
+    ============================ -->
 
-/* Labels */
-label {
-    display: block;
-    margin-top: 15px;
-    font-weight: 600;
-    color: #34495e;
-}
+    <div class="resume-topbar">
 
-/* Input Fields */
-input[type="text"],
-input[type="email"],
-input[type="url"],
-textarea {
-    width: 100%;
-    padding: 10px;
-    margin-top: 8px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    font-size: 14px;
-    transition: border-color 0.3s ease;
-}
+        <div class="topbar-left">
+            <h1>
+                <i class="fas fa-file-alt"></i>
+                Advanced Resume Builder
+            </h1>
 
-input:focus,
-textarea:focus {
-    border-color: #3498db;
-    outline: none;
-}
+            <p>
+                Build an ATS Friendly Professional Resume
+            </p>
+        </div>
 
-/* Textarea Styling */
-textarea {
-    min-height: 80px;
-    resize: vertical;
-}
+        <div class="topbar-right">
 
-/* Submit Button */
-.btn-submit {
-    display: block;
-    width: 100%;
-    padding: 12px;
-    margin-top: 25px;
-    background: #3498db;
-    color: #fff;
-    font-size: 16px;
-    font-weight: bold;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background 0.3s ease;
-}
+            <button class="btn btn-outline-primary" id="saveDraftBtn">
 
-.btn-submit:hover {
-    background: #2980b9;
-}
-</style>
-<h1 class="page-title">📄 Advanced Resume Builder</h1>
+                <i class="fas fa-save"></i>
+                Save Draft
 
-<div class="card">
+            </button>
 
-    <form method="POST" action="/resume_builder">
+            <button class="btn btn-success" id="downloadPdfBtn">
 
-        <label>Full Name</label>
-        <input type="text" name="name" required>
+                <i class="fas fa-download"></i>
+                Download PDF
 
-        <label>Email</label>
-        <input type="email" name="email" required>
+            </button>
 
-        <label>Mobile Number</label>
-        <input type="text" name="mobile" required>
+        </div>
 
-        <label>LinkedIn Profile</label>
-        <input type="url" name="linkedin">
+    </div>
 
-        <label>GitHub/Portfolio</label>
-        <input type="url" name="portfolio">
+    <!-- ===========================
+            PROGRESS BAR
+    ============================ -->
 
-        <label>Professional Summary</label>
-        <textarea name="summary" placeholder="Brief career overview"></textarea>
+    <div class="resume-progress-card">
 
-        <label>Education</label>
-        <textarea name="education" required></textarea>
+        <div class="progress-header">
 
-        <label>Technical Skills</label>
-        <textarea name="technical_skills"></textarea>
+            <div>
 
-        <label>Soft Skills</label>
-        <textarea name="soft_skills"></textarea>
+                <h4>Resume Completion</h4>
 
-        <label>Projects</label>
-        <textarea name="projects"></textarea>
+                <small>
+                    Complete all sections to improve ATS Score
+                </small>
 
-        <label>Internship / Experience</label>
-        <textarea name="experience"></textarea>
+            </div>
 
-        <label>Achievements</label>
-        <textarea name="achievements"></textarea>
+            <div>
 
-        <label>Certifications</label>
-        <textarea name="certifications"></textarea>
+                <span id="progressPercent">
+                    12%
+                </span>
 
-        <label>Languages</label>
-        <textarea name="languages"></textarea>
+            </div>
 
-        <label>References</label>
-        <textarea name="references"></textarea>
+        </div>
 
-        <br><br>
+        <div class="progress">
 
-        <button type="submit" class="btn-submit">
-            Generate Resume
-        </button>
+            <div
+                class="progress-bar bg-success"
+                id="resumeProgressBar"
+                role="progressbar"
+                style="width:12%;">
 
-    </form>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ===========================
+            MAIN CONTAINER
+    ============================ -->
+
+    <div class="resume-layout">
+
+        <!-- ======================
+                LEFT SIDEBAR
+        ======================= -->
+
+        <aside class="resume-sidebar">
+
+            <ul>
+
+                <li class="active">
+
+                    <span class="step-number">
+                        1
+                    </span>
+
+                    Personal Information
+
+                </li>
+
+                <li>
+
+                    <span class="step-number">
+                        2
+                    </span>
+
+                    Professional Summary
+
+                </li>
+
+                <li>
+
+                    <span class="step-number">
+                        3
+                    </span>
+
+                    Education
+
+                </li>
+
+                <li>
+
+                    <span class="step-number">
+                        4
+                    </span>
+
+                    Experience
+
+                </li>
+
+                <li>
+
+                    <span class="step-number">
+                        5
+                    </span>
+
+                    Internships
+
+                </li>
+
+                <li>
+
+                    <span class="step-number">
+                        6
+                    </span>
+
+                    Projects
+
+                </li>
+
+                <li>
+
+                    <span class="step-number">
+                        7
+                    </span>
+
+                    Technical Skills
+
+                </li>
+
+                <li>
+
+                    <span class="step-number">
+                        8
+                    </span>
+
+                    Certifications
+
+                </li>
+
+                <li>
+
+                    <span class="step-number">
+                        9
+                    </span>
+
+                    Achievements
+
+                </li>
+
+                <li>
+
+                    <span class="step-number">
+                        10
+                    </span>
+
+                    Languages
+
+                </li>
+
+                <li>
+
+                    <span class="step-number">
+                        11
+                    </span>
+
+                    Resume Preview
+
+                </li>
+
+            </ul>
+
+        </aside>
+
+        <!-- ======================
+                FORM SECTION
+        ======================= -->
+
+        <div class="resume-form-container">
+
+            <form
+                method="POST"
+                action="/resume_builder"
+                enctype="multipart/form-data"
+                id="resumeForm">
+
+                <!-- ======================
+                        STEP INDICATOR
+                ======================= -->
+
+                <div class="wizard-card">
+
+                    <div class="wizard-step active">
+
+                        <div class="wizard-circle">
+
+                            1
+
+                        </div>
+
+                        <span>
+
+                            Personal
+
+                        </span>
+
+                    </div>
+
+                    <div class="wizard-line"></div>
+
+                    <div class="wizard-step">
+
+                        <div class="wizard-circle">
+
+                            2
+
+                        </div>
+
+                        <span>
+
+                            Education
+
+                        </span>
+
+                    </div>
+
+                    <div class="wizard-line"></div>
+
+                    <div class="wizard-step">
+
+                        <div class="wizard-circle">
+
+                            3
+
+                        </div>
+
+                        <span>
+
+                            Experience
+
+                        </span>
+
+                    </div>
+
+                    <div class="wizard-line"></div>
+
+                    <div class="wizard-step">
+
+                        <div class="wizard-circle">
+
+                            4
+
+                        </div>
+
+                        <span>
+
+                            Projects
+
+                        </span>
+
+                    </div>
+
+                    <div class="wizard-line"></div>
+
+                    <div class="wizard-step">
+
+                        <div class="wizard-circle">
+
+                            5
+
+                        </div>
+
+                        <span>
+
+                            Skills
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <!-- ======================
+                    PERSONAL INFO START
+                ======================= -->
+
+                <div class="resume-card">
+
+                    <div class="card-header">
+
+                        <h2>
+
+                            <i class="fas fa-user-circle"></i>
+
+                            Personal Information
+
+                        </h2>
+
+                        <p>
+
+                            Fill your professional details.
+
+                        </p>
+
+                    </div>
+
+                    <div class="card-body">
+
+                        <!-- Part 1B starts from here -->
+
+                    </div>
+
+                </div>
+                    <!-- ===========================
+                            PROFILE PHOTO
+                    ============================ -->
+
+                    <div class="row">
+
+                        <div class="col-md-12">
+
+                            <div class="profile-upload-box">
+
+                                <label class="form-label">
+                                    Profile Photo
+                                </label>
+
+                                <input
+                                    type="file"
+                                    name="profile_photo"
+                                    id="profile_photo"
+                                    class="form-control"
+                                    accept=".jpg,.jpeg,.png">
+
+                                <small class="text-muted">
+                                    JPG / PNG | Max 2 MB
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- ===========================
+                            PERSONAL DETAILS
+                    ============================ -->
+
+                    <div class="row mt-4">
+
+                        <div class="col-md-6">
+
+                            <label class="form-label">
+                                Full Name *
+                            </label>
+
+                            <input
+                                type="text"
+                                class="form-control"
+                                name="full_name"
+                                placeholder="John Smith"
+                                required>
+
+                        </div>
+
+                        <div class="col-md-6">
+
+                            <label class="form-label">
+                                Professional Title *
+                            </label>
+
+                            <input
+                                type="text"
+                                class="form-control"
+                                name="job_title"
+                                placeholder="Java Full Stack Developer">
+
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-md-6">
+
+                            <label>Email Address *</label>
+
+                            <input
+                                type="email"
+                                class="form-control"
+                                name="email"
+                                required>
+
+                        </div>
+
+                        <div class="col-md-6">
+
+                            <label>Mobile Number *</label>
+
+                            <input
+                                type="text"
+                                class="form-control"
+                                name="mobile"
+                                maxlength="10">
+
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-md-4">
+
+                            <label>Date of Birth</label>
+
+                            <input
+                                type="date"
+                                class="form-control"
+                                name="dob">
+
+                        </div>
+
+                        <div class="col-md-4">
+
+                            <label>Gender</label>
+
+                            <select
+                                class="form-select"
+                                name="gender">
+
+                                <option value="">Select</option>
+
+                                <option>Male</option>
+
+                                <option>Female</option>
+
+                                <option>Other</option>
+
+                            </select>
+
+                        </div>
+
+                        <div class="col-md-4">
+
+                            <label>Nationality</label>
+
+                            <input
+                                type="text"
+                                class="form-control"
+                                name="nationality"
+                                placeholder="Indian">
+
+                        </div>
+
+                    </div>
+
+                    <!-- ===========================
+                            ADDRESS
+                    ============================ -->
+
+                    <div class="row">
+
+                        <div class="col-md-12">
+
+                            <label>Address</label>
+
+                            <textarea
+                                class="form-control"
+                                rows="3"
+                                name="address"></textarea>
+
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-md-4">
+
+                            <label>City</label>
+
+                            <input
+                                type="text"
+                                class="form-control"
+                                name="city">
+
+                        </div>
+
+                        <div class="col-md-4">
+
+                            <label>State</label>
+
+                            <input
+                                type="text"
+                                class="form-control"
+                                name="state">
+
+                        </div>
+
+                        <div class="col-md-4">
+
+                            <label>Pincode</label>
+
+                            <input
+                                type="text"
+                                class="form-control"
+                                name="pincode">
+
+                        </div>
+
+                    </div>
+
+                    <!-- ===========================
+                            SOCIAL LINKS
+                    ============================ -->
+
+                    <hr>
+
+                    <h4>Professional Links</h4>
+
+                    <div class="row">
+
+                        <div class="col-md-6">
+
+                            <label>LinkedIn</label>
+
+                            <input
+                                type="url"
+                                class="form-control"
+                                name="linkedin">
+
+                        </div>
+
+                        <div class="col-md-6">
+
+                            <label>GitHub</label>
+
+                            <input
+                                type="url"
+                                class="form-control"
+                                name="github">
+
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-md-6">
+
+                            <label>Portfolio Website</label>
+
+                            <input
+                                type="url"
+                                class="form-control"
+                                name="portfolio">
+
+                        </div>
+
+                        <div class="col-md-6">
+
+                            <label>Personal Website</label>
+
+                            <input
+                                type="url"
+                                class="form-control"
+                                name="website">
+
+                        </div>
+
+                    </div>
+
+                    <!-- ===========================
+                            CODING PROFILES
+                    ============================ -->
+
+                    <hr>
+
+                    <h4>Coding Profiles</h4>
+
+                    <div class="row">
+
+                        <div class="col-md-6">
+
+                            <label>LeetCode</label>
+
+                            <input
+                                type="url"
+                                class="form-control"
+                                name="leetcode">
+
+                        </div>
+
+                        <div class="col-md-6">
+
+                            <label>GeeksforGeeks</label>
+
+                            <input
+                                type="url"
+                                class="form-control"
+                                name="gfg">
+
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-md-4">
+
+                            <label>HackerRank</label>
+
+                            <input
+                                type="url"
+                                class="form-control"
+                                name="hackerrank">
+
+                        </div>
+
+                        <div class="col-md-4">
+
+                            <label>CodeChef</label>
+
+                            <input
+                                type="url"
+                                class="form-control"
+                                name="codechef">
+
+                        </div>
+
+                        <div class="col-md-4">
+
+                            <label>Codeforces</label>
+
+                            <input
+                                type="url"
+                                class="form-control"
+                                name="codeforces">
+
+                        </div>
+
+                    </div>
+
+                    <!-- ===========================
+                            BUTTONS
+                    ============================ -->
+
+                    <div class="d-flex justify-content-between mt-5">
+
+                        <button
+                            type="button"
+                            class="btn btn-secondary"
+                            disabled>
+
+                            Previous
+
+                        </button>
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary">
+
+                            Save & Continue
+
+                            <i class="fas fa-arrow-right"></i>
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
 
 </div>
 
