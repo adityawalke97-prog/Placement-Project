@@ -1,15 +1,15 @@
-/* ============================================================
+/* =========================================================
    AI RESUME BUILDER
-   Complete Frontend JavaScript
-============================================================ */
-
-"use strict";
+   Complete Frontend Controller
+========================================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    /* ========================================================
+    "use strict";
+
+    /* =====================================================
        HELPERS
-    ======================================================== */
+    ===================================================== */
 
     const $ = (selector, parent = document) =>
         parent.querySelector(selector);
@@ -17,32 +17,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const $$ = (selector, parent = document) =>
         [...parent.querySelectorAll(selector)];
 
-
-    function getValue(id) {
-
-        const element = document.getElementById(id);
-
-        return element
-            ? element.value.trim()
-            : "";
+    function value(id) {
+        const el = document.getElementById(id);
+        return el ? el.value.trim() : "";
     }
 
-
-    function setValue(id, value) {
-
-        const element = document.getElementById(id);
-
-        if (element) {
-            element.value = value || "";
-        }
-    }
-
-
-    /* ========================================================
-       TOAST
-    ======================================================== */
-
-    window.showResumeToast = function(message, type = "success") {
+    function showToast(message, type = "success") {
 
         const toast = $("#resumeToast");
 
@@ -50,87 +30,273 @@ document.addEventListener("DOMContentLoaded", () => {
 
         toast.textContent = message;
 
-        toast.className =
-            `resume-toast show ${type}`;
+        toast.className = `resume-toast show ${type}`;
 
-        clearTimeout(window.resumeToastTimer);
-
-        window.resumeToastTimer =
-            setTimeout(() => {
-
-                toast.classList.remove("show");
-
-            }, 3500);
-    };
+        setTimeout(() => {
+            toast.classList.remove("show");
+        }, 3000);
+    }
 
 
-    /* ========================================================
-       LOADING
-    ======================================================== */
-
-    window.showResumeLoading = function() {
+    function showLoading(message = "Processing...") {
 
         const loader = $("#resumeLoading");
 
         if (!loader) return;
 
+        const title = $("h3", loader);
+
+        if (title) {
+            title.textContent = message;
+        }
+
         loader.classList.add("active");
-
-        loader.style.display = "flex";
-    };
+    }
 
 
-    window.hideResumeLoading = function() {
+    function hideLoading() {
 
         const loader = $("#resumeLoading");
 
         if (!loader) return;
 
         loader.classList.remove("active");
-
-        loader.style.display = "none";
-    };
+    }
 
 
-    /* ========================================================
-       API CALL
-    ======================================================== */
+    /* =====================================================
+       COLLECT RESUME DATA
+    ===================================================== */
 
-    async function callResumeAI(endpoint, data) {
+    function collectResumeData() {
 
-        showResumeLoading();
+        const data = {
 
-        try {
+            personal: {
+                full_name: value("fullName"),
+                professional_title: value("professionalTitle"),
+                location: value("location"),
+                email: value("email"),
+                phone: value("phone"),
+                linkedin: value("linkedin"),
+                github: value("github"),
+                portfolio: value("portfolio")
+            },
 
-            const response = await fetch(endpoint, {
+            summary: value("professionalSummary"),
 
-                method: "POST",
+            target_job: {
+                title: value("targetJobTitle"),
+                industry: value("targetIndustry"),
+                description: value("jobDescription")
+            },
 
-                headers: {
-                    "Content-Type": "application/json"
-                },
+            education: [],
 
-                body: JSON.stringify(data)
+            skills: {
+                programming: [],
+                frameworks: [],
+                databases: [],
+                tools: []
+            },
+
+            experience: [],
+
+            projects: [],
+
+            certifications: [],
+
+            achievements: [],
+
+            additional: {
+                languages: value("languages"),
+                coursework: value("coursework"),
+                interests: value("interests")
+            }
+        };
+
+
+        /* EDUCATION */
+
+        $$(".education-item").forEach(item => {
+
+            const inputs = $$("input", item);
+
+            data.education.push({
+                degree: inputs[0]?.value.trim() || "",
+                institution: inputs[1]?.value.trim() || "",
+                start_year: inputs[2]?.value.trim() || "",
+                end_year: inputs[3]?.value.trim() || "",
+                grade: inputs[4]?.value.trim() || "",
+                location: inputs[5]?.value.trim() || ""
+            });
+
+        });
+
+
+        /* SKILLS */
+
+        $$('input[name="programming_skills[]"]')
+            .forEach(input => {
+                if (input.value.trim())
+                    data.skills.programming.push(input.value.trim());
+            });
+
+
+        $$('input[name="framework_skills[]"]')
+            .forEach(input => {
+                if (input.value.trim())
+                    data.skills.frameworks.push(input.value.trim());
+            });
+
+
+        $$('input[name="database_skills[]"]')
+            .forEach(input => {
+                if (input.value.trim())
+                    data.skills.databases.push(input.value.trim());
+            });
+
+
+        $$('input[name="tool_skills[]"]')
+            .forEach(input => {
+                if (input.value.trim())
+                    data.skills.tools.push(input.value.trim());
+            });
+
+
+        /* EXPERIENCE */
+
+        $$(".experience-item").forEach(item => {
+
+            const inputs = $$("input", item);
+            const textarea = $("textarea", item);
+
+            data.experience.push({
+
+                job_title: inputs[0]?.value.trim() || "",
+
+                company: inputs[1]?.value.trim() || "",
+
+                start_date: inputs[2]?.value || "",
+
+                end_date: inputs[3]?.value || "",
+
+                description: textarea?.value.trim() || ""
+
+            });
+
+        });
+
+
+        /* PROJECTS */
+
+        $$(".project-item").forEach(item => {
+
+            const inputs = $$("input", item);
+
+            const select = $("select", item);
+
+            const textarea = $("textarea", item);
+
+            data.projects.push({
+
+                name: inputs[0]?.value.trim() || "",
+
+                type: select?.value || "",
+
+                github: inputs[1]?.value.trim() || "",
+
+                demo: inputs[2]?.value.trim() || "",
+
+                technologies: inputs[3]?.value.trim() || "",
+
+                description: textarea?.value.trim() || ""
+
+            });
+
+        });
+
+
+        /* CERTIFICATIONS */
+
+        $$("#certificationContainer .dynamic-item")
+            .forEach(item => {
+
+                const inputs = $$("input", item);
+
+                data.certifications.push({
+
+                    name: inputs[0]?.value.trim() || "",
+
+                    organization: inputs[1]?.value.trim() || "",
+
+                    year: inputs[2]?.value.trim() || "",
+
+                    url: inputs[3]?.value.trim() || ""
+
+                });
 
             });
 
 
-            let result;
+        /* ACHIEVEMENTS */
 
-            try {
+        $$('textarea[name="achievement[]"]')
+            .forEach(textarea => {
 
-                result = await response.json();
+                if (textarea.value.trim()) {
 
-            } catch {
+                    data.achievements.push(
+                        textarea.value.trim()
+                    );
 
-                throw new Error(
-                    "Invalid server response."
-                );
+                }
 
-            }
+            });
 
 
-            if (!response.ok || !result.success) {
+        return data;
+    }
+
+
+    /* =====================================================
+       AI API CALL
+    ===================================================== */
+
+    async function callAI(action, extraData = {}) {
+
+        try {
+
+            showLoading("AI is working...");
+
+            const resume = collectResumeData();
+
+            const response = await fetch("/api/resume/ai", {
+
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
+                },
+
+                body: JSON.stringify({
+
+                    action: action,
+
+                    resume: resume,
+
+                    ...extraData
+
+                })
+
+            });
+
+
+            const result = await response.json();
+
+
+            if (!response.ok) {
 
                 throw new Error(
                     result.error ||
@@ -142,1601 +308,671 @@ document.addEventListener("DOMContentLoaded", () => {
 
             return result;
 
+        }
 
-        } catch (error) {
+        catch (error) {
 
-            console.error(
-                "Resume AI Error:",
-                error
-            );
+            console.error("AI ERROR:", error);
 
-            showResumeToast(
-                error.message ||
-                "AI service unavailable.",
+            showToast(
+                error.message || "AI service failed.",
                 "error"
             );
 
             return null;
 
+        }
 
-        } finally {
+        finally {
 
-            hideResumeLoading();
+            hideLoading();
 
         }
 
     }
 
 
-    /* ========================================================
-       COLLECT RESUME TEXT
-    ======================================================== */
+    /* =====================================================
+       IMPROVE SUMMARY
+    ===================================================== */
 
-    window.collectResumeText = function() {
+    const improveSummaryBtn =
+        $("#improveSummaryBtn");
 
-        const sections = [];
+    if (improveSummaryBtn) {
 
-        const fullName = getValue("fullName");
-
-        if (fullName)
-            sections.push(`Name: ${fullName}`);
-
-
-        const title =
-            getValue("professionalTitle");
-
-        if (title)
-            sections.push(`Title: ${title}`);
-
-
-        const summary =
-            getValue("professionalSummary");
-
-        if (summary)
-            sections.push(
-                `Professional Summary:\n${summary}`
-            );
-
-
-        /* EDUCATION */
-
-        $$(
-            "#educationContainer .education-item"
-        ).forEach(item => {
-
-            const values =
-                $$("input", item)
-                .map(input => input.value.trim())
-                .filter(Boolean);
-
-            if (values.length) {
-
-                sections.push(
-                    `Education:\n${values.join(" | ")}`
-                );
-
-            }
-
-        });
-
-
-        /* SKILLS */
-
-        const skillInputs =
-            $$(".skill-inputs input");
-
-        const skills =
-            skillInputs
-                .map(input => input.value.trim())
-                .filter(Boolean);
-
-        if (skills.length) {
-
-            sections.push(
-                `Technical Skills:\n${skills.join(", ")}`
-            );
-
-        }
-
-
-        /* EXPERIENCE */
-
-        $$(
-            "#experienceContainer .experience-item"
-        ).forEach(item => {
-
-            const values =
-                $$("input, textarea", item)
-                .map(input => input.value.trim())
-                .filter(Boolean);
-
-            if (values.length) {
-
-                sections.push(
-                    `Experience:\n${values.join("\n")}`
-                );
-
-            }
-
-        });
-
-
-        /* PROJECTS */
-
-        $$(
-            "#projectsContainer .project-item"
-        ).forEach(item => {
-
-            const values =
-                $$("input, textarea, select", item)
-                .map(input => input.value.trim())
-                .filter(Boolean);
-
-            if (values.length) {
-
-                sections.push(
-                    `Project:\n${values.join("\n")}`
-                );
-
-            }
-
-        });
-
-
-        /* CERTIFICATIONS */
-
-        $$(
-            "#certificationContainer .dynamic-item"
-        ).forEach(item => {
-
-            const values =
-                $$("input", item)
-                .map(input => input.value.trim())
-                .filter(Boolean);
-
-            if (values.length) {
-
-                sections.push(
-                    `Certification:\n${values.join(" | ")}`
-                );
-
-            }
-
-        });
-
-
-        /* ACHIEVEMENTS */
-
-        $$(
-            "#achievementContainer .dynamic-item"
-        ).forEach(item => {
-
-            const values =
-                $$("textarea", item)
-                .map(input => input.value.trim())
-                .filter(Boolean);
-
-            if (values.length) {
-
-                sections.push(
-                    `Achievement:\n${values.join("\n")}`
-                );
-
-            }
-
-        });
-
-
-        /* ADDITIONAL */
-
-        const languages =
-            getValue("languages");
-
-        if (languages)
-            sections.push(
-                `Languages: ${languages}`
-            );
-
-
-        const coursework =
-            getValue("coursework");
-
-        if (coursework)
-            sections.push(
-                `Coursework: ${coursework}`
-            );
-
-
-        const interests =
-            getValue("interests");
-
-        if (interests)
-            sections.push(
-                `Interests: ${interests}`
-            );
-
-
-        return sections.join("\n\n");
-
-    };
-
-
-    /* ========================================================
-       SUMMARY COUNTER
-    ======================================================== */
-
-    const summary =
-        $("#professionalSummary");
-
-    const summaryCounter =
-        $("#summaryCounter");
-
-
-    function updateSummaryCounter() {
-
-        if (!summary || !summaryCounter)
-            return;
-
-        summaryCounter.textContent =
-            `${summary.value.length} / 1000`;
-
-    }
-
-
-    summary?.addEventListener(
-        "input",
-        updateSummaryCounter
-    );
-
-
-    /* ========================================================
-       COMPLETION
-    ======================================================== */
-
-    window.updateResumeProgress = function() {
-
-        let completed = 0;
-
-        const total = 6;
-
-
-        /* CONTACT */
-
-        if (
-            getValue("fullName") &&
-            getValue("email")
-        ) {
-
-            completed++;
-
-            markChecklist(
-                "checkContact",
-                true
-            );
-
-        } else {
-
-            markChecklist(
-                "checkContact",
-                false
-            );
-
-        }
-
-
-        /* SUMMARY */
-
-        if (
-            getValue("professionalSummary")
-        ) {
-
-            completed++;
-
-            markChecklist(
-                "checkSummary",
-                true
-            );
-
-        } else {
-
-            markChecklist(
-                "checkSummary",
-                false
-            );
-
-        }
-
-
-        /* EDUCATION */
-
-        if (
-            $$("#educationContainer input")
-                .some(input =>
-                    input.value.trim()
-                )
-        ) {
-
-            completed++;
-
-            markChecklist(
-                "checkEducation",
-                true
-            );
-
-        } else {
-
-            markChecklist(
-                "checkEducation",
-                false
-            );
-
-        }
-
-
-        /* SKILLS */
-
-        if (
-            $$(".skill-inputs input")
-                .some(input =>
-                    input.value.trim()
-                )
-        ) {
-
-            completed++;
-
-            markChecklist(
-                "checkSkills",
-                true
-            );
-
-        } else {
-
-            markChecklist(
-                "checkSkills",
-                false
-            );
-
-        }
-
-
-        /* PROJECTS */
-
-        if (
-            $$("#projectsContainer input, #projectsContainer textarea")
-                .some(input =>
-                    input.value.trim()
-                )
-        ) {
-
-            completed++;
-
-            markChecklist(
-                "checkProjects",
-                true
-            );
-
-        } else {
-
-            markChecklist(
-                "checkProjects",
-                false
-            );
-
-        }
-
-
-        /* EXPERIENCE */
-
-        if (
-            $$("#experienceContainer input, #experienceContainer textarea")
-                .some(input =>
-                    input.value.trim()
-                )
-        ) {
-
-            completed++;
-
-            markChecklist(
-                "checkExperience",
-                true
-            );
-
-        } else {
-
-            markChecklist(
-                "checkExperience",
-                false
-            );
-
-        }
-
-
-        const percentage =
-            Math.round(
-                (completed / total) * 100
-            );
-
-
-        const progressText =
-            $("#completionText");
-
-        if (progressText) {
-
-            progressText.textContent =
-                `${percentage}% Complete`;
-
-        }
-
-
-        const score =
-            $("#completionScore");
-
-        if (score) {
-
-            score.textContent =
-                `${percentage}%`;
-
-        }
-
-
-        const fill =
-            $("#mainProgressFill");
-
-        if (fill) {
-
-            fill.style.width =
-                `${percentage}%`;
-
-        }
-
-
-        return percentage;
-
-    };
-
-
-    function markChecklist(id, complete) {
-
-        const item =
-            document.getElementById(id);
-
-        if (!item) return;
-
-        item.classList.toggle(
-            "completed",
-            complete
-        );
-
-
-        const icon =
-            $("span", item);
-
-        if (icon) {
-
-            icon.textContent =
-                complete ? "✓" : "○";
-
-        }
-
-    }
-
-
-    /* ========================================================
-       AI — IMPROVE SUMMARY
-    ======================================================== */
-
-    $("#improveSummaryBtn")
-        ?.addEventListener(
+        improveSummaryBtn.addEventListener(
             "click",
             async () => {
 
                 const summary =
-                    getValue(
-                        "professionalSummary"
-                    );
+                    value("professionalSummary");
 
-                const targetJob =
-                    getValue(
-                        "targetJobTitle"
-                    ) ||
-                    "Software Engineer";
-
+                const job =
+                    value("targetJobTitle");
 
                 if (!summary) {
 
-                    showResumeToast(
-                        "Write your summary first.",
+                    showToast(
+                        "Please write a summary first.",
                         "error"
                     );
 
                     return;
-
                 }
 
 
-                const result =
-                    await callResumeAI(
-                        "/api/resume/improve-summary",
-                        {
-                            summary,
-                            target_job: targetJob
-                        }
+                const result = await callAI(
+                    "improve_summary",
+                    {
+                        text: summary,
+                        target_job: job
+                    }
+                );
+
+
+                if (
+                    result &&
+                    result.success &&
+                    result.content
+                ) {
+
+                    $("#professionalSummary").value =
+                        result.content;
+
+                    updateSummaryCounter();
+
+                    updateResumeProgress();
+
+                    showToast(
+                        "✨ Summary improved successfully!"
                     );
 
-
-                if (!result)
-                    return;
-
-
-                setValue(
-                    "professionalSummary",
-                    result.result
-                );
-
-
-                updateSummaryCounter();
-
-                updateResumeProgress();
-
-
-                showResumeToast(
-                    "✨ Summary improved!",
-                    "success"
-                );
+                }
 
             }
         );
 
+    }
 
-    /* ========================================================
-       AI — ANALYZE JOB
-    ======================================================== */
 
-    $("#analyzeJobBtn")
-        ?.addEventListener(
+    /* =====================================================
+       ANALYZE JOB
+    ===================================================== */
+
+    const analyzeJobBtn =
+        $("#analyzeJobBtn");
+
+    if (analyzeJobBtn) {
+
+        analyzeJobBtn.addEventListener(
             "click",
             async () => {
 
                 const jobDescription =
-                    getValue(
-                        "jobDescription"
-                    );
-
+                    value("jobDescription");
 
                 if (!jobDescription) {
 
-                    showResumeToast(
+                    showToast(
                         "Paste a job description first.",
                         "error"
                     );
 
                     return;
-
                 }
 
 
-                const result =
-                    await callResumeAI(
-                        "/api/resume/analyze-job",
-                        {
-                            resume_text:
-                                collectResumeText(),
+                const result = await callAI(
+                    "analyze_job",
+                    {
+                        job_description:
+                            jobDescription
+                    }
+                );
 
-                            job_description:
-                                jobDescription
-                        }
+
+                if (result && result.success) {
+
+                    showAIAnalysis(result);
+
+                    showToast(
+                        "🎯 Job analysis completed!"
                     );
 
-
-                if (!result)
-                    return;
-
-
-                showJobAnalysis(result);
+                }
 
             }
-        );
-
-
-    function showJobAnalysis(result) {
-
-        const score =
-            result.match_score ?? 0;
-
-        const missing =
-            result.missing_keywords || [];
-
-        const strengths =
-            result.strengths || [];
-
-        const improvements =
-            result.improvements || [];
-
-
-        console.log(
-            "AI JOB ANALYSIS",
-            result
-        );
-
-
-        showResumeToast(
-            `🎯 Job Match: ${score}%`,
-            score >= 70
-                ? "success"
-                : "warning"
-        );
-
-
-        console.table({
-            "Match Score": score,
-            "Keyword Score":
-                result.keyword_score,
-            "Skills Score":
-                result.skills_score,
-            "Content Score":
-                result.content_score
-        });
-
-
-        console.log(
-            "Missing Keywords:",
-            missing
-        );
-
-        console.log(
-            "Strengths:",
-            strengths
-        );
-
-        console.log(
-            "Improvements:",
-            improvements
         );
 
     }
 
 
-    /* ========================================================
-       AI — SUGGEST SKILLS
-    ======================================================== */
+    /* =====================================================
+       SUGGEST SKILLS
+    ===================================================== */
 
-    $("#suggestSkillsBtn")
-        ?.addEventListener(
+    const suggestSkillsBtn =
+        $("#suggestSkillsBtn");
+
+    if (suggestSkillsBtn) {
+
+        suggestSkillsBtn.addEventListener(
             "click",
             async () => {
 
-                const targetJob =
-                    getValue(
-                        "targetJobTitle"
-                    );
+                const result = await callAI(
+                    "suggest_skills",
+                    {
+                        target_job:
+                            value("targetJobTitle"),
 
-                const jobDescription =
-                    getValue(
-                        "jobDescription"
-                    );
+                        job_description:
+                            value("jobDescription")
+                    }
+                );
 
 
                 if (
-                    !targetJob &&
-                    !jobDescription
+                    result &&
+                    result.success
                 ) {
 
-                    showResumeToast(
-                        "Enter target job or job description.",
-                        "error"
+                    showSkillSuggestions(
+                        result
                     );
-
-                    return;
 
                 }
 
-
-                const result =
-                    await callResumeAI(
-                        "/api/resume/suggest-skills",
-                        {
-                            target_job:
-                                targetJob,
-
-                            job_description:
-                                jobDescription
-                        }
-                    );
-
-
-                if (!result)
-                    return;
-
-
-                addSuggestedSkills(
-                    result.skills || []
-                );
-
             }
-        );
-
-
-    function addSuggestedSkills(skills) {
-
-        if (!skills.length) {
-
-            showResumeToast(
-                "No new skills found.",
-                "info"
-            );
-
-            return;
-
-        }
-
-
-        const container =
-            $("#programmingSkills");
-
-        if (!container)
-            return;
-
-
-        skills.forEach(skill => {
-
-            if (!skill)
-                return;
-
-
-            const exists =
-                $$("input", container)
-                    .some(input =>
-                        input.value
-                            .toLowerCase() ===
-                        skill.toLowerCase()
-                    );
-
-
-            if (exists)
-                return;
-
-
-            const input =
-                document.createElement(
-                    "input"
-                );
-
-
-            input.type = "text";
-
-            input.name =
-                "programming_skills[]";
-
-            input.value =
-                skill;
-
-            input.placeholder =
-                "AI Suggested Skill";
-
-
-            container.appendChild(
-                input
-            );
-
-        });
-
-
-        updateResumeProgress();
-
-
-        showResumeToast(
-            `💡 ${skills.length} skills suggested!`,
-            "success"
         );
 
     }
 
 
-    /* ========================================================
-       AI — IMPROVE EXPERIENCE
-    ======================================================== */
+    /* =====================================================
+       IMPROVE EXPERIENCE
+    ===================================================== */
 
-    document.addEventListener(
-        "click",
-        async event => {
+    $$(".improveExperienceBtn")
+        .forEach(button => {
 
-            const button =
-                event.target.closest(
-                    ".improveExperienceBtn"
-                );
+            button.addEventListener(
+                "click",
+                async () => {
 
+                    const item =
+                        button.closest(
+                            ".experience-item"
+                        );
 
-            if (!button)
-                return;
-
-
-            const item =
-                button.closest(
-                    ".experience-item"
-                );
+                    if (!item) return;
 
 
-            if (!item)
-                return;
+                    const textarea =
+                        $("textarea", item);
 
+                    if (
+                        !textarea ||
+                        !textarea.value.trim()
+                    ) {
 
-            const textarea =
-                $("textarea", item);
+                        showToast(
+                            "Enter your experience first.",
+                            "error"
+                        );
 
-
-            if (!textarea?.value.trim()) {
-
-                showResumeToast(
-                    "Enter experience details first.",
-                    "error"
-                );
-
-                return;
-
-            }
-
-
-            const result =
-                await callResumeAI(
-                    "/api/resume/improve-experience",
-                    {
-                        description:
-                            textarea.value,
-
-                        target_job:
-                            getValue(
-                                "targetJobTitle"
-                            ) ||
-                            "Software Engineer"
+                        return;
                     }
-                );
 
 
-            if (!result)
-                return;
+                    const result =
+                        await callAI(
+                            "improve_experience",
+                            {
+                                text:
+                                    textarea.value,
+
+                                target_job:
+                                    value(
+                                        "targetJobTitle"
+                                    )
+                            }
+                        );
 
 
-            textarea.value =
-                result.result;
+                    if (
+                        result &&
+                        result.success &&
+                        result.content
+                    ) {
 
+                        textarea.value =
+                            result.content;
 
-            updateResumeProgress();
+                        updateResumeProgress();
 
+                        showToast(
+                            "✨ Experience improved!"
+                        );
 
-            showResumeToast(
-                "💼 Experience improved!",
-                "success"
-            );
-
-        }
-    );
-
-
-    /* ========================================================
-       AI — IMPROVE PROJECT
-    ======================================================== */
-
-    document.addEventListener(
-        "click",
-        async event => {
-
-            const button =
-                event.target.closest(
-                    ".improveProjectBtn"
-                );
-
-
-            if (!button)
-                return;
-
-
-            const item =
-                button.closest(
-                    ".project-item"
-                );
-
-
-            if (!item)
-                return;
-
-
-            const textarea =
-                $("textarea", item);
-
-
-            const inputs =
-                $$("input", item);
-
-
-            if (!textarea?.value.trim()) {
-
-                showResumeToast(
-                    "Enter project description first.",
-                    "error"
-                );
-
-                return;
-
-            }
-
-
-            const projectName =
-                inputs[0]?.value || "";
-
-
-            const technologies =
-                inputs
-                    .find(input =>
-                        input.name ===
-                        "project_technologies[]"
-                    )?.value || "";
-
-
-            const result =
-                await callResumeAI(
-                    "/api/resume/improve-project",
-                    {
-                        description:
-                            textarea.value,
-
-                        project_name:
-                            projectName,
-
-                        technologies:
-                            technologies
                     }
-                );
-
-
-            if (!result)
-                return;
-
-
-            textarea.value =
-                result.result;
-
-
-            updateResumeProgress();
-
-
-            showResumeToast(
-                "🚀 Project improved!",
-                "success"
-            );
-
-        }
-    );
-
-
-    /* ========================================================
-       AI — VERIFY RESUME
-    ======================================================== */
-
-    $("#verifyResumeBtn")
-        ?.addEventListener(
-            "click",
-            async () => {
-
-                const resumeText =
-                    collectResumeText();
-
-
-                if (!resumeText.trim()) {
-
-                    showResumeToast(
-                        "Add resume information first.",
-                        "error"
-                    );
-
-                    return;
 
                 }
+            );
 
+        });
+
+
+    /* =====================================================
+       IMPROVE PROJECT
+    ===================================================== */
+
+    $$(".improveProjectBtn")
+        .forEach(button => {
+
+            button.addEventListener(
+                "click",
+                async () => {
+
+                    const item =
+                        button.closest(
+                            ".project-item"
+                        );
+
+                    if (!item) return;
+
+
+                    const textarea =
+                        $("textarea", item);
+
+                    if (
+                        !textarea ||
+                        !textarea.value.trim()
+                    ) {
+
+                        showToast(
+                            "Enter project description first.",
+                            "error"
+                        );
+
+                        return;
+                    }
+
+
+                    const result =
+                        await callAI(
+                            "improve_project",
+                            {
+                                text:
+                                    textarea.value,
+
+                                technologies:
+                                    $("input[name='project_technologies[]']", item)
+                                    ?.value || ""
+                            }
+                        );
+
+
+                    if (
+                        result &&
+                        result.success &&
+                        result.content
+                    ) {
+
+                        textarea.value =
+                            result.content;
+
+                        updateResumeProgress();
+
+                        showToast(
+                            "🚀 Project improved!"
+                        );
+
+                    }
+
+                }
+            );
+
+        });
+
+
+    /* =====================================================
+       VERIFY RESUME
+    ===================================================== */
+
+    const verifyResumeBtn =
+        $("#verifyResumeBtn");
+
+    if (verifyResumeBtn) {
+
+        verifyResumeBtn.addEventListener(
+            "click",
+            async () => {
 
                 openModal(
                     "verificationModal"
                 );
 
-
-                const loading =
-                    $("#verificationLoading");
-
-                const resultBox =
-                    $("#verificationResult");
-
-
-                if (loading)
-                    loading.style.display =
-                        "block";
-
-
-                if (resultBox)
-                    resultBox.style.display =
-                        "none";
+                showVerificationLoading();
 
 
                 const result =
-                    await callResumeAI(
-                        "/api/resume/verify",
+                    await callAI(
+                        "verify_resume",
                         {
-                            resume_text:
-                                resumeText,
-
                             job_description:
-                                getValue(
+                                value(
                                     "jobDescription"
                                 )
                         }
                     );
 
 
-                if (!result)
-                    return;
-
-
-                displayVerificationResult(
-                    result
-                );
-
-            }
-        );
-
-
-    function displayVerificationResult(
-        result
-    ) {
-
-        const loading =
-            $("#verificationLoading");
-
-        const resultBox =
-            $("#verificationResult");
-
-
-        if (loading)
-            loading.style.display =
-                "none";
-
-
-        if (resultBox)
-            resultBox.style.display =
-                "block";
-
-
-        setText(
-            "verificationScore",
-            result.score ?? 0
-        );
-
-
-        setText(
-            "keywordScore",
-            `${result.keyword_score ?? 0}%`
-        );
-
-
-        setText(
-            "contentScore",
-            `${result.content_score ?? 0}%`
-        );
-
-
-        setText(
-            "formatScore",
-            `${result.format_score ?? 0}%`
-        );
-
-
-        setText(
-            "skillsScore",
-            `${result.skills_score ?? 0}%`
-        );
-
-
-        setText(
-            "atsScore",
-            result.score ?? 0
-        );
-
-
-        const progress =
-            $("#atsProgressFill");
-
-        if (progress) {
-
-            progress.style.width =
-                `${result.score ?? 0}%`;
-
-        }
-
-
-        const status =
-            $("#atsStatus");
-
-        if (status) {
-
-            const score =
-                result.score ?? 0;
-
-
-            if (score >= 80) {
-
-                status.textContent =
-                    "Excellent ATS readiness!";
-
-            } else if (score >= 60) {
-
-                status.textContent =
-                    "Good resume. Some improvements recommended.";
-
-            } else {
-
-                status.textContent =
-                    "Your resume needs improvement.";
-
-            }
-
-        }
-
-
-        fillList(
-            "strengthsList",
-            result.strengths
-        );
-
-
-        fillList(
-            "improvementsList",
-            result.improvements
-        );
-
-
-        fillKeywords(
-            "missingKeywordsList",
-            result.missing_keywords
-        );
-
-    }
-
-
-    function setText(id, value) {
-
-        const element =
-            document.getElementById(id);
-
-        if (element)
-            element.textContent =
-                value;
-
-    }
-
-
-    function fillList(id, items) {
-
-        const list =
-            document.getElementById(id);
-
-        if (!list)
-            return;
-
-
-        list.innerHTML = "";
-
-
-        (items || []).forEach(item => {
-
-            const li =
-                document.createElement(
-                    "li"
-                );
-
-            li.textContent =
-                item;
-
-            list.appendChild(li);
-
-        });
-
-    }
-
-
-    function fillKeywords(id, items) {
-
-        const container =
-            document.getElementById(id);
-
-        if (!container)
-            return;
-
-
-        container.innerHTML = "";
-
-
-        (items || []).forEach(keyword => {
-
-            const tag =
-                document.createElement(
-                    "span"
-                );
-
-            tag.className =
-                "keyword-tag";
-
-            tag.textContent =
-                keyword;
-
-            container.appendChild(tag);
-
-        });
-
-    }
-
-
-    /* ========================================================
-       AI — TAILOR RESUME
-       Uses existing verification endpoint
-    ======================================================== */
-
-    $("#tailorResumeBtn")
-        ?.addEventListener(
-            "click",
-            async () => {
-
-                const resumeText =
-                    collectResumeText();
-
-                const jobDescription =
-                    getValue(
-                        "jobDescription"
+                if (
+                    result &&
+                    result.success
+                ) {
+
+                    displayVerification(
+                        result
                     );
-
-
-                if (!resumeText) {
-
-                    showResumeToast(
-                        "Build your resume first.",
-                        "error"
-                    );
-
-                    return;
 
                 }
 
+            }
+        );
 
-                if (!jobDescription) {
+    }
 
-                    showResumeToast(
-                        "Paste a job description first.",
+
+    /* =====================================================
+       TAILOR RESUME
+    ===================================================== */
+
+    const tailorResumeBtn =
+        $("#tailorResumeBtn");
+
+    if (tailorResumeBtn) {
+
+        tailorResumeBtn.addEventListener(
+            "click",
+            async () => {
+
+                if (!value("jobDescription")) {
+
+                    showToast(
+                        "Add a job description first.",
                         "error"
                     );
 
                     return;
-
                 }
 
 
                 const result =
-                    await callResumeAI(
-                        "/api/resume/analyze-job",
+                    await callAI(
+                        "tailor_resume",
                         {
-                            resume_text:
-                                resumeText,
-
                             job_description:
-                                jobDescription
+                                value(
+                                    "jobDescription"
+                                )
                         }
                     );
 
 
-                if (!result)
-                    return;
+                if (
+                    result &&
+                    result.success
+                ) {
 
-
-                showJobAnalysis(result);
-
-
-                showResumeToast(
-                    "🎯 Resume tailoring analysis completed!",
-                    "success"
-                );
-
-            }
-        );
-
-
-    /* ========================================================
-       AI — MISSING KEYWORDS
-    ======================================================== */
-
-    $("#missingKeywordsBtn")
-        ?.addEventListener(
-            "click",
-            async () => {
-
-                const resumeText =
-                    collectResumeText();
-
-                const jobDescription =
-                    getValue(
-                        "jobDescription"
+                    showAIResultModal(
+                        "🎯 Resume Tailoring",
+                        result
                     );
-
-
-                if (!jobDescription) {
-
-                    showResumeToast(
-                        "Paste a job description first.",
-                        "error"
-                    );
-
-                    return;
 
                 }
 
-
-                const result =
-                    await callResumeAI(
-                        "/api/resume/analyze-job",
-                        {
-                            resume_text:
-                                resumeText,
-
-                            job_description:
-                                jobDescription
-                        }
-                    );
-
-
-                if (!result)
-                    return;
-
-
-                const missing =
-                    result.missing_keywords ||
-                    [];
-
-
-                if (!missing.length) {
-
-                    showResumeToast(
-                        "🎉 No major missing keywords found!",
-                        "success"
-                    );
-
-                    return;
-
-                }
-
-
-                console.log(
-                    "Missing Keywords:",
-                    missing
-                );
-
-
-                alert(
-                    "Missing Keywords:\n\n" +
-                    missing.join(", ")
-                );
-
             }
         );
-
-
-    /* ========================================================
-       AI — GENERATE ACHIEVEMENT
-    ======================================================== */
-
-    $("#generateAchievementBtn")
-        ?.addEventListener(
-            "click",
-            async () => {
-
-                const context =
-                    collectResumeText();
-
-
-                if (!context) {
-
-                    showResumeToast(
-                        "Add some resume information first.",
-                        "error"
-                    );
-
-                    return;
-
-                }
-
-
-                const result =
-                    await callResumeAI(
-                        "/api/resume/generate-achievement",
-                        {
-                            context
-                        }
-                    );
-
-
-                if (!result)
-                    return;
-
-
-                const container =
-                    $("#achievementContainer");
-
-
-                if (!container)
-                    return;
-
-
-                const item =
-                    createAchievementItem(
-                        result.result
-                    );
-
-
-                container.appendChild(
-                    item
-                );
-
-
-                updateResumeProgress();
-
-
-                showResumeToast(
-                    "🏆 Achievement generated!",
-                    "success"
-                );
-
-            }
-        );
-
-
-    function createAchievementItem(
-        text
-    ) {
-
-        const wrapper =
-            document.createElement(
-                "div"
-            );
-
-
-        wrapper.className =
-            "dynamic-item";
-
-
-        wrapper.innerHTML = `
-
-            <div class="form-group">
-
-                <label>
-                    AI Generated Achievement
-                </label>
-
-                <textarea
-                    name="achievement[]"
-                    rows="5"></textarea>
-
-            </div>
-
-        `;
-
-
-        const textarea =
-            $("textarea", wrapper);
-
-
-        if (textarea)
-            textarea.value =
-                text;
-
-
-        return wrapper;
 
     }
 
 
-    /* ========================================================
-       AI — RESUME SUGGESTIONS
-    ======================================================== */
+    /* =====================================================
+       MISSING KEYWORDS
+    ===================================================== */
 
-    $("#resumeSuggestionsBtn")
-        ?.addEventListener(
+    const missingKeywordsBtn =
+        $("#missingKeywordsBtn");
+
+    if (missingKeywordsBtn) {
+
+        missingKeywordsBtn.addEventListener(
             "click",
             async () => {
 
-                const resumeText =
-                    collectResumeText();
+                if (!value("jobDescription")) {
 
-
-                if (!resumeText) {
-
-                    showResumeToast(
-                        "Add resume information first.",
+                    showToast(
+                        "Add a job description first.",
                         "error"
                     );
 
                     return;
-
                 }
 
 
                 const result =
-                    await callResumeAI(
-                        "/api/resume/suggestions",
+                    await callAI(
+                        "missing_keywords",
                         {
-                            resume_text:
-                                resumeText,
+                            job_description:
+                                value(
+                                    "jobDescription"
+                                )
+                        }
+                    );
 
+
+                if (
+                    result &&
+                    result.success
+                ) {
+
+                    showAIResultModal(
+                        "🔍 Missing Keywords",
+                        result
+                    );
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       RESUME SUGGESTIONS
+    ===================================================== */
+
+    const resumeSuggestionsBtn =
+        $("#resumeSuggestionsBtn");
+
+    if (resumeSuggestionsBtn) {
+
+        resumeSuggestionsBtn.addEventListener(
+            "click",
+            async () => {
+
+                const result =
+                    await callAI(
+                        "resume_suggestions"
+                    );
+
+
+                if (
+                    result &&
+                    result.success
+                ) {
+
+                    showAIResultModal(
+                        "💡 Resume Suggestions",
+                        result
+                    );
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       GENERATE ACHIEVEMENT
+    ===================================================== */
+
+    const generateAchievementBtn =
+        $("#generateAchievementBtn");
+
+    if (generateAchievementBtn) {
+
+        generateAchievementBtn.addEventListener(
+            "click",
+            async () => {
+
+                const result =
+                    await callAI(
+                        "generate_achievement",
+                        {
                             target_job:
-                                getValue(
+                                value(
                                     "targetJobTitle"
                                 )
                         }
                     );
 
 
-                if (!result)
-                    return;
+                if (
+                    result &&
+                    result.success &&
+                    result.content
+                ) {
 
+                    const container =
+                        $("#achievementContainer");
 
-                const suggestions =
-                    result.suggestions ||
-                    [];
+                    if (container) {
 
+                        const item =
+                            document.createElement(
+                                "div"
+                            );
 
-                if (!suggestions.length) {
+                        item.className =
+                            "dynamic-item";
 
-                    showResumeToast(
-                        "No suggestions available.",
-                        "info"
-                    );
+                        item.innerHTML = `
 
-                    return;
+                            <div class="form-group">
+
+                                <label>
+                                    AI Generated Achievement
+                                </label>
+
+                                <textarea
+                                    name="achievement[]"
+                                    rows="3">${escapeHTML(
+                                        result.content
+                                    )}</textarea>
+
+                            </div>
+
+                        `;
+
+                        container.appendChild(item);
+
+                        updateResumeProgress();
+
+                        showToast(
+                            "🏆 Achievement generated!"
+                        );
+
+                    }
 
                 }
-
-
-                alert(
-                    "AI Resume Suggestions\n\n" +
-                    suggestions
-                        .map(
-                            (item, index) =>
-                                `${index + 1}. ${item}`
-                        )
-                        .join("\n\n")
-                );
 
             }
         );
 
+    }
 
-    /* ========================================================
+
+    /* =====================================================
+       SUMMARY COUNTER
+    ===================================================== */
+
+    function updateSummaryCounter() {
+
+        const textarea =
+            $("#professionalSummary");
+
+        const counter =
+            $("#summaryCounter");
+
+        if (!textarea || !counter) return;
+
+        counter.textContent =
+            `${textarea.value.length} / 1000`;
+
+    }
+
+
+    const summaryTextarea =
+        $("#professionalSummary");
+
+    if (summaryTextarea) {
+
+        summaryTextarea.addEventListener(
+            "input",
+            () => {
+
+                updateSummaryCounter();
+
+                updateResumeProgress();
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
        DYNAMIC EDUCATION
-    ======================================================== */
+    ===================================================== */
 
-    $("#addEducationBtn")
-        ?.addEventListener(
+    const addEducationBtn =
+        $("#addEducationBtn");
+
+    if (addEducationBtn) {
+
+        addEducationBtn.addEventListener(
             "click",
             () => {
 
                 const container =
                     $("#educationContainer");
 
-                if (!container)
-                    return;
-
+                if (!container) return;
 
                 const item =
-                    document.createElement(
-                        "div"
-                    );
-
+                    document.createElement("div");
 
                 item.className =
                     "dynamic-item education-item";
-
 
                 item.innerHTML = `
 
@@ -1805,44 +1041,42 @@ document.addEventListener("DOMContentLoaded", () => {
                         </div>
 
                     </div>
+
                 `;
 
-
-                container.appendChild(
-                    item
-                );
+                container.appendChild(item);
 
                 updateResumeProgress();
 
             }
         );
 
+    }
 
-    /* ========================================================
+
+    /* =====================================================
        DYNAMIC EXPERIENCE
-    ======================================================== */
+    ===================================================== */
 
-    $("#addExperienceBtn")
-        ?.addEventListener(
+    const addExperienceBtn =
+        $("#addExperienceBtn");
+
+    if (addExperienceBtn) {
+
+        addExperienceBtn.addEventListener(
             "click",
             () => {
 
                 const container =
                     $("#experienceContainer");
 
-                if (!container)
-                    return;
-
+                if (!container) return;
 
                 const item =
-                    document.createElement(
-                        "div"
-                    );
-
+                    document.createElement("div");
 
                 item.className =
                     "dynamic-item experience-item";
-
 
                 item.innerHTML = `
 
@@ -1863,36 +1097,49 @@ document.addEventListener("DOMContentLoaded", () => {
                     <div class="form-grid">
 
                         <div class="form-group">
+
                             <label>Job Title</label>
+
                             <input
                                 type="text"
                                 name="job_title[]"
                                 placeholder="Software Developer Intern">
+
                         </div>
 
                         <div class="form-group">
+
                             <label>Company</label>
+
                             <input
                                 type="text"
                                 name="company[]"
                                 placeholder="Company Name">
+
                         </div>
 
                         <div class="form-group">
+
                             <label>Start Date</label>
+
                             <input
                                 type="month"
                                 name="experience_start[]">
+
                         </div>
 
                         <div class="form-group">
+
                             <label>End Date</label>
+
                             <input
                                 type="month"
                                 name="experience_end[]">
+
                         </div>
 
                         <div class="form-group full">
+
                             <label>
                                 Responsibilities & Achievements
                             </label>
@@ -1901,6 +1148,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                 name="experience_description[]"
                                 rows="6"
                                 placeholder="Describe your work..."></textarea>
+
                         </div>
 
                     </div>
@@ -1908,46 +1156,109 @@ document.addEventListener("DOMContentLoaded", () => {
                     <button
                         type="button"
                         class="ai-bullet-btn improveExperienceBtn">
+
                         ✨ Improve Experience Bullets
+
                     </button>
+
                 `;
 
+                container.appendChild(item);
 
-                container.appendChild(
-                    item
-                );
-
-                updateResumeProgress();
+                attachExperienceAI(item);
 
             }
         );
 
+    }
 
-    /* ========================================================
-       DYNAMIC PROJECT
-    ======================================================== */
 
-    $("#addProjectBtn")
-        ?.addEventListener(
+    function attachExperienceAI(item) {
+
+        const button =
+            $(".improveExperienceBtn", item);
+
+        if (!button) return;
+
+        button.addEventListener(
+            "click",
+            async () => {
+
+                const textarea =
+                    $("textarea", item);
+
+                if (
+                    !textarea ||
+                    !textarea.value.trim()
+                ) {
+
+                    showToast(
+                        "Enter experience first.",
+                        "error"
+                    );
+
+                    return;
+                }
+
+
+                const result =
+                    await callAI(
+                        "improve_experience",
+                        {
+                            text:
+                                textarea.value,
+
+                            target_job:
+                                value(
+                                    "targetJobTitle"
+                                )
+                        }
+                    );
+
+
+                if (
+                    result &&
+                    result.success
+                ) {
+
+                    textarea.value =
+                        result.content;
+
+                    showToast(
+                        "✨ Experience improved!"
+                    );
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       DYNAMIC PROJECTS
+    ===================================================== */
+
+    const addProjectBtn =
+        $("#addProjectBtn");
+
+    if (addProjectBtn) {
+
+        addProjectBtn.addEventListener(
             "click",
             () => {
 
                 const container =
                     $("#projectsContainer");
 
-                if (!container)
-                    return;
-
+                if (!container) return;
 
                 const item =
-                    document.createElement(
-                        "div"
-                    );
-
+                    document.createElement("div");
 
                 item.className =
                     "dynamic-item project-item";
-
 
                 item.innerHTML = `
 
@@ -1968,14 +1279,22 @@ document.addEventListener("DOMContentLoaded", () => {
                     <div class="form-grid">
 
                         <div class="form-group">
-                            <label>Project Name</label>
+
+                            <label>
+                                Project Name
+                            </label>
+
                             <input
                                 type="text"
                                 name="project_name[]">
+
                         </div>
 
                         <div class="form-group">
-                            <label>Project Type</label>
+
+                            <label>
+                                Project Type
+                            </label>
 
                             <select name="project_type[]">
 
@@ -1983,46 +1302,49 @@ document.addEventListener("DOMContentLoaded", () => {
                                     Select Type
                                 </option>
 
-                                <option>
-                                    Academic
-                                </option>
-
-                                <option>
-                                    Personal
-                                </option>
-
-                                <option>
-                                    Internship
-                                </option>
-
-                                <option>
-                                    Freelance
-                                </option>
+                                <option>Academic</option>
+                                <option>Personal</option>
+                                <option>Internship</option>
+                                <option>Freelance</option>
 
                             </select>
+
                         </div>
 
                         <div class="form-group">
-                            <label>GitHub URL</label>
+
+                            <label>
+                                GitHub URL
+                            </label>
+
                             <input
                                 type="url"
                                 name="project_github[]">
+
                         </div>
 
                         <div class="form-group">
-                            <label>Live Demo</label>
+
+                            <label>
+                                Live Demo
+                            </label>
+
                             <input
                                 type="url"
                                 name="project_demo[]">
+
                         </div>
 
                         <div class="form-group full">
-                            <label>Technologies</label>
+
+                            <label>
+                                Technologies
+                            </label>
 
                             <input
                                 type="text"
-                                name="project_technologies[]"
-                                placeholder="Flask, MySQL, JavaScript">
+                                name="project_technologies[]">
+
                         </div>
 
                         <div class="form-group full">
@@ -2042,203 +1364,91 @@ document.addEventListener("DOMContentLoaded", () => {
                     <button
                         type="button"
                         class="ai-bullet-btn improveProjectBtn">
+
                         ✨ Improve Project Description
+
                     </button>
+
                 `;
 
+                container.appendChild(item);
 
-                container.appendChild(
-                    item
-                );
-
-                updateResumeProgress();
+                attachProjectAI(item);
 
             }
         );
 
+    }
 
-    /* ========================================================
-       DYNAMIC CERTIFICATION
-    ======================================================== */
 
-    $("#addCertificationBtn")
-        ?.addEventListener(
+    function attachProjectAI(item) {
+
+        const button =
+            $(".improveProjectBtn", item);
+
+        if (!button) return;
+
+        button.addEventListener(
             "click",
-            () => {
+            async () => {
 
-                const container =
-                    $("#certificationContainer");
+                const textarea =
+                    $("textarea", item);
 
-                if (!container)
+                if (
+                    !textarea ||
+                    !textarea.value.trim()
+                ) {
+
+                    showToast(
+                        "Enter project description first.",
+                        "error"
+                    );
+
                     return;
+                }
 
 
-                const item =
-                    document.createElement(
-                        "div"
+                const tech =
+                    $("input[name='project_technologies[]']", item);
+
+
+                const result =
+                    await callAI(
+                        "improve_project",
+                        {
+                            text:
+                                textarea.value,
+
+                            technologies:
+                                tech?.value || ""
+                        }
                     );
 
 
-                item.className =
-                    "dynamic-item";
+                if (
+                    result &&
+                    result.success
+                ) {
 
+                    textarea.value =
+                        result.content;
 
-                item.innerHTML = `
-
-                    <div class="dynamic-item-header">
-
-                        <strong>
-                            Certification
-                        </strong>
-
-                        <button
-                            type="button"
-                            class="remove-btn">
-                            🗑
-                        </button>
-
-                    </div>
-
-                    <div class="form-grid">
-
-                        <div class="form-group">
-                            <label>Certification Name</label>
-                            <input
-                                type="text"
-                                name="certification_name[]">
-                        </div>
-
-                        <div class="form-group">
-                            <label>Issuing Organization</label>
-                            <input
-                                type="text"
-                                name="certification_org[]">
-                        </div>
-
-                        <div class="form-group">
-                            <label>Year</label>
-                            <input
-                                type="text"
-                                name="certification_year[]">
-                        </div>
-
-                        <div class="form-group">
-                            <label>Credential URL</label>
-                            <input
-                                type="url"
-                                name="certification_url[]">
-                        </div>
-
-                    </div>
-                `;
-
-
-                container.appendChild(
-                    item
-                );
-
-            }
-        );
-
-
-    /* ========================================================
-       DYNAMIC ACHIEVEMENT
-    ======================================================== */
-
-    $("#addAchievementBtn")
-        ?.addEventListener(
-            "click",
-            () => {
-
-                const container =
-                    $("#achievementContainer");
-
-                if (!container)
-                    return;
-
-
-                const item =
-                    createAchievementItem(
-                        ""
+                    showToast(
+                        "🚀 Project improved!"
                     );
 
-
-                container.appendChild(
-                    item
-                );
-
-
-                updateResumeProgress();
+                }
 
             }
         );
 
-
-    /* ========================================================
-       REMOVE DYNAMIC ITEMS
-    ======================================================== */
-
-    document.addEventListener(
-        "click",
-        event => {
-
-            const button =
-                event.target.closest(
-                    ".remove-btn"
-                );
+    }
 
 
-            if (!button)
-                return;
-
-
-            const item =
-                button.closest(
-                    ".dynamic-item"
-                );
-
-
-            if (!item)
-                return;
-
-
-            const container =
-                item.parentElement;
-
-
-            const items =
-                $$(".dynamic-item", container);
-
-
-            /* Don't remove last item */
-
-            if (items.length <= 1) {
-
-                $$(
-                    "input, textarea, select",
-                    item
-                ).forEach(field => {
-
-                    field.value = "";
-
-                });
-
-            } else {
-
-                item.remove();
-
-            }
-
-
-            updateResumeProgress();
-
-        }
-    );
-
-
-    /* ========================================================
+    /* =====================================================
        ADD SKILL
-    ======================================================== */
+    ===================================================== */
 
     $$(".add-skill-btn")
         .forEach(button => {
@@ -2250,32 +1460,72 @@ document.addEventListener("DOMContentLoaded", () => {
                     const category =
                         button.dataset.category;
 
+                    let containerId = "";
 
-                    const map = {
+                    let name = "";
 
-                        programming:
-                            "programmingSkills",
+                    let placeholder = "";
 
-                        frameworks:
-                            "frameworkSkills",
 
-                        database:
-                            "databaseSkills",
+                    if (category === "programming") {
 
-                        tools:
-                            "toolSkills"
+                        containerId =
+                            "programmingSkills";
 
-                    };
+                        name =
+                            "programming_skills[]";
+
+                        placeholder =
+                            "JavaScript";
+
+                    }
+
+                    else if (category === "frameworks") {
+
+                        containerId =
+                            "frameworkSkills";
+
+                        name =
+                            "framework_skills[]";
+
+                        placeholder =
+                            "React";
+
+                    }
+
+                    else if (category === "database") {
+
+                        containerId =
+                            "databaseSkills";
+
+                        name =
+                            "database_skills[]";
+
+                        placeholder =
+                            "PostgreSQL";
+
+                    }
+
+                    else {
+
+                        containerId =
+                            "toolSkills";
+
+                        name =
+                            "tool_skills[]";
+
+                        placeholder =
+                            "Docker";
+
+                    }
 
 
                     const container =
                         document.getElementById(
-                            map[category]
+                            containerId
                         );
 
-
-                    if (!container)
-                        return;
+                    if (!container) return;
 
 
                     const input =
@@ -2283,34 +1533,12 @@ document.addEventListener("DOMContentLoaded", () => {
                             "input"
                         );
 
+                    input.type = "text";
 
-                    input.type =
-                        "text";
-
-
-                    const names = {
-
-                        programming:
-                            "programming_skills[]",
-
-                        frameworks:
-                            "framework_skills[]",
-
-                        database:
-                            "database_skills[]",
-
-                        tools:
-                            "tool_skills[]"
-
-                    };
-
-
-                    input.name =
-                        names[category];
-
+                    input.name = name;
 
                     input.placeholder =
-                        "Add skill";
+                        placeholder;
 
 
                     container.appendChild(
@@ -2320,708 +1548,565 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     input.focus();
 
+                    updateResumeProgress();
+
                 }
             );
 
         });
 
 
-    /* ========================================================
-       LIVE INPUT LISTENER
-    ======================================================== */
+    /* =====================================================
+       REMOVE DYNAMIC ITEM
+    ===================================================== */
 
     document.addEventListener(
-        "input",
+        "click",
         event => {
 
-            if (
-                event.target.matches(
-                    "input, textarea, select"
-                )
-            ) {
+            const button =
+                event.target.closest(
+                    ".remove-btn"
+                );
 
-                updateResumeProgress();
+            if (!button) return;
+
+
+            const item =
+                button.closest(
+                    ".dynamic-item"
+                );
+
+            if (!item) return;
+
+
+            const parent =
+                item.parentElement;
+
+
+            const items =
+                parent.querySelectorAll(
+                    ".dynamic-item"
+                );
+
+
+            if (items.length <= 1) {
+
+                showToast(
+                    "At least one item should remain.",
+                    "error"
+                );
+
+                return;
 
             }
+
+
+            item.remove();
+
+            updateResumeProgress();
 
         }
     );
 
 
-    /* ========================================================
-       SAVE DRAFT
-    ======================================================== */
+    /* =====================================================
+       PROGRESS
+    ===================================================== */
 
-    function getResumeFormData() {
+    function updateResumeProgress() {
 
-        const data = {};
+        const fields = [
 
-        $$(
-            "input, textarea, select"
-        ).forEach(field => {
+            value("fullName"),
 
-            if (!field.name)
-                return;
+            value("email"),
 
+            value("professionalSummary"),
 
-            if (
-                field.name.endsWith("[]")
-            ) {
+            value("targetJobTitle"),
 
-                const name =
-                    field.name.slice(
-                        0,
-                        -2
-                    );
+            value("location")
+
+        ];
 
 
-                if (!data[name])
-                    data[name] = [];
+        const hasEducation =
+            $$(".education-item input")
+            .some(input =>
+                input.value.trim()
+            );
 
 
-                data[name].push(
-                    field.value
-                );
-
-            } else {
-
-                data[field.name] =
-                    field.value;
-
-            }
-
-        });
+        const hasSkills =
+            $$(
+                'input[name$="_skills[]"]'
+            )
+            .some(input =>
+                input.value.trim()
+            );
 
 
-        return data;
+        const hasProjects =
+            $$(".project-item input, .project-item textarea")
+            .some(el =>
+                el.value.trim()
+            );
+
+
+        const hasExperience =
+            $$(".experience-item input, .experience-item textarea")
+            .some(el =>
+                el.value.trim()
+            );
+
+
+        let completed = 0;
+
+        const total = 8;
+
+
+        completed += fields[0] ? 1 : 0;
+
+        completed += fields[1] ? 1 : 0;
+
+        completed += fields[2] ? 1 : 0;
+
+        completed += hasEducation ? 1 : 0;
+
+        completed += hasSkills ? 1 : 0;
+
+        completed += hasProjects ? 1 : 0;
+
+        completed += hasExperience ? 1 : 0;
+
+        completed += fields[3] ? 1 : 0;
+
+
+        const percentage =
+            Math.round(
+                (completed / total) * 100
+            );
+
+
+        const text =
+            $("#completionText");
+
+        const score =
+            $("#completionScore");
+
+        const fill =
+            $("#mainProgressFill");
+
+
+        if (text)
+            text.textContent =
+                `${percentage}% Complete`;
+
+        if (score)
+            score.textContent =
+                `${percentage}%`;
+
+        if (fill)
+            fill.style.width =
+                `${percentage}%`;
+
+
+        updateChecklist();
 
     }
 
 
-    function saveDraft() {
+    /* =====================================================
+       CHECKLIST
+    ===================================================== */
 
-        const data =
-            getResumeFormData();
+    function updateChecklist() {
 
-
-        localStorage.setItem(
-            "ai_resume_draft",
-            JSON.stringify(data)
+        setCheck(
+            "checkContact",
+            value("fullName") &&
+            value("email")
         );
 
 
-        showResumeToast(
-            "💾 Resume draft saved!",
-            "success"
+        setCheck(
+            "checkSummary",
+            value("professionalSummary")
+        );
+
+
+        setCheck(
+            "checkEducation",
+            $$(".education-item input")
+                .some(el =>
+                    el.value.trim()
+                )
+        );
+
+
+        setCheck(
+            "checkSkills",
+            $$(
+                'input[name$="_skills[]"]'
+            )
+            .some(el =>
+                el.value.trim()
+            )
+        );
+
+
+        setCheck(
+            "checkProjects",
+            $$(".project-item input, .project-item textarea")
+                .some(el =>
+                    el.value.trim()
+                )
+        );
+
+
+        setCheck(
+            "checkExperience",
+            $$(".experience-item input, .experience-item textarea")
+                .some(el =>
+                    el.value.trim()
+                )
         );
 
     }
 
 
-    $("#saveDraftBtn")
-        ?.addEventListener(
-            "click",
-            saveDraft
-        );
+    function setCheck(id, complete) {
+
+        const element =
+            document.getElementById(id);
+
+        if (!element) return;
 
 
-    $("#saveResumeBtn")
-        ?.addEventListener(
-            "click",
-            saveDraft
-        );
+        const icon =
+            $("span", element);
 
 
-    /* ========================================================
-       LOAD DRAFT
-    ======================================================== */
+        if (complete) {
 
-    function loadDraft() {
-
-        const saved =
-            localStorage.getItem(
-                "ai_resume_draft"
+            element.classList.add(
+                "completed"
             );
 
+            if (icon)
+                icon.textContent = "✓";
 
-        if (!saved)
-            return;
+        }
 
+        else {
 
-        try {
-
-            const data =
-                JSON.parse(saved);
-
-
-            Object.entries(data)
-                .forEach(([name, value]) => {
-
-                    const fields =
-                        $$(
-                            `[name="${name}"], [name="${name}[]"]`
-                        );
-
-
-                    if (!fields.length)
-                        return;
-
-
-                    if (Array.isArray(value)) {
-
-                        value.forEach(
-                            (item, index) => {
-
-                                if (fields[index]) {
-
-                                    fields[index]
-                                        .value =
-                                        item;
-
-                                }
-
-                            }
-                        );
-
-                    } else {
-
-                        fields[0].value =
-                            value;
-
-                    }
-
-                });
-
-
-            updateSummaryCounter();
-
-            updateResumeProgress();
-
-
-        } catch (error) {
-
-            console.error(
-                "Draft loading failed:",
-                error
+            element.classList.remove(
+                "completed"
             );
+
+            if (icon)
+                icon.textContent = "○";
 
         }
 
     }
 
 
-    loadDraft();
+    /* =====================================================
+       VERIFY DISPLAY
+    ===================================================== */
+
+    function showVerificationLoading() {
+
+        const loading =
+            $("#verificationLoading");
+
+        const result =
+            $("#verificationResult");
 
 
-    /* ========================================================
-       CLEAR RESUME
-    ======================================================== */
+        if (loading)
+            loading.style.display =
+                "block";
 
-    $("#clearResumeBtn")
-        ?.addEventListener(
-            "click",
-            () => {
+        if (result)
+            result.style.display =
+                "none";
 
-                const confirmed =
-                    confirm(
-                        "Clear the entire resume?"
-                    );
+    }
 
 
-                if (!confirmed)
-                    return;
+    function displayVerification(data) {
+
+        const loading =
+            $("#verificationLoading");
+
+        const result =
+            $("#verificationResult");
 
 
-                $$(
-                    "input, textarea, select"
-                ).forEach(field => {
+        if (loading)
+            loading.style.display =
+                "none";
 
-                    field.value = "";
-
-                });
-
-
-                localStorage.removeItem(
-                    "ai_resume_draft"
-                );
+        if (result)
+            result.style.display =
+                "block";
 
 
-                updateSummaryCounter();
+        const score =
+            data.score ??
+            data.ats_score ??
+            0;
 
-                updateResumeProgress();
 
-
-                showResumeToast(
-                    "🗑 Resume cleared.",
-                    "success"
-                );
-
-            }
+        setText(
+            "verificationScore",
+            score
         );
 
 
-    /* ========================================================
-       PREVIEW
-    ======================================================== */
-
-    $("#previewResumeBtn")
-        ?.addEventListener(
-            "click",
-            () => {
-
-                generatePreview();
-
-                openModal(
-                    "previewModal"
-                );
-
-            }
+        setText(
+            "atsScore",
+            score
         );
 
 
-    function generatePreview() {
-
-        const preview =
-            $("#resumePreview");
-
-
-        if (!preview)
-            return;
+        setText(
+            "keywordScore",
+            `${data.keyword_score ?? 0}%`
+        );
 
 
-        const name =
-            getValue("fullName") ||
-            "Your Name";
+        setText(
+            "contentScore",
+            `${data.content_score ?? 0}%`
+        );
 
 
-        const title =
-            getValue(
-                "professionalTitle"
-            );
+        setText(
+            "formatScore",
+            `${data.format_score ?? 0}%`
+        );
 
 
-        const email =
-            getValue("email");
+        setText(
+            "skillsScore",
+            `${data.skills_score ?? 0}%`
+        );
 
 
-        const phone =
-            getValue("phone");
+        fillATS(score);
 
 
-        const location =
-            getValue("location");
+        renderList(
+            "strengthsList",
+            data.strengths || []
+        );
 
 
-        const linkedin =
-            getValue("linkedin");
+        renderList(
+            "improvementsList",
+            data.improvements || []
+        );
 
 
-        const github =
-            getValue("github");
+        renderKeywords(
+            data.missing_keywords || []
+        );
+
+    }
 
 
-        const summary =
-            getValue(
-                "professionalSummary"
-            );
+    function fillATS(score) {
+
+        const fill =
+            $("#atsProgressFill");
+
+        if (fill)
+            fill.style.width =
+                `${Math.min(
+                    100,
+                    Math.max(0, score)
+                )}%`;
+
+    }
 
 
-        let html = `
+    /* =====================================================
+       AI ANALYSIS
+    ===================================================== */
 
-            <div class="generated-resume">
+    function showAIAnalysis(data) {
 
-                <header>
+        let message = "";
 
-                    <h1>
-                        ${escapeHTML(name)}
-                    </h1>
+        if (data.summary)
+            message +=
+                `${data.summary}\n\n`;
 
-                    ${
-                        title
-                        ? `<h2>${escapeHTML(title)}</h2>`
-                        : ""
-                    }
-
-                    <div class="resume-contact">
-
-                        ${
-                            email
-                            ? escapeHTML(email)
-                            : ""
-                        }
-
-                        ${
-                            phone
-                            ? " | " +
-                              escapeHTML(phone)
-                            : ""
-                        }
-
-                        ${
-                            location
-                            ? " | " +
-                              escapeHTML(location)
-                            : ""
-                        }
-
-                    </div>
-
-                    <div class="resume-links">
-
-                        ${
-                            linkedin
-                            ? `<a href="${escapeAttribute(linkedin)}" target="_blank">LinkedIn</a>`
-                            : ""
-                        }
-
-                        ${
-                            github
-                            ? `<a href="${escapeAttribute(github)}" target="_blank">GitHub</a>`
-                            : ""
-                        }
-
-                    </div>
-
-                </header>
-
-        `;
+        if (data.missing_keywords?.length)
+            message +=
+                "Missing keywords:\n" +
+                data.missing_keywords.join(
+                    ", "
+                );
 
 
-        if (summary) {
+        alert(
+            message ||
+            "Job analysis completed."
+        );
 
-            html += `
-
-                <section>
-
-                    <h3>
-                        PROFESSIONAL SUMMARY
-                    </h3>
-
-                    <p>
-                        ${escapeHTML(summary)}
-                    </p>
-
-                </section>
-
-            `;
-
-        }
+    }
 
 
-        /* SKILLS */
+    function showSkillSuggestions(data) {
 
         const skills =
-            $$(".skill-inputs input")
-                .map(input =>
-                    input.value.trim()
-                )
-                .filter(Boolean);
+            data.skills ||
+            data.suggested_skills ||
+            [];
 
 
-        if (skills.length) {
+        if (!skills.length) {
 
-            html += `
+            showToast(
+                "No additional skills found."
+            );
 
-                <section>
-
-                    <h3>
-                        TECHNICAL SKILLS
-                    </h3>
-
-                    <p>
-                        ${skills
-                            .map(escapeHTML)
-                            .join(" • ")}
-                    </p>
-
-                </section>
-
-            `;
+            return;
 
         }
 
 
-        /* EDUCATION */
+        const formatted =
+            skills.join(", ");
 
-        const educationItems =
-            $$("#educationContainer .education-item");
 
-
-        if (educationItems.length) {
-
-            html += `
-                <section>
-                    <h3>EDUCATION</h3>
-            `;
-
-
-            educationItems.forEach(item => {
-
-                const values =
-                    $$(
-                        "input",
-                        item
-                    )
-                    .map(
-                        input =>
-                            input.value.trim()
-                    )
-                    .filter(Boolean);
-
-
-                if (values.length) {
-
-                    html += `
-                        <div class="preview-item">
-                            ${values
-                                .map(escapeHTML)
-                                .join(" | ")}
-                        </div>
-                    `;
-
-                }
-
-            });
-
-
-            html += `</section>`;
-
-        }
-
-
-        /* EXPERIENCE */
-
-        const experiences =
-            $$("#experienceContainer .experience-item");
-
-
-        if (experiences.length) {
-
-            html += `
-                <section>
-                    <h3>EXPERIENCE</h3>
-            `;
-
-
-            experiences.forEach(item => {
-
-                const values =
-                    $$(
-                        "input, textarea",
-                        item
-                    )
-                    .map(
-                        field =>
-                            field.value.trim()
-                    )
-                    .filter(Boolean);
-
-
-                if (values.length) {
-
-                    html += `
-                        <div class="preview-item">
-                            ${values
-                                .map(escapeHTML)
-                                .join("<br>")}
-                        </div>
-                    `;
-
-                }
-
-            });
-
-
-            html += `</section>`;
-
-        }
-
-
-        /* PROJECTS */
-
-        const projects =
-            $$("#projectsContainer .project-item");
-
-
-        if (projects.length) {
-
-            html += `
-                <section>
-                    <h3>PROJECTS</h3>
-            `;
-
-
-            projects.forEach(item => {
-
-                const values =
-                    $$(
-                        "input, textarea, select",
-                        item
-                    )
-                    .map(
-                        field =>
-                            field.value.trim()
-                    )
-                    .filter(Boolean);
-
-
-                if (values.length) {
-
-                    html += `
-                        <div class="preview-item">
-                            ${values
-                                .map(escapeHTML)
-                                .join("<br>")}
-                        </div>
-                    `;
-
-                }
-
-            });
-
-
-            html += `</section>`;
-
-        }
-
-
-        /* CERTIFICATIONS */
-
-        const certifications =
-            $$("#certificationContainer .dynamic-item");
-
-
-        if (certifications.length) {
-
-            html += `
-                <section>
-                    <h3>CERTIFICATIONS</h3>
-            `;
-
-
-            certifications.forEach(item => {
-
-                const values =
-                    $$(
-                        "input",
-                        item
-                    )
-                    .map(
-                        input =>
-                            input.value.trim()
-                    )
-                    .filter(Boolean);
-
-
-                if (values.length) {
-
-                    html += `
-                        <div class="preview-item">
-                            ${values
-                                .map(escapeHTML)
-                                .join(" | ")}
-                        </div>
-                    `;
-
-                }
-
-            });
-
-
-            html += `</section>`;
-
-        }
-
-
-        /* ACHIEVEMENTS */
-
-        const achievements =
-            $$("#achievementContainer textarea")
-                .map(
-                    textarea =>
-                        textarea.value.trim()
-                )
-                .filter(Boolean);
-
-
-        if (achievements.length) {
-
-            html += `
-
-                <section>
-
-                    <h3>
-                        ACHIEVEMENTS
-                    </h3>
-
-                    <ul>
-
-                        ${achievements
-                            .map(
-                                item =>
-                                    `<li>${escapeHTML(item)}</li>`
-                            )
-                            .join("")}
-
-                    </ul>
-
-                </section>
-
-            `;
-
-        }
-
-
-        html += `
-            </div>
-        `;
-
-
-        preview.innerHTML =
-            html;
+        showToast(
+            `💡 Suggested: ${formatted}`
+        );
 
     }
 
 
-    /* ========================================================
-       GENERATE RESUME
-    ======================================================== */
+    /* =====================================================
+       RESULT MODAL
+    ===================================================== */
 
-    $("#generateResumeBtn")
-        ?.addEventListener(
-            "click",
-            () => {
+    function showAIResultModal(title, data) {
 
-                saveDraft();
+        let content =
+            data.content ||
+            data.message ||
+            data.summary ||
+            "";
 
-                generatePreview();
 
-                openModal(
-                    "previewModal"
+        if (
+            typeof content !== "string"
+        ) {
+
+            content =
+                JSON.stringify(
+                    content,
+                    null,
+                    2
                 );
 
-                showResumeToast(
-                    "🚀 Resume generated!",
-                    "success"
-                );
+        }
 
-            }
+
+        const modal =
+            document.createElement(
+                "div"
+            );
+
+        modal.className =
+            "resume-modal active";
+
+
+        modal.innerHTML = `
+
+            <div class="modal-overlay"></div>
+
+            <div class="modal-container">
+
+                <div class="modal-header">
+
+                    <div>
+
+                        <span class="modal-label">
+                            AI ASSISTANT
+                        </span>
+
+                        <h2>
+                            ${escapeHTML(title)}
+                        </h2>
+
+                    </div>
+
+                    <button
+                        type="button"
+                        class="modal-close">
+                        ✕
+                    </button>
+
+                </div>
+
+                <div
+                    style="
+                        padding:25px;
+                        white-space:pre-wrap;
+                        line-height:1.7;
+                    "
+                >
+                    ${escapeHTML(content)}
+                </div>
+
+            </div>
+
+        `;
+
+
+        document.body.appendChild(
+            modal
         );
 
 
-    /* ========================================================
+        const close = () => {
+            modal.remove();
+        };
+
+
+        $(".modal-close", modal)
+            ?.addEventListener(
+                "click",
+                close
+            );
+
+
+        $(".modal-overlay", modal)
+            ?.addEventListener(
+                "click",
+                close
+            );
+
+    }
+
+
+    /* =====================================================
        MODALS
-    ======================================================== */
+    ===================================================== */
 
     function openModal(id) {
 
         const modal =
             document.getElementById(id);
 
-
-        if (!modal)
-            return;
-
+        if (!modal) return;
 
         modal.classList.add("active");
 
@@ -3042,14 +2127,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const modal =
             document.getElementById(id);
 
+        if (!modal) return;
 
-        if (!modal)
-            return;
-
-
-        modal.classList.remove(
-            "active"
-        );
+        modal.classList.remove("active");
 
         modal.setAttribute(
             "aria-hidden",
@@ -3063,68 +2143,33 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    document.addEventListener(
-        "click",
-        event => {
+    $$("[data-close-modal]")
+        .forEach(element => {
 
-            const button =
-                event.target.closest(
-                    "[data-close-modal]"
-                );
-
-
-            if (!button)
-                return;
-
-
-            closeModal(
-                button.dataset.closeModal
-            );
-
-        }
-    );
-
-
-    document.addEventListener(
-        "keydown",
-        event => {
-
-            if (event.key !== "Escape")
-                return;
-
-
-            $$(".resume-modal.active")
-                .forEach(modal => {
+            element.addEventListener(
+                "click",
+                () => {
 
                     closeModal(
-                        modal.id
+                        element.dataset.closeModal
                     );
 
-                });
+                }
+            );
 
-        }
-    );
-
-
-    /* ========================================================
-       PRINT
-    ======================================================== */
-
-    $("#printResumeBtn")
-        ?.addEventListener(
-            "click",
-            () => {
-
-                generatePreview();
-
-                window.print();
-
-            }
-        );
+        });
 
 
-    $("#downloadResumeBtn")
-        ?.addEventListener(
+    /* =====================================================
+       PREVIEW
+    ===================================================== */
+
+    const previewResumeBtn =
+        $("#previewResumeBtn");
+
+    if (previewResumeBtn) {
+
+        previewResumeBtn.addEventListener(
             "click",
             () => {
 
@@ -3134,100 +2179,683 @@ document.addEventListener("DOMContentLoaded", () => {
                     "previewModal"
                 );
 
+            }
+        );
 
-                showResumeToast(
-                    "Use Print → Save as PDF to download.",
-                    "info"
+    }
+
+
+    function generatePreview() {
+
+        const preview =
+            $("#resumePreview");
+
+        if (!preview) return;
+
+
+        const data =
+            collectResumeData();
+
+
+        preview.innerHTML = `
+
+            <div class="resume-paper">
+
+                <header class="preview-personal">
+
+                    <h1>
+                        ${escapeHTML(
+                            data.personal.full_name ||
+                            "Your Name"
+                        )}
+                    </h1>
+
+                    <h3>
+                        ${escapeHTML(
+                            data.personal.professional_title ||
+                            ""
+                        )}
+                    </h3>
+
+                    <p>
+                        ${escapeHTML(
+                            data.personal.email
+                        )}
+                        ${data.personal.phone
+                            ? " • " +
+                              escapeHTML(
+                                data.personal.phone
+                              )
+                            : ""}
+                        ${data.personal.location
+                            ? " • " +
+                              escapeHTML(
+                                data.personal.location
+                              )
+                            : ""}
+                    </p>
+
+                </header>
+
+
+                ${
+                    data.summary
+                    ? `
+                    <section>
+
+                        <h2>
+                            PROFESSIONAL SUMMARY
+                        </h2>
+
+                        <p>
+                            ${escapeHTML(
+                                data.summary
+                            )}
+                        </p>
+
+                    </section>
+                    `
+                    : ""
+                }
+
+
+                ${
+                    data.skills.programming.length ||
+                    data.skills.frameworks.length ||
+                    data.skills.databases.length ||
+                    data.skills.tools.length
+                    ? `
+                    <section>
+
+                        <h2>
+                            TECHNICAL SKILLS
+                        </h2>
+
+                        <p>
+                            ${escapeHTML(
+                                [
+                                    ...data.skills.programming,
+                                    ...data.skills.frameworks,
+                                    ...data.skills.databases,
+                                    ...data.skills.tools
+                                ].join(", ")
+                            )}
+                        </p>
+
+                    </section>
+                    `
+                    : ""
+                }
+
+
+                ${
+                    data.education.length
+                    ? `
+                    <section>
+
+                        <h2>
+                            EDUCATION
+                        </h2>
+
+                        ${data.education.map(
+                            edu => `
+                                <div>
+
+                                    <strong>
+                                        ${escapeHTML(
+                                            edu.degree
+                                        )}
+                                    </strong>
+
+                                    <p>
+                                        ${escapeHTML(
+                                            edu.institution
+                                        )}
+                                    </p>
+
+                                </div>
+                            `
+                        ).join("")}
+
+                    </section>
+                    `
+                    : ""
+                }
+
+
+                ${
+                    data.experience.some(
+                        x =>
+                            x.job_title ||
+                            x.company ||
+                            x.description
+                    )
+                    ? `
+                    <section>
+
+                        <h2>
+                            EXPERIENCE
+                        </h2>
+
+                        ${data.experience.map(
+                            exp => `
+                                <div>
+
+                                    <h3>
+                                        ${escapeHTML(
+                                            exp.job_title
+                                        )}
+                                    </h3>
+
+                                    <strong>
+                                        ${escapeHTML(
+                                            exp.company
+                                        )}
+                                    </strong>
+
+                                    <p>
+                                        ${escapeHTML(
+                                            exp.description
+                                        )}
+                                    </p>
+
+                                </div>
+                            `
+                        ).join("")}
+
+                    </section>
+                    `
+                    : ""
+                }
+
+
+                ${
+                    data.projects.some(
+                        x =>
+                            x.name ||
+                            x.description
+                    )
+                    ? `
+                    <section>
+
+                        <h2>
+                            PROJECTS
+                        </h2>
+
+                        ${data.projects.map(
+                            project => `
+                                <div>
+
+                                    <h3>
+                                        ${escapeHTML(
+                                            project.name
+                                        )}
+                                    </h3>
+
+                                    <p>
+                                        ${escapeHTML(
+                                            project.description
+                                        )}
+                                    </p>
+
+                                    <small>
+                                        ${escapeHTML(
+                                            project.technologies
+                                        )}
+                                    </small>
+
+                                </div>
+                            `
+                        ).join("")}
+
+                    </section>
+                    `
+                    : ""
+                }
+
+            </div>
+
+        `;
+
+    }
+
+
+    /* =====================================================
+       PRINT
+    ===================================================== */
+
+    const printResumeBtn =
+        $("#printResumeBtn");
+
+    if (printResumeBtn) {
+
+        printResumeBtn.addEventListener(
+            "click",
+            () => {
+
+                window.print();
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       CLEAR
+    ===================================================== */
+
+    const clearResumeBtn =
+        $("#clearResumeBtn");
+
+    if (clearResumeBtn) {
+
+        clearResumeBtn.addEventListener(
+            "click",
+            () => {
+
+                const confirmClear =
+                    confirm(
+                        "Clear your complete resume?"
+                    );
+
+
+                if (!confirmClear)
+                    return;
+
+
+                $$(
+                    ".resume-builder-page input, " +
+                    ".resume-builder-page textarea"
+                )
+                .forEach(el => {
+
+                    el.value = "";
+
+                });
+
+
+                $$(
+                    ".resume-builder-page select"
+                )
+                .forEach(el => {
+
+                    el.selectedIndex = 0;
+
+                });
+
+
+                updateResumeProgress();
+
+                updateSummaryCounter();
+
+                showToast(
+                    "Resume cleared."
                 );
 
             }
         );
 
-
-    /* ========================================================
-       SAVE AUTO DRAFT
-    ======================================================== */
-
-    let autoSaveTimer;
+    }
 
 
-    document.addEventListener(
-        "input",
-        () => {
+    /* =====================================================
+       SAVE DRAFT LOCAL STORAGE
+    ===================================================== */
 
-            clearTimeout(
-                autoSaveTimer
+    const saveDraftBtn =
+        $("#saveDraftBtn");
+
+    if (saveDraftBtn) {
+
+        saveDraftBtn.addEventListener(
+            "click",
+            () => {
+
+                const data =
+                    collectResumeData();
+
+
+                localStorage.setItem(
+                    "ai_resume_draft",
+                    JSON.stringify(data)
+                );
+
+
+                showToast(
+                    "💾 Draft saved successfully!"
+                );
+
+            }
+        );
+
+    }
+
+
+    const saveResumeBtn =
+        $("#saveResumeBtn");
+
+    if (saveResumeBtn) {
+
+        saveResumeBtn.addEventListener(
+            "click",
+            () => {
+
+                const data =
+                    collectResumeData();
+
+
+                localStorage.setItem(
+                    "ai_resume_draft",
+                    JSON.stringify(data)
+                );
+
+
+                showToast(
+                    "💾 Resume saved!"
+                );
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       LOAD DRAFT
+    ===================================================== */
+
+    function loadDraft() {
+
+        const saved =
+            localStorage.getItem(
+                "ai_resume_draft"
             );
 
 
-            autoSaveTimer =
+        if (!saved) return;
+
+
+        try {
+
+            const data =
+                JSON.parse(saved);
+
+
+            if (
+                data.personal
+            ) {
+
+                setValue(
+                    "fullName",
+                    data.personal.full_name
+                );
+
+                setValue(
+                    "professionalTitle",
+                    data.personal.professional_title
+                );
+
+                setValue(
+                    "location",
+                    data.personal.location
+                );
+
+                setValue(
+                    "email",
+                    data.personal.email
+                );
+
+                setValue(
+                    "phone",
+                    data.personal.phone
+                );
+
+                setValue(
+                    "linkedin",
+                    data.personal.linkedin
+                );
+
+                setValue(
+                    "github",
+                    data.personal.github
+                );
+
+                setValue(
+                    "portfolio",
+                    data.personal.portfolio
+                );
+
+            }
+
+
+            setValue(
+                "professionalSummary",
+                data.summary
+            );
+
+
+            setValue(
+                "targetJobTitle",
+                data.target_job?.title
+            );
+
+            setValue(
+                "targetIndustry",
+                data.target_job?.industry
+            );
+
+            setValue(
+                "jobDescription",
+                data.target_job?.description
+            );
+
+
+            setValue(
+                "languages",
+                data.additional?.languages
+            );
+
+            setValue(
+                "coursework",
+                data.additional?.coursework
+            );
+
+            setValue(
+                "interests",
+                data.additional?.interests
+            );
+
+
+            updateSummaryCounter();
+
+            updateResumeProgress();
+
+
+        }
+
+        catch(error) {
+
+            console.error(
+                "Draft loading error:",
+                error
+            );
+
+        }
+
+    }
+
+
+    /* =====================================================
+       DOWNLOAD
+    ===================================================== */
+
+    const downloadResumeBtn =
+        $("#downloadResumeBtn");
+
+    if (downloadResumeBtn) {
+
+        downloadResumeBtn.addEventListener(
+            "click",
+            () => {
+
+                generatePreview();
+
                 setTimeout(
                     () => {
-
-                        const data =
-                            getResumeFormData();
-
-
-                        localStorage.setItem(
-                            "ai_resume_draft",
-                            JSON.stringify(data)
-                        );
-
+                        window.print();
                     },
-                    1500
+                    200
                 );
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       UTILITIES
+    ===================================================== */
+
+    function setText(id, text) {
+
+        const el =
+            document.getElementById(id);
+
+        if (el)
+            el.textContent =
+                text;
+
+    }
+
+
+    function setValue(id, value) {
+
+        const el =
+            document.getElementById(id);
+
+        if (
+            el &&
+            value !== undefined &&
+            value !== null
+        ) {
+
+            el.value = value;
+
+        }
+
+    }
+
+
+    function renderList(id, items) {
+
+        const list =
+            document.getElementById(id);
+
+        if (!list) return;
+
+
+        list.innerHTML = "";
+
+
+        items.forEach(item => {
+
+            const li =
+                document.createElement(
+                    "li"
+                );
+
+            li.textContent =
+                item;
+
+            list.appendChild(li);
+
+        });
+
+    }
+
+
+    function renderKeywords(items) {
+
+        const container =
+            $("#missingKeywordsList");
+
+        if (!container) return;
+
+
+        container.innerHTML = "";
+
+
+        items.forEach(keyword => {
+
+            const span =
+                document.createElement(
+                    "span"
+                );
+
+            span.className =
+                "keyword-tag";
+
+            span.textContent =
+                keyword;
+
+            container.appendChild(
+                span
+            );
+
+        });
+
+    }
+
+
+    function escapeHTML(text) {
+
+        const div =
+            document.createElement(
+                "div"
+            );
+
+        div.textContent =
+            text || "";
+
+        return div.innerHTML;
+
+    }
+
+
+    /* =====================================================
+       INPUT LISTENERS
+    ===================================================== */
+
+    document.addEventListener(
+        "input",
+        event => {
+
+            if (
+                event.target.matches(
+                    ".resume-builder-page input, " +
+                    ".resume-builder-page textarea"
+                )
+            ) {
+
+                updateResumeProgress();
+
+            }
 
         }
     );
 
 
-    /* ========================================================
-       ESCAPE HTML
-    ======================================================== */
-
-    function escapeHTML(value) {
-
-        return String(value)
-            .replace(
-                /&/g,
-                "&amp;"
-            )
-            .replace(
-                /</g,
-                "&lt;"
-            )
-            .replace(
-                />/g,
-                "&gt;"
-            )
-            .replace(
-                /"/g,
-                "&quot;"
-            )
-            .replace(
-                /'/g,
-                "&#039;"
-            );
-
-    }
-
-
-    function escapeAttribute(value) {
-
-        return escapeHTML(value);
-
-    }
-
-
-    /* ========================================================
+    /* =====================================================
        INITIALIZE
-    ======================================================== */
+    ===================================================== */
+
+    loadDraft();
 
     updateSummaryCounter();
 
     updateResumeProgress();
-
-    hideResumeLoading();
 
 
     console.log(
