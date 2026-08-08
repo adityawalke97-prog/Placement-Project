@@ -324,12 +324,81 @@ def signup():
 @app.route("/resume_builder", methods=["GET", "POST"])
 @login_required
 def resume_builder():
+
     if request.method == "POST":
-        # Resume data save/generate
-        return redirect(url_for("dashboard"))
+
+        full_name = request.form.get("full_name", "").strip()
+        email = request.form.get("email", "").strip()
+        mobile = request.form.get("mobile", "").strip()
+
+        if not full_name or not email or not mobile:
+            flash("Name, email and mobile are required.", "danger")
+            return render_template("resume_builder.html")
+
+        profile_photo = request.files.get("profile_photo")
+
+        if profile_photo and profile_photo.filename:
+            filename = secure_filename(profile_photo.filename)
+
+            upload_folder = os.path.join(
+                app.root_path,
+                "uploads",
+                "profile_photos"
+            )
+
+            os.makedirs(upload_folder, exist_ok=True)
+
+            profile_photo.save(
+                os.path.join(upload_folder, filename)
+            )
+
+        conn = get_db_connection()
+        cur = conn.cursor()
+
+        try:
+            cur.execute("""
+                INSERT INTO resume
+                (
+                    user_id,
+                    name,
+                    email,
+                    mobile,
+                    objective,
+                    education,
+                    skills,
+                    projects,
+                    certifications
+                )
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """, (
+                session["user_id"],
+                full_name,
+                email,
+                mobile,
+                request.form.get("objective", ""),
+                request.form.get("education", ""),
+                request.form.get("skills", ""),
+                request.form.get("projects", ""),
+                request.form.get("certifications", "")
+            ))
+
+            conn.commit()
+
+            flash("Resume saved successfully.", "success")
+            return redirect(url_for("dashboard"))
+
+        except Exception as error:
+            conn.rollback()
+            print("RESUME SAVE ERROR:", error)
+            flash("Resume save failed.", "danger")
+            return render_template("resume_builder.html")
+
+        finally:
+            cur.close()
+            conn.close()
 
     return render_template("resume_builder.html")
-# --------------------------------------------------
+    
 # LOGIN
 # --------------------------------------------------
 
