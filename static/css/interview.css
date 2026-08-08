@@ -1,11 +1,7 @@
 /* =========================================================
    INTERVIEW PREPARATION PORTAL
    PREMIUM RESPONSIVE CSS
-   ========================================================= */
-
-/* =========================================================
-   ROOT
-   ========================================================= */
+========================================================= */
 
 :root {
     --primary: #2563eb;
@@ -34,26 +30,15 @@
     --background: #f8fafc;
     --white: #ffffff;
 
-    --shadow-sm:
-        0 2px 8px rgba(15, 23, 42, 0.06);
-
-    --shadow:
-        0 8px 25px rgba(15, 23, 42, 0.08);
-
-    --shadow-lg:
-        0 18px 45px rgba(15, 23, 42, 0.14);
+    --shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.06);
+    --shadow: 0 8px 25px rgba(15, 23, 42, 0.08);
+    --shadow-lg: 0 18px 45px rgba(15, 23, 42, 0.14);
 
     --radius: 16px;
     --radius-sm: 10px;
 
-    --transition:
-        all 0.25s ease;
+    --transition: all 0.25s ease;
 }
-
-
-/* =========================================================
-   GLOBAL
-   ========================================================= */
 
 * {
     box-sizing: border-box;
@@ -67,12 +52,11 @@ body {
     margin: 0;
     padding: 0;
 
-    background:
-        linear-gradient(
-            180deg,
-            #f8fafc 0%,
-            #eef4ff 100%
-        );
+    background: linear-gradient(
+        180deg,
+        #f8fafc 0%,
+        #eef4ff 100%
+    );
 
     color: var(--text);
 
@@ -83,10 +67,6 @@ body {
         sans-serif;
 
     line-height: 1.6;
-}
-
-body.modal-open {
-    overflow: hidden;
 }
 
 button,
@@ -102,7 +82,6 @@ button {
 a {
     text-decoration: none;
 }
-
 
 /* =========================================================
    HERO
