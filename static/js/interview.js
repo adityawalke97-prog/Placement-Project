@@ -1,217 +1,248 @@
-/*==================================================
-        INTERVIEW PREPARATION
-        PART 1
-        SEARCH + FILTER + ANSWER + PROGRESS
-==================================================*/
-
-// ==========================
-// GLOBAL
-// ==========================
-
-const questionCards = document.querySelectorAll(".question-card");
-
-const searchInput = document.getElementById("searchInput");
-
-const categoryFilter = document.getElementById("categoryFilter");
-
-const levelFilter = document.getElementById("levelFilter");
-
-const companyFilter = document.getElementById("companyFilter");
-
-const progressFill = document.getElementById("progressFill");
-
-const progressPercent = document.getElementById("progressPercent");
+"use strict";
 
 let viewedQuestions = new Set();
 
-// ==========================
-// SEARCH
-// ==========================
-
-if(searchInput){
-
-searchInput.addEventListener("keyup",function(){
-
-    filterQuestions();
-
+document.addEventListener("DOMContentLoaded", function () {
+    initializeInterviewPage();
 });
 
-}
+function initializeInterviewPage() {
+    loadSavedProgress();
+    restoreBookmarks();
+    restoreCompleted();
+    updateStats();
+    updateProgress();
+    updateDailyGoal();
 
-// ==========================
-// FILTER
-// ==========================
+    const searchInput = document.getElementById("searchInput");
+    const categoryFilter = document.getElementById("categoryFilter");
+    const levelFilter = document.getElementById("levelFilter");
+    const companyFilter = document.getElementById("companyFilter");
+    const resetButton = document.getElementById("resetFiltersBtn");
 
-if(categoryFilter){
+    if (searchInput) {
+        searchInput.addEventListener("input", filterQuestions);
+    }
 
-categoryFilter.addEventListener("change",filterQuestions);
+    if (categoryFilter) {
+        categoryFilter.addEventListener("change", filterQuestions);
+    }
 
-}
+    if (levelFilter) {
+        levelFilter.addEventListener("change", filterQuestions);
+    }
 
-if(levelFilter){
+    if (companyFilter) {
+        companyFilter.addEventListener("change", filterQuestions);
+    }
 
-levelFilter.addEventListener("change",filterQuestions);
+    if (resetButton) {
+        resetButton.addEventListener("click", resetFilters);
+    }
 
-}
-
-if(companyFilter){
-
-companyFilter.addEventListener("change",filterQuestions);
-
-}
-
-// ==========================
-// FILTER FUNCTION
-// ==========================
-
-function filterQuestions(){
-
-    const search =
-        searchInput ? searchInput.value.toLowerCase() : "";
-
-    const category =
-        categoryFilter ? categoryFilter.value : "";
-
-    const level =
-        levelFilter ? levelFilter.value : "";
-
-    const company =
-        companyFilter ? companyFilter.value : "";
-
-    questionCards.forEach(function(card){
-
-        const text =
-            card.innerText.toLowerCase();
-
-        const c =
-            card.dataset.category || "";
-
-        const l =
-            card.dataset.level || "";
-
-        const com =
-            card.dataset.company || "";
-
-        const visible =
-            text.includes(search)
-            &&
-            (category==="" || c===category)
-            &&
-            (level==="" || l===level)
-            &&
-            (company==="" || com===company);
-
-        card.style.display =
-            visible ? "block" : "none";
-
+    document.querySelectorAll(".answer-btn").forEach(function (button) {
+        button.addEventListener("click", function () {
+            toggleAnswer(this);
+        });
     });
 
+    document.querySelectorAll(".bookmark-btn").forEach(function (button) {
+        button.addEventListener("click", function () {
+            toggleBookmark(this);
+        });
+    });
+
+    document.querySelectorAll(".copy-btn").forEach(function (button) {
+        button.addEventListener("click", function () {
+            copyQuestion(this);
+        });
+    });
+
+    document.querySelectorAll(".share-btn").forEach(function (button) {
+        button.addEventListener("click", function () {
+            shareQuestion(this);
+        });
+    });
+
+    document.querySelectorAll(".complete-btn").forEach(function (button) {
+        button.addEventListener("click", function () {
+            markCompleted(this);
+        });
+    });
+
+    const scrollButton = document.getElementById("scrollTopBtn");
+
+    if (scrollButton) {
+        scrollButton.addEventListener("click", scrollTopPage);
+    }
+
+    const continueButton = document.getElementById("continueBtn");
+
+    if (continueButton) {
+        continueButton.addEventListener(
+            "click",
+            continueLastQuestion
+        );
+    }
+
+    window.addEventListener("scroll", handleScroll);
+
+    document.addEventListener("keydown", handleKeyboardShortcuts);
 }
 
-// ==========================
-// SHOW ANSWER
-// ==========================
+/* =========================
+   SHOW / HIDE ANSWER
+========================= */
 
-function toggleAnswer(btn){
+function toggleAnswer(button) {
+    const card = button.closest(".question-card");
 
-    const answer =
-        btn.parentElement.querySelector(".answer-box");
+    if (!card) {
+        console.error("Question card not found");
+        return;
+    }
 
-    if(!answer) return;
+    const answerBox = card.querySelector(".answer-box");
 
-    if(answer.style.display==="block"){
+    if (!answerBox) {
+        console.error("Answer box not found");
+        return;
+    }
 
-        answer.style.display="none";
+    const questionId = card.dataset.id;
 
-        btn.innerHTML="Show Answer";
+    const isVisible =
+        window.getComputedStyle(answerBox).display !== "none";
 
-    }else{
+    if (isVisible) {
+        answerBox.style.display = "none";
 
-        answer.style.display="block";
+        button.innerHTML = `
+            <i class="fas fa-lightbulb"></i>
+            Show Answer
+        `;
+    } else {
+        answerBox.style.display = "block";
 
-        btn.innerHTML="Hide Answer";
+        button.innerHTML = `
+            <i class="fas fa-eye-slash"></i>
+            Hide Answer
+        `;
 
-        viewedQuestions.add(btn.dataset.id);
+        if (questionId) {
+            viewedQuestions.add(questionId);
+        }
 
+        saveProgress();
         updateProgress();
-
+        saveRecent(questionId);
     }
-
 }
 
-// ==========================
-// PROGRESS
-// ==========================
+/* =========================
+   SEARCH AND FILTER
+========================= */
 
-function updateProgress(){
+function filterQuestions() {
+    const searchInput = document.getElementById("searchInput");
+    const categoryFilter = document.getElementById("categoryFilter");
+    const levelFilter = document.getElementById("levelFilter");
+    const companyFilter = document.getElementById("companyFilter");
 
-    const total =
-        questionCards.length;
+    const search = searchInput
+        ? searchInput.value.toLowerCase().trim()
+        : "";
 
-    const completed =
-        viewedQuestions.size;
+    const category = categoryFilter
+        ? categoryFilter.value
+        : "";
 
-    const percent =
-        total===0 ? 0 :
-        Math.round((completed/total)*100);
+    const level = levelFilter
+        ? levelFilter.value
+        : "";
 
-    if(progressFill){
+    const company = companyFilter
+        ? companyFilter.value
+        : "";
 
-        progressFill.style.width =
-            percent+"%";
+    document.querySelectorAll(".question-card").forEach(function (card) {
+        const text = card.innerText.toLowerCase();
 
-    }
+        const cardCategory = card.dataset.category || "";
+        const cardLevel = card.dataset.level || "";
+        const cardCompany = card.dataset.company || "";
 
-    if(progressPercent){
+        const matches =
+            text.includes(search) &&
+            (category === "" || cardCategory === category) &&
+            (level === "" || cardLevel === level) &&
+            (company === "" || cardCompany === company);
 
-        progressPercent.innerHTML =
-            percent+"%";
-
-    }
-
+        card.style.display = matches ? "" : "none";
+    });
 }
-/*==================================================
-        INTERVIEW PREPARATION
-        PART 2
-        BOOKMARK + COPY + SHARE + TOAST
-==================================================*/
 
-// ==========================
-// BOOKMARK
-// ==========================
+function resetFilters() {
+    const searchInput = document.getElementById("searchInput");
+    const categoryFilter = document.getElementById("categoryFilter");
+    const levelFilter = document.getElementById("levelFilter");
+    const companyFilter = document.getElementById("companyFilter");
 
-restoreBookmarks();
+    if (searchInput) {
+        searchInput.value = "";
+    }
 
-function toggleBookmark(btn){
+    if (categoryFilter) {
+        categoryFilter.value = "";
+    }
 
-    const id = btn.dataset.id;
+    if (levelFilter) {
+        levelFilter.value = "";
+    }
+
+    if (companyFilter) {
+        companyFilter.value = "";
+    }
+
+    filterQuestions();
+}
+
+/* =========================
+   BOOKMARK
+========================= */
+
+function toggleBookmark(button) {
+    const id = button.dataset.id;
+
+    if (!id) {
+        return;
+    }
 
     let bookmarks =
-        JSON.parse(localStorage.getItem("interview_bookmarks")) || [];
+        JSON.parse(
+            localStorage.getItem("interview_bookmarks")
+        ) || [];
 
-    if(bookmarks.includes(id)){
+    if (bookmarks.includes(id)) {
+        bookmarks = bookmarks.filter(function (item) {
+            return item !== id;
+        });
 
-        bookmarks =
-            bookmarks.filter(x => x !== id);
+        button.classList.remove("active");
 
-        btn.classList.remove("active");
-
-        btn.innerHTML =
+        button.innerHTML =
             '<i class="far fa-bookmark"></i>';
 
         showToast("Bookmark Removed");
-
-    }else{
-
+    } else {
         bookmarks.push(id);
 
-        btn.classList.add("active");
+        button.classList.add("active");
 
-        btn.innerHTML =
+        button.innerHTML =
             '<i class="fas fa-bookmark"></i>';
 
         showToast("Question Bookmarked");
-
     }
 
     localStorage.setItem(
@@ -219,615 +250,433 @@ function toggleBookmark(btn){
         JSON.stringify(bookmarks)
     );
 
+    updateStats();
 }
 
-function restoreBookmarks(){
+function restoreBookmarks() {
+    const bookmarks =
+        JSON.parse(
+            localStorage.getItem("interview_bookmarks")
+        ) || [];
 
-    let bookmarks =
-        JSON.parse(localStorage.getItem("interview_bookmarks")) || [];
+    document.querySelectorAll(".bookmark-btn").forEach(
+        function (button) {
+            const id = button.dataset.id;
 
-    document.querySelectorAll(".bookmark-btn").forEach(function(btn){
+            if (bookmarks.includes(id)) {
+                button.classList.add("active");
 
-        const id = btn.dataset.id;
-
-        if(bookmarks.includes(id)){
-
-            btn.classList.add("active");
-
-            btn.innerHTML =
-                '<i class="fas fa-bookmark"></i>';
-
+                button.innerHTML =
+                    '<i class="fas fa-bookmark"></i>';
+            }
         }
-
-    });
-
-}
-
-// ==========================
-// COPY QUESTION
-// ==========================
-
-function copyQuestion(btn){
-
-    const question = btn.closest(".question-card")
-                        .querySelector(".question-title")
-                        .innerText;
-
-    navigator.clipboard.writeText(question);
-
-    btn.innerHTML = "Copied ✓";
-
-    btn.classList.add("copied");
-
-    showToast("Question Copied");
-
-    setTimeout(function(){
-
-        btn.innerHTML = "Copy";
-
-        btn.classList.remove("copied");
-
-    },2000);
-
-}
-
-// ==========================
-// SHARE QUESTION
-// ==========================
-
-function shareQuestion(btn){
-
-    const question = btn.closest(".question-card")
-                        .querySelector(".question-title")
-                        .innerText;
-
-    if(navigator.share){
-
-        navigator.share({
-
-            title:"Interview Question",
-
-            text:question
-
-        });
-
-    }else{
-
-        navigator.clipboard.writeText(question);
-
-        showToast("Copied for Sharing");
-
-    }
-
-}
-
-// ==========================
-// TOAST
-// ==========================
-
-function showToast(message){
-
-    const toast =
-        document.getElementById("toast");
-
-    if(!toast) return;
-
-    toast.innerHTML = message;
-
-    toast.style.display = "block";
-
-    setTimeout(function(){
-
-        toast.style.display = "none";
-
-    },2500);
-
-}
-
-// ==========================
-// SAVE PROGRESS
-// ==========================
-
-window.addEventListener("beforeunload",function(){
-
-    localStorage.setItem(
-
-        "interview_progress",
-
-        JSON.stringify([...viewedQuestions])
-
     );
+}
 
-});
+/* =========================
+   COMPLETED
+========================= */
 
-document.addEventListener("DOMContentLoaded",function(){
+function markCompleted(button) {
+    const card = button.closest(".question-card");
 
-    const saved =
-        JSON.parse(localStorage.getItem("interview_progress"));
-
-    if(saved){
-
-        viewedQuestions =
-            new Set(saved);
-
-        updateProgress();
-
+    if (!card) {
+        return;
     }
 
-});
-/*==================================================
-        INTERVIEW PREPARATION
-        PART 3
-        FAVORITES + COMPLETED + GOAL +
-        SCROLL TO TOP + CONTINUE
-==================================================*/
+    const id = card.dataset.id;
 
-// ==========================
-// MARK COMPLETED
-// ==========================
-
-restoreCompleted();
-
-function markCompleted(btn){
-
-    const card = btn.closest(".question-card");
-
-    const id = btn.dataset.id;
+    if (!id) {
+        return;
+    }
 
     let completed =
-        JSON.parse(localStorage.getItem("completed_questions")) || [];
+        JSON.parse(
+            localStorage.getItem("completed_questions")
+        ) || [];
 
-    if(completed.includes(id)){
-
-        completed =
-            completed.filter(x => x !== id);
+    if (completed.includes(id)) {
+        completed = completed.filter(function (item) {
+            return item !== id;
+        });
 
         card.classList.remove("completed");
 
-        btn.innerHTML = "✔ Mark Completed";
+        button.innerHTML = `
+            <i class="fas fa-check-circle"></i>
+            Mark Completed
+        `;
 
         showToast("Removed from Completed");
-
-    }else{
-
+    } else {
         completed.push(id);
 
         card.classList.add("completed");
 
-        btn.innerHTML = "✅ Completed";
+        button.innerHTML = `
+            <i class="fas fa-check-circle"></i>
+            Completed
+        `;
 
         viewedQuestions.add(id);
 
+        saveProgress();
         updateProgress();
 
         showToast("Question Completed");
-
     }
 
     localStorage.setItem(
-
         "completed_questions",
-
         JSON.stringify(completed)
-
     );
 
+    updateStats();
 }
 
-// ==========================
-// RESTORE COMPLETED
-// ==========================
-
-function restoreCompleted(){
-
+function restoreCompleted() {
     const completed =
-        JSON.parse(localStorage.getItem("completed_questions")) || [];
+        JSON.parse(
+            localStorage.getItem("completed_questions")
+        ) || [];
 
-    document.querySelectorAll(".complete-btn").forEach(function(btn){
+    document.querySelectorAll(".complete-btn").forEach(
+        function (button) {
+            const card = button.closest(".question-card");
 
-        const id = btn.dataset.id;
+            if (!card) {
+                return;
+            }
 
-        if(completed.includes(id)){
+            const id = card.dataset.id;
 
-            btn.innerHTML = "✅ Completed";
+            if (completed.includes(id)) {
+                card.classList.add("completed");
 
-            btn.closest(".question-card")
-               .classList.add("completed");
-
+                button.innerHTML = `
+                    <i class="fas fa-check-circle"></i>
+                    Completed
+                `;
+            }
         }
-
-    });
-
+    );
 }
 
-// ==========================
-// DAILY GOAL
-// ==========================
+/* =========================
+   COPY QUESTION
+========================= */
 
-function updateDailyGoal(){
+function copyQuestion(button) {
+    const card = button.closest(".question-card");
 
-    const completed =
-        JSON.parse(localStorage.getItem("completed_questions")) || [];
-
-    const todayGoal = 20;
-
-    const progress =
-        Math.min(completed.length,todayGoal);
-
-    const percent =
-        Math.round((progress/todayGoal)*100);
-
-    const bar =
-        document.getElementById("dailyGoalFill");
-
-    const text =
-        document.getElementById("dailyGoalText");
-
-    if(bar){
-
-        bar.style.width = percent+"%";
-
+    if (!card) {
+        return;
     }
 
-    if(text){
+    const title = card.querySelector(".question-title");
 
-        text.innerHTML =
-            progress+" / "+todayGoal+" Questions";
-
+    if (!title) {
+        return;
     }
 
+    const question = title.innerText.trim();
+
+    navigator.clipboard.writeText(question)
+        .then(function () {
+            showToast("Question Copied");
+
+            button.innerHTML =
+                '<i class="fas fa-check"></i> Copied';
+
+            setTimeout(function () {
+                button.innerHTML =
+                    '<i class="fas fa-copy"></i> Copy';
+            }, 2000);
+        })
+        .catch(function () {
+            showToast("Copy failed");
+        });
 }
 
-document.addEventListener(
+/* =========================
+   SHARE QUESTION
+========================= */
 
-    "DOMContentLoaded",
+function shareQuestion(button) {
+    const card = button.closest(".question-card");
 
-    updateDailyGoal
-
-);
-
-// ==========================
-// SCROLL TO TOP
-// ==========================
-
-const scrollBtn =
-    document.getElementById("scrollTop");
-
-window.addEventListener("scroll",function(){
-
-    if(!scrollBtn) return;
-
-    if(window.scrollY>400){
-
-        scrollBtn.style.display="block";
-
-    }else{
-
-        scrollBtn.style.display="none";
-
+    if (!card) {
+        return;
     }
 
-});
+    const title = card.querySelector(".question-title");
 
-function scrollTopPage(){
+    if (!title) {
+        return;
+    }
 
-    window.scrollTo({
+    const question = title.innerText.trim();
 
-        top:0,
-
-        behavior:"smooth"
-
-    });
-
-}
-
-// ==========================
-// SAVE LAST QUESTION
-// ==========================
-
-document.querySelectorAll(".answer-btn").forEach(function(btn){
-
-    btn.addEventListener("click",function(){
-
-        const card =
-            this.closest(".question-card");
-
-        if(card){
-
-            localStorage.setItem(
-
-                "last_question",
-
-                card.id
-
-            );
-
-        }
-
-    });
-
-});
-
-// ==========================
-// CONTINUE LAST QUESTION
-// ==========================
-
-document.addEventListener(
-
-"DOMContentLoaded",
-
-function(){
-
-    const last =
-        localStorage.getItem("last_question");
-
-    if(last){
-
-        const card =
-            document.getElementById(last);
-
-        if(card){
-
-            card.scrollIntoView({
-
-                behavior:"smooth",
-
-                block:"center"
-
+    if (navigator.share) {
+        navigator.share({
+            title: "Interview Question",
+            text: question
+        }).catch(function () {
+            // User cancelled sharing.
+        });
+    } else {
+        navigator.clipboard.writeText(question)
+            .then(function () {
+                showToast("Copied for Sharing");
             });
-
-        }
-
     }
-
-});
-/*==================================================
-        INTERVIEW PREPARATION
-        PART 4
-        RANDOM + STREAK + TIMER +
-        RECENT + SHORTCUTS
-==================================================*/
-
-// ==========================
-// RANDOM QUESTION
-// ==========================
-
-function randomQuestion(){
-
-    const cards =
-        document.querySelectorAll(".question-card");
-
-    if(cards.length===0) return;
-
-    const random =
-        Math.floor(Math.random()*cards.length);
-
-    cards[random].scrollIntoView({
-
-        behavior:"smooth",
-
-        block:"center"
-
-    });
-
-    showToast("Random Question Opened");
-
 }
 
-// ==========================
-// STREAK
-// ==========================
+/* =========================
+   PROGRESS
+========================= */
 
-function updateStreak(){
-
-    const today =
-        new Date().toLocaleDateString();
-
-    let last =
-        localStorage.getItem("streak_date");
-
-    let streak =
-        parseInt(localStorage.getItem("streak")) || 0;
-
-    if(last!==today){
-
-        streak++;
-
-        localStorage.setItem("streak",streak);
-
-        localStorage.setItem("streak_date",today);
-
-    }
-
-    const streakBox =
-        document.getElementById("streakCount");
-
-    if(streakBox){
-
-        streakBox.innerHTML=streak;
-
-    }
-
+function saveProgress() {
+    localStorage.setItem(
+        "interview_progress",
+        JSON.stringify([...viewedQuestions])
+    );
 }
 
-document.addEventListener(
+function loadSavedProgress() {
+    const saved =
+        JSON.parse(
+            localStorage.getItem("interview_progress")
+        ) || [];
 
-    "DOMContentLoaded",
+    viewedQuestions = new Set(saved);
+}
 
-    updateStreak
+function updateProgress() {
+    const total =
+        document.querySelectorAll(".question-card").length;
 
-);
+    const completed = viewedQuestions.size;
 
-// ==========================
-// STUDY TIMER
-// ==========================
+    const percent = total === 0
+        ? 0
+        : Math.min(100, Math.round((completed / total) * 100));
 
-let studyMinutes = 0;
+    const progressFill =
+        document.getElementById("progressFill");
 
-setInterval(function(){
+    const progressPercent =
+        document.getElementById("progressPercent");
 
-    studyMinutes++;
+    const progressText =
+        document.getElementById("progressText");
 
-    const timer =
-        document.getElementById("studyTime");
-
-    if(timer){
-
-        timer.innerHTML =
-            studyMinutes+" Min";
-
+    if (progressFill) {
+        progressFill.style.width = percent + "%";
     }
 
-},60000);
+    if (progressPercent) {
+        progressPercent.innerText = percent + "%";
+    }
 
-// ==========================
-// RECENT QUESTIONS
-// ==========================
+    if (progressText) {
+        progressText.innerText = percent + "%";
+    }
+}
 
-function saveRecent(id){
+/* =========================
+   STATS
+========================= */
+
+function updateStats() {
+    const completed =
+        JSON.parse(
+            localStorage.getItem("completed_questions")
+        ) || [];
+
+    const bookmarks =
+        JSON.parse(
+            localStorage.getItem("interview_bookmarks")
+        ) || [];
+
+    const completedCount =
+        document.getElementById("completedCount");
+
+    const bookmarkCount =
+        document.getElementById("bookmarkCount");
+
+    if (completedCount) {
+        completedCount.innerText = completed.length;
+    }
+
+    if (bookmarkCount) {
+        bookmarkCount.innerText = bookmarks.length;
+    }
+}
+
+/* =========================
+   RECENT QUESTIONS
+========================= */
+
+function saveRecent(id) {
+    if (!id) {
+        return;
+    }
 
     let recent =
-        JSON.parse(localStorage.getItem("recent_questions")) || [];
+        JSON.parse(
+            localStorage.getItem("recent_questions")
+        ) || [];
 
-    recent =
-        recent.filter(q=>q!==id);
+    recent = recent.filter(function (item) {
+        return item !== id;
+    });
 
     recent.unshift(id);
 
-    if(recent.length>10){
-
+    if (recent.length > 10) {
         recent.pop();
-
     }
 
     localStorage.setItem(
-
         "recent_questions",
-
         JSON.stringify(recent)
-
     );
 
+    localStorage.setItem("last_question", id);
 }
 
-document.querySelectorAll(".answer-btn").forEach(function(btn){
+/* =========================
+   CONTINUE LAST QUESTION
+========================= */
 
-    btn.addEventListener("click",function(){
+function continueLastQuestion() {
+    const lastId =
+        localStorage.getItem("last_question");
 
-        saveRecent(btn.dataset.id);
+    if (!lastId) {
+        showToast("No recent question found");
+        return;
+    }
 
-    });
+    const card =
+        document.getElementById("question-" + lastId);
 
-});
+    if (card) {
+        card.scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+        });
 
-// ==========================
-// RECENT PANEL
-// ==========================
+        card.classList.add("highlight-question");
 
-function loadRecent(){
-
-    const panel =
-        document.getElementById("recentList");
-
-    if(!panel) return;
-
-    panel.innerHTML="";
-
-    const recent =
-        JSON.parse(localStorage.getItem("recent_questions")) || [];
-
-    recent.forEach(function(id){
-
-        panel.innerHTML +=
-
-        `<button class="secondary-btn"
-        onclick="document.getElementById('question-${id}')
-        .scrollIntoView({behavior:'smooth'})">
-
-        Question ${id}
-
-        </button>`;
-
-    });
-
+        setTimeout(function () {
+            card.classList.remove("highlight-question");
+        }, 2000);
+    } else {
+        showToast("Recent question is on another page");
+    }
 }
 
-document.addEventListener(
+/* =========================
+   DAILY GOAL
+========================= */
 
-    "DOMContentLoaded",
-
-    loadRecent
-
-);
-
-// ==========================
-// KEYBOARD SHORTCUTS
-// ==========================
-
-document.addEventListener("keydown",function(e){
-
-    if(e.ctrlKey && e.key==="f"){
-
-        e.preventDefault();
-
-        searchInput.focus();
-
-    }
-
-    if(e.key==="Home"){
-
-        scrollTopPage();
-
-    }
-
-    if(e.key==="r" || e.key==="R"){
-
-        randomQuestion();
-
-    }
-
-});
-
-// ==========================
-// QUICK STATS
-// ==========================
-
-function updateStats(){
-
+function updateDailyGoal() {
     const completed =
-        JSON.parse(localStorage.getItem("completed_questions")) || [];
+        JSON.parse(
+            localStorage.getItem("completed_questions")
+        ) || [];
 
-    const bookmarked =
-        JSON.parse(localStorage.getItem("interview_bookmarks")) || [];
+    const todayGoal = 20;
+    const progress = Math.min(
+        completed.length,
+        todayGoal
+    );
 
-    const completedBox =
-        document.getElementById("completedCount");
+    const percent = Math.round(
+        (progress / todayGoal) * 100
+    );
 
-    const bookmarkBox =
-        document.getElementById("bookmarkCount");
+    const goalBar =
+        document.getElementById("dailyGoalFill");
 
-    if(completedBox){
+    const goalText =
+        document.getElementById("dailyGoalText");
 
-        completedBox.innerHTML =
-            completed.length;
-
+    if (goalBar) {
+        goalBar.style.width = percent + "%";
     }
 
-    if(bookmarkBox){
-
-        bookmarkBox.innerHTML =
-            bookmarked.length;
-
+    if (goalText) {
+        goalText.innerText =
+            progress + " / " + todayGoal + " Questions";
     }
-
 }
 
-document.addEventListener(
+/* =========================
+   SCROLL TO TOP
+========================= */
 
-    "DOMContentLoaded",
+function handleScroll() {
+    const scrollButton =
+        document.getElementById("scrollTopBtn");
 
-    updateStats
+    if (!scrollButton) {
+        return;
+    }
 
-);
+    scrollButton.style.display =
+        window.scrollY > 400 ? "block" : "none";
+}
 
-console.log("Interview JS Part 4 Loaded");
+function scrollTopPage() {
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+}
+
+/* =========================
+   TOAST
+========================= */
+
+function showToast(message) {
+    const toast =
+        document.getElementById("toast");
+
+    if (!toast) {
+        return;
+    }
+
+    toast.innerText = message;
+    toast.style.display = "block";
+
+    setTimeout(function () {
+        toast.style.display = "none";
+    }, 2500);
+}
+
+/* =========================
+   KEYBOARD SHORTCUTS
+========================= */
+
+function handleKeyboardShortcuts(event) {
+    const searchInput =
+        document.getElementById("searchInput");
+
+    if (
+        event.ctrlKey &&
+        event.key.toLowerCase() === "f"
+    ) {
+        event.preventDefault();
+
+        if (searchInput) {
+            searchInput.focus();
+        }
+    }
+
+    if (event.key === "Home") {
+        scrollTopPage();
+    }
+}
