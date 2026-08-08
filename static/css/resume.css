@@ -1,2129 +1,2176 @@
-{% extends "layout.html" %}
+/* =========================================================
+   ADVANCED RESUME BUILDER
+   PROFESSIONAL / ATS FRIENDLY UI
+========================================================= */
 
-{% block title %}AI Resume Builder{% endblock %}
+:root {
+    --rb-primary: #2563eb;
+    --rb-primary-dark: #1d4ed8;
+    --rb-primary-soft: #eff6ff;
 
-{% block css %}
-<link rel="stylesheet"
-      href="{{ url_for('static', filename='css/resume_builder.css') }}">
-{% endblock %}
+    --rb-success: #16a34a;
+    --rb-success-soft: #f0fdf4;
 
+    --rb-warning: #d97706;
+    --rb-warning-soft: #fffbeb;
 
-{% block content %}
+    --rb-danger: #dc2626;
+    --rb-danger-soft: #fef2f2;
 
-<div class="resume-builder-page">
+    --rb-purple: #7c3aed;
+    --rb-purple-soft: #f5f3ff;
 
-    <!-- =====================================================
-         TOP HEADER
-    ====================================================== -->
+    --rb-dark: #0f172a;
+    --rb-heading: #172033;
+    --rb-text: #334155;
+    --rb-muted: #64748b;
 
-    <section class="resume-header">
+    --rb-border: #e2e8f0;
+    --rb-bg: #f5f7fb;
+    --rb-white: #ffffff;
 
-        <div class="resume-header-left">
+    --rb-radius: 14px;
+    --rb-radius-sm: 9px;
 
-            <div class="resume-logo">
-                📄
-            </div>
+    --rb-shadow-sm:
+        0 2px 8px rgba(15, 23, 42, 0.06);
 
-            <div>
-                <span class="resume-kicker">
-                    AI POWERED
-                </span>
+    --rb-shadow:
+        0 8px 25px rgba(15, 23, 42, 0.08);
 
-                <h1>
-                    Professional Resume Builder
-                </h1>
+    --rb-shadow-lg:
+        0 20px 50px rgba(15, 23, 42, 0.13);
 
-                <p>
-                    Build an ATS-friendly resume designed for
-                    real-world job applications.
-                </p>
-            </div>
+    --rb-transition:
+        all 0.22s ease;
+}
 
-        </div>
 
+/* =========================================================
+   RESET
+========================================================= */
 
-        <div class="resume-header-actions">
+* {
+    box-sizing: border-box;
+}
 
-            <button type="button"
-                    class="header-btn"
-                    id="saveResumeBtn">
-                💾 Save
-            </button>
+html {
+    scroll-behavior: smooth;
+}
 
-            <button type="button"
-                    class="header-btn"
-                    id="previewResumeBtn">
-                👁 Preview
-            </button>
+body {
+    margin: 0;
+    background: var(--rb-bg);
+    color: var(--rb-text);
 
-            <button type="button"
-                    class="header-btn primary"
-                    id="downloadResumeBtn">
-                📥 Download
-            </button>
+    font-family:
+        "Inter",
+        "Poppins",
+        "Segoe UI",
+        Arial,
+        sans-serif;
 
-        </div>
+    line-height: 1.6;
+}
 
-    </section>
+button,
+input,
+textarea,
+select {
+    font-family: inherit;
+}
 
+button {
+    cursor: pointer;
+}
 
+a {
+    text-decoration: none;
+}
 
-    <!-- =====================================================
-         RESUME PROGRESS
-    ====================================================== -->
 
-    <section class="resume-progress-card">
+/* =========================================================
+   MAIN CONTAINER
+========================================================= */
 
-        <div class="progress-info">
+.resume-builder {
+    width: min(1500px, 96%);
+    margin: 30px auto 60px;
+}
 
-            <div>
 
-                <span class="section-label">
-                    RESUME COMPLETION
-                </span>
+/* =========================================================
+   PAGE HEADER
+========================================================= */
 
-                <h2 id="completionText">
-                    0% Complete
-                </h2>
+.resume-page-header {
+    margin-bottom: 25px;
+}
 
-            </div>
+.resume-page-header h1 {
+    margin: 0;
 
-            <div class="completion-score"
-                 id="completionScore">
-                0%
-            </div>
+    color: var(--rb-heading);
 
-        </div>
+    font-size: clamp(26px, 3vw, 38px);
+    font-weight: 800;
+    letter-spacing: -0.7px;
+}
 
+.resume-page-header p {
+    margin: 6px 0 0;
 
-        <div class="main-progress">
+    color: var(--rb-muted);
 
-            <div class="main-progress-fill"
-                 id="mainProgressFill">
-            </div>
+    font-size: 14px;
+}
 
-        </div>
 
+/* =========================================================
+   TOP TOOLBAR
+========================================================= */
 
-        <div class="progress-hints">
+.resume-toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
 
-            <span>
-                ✓ Profile
-            </span>
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 
-            <span>
-                ✓ Education
-            </span>
+    gap: 15px;
 
-            <span>
-                ✓ Skills
-            </span>
+    padding: 13px 16px;
+    margin-bottom: 22px;
 
-            <span>
-                ✓ Projects
-            </span>
+    background: rgba(255, 255, 255, 0.96);
 
-            <span>
-                ✓ Experience
-            </span>
+    border: 1px solid var(--rb-border);
+    border-radius: var(--rb-radius);
 
-        </div>
+    box-shadow: var(--rb-shadow);
 
-    </section>
+    backdrop-filter: blur(12px);
+}
 
+.toolbar-left,
+.toolbar-right {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 9px;
+}
 
 
-    <!-- =====================================================
-         MAIN BUILDER
-    ====================================================== -->
+/* =========================================================
+   BUTTON SYSTEM
+========================================================= */
 
-    <div class="resume-builder-layout">
+.rb-btn {
+    min-height: 42px;
 
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 
-        <!-- =================================================
-             LEFT EDITOR
-        ================================================== -->
+    gap: 7px;
 
-        <main class="resume-editor">
+    padding: 0 15px;
 
+    border-radius: var(--rb-radius-sm);
 
-            <!-- =============================================
-                 PERSONAL INFORMATION
-            ============================================== -->
+    border: 1px solid transparent;
 
-            <section class="builder-section"
-                     id="personalSection">
+    font-size: 13px;
+    font-weight: 700;
 
-                <div class="builder-section-header">
+    transition: var(--rb-transition);
+}
 
-                    <div class="section-icon blue">
-                        👤
-                    </div>
+.rb-btn:hover {
+    transform: translateY(-1px);
+}
 
-                    <div>
+.rb-btn:active {
+    transform: translateY(0);
+}
 
-                        <span class="section-number">
-                            01
-                        </span>
 
-                        <h2>
-                            Personal Information
-                        </h2>
+/* Primary */
 
-                        <p>
-                            Add your professional contact details.
-                        </p>
+.rb-btn-primary {
+    background: var(--rb-primary);
+    color: white;
+}
 
-                    </div>
+.rb-btn-primary:hover {
+    background: var(--rb-primary-dark);
 
-                </div>
+    box-shadow:
+        0 7px 18px rgba(37, 99, 235, 0.22);
+}
 
 
-                <div class="form-grid">
+/* Secondary */
 
+.rb-btn-secondary {
+    background: white;
+    color: var(--rb-text);
 
-                    <div class="form-group full">
+    border-color: var(--rb-border);
+}
 
-                        <label>
-                            Full Name
-                            <span>*</span>
-                        </label>
+.rb-btn-secondary:hover {
+    color: var(--rb-primary);
 
-                        <input
-                            type="text"
-                            id="fullName"
-                            name="full_name"
-                            placeholder="e.g. Aditya Walke"
-                            autocomplete="name">
+    border-color: #bfdbfe;
+    background: var(--rb-primary-soft);
+}
 
-                    </div>
 
+/* Success */
 
-                    <div class="form-group">
+.rb-btn-success {
+    background: var(--rb-success);
+    color: white;
+}
 
-                        <label>
-                            Professional Title
-                        </label>
+.rb-btn-success:hover {
+    background: #15803d;
+}
 
-                        <input
-                            type="text"
-                            id="professionalTitle"
-                            name="professional_title"
-                            placeholder="e.g. Java Developer">
 
-                    </div>
+/* Danger */
 
+.rb-btn-danger {
+    background: white;
+    color: var(--rb-danger);
 
-                    <div class="form-group">
+    border-color: #fecaca;
+}
 
-                        <label>
-                            Location
-                        </label>
+.rb-btn-danger:hover {
+    background: var(--rb-danger-soft);
+}
 
-                        <input
-                            type="text"
-                            id="location"
-                            name="location"
-                            placeholder="e.g. Pune, Maharashtra">
 
-                    </div>
+/* AI */
 
+.rb-btn-ai {
+    background:
+        linear-gradient(
+            135deg,
+            #7c3aed,
+            #4f46e5
+        );
 
-                    <div class="form-group">
+    color: white;
 
-                        <label>
-                            Email
-                            <span>*</span>
-                        </label>
+    box-shadow:
+        0 6px 18px rgba(124, 58, 237, 0.20);
+}
 
-                        <input
-                            type="email"
-                            id="email"
-                            name="email"
-                            placeholder="you@example.com"
-                            autocomplete="email">
+.rb-btn-ai:hover {
+    transform: translateY(-2px);
 
-                    </div>
+    box-shadow:
+        0 10px 25px rgba(124, 58, 237, 0.28);
+}
 
 
-                    <div class="form-group">
+/* =========================================================
+   BUILDER GRID
+========================================================= */
 
-                        <label>
-                            Phone
-                        </label>
+.resume-builder-grid {
+    display: grid;
 
-                        <input
-                            type="tel"
-                            id="phone"
-                            name="phone"
-                            placeholder="+91 XXXXX XXXXX"
-                            autocomplete="tel">
+    grid-template-columns:
+        minmax(0, 0.95fr)
+        minmax(550px, 1.05fr);
 
-                    </div>
+    gap: 24px;
 
+    align-items: start;
+}
 
-                    <div class="form-group">
 
-                        <label>
-                            LinkedIn
-                        </label>
+/* =========================================================
+   EDITOR PANEL
+========================================================= */
 
-                        <input
-                            type="url"
-                            id="linkedin"
-                            name="linkedin"
-                            placeholder="https://linkedin.com/in/username">
+.resume-editor {
+    min-width: 0;
+}
 
-                    </div>
+.editor-card {
+    margin-bottom: 18px;
 
+    padding: 22px;
 
-                    <div class="form-group">
+    background: white;
 
-                        <label>
-                            GitHub
-                        </label>
+    border: 1px solid var(--rb-border);
+    border-radius: var(--rb-radius);
 
-                        <input
-                            type="url"
-                            id="github"
-                            name="github"
-                            placeholder="https://github.com/username">
+    box-shadow: var(--rb-shadow-sm);
 
-                    </div>
+    transition: var(--rb-transition);
+}
 
+.editor-card:hover {
+    box-shadow: var(--rb-shadow);
+}
 
-                    <div class="form-group">
 
-                        <label>
-                            Portfolio
-                        </label>
+/* =========================================================
+   SECTION HEADER
+========================================================= */
 
-                        <input
-                            type="url"
-                            id="portfolio"
-                            name="portfolio"
-                            placeholder="https://yourportfolio.com">
+.editor-section-header {
+    display: flex;
 
-                    </div>
+    align-items: center;
+    justify-content: space-between;
 
-                </div>
+    gap: 12px;
 
-            </section>
+    padding-bottom: 15px;
+    margin-bottom: 18px;
 
+    border-bottom: 1px solid #edf0f5;
+}
 
+.editor-section-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
 
-            <!-- =============================================
-                 PROFESSIONAL SUMMARY
-            ============================================== -->
+.editor-section-title .section-icon {
+    width: 38px;
+    height: 38px;
 
-            <section class="builder-section"
-                     id="summarySection">
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-                <div class="builder-section-header">
+    border-radius: 10px;
 
-                    <div class="section-icon purple">
-                        ✨
-                    </div>
+    background: var(--rb-primary-soft);
+    color: var(--rb-primary);
 
-                    <div>
+    font-size: 17px;
+}
 
-                        <span class="section-number">
-                            02
-                        </span>
+.editor-section-title h2,
+.editor-section-title h3 {
+    margin: 0;
 
-                        <h2>
-                            Professional Summary
-                        </h2>
+    color: var(--rb-heading);
 
-                        <p>
-                            Introduce yourself in 2–4 powerful sentences.
-                        </p>
+    font-size: 16px;
+    font-weight: 800;
+}
 
-                    </div>
+.editor-section-title p {
+    margin: 2px 0 0;
 
-                </div>
+    color: var(--rb-muted);
 
+    font-size: 11px;
+}
 
-                <div class="ai-writing-card">
 
-                    <div>
+/* =========================================================
+   FORM GRID
+========================================================= */
 
-                        <strong>
-                            🤖 AI Resume Assistant
-                        </strong>
+.form-grid {
+    display: grid;
 
-                        <p>
-                            Generate or improve your summary
-                            according to your target role.
-                        </p>
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
 
-                    </div>
+    gap: 15px;
+}
 
+.form-group {
+    min-width: 0;
+}
 
-                    <button
-                        type="button"
-                        class="ai-btn"
-                        id="improveSummaryBtn">
+.form-group.full {
+    grid-column: 1 / -1;
+}
 
-                        ✨ Improve with AI
 
-                    </button>
+/* =========================================================
+   LABELS
+========================================================= */
 
-                </div>
+.form-group label {
+    display: block;
 
+    margin-bottom: 6px;
 
-                <div class="form-group">
+    color: var(--rb-heading);
 
-                    <label>
-                        Professional Summary
-                    </label>
+    font-size: 12px;
+    font-weight: 700;
+}
 
-                    <textarea
-                        id="professionalSummary"
-                        name="professional_summary"
-                        rows="6"
-                        maxlength="1000"
-                        placeholder="Write a concise professional summary highlighting your skills, experience, projects and career goals..."></textarea>
+.required {
+    color: var(--rb-danger);
+}
 
-                    <div class="textarea-footer">
 
-                        <span>
-                            Keep it concise and job-focused.
-                        </span>
+/* =========================================================
+   INPUTS
+========================================================= */
 
-                        <span id="summaryCounter">
-                            0 / 1000
-                        </span>
+.form-group input,
+.form-group textarea,
+.form-group select,
+.resume-input,
+.resume-textarea,
+.resume-select {
+    width: 100%;
 
-                    </div>
+    border: 1px solid var(--rb-border);
+    border-radius: 9px;
 
-                </div>
+    background: white;
 
-            </section>
+    color: var(--rb-dark);
 
+    outline: none;
 
+    font-size: 13px;
 
-            <!-- =============================================
-                 TARGET JOB
-            ============================================== -->
+    transition: var(--rb-transition);
+}
 
-            <section class="builder-section"
-                     id="targetJobSection">
+.form-group input,
+.form-group select,
+.resume-input,
+.resume-select {
+    height: 44px;
 
-                <div class="builder-section-header">
+    padding: 0 12px;
+}
 
-                    <div class="section-icon orange">
-                        🎯
-                    </div>
+.form-group textarea,
+.resume-textarea {
+    min-height: 105px;
 
-                    <div>
+    padding: 11px 12px;
 
-                        <span class="section-number">
-                            03
-                        </span>
+    resize: vertical;
+}
 
-                        <h2>
-                            Target Job
-                        </h2>
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+    color: #94a3b8;
+}
 
-                        <p>
-                            Tell the builder what role you're targeting.
-                        </p>
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus,
+.resume-input:focus,
+.resume-textarea:focus,
+.resume-select:focus {
+    border-color: var(--rb-primary);
 
-                    </div>
+    box-shadow:
+        0 0 0 3px rgba(37, 99, 235, 0.09);
+}
 
-                </div>
 
+/* =========================================================
+   INPUT HELP TEXT
+========================================================= */
 
-                <div class="form-grid">
+.input-help {
+    margin-top: 5px;
 
-                    <div class="form-group">
+    color: var(--rb-muted);
 
-                        <label>
-                            Target Job Title
-                        </label>
+    font-size: 10px;
+}
 
-                        <input
-                            type="text"
-                            id="targetJobTitle"
-                            placeholder="e.g. Software Engineer">
 
-                    </div>
+/* =========================================================
+   PROFILE / PERSONAL INFO
+========================================================= */
 
+.profile-grid {
+    display: grid;
 
-                    <div class="form-group">
+    grid-template-columns:
+        110px
+        minmax(0, 1fr);
 
-                        <label>
-                            Target Industry
-                        </label>
+    gap: 18px;
 
-                        <input
-                            type="text"
-                            id="targetIndustry"
-                            placeholder="e.g. IT / Software">
+    align-items: start;
+}
 
-                    </div>
+.profile-photo {
+    width: 110px;
+    height: 110px;
 
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-                    <div class="form-group full">
+    overflow: hidden;
 
-                        <label>
-                            Job Description
-                        </label>
+    border-radius: 14px;
 
-                        <textarea
-                            id="jobDescription"
-                            rows="7"
-                            placeholder="Paste the company's job description here. AI will analyze keywords, skills and requirements."></textarea>
+    border: 2px dashed #cbd5e1;
 
-                    </div>
+    background: #f8fafc;
 
-                </div>
+    color: var(--rb-muted);
 
+    cursor: pointer;
 
-                <div class="job-analyzer-card">
+    transition: var(--rb-transition);
+}
 
-                    <div class="analyzer-icon">
-                        🎯
-                    </div>
+.profile-photo:hover {
+    border-color: var(--rb-primary);
+    background: var(--rb-primary-soft);
+}
 
-                    <div class="analyzer-content">
+.profile-photo img {
+    width: 100%;
+    height: 100%;
 
-                        <h3>
-                            AI Job Description Analyzer
-                        </h3>
+    object-fit: cover;
+}
 
-                        <p>
-                            Compare your resume against the target
-                            job and identify missing keywords.
-                        </p>
 
-                    </div>
+/* =========================================================
+   DYNAMIC ITEMS
+========================================================= */
 
-                    <button
-                        type="button"
-                        id="analyzeJobBtn"
-                        class="analyze-btn">
+.dynamic-item {
+    position: relative;
 
-                        🔍 Analyze Job
+    padding: 17px;
 
-                    </button>
+    margin-bottom: 13px;
 
-                </div>
+    background: #fafcff;
 
-            </section>
+    border: 1px solid var(--rb-border);
 
+    border-radius: 11px;
+}
 
+.dynamic-item:hover {
+    border-color: #bfdbfe;
+}
 
-            <!-- =============================================
-                 EDUCATION
-            ============================================== -->
+.dynamic-item-header {
+    display: flex;
 
-            <section class="builder-section"
-                     id="educationSection">
+    align-items: center;
+    justify-content: space-between;
 
-                <div class="builder-section-header">
+    gap: 10px;
 
-                    <div class="section-icon green">
-                        🎓
-                    </div>
+    margin-bottom: 13px;
+}
 
-                    <div>
+.dynamic-item-header strong {
+    color: var(--rb-heading);
 
-                        <span class="section-number">
-                            04
-                        </span>
+    font-size: 13px;
+}
 
-                        <h2>
-                            Education
-                        </h2>
 
-                        <p>
-                            Add your academic qualifications.
-                        </p>
+/* =========================================================
+   ADD BUTTON
+========================================================= */
 
-                    </div>
+.add-item-btn {
+    min-height: 38px;
 
-                    <button
-                        type="button"
-                        class="add-btn"
-                        id="addEducationBtn">
+    padding: 0 12px;
 
-                        + Add Education
+    border: 1px dashed #93c5fd;
 
-                    </button>
+    border-radius: 8px;
 
-                </div>
+    background: var(--rb-primary-soft);
 
+    color: var(--rb-primary);
 
-                <div id="educationContainer">
+    font-size: 12px;
+    font-weight: 700;
 
-                    <div class="dynamic-item education-item">
+    transition: var(--rb-transition);
+}
 
-                        <div class="dynamic-item-header">
+.add-item-btn:hover {
+    background: #dbeafe;
 
-                            <strong>
-                                Education
-                            </strong>
+    border-style: solid;
 
-                            <button
-                                type="button"
-                                class="remove-btn"
-                                data-remove="education">
+    transform: translateY(-1px);
+}
 
-                                🗑
 
-                            </button>
+/* =========================================================
+   REMOVE ITEM
+========================================================= */
 
-                        </div>
+.remove-item-btn {
+    width: 32px;
+    height: 32px;
 
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 
-                        <div class="form-grid">
+    border: 1px solid #fecaca;
+    border-radius: 8px;
 
-                            <div class="form-group">
+    background: white;
 
-                                <label>
-                                    Degree
-                                </label>
+    color: var(--rb-danger);
 
-                                <input
-                                    type="text"
-                                    name="degree[]"
-                                    placeholder="e.g. B.Sc Computer Science">
+    transition: var(--rb-transition);
+}
 
-                            </div>
+.remove-item-btn:hover {
+    background: var(--rb-danger-soft);
+}
 
 
-                            <div class="form-group">
+/* =========================================================
+   SKILLS
+========================================================= */
 
-                                <label>
-                                    Institution
-                                </label>
+.skills-input-wrapper {
+    display: flex;
 
-                                <input
-                                    type="text"
-                                    name="institution[]"
-                                    placeholder="College / University">
+    gap: 8px;
+}
 
-                            </div>
+.skills-input-wrapper input {
+    flex: 1;
+}
 
+.add-skill-btn {
+    min-width: 45px;
 
-                            <div class="form-group">
+    border: none;
 
-                                <label>
-                                    Start Year
-                                </label>
+    border-radius: 9px;
 
-                                <input
-                                    type="text"
-                                    name="education_start[]"
-                                    placeholder="2024">
+    background: var(--rb-primary);
 
-                            </div>
+    color: white;
 
+    font-size: 18px;
+}
 
-                            <div class="form-group">
+.skills-list {
+    display: flex;
 
-                                <label>
-                                    End Year
-                                </label>
+    flex-wrap: wrap;
 
-                                <input
-                                    type="text"
-                                    name="education_end[]"
-                                    placeholder="2027">
+    gap: 7px;
 
-                            </div>
+    margin-top: 12px;
+}
 
+.skill-tag {
+    display: inline-flex;
 
-                            <div class="form-group">
+    align-items: center;
 
-                                <label>
-                                    CGPA / Percentage
-                                </label>
+    gap: 7px;
 
-                                <input
-                                    type="text"
-                                    name="grade[]"
-                                    placeholder="e.g. 8.5 CGPA">
+    padding: 6px 10px;
 
-                            </div>
+    border-radius: 20px;
 
+    background: var(--rb-primary-soft);
 
-                            <div class="form-group">
+    color: var(--rb-primary);
 
-                                <label>
-                                    Location
-                                </label>
+    font-size: 11px;
+    font-weight: 700;
+}
 
-                                <input
-                                    type="text"
-                                    name="education_location[]"
-                                    placeholder="Pune, Maharashtra">
+.skill-tag button {
+    padding: 0;
 
-                            </div>
+    border: none;
 
-                        </div>
+    background: transparent;
 
-                    </div>
+    color: inherit;
 
-                </div>
+    font-size: 12px;
+}
 
-            </section>
 
+/* =========================================================
+   CHECKBOX / SWITCH
+========================================================= */
 
+.checkbox-row {
+    display: flex;
 
-            <!-- =============================================
-                 SKILLS
-            ============================================== -->
+    align-items: center;
 
-            <section class="builder-section"
-                     id="skillsSection">
+    gap: 8px;
 
-                <div class="builder-section-header">
+    margin-top: 10px;
+}
 
-                    <div class="section-icon blue">
-                        🛠️
-                    </div>
+.checkbox-row input {
+    accent-color: var(--rb-primary);
+}
 
-                    <div>
+.checkbox-row label {
+    margin: 0;
 
-                        <span class="section-number">
-                            05
-                        </span>
+    font-size: 12px;
 
-                        <h2>
-                            Technical Skills
-                        </h2>
+    font-weight: 500;
+}
 
-                        <p>
-                            Add skills relevant to your target role.
-                        </p>
 
-                    </div>
+/* =========================================================
+   AI VERIFICATION CARD
+========================================================= */
 
-                </div>
+.ai-verification-card {
+    position: relative;
 
+    overflow: hidden;
 
-                <div class="skills-builder">
+    padding: 22px;
 
-                    <div class="skill-category">
+    border-radius: 16px;
 
-                        <div class="skill-category-header">
+    background:
+        linear-gradient(
+            135deg,
+            #111827,
+            #1e1b4b
+        );
 
-                            <h3>
-                                Programming Languages
-                            </h3>
+    color: white;
 
-                            <button
-                                type="button"
-                                class="add-skill-btn"
-                                data-category="programming">
+    box-shadow:
+        0 15px 40px rgba(15, 23, 42, 0.18);
+}
 
-                                + Add
+.ai-verification-card::before {
+    content: "";
 
-                            </button>
+    position: absolute;
 
-                        </div>
+    width: 180px;
+    height: 180px;
 
-                        <div
-                            class="skill-inputs"
-                            id="programmingSkills">
+    right: -70px;
+    top: -70px;
 
-                            <input
-                                type="text"
-                                name="programming_skills[]"
-                                placeholder="Java">
+    border-radius: 50%;
 
-                            <input
-                                type="text"
-                                name="programming_skills[]"
-                                placeholder="Python">
+    background:
+        rgba(124, 58, 237, 0.25);
 
-                        </div>
+    filter: blur(20px);
+}
 
-                    </div>
+.ai-header {
+    position: relative;
 
+    display: flex;
 
-                    <div class="skill-category">
+    align-items: center;
+    justify-content: space-between;
 
-                        <div class="skill-category-header">
+    gap: 15px;
 
-                            <h3>
-                                Frameworks & Libraries
-                            </h3>
+    margin-bottom: 18px;
+}
 
-                            <button
-                                type="button"
-                                class="add-skill-btn"
-                                data-category="frameworks">
+.ai-title {
+    display: flex;
 
-                                + Add
+    align-items: center;
 
-                            </button>
+    gap: 10px;
+}
 
-                        </div>
+.ai-icon {
+    width: 42px;
+    height: 42px;
 
-                        <div
-                            class="skill-inputs"
-                            id="frameworkSkills">
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-                            <input
-                                type="text"
-                                name="framework_skills[]"
-                                placeholder="Flask">
+    border-radius: 11px;
 
-                            <input
-                                type="text"
-                                name="framework_skills[]"
-                                placeholder="Spring Boot">
+    background: rgba(255, 255, 255, 0.12);
 
-                        </div>
+    font-size: 19px;
+}
 
-                    </div>
+.ai-title h3 {
+    margin: 0;
 
+    font-size: 16px;
+}
 
-                    <div class="skill-category">
+.ai-title p {
+    margin: 2px 0 0;
 
-                        <div class="skill-category-header">
+    color: #cbd5e1;
 
-                            <h3>
-                                Databases
-                            </h3>
+    font-size: 10px;
+}
 
-                            <button
-                                type="button"
-                                class="add-skill-btn"
-                                data-category="database">
+.ai-score {
+    position: relative;
 
-                                + Add
+    width: 80px;
+    height: 80px;
 
-                            </button>
+    display: flex;
+    flex-direction: column;
 
-                        </div>
+    align-items: center;
+    justify-content: center;
 
-                        <div
-                            class="skill-inputs"
-                            id="databaseSkills">
+    border-radius: 50%;
 
-                            <input
-                                type="text"
-                                name="database_skills[]"
-                                placeholder="MySQL">
+    border: 5px solid rgba(255, 255, 255, 0.14);
+}
 
-                        </div>
+.ai-score strong {
+    font-size: 22px;
+}
 
-                    </div>
+.ai-score span {
+    color: #cbd5e1;
 
+    font-size: 9px;
+}
 
-                    <div class="skill-category">
+.ai-check-list {
+    position: relative;
 
-                        <div class="skill-category-header">
+    display: grid;
 
-                            <h3>
-                                Tools & Technologies
-                            </h3>
+    gap: 8px;
 
-                            <button
-                                type="button"
-                                class="add-skill-btn"
-                                data-category="tools">
+    margin-top: 15px;
+}
 
-                                + Add
+.ai-check {
+    display: flex;
 
-                            </button>
+    align-items: center;
 
-                        </div>
+    gap: 9px;
 
-                        <div
-                            class="skill-inputs"
-                            id="toolSkills">
+    padding: 9px 11px;
 
-                            <input
-                                type="text"
-                                name="tool_skills[]"
-                                placeholder="Git">
+    border-radius: 8px;
 
-                            <input
-                                type="text"
-                                name="tool_skills[]"
-                                placeholder="GitHub">
+    background:
+        rgba(255, 255, 255, 0.07);
 
-                        </div>
+    color: #e2e8f0;
 
-                    </div>
+    font-size: 11px;
+}
 
-                </div>
+.ai-check.success {
+    color: #bbf7d0;
+}
 
+.ai-check.warning {
+    color: #fde68a;
+}
 
-                <div class="skill-suggestion-card">
+.ai-check.danger {
+    color: #fecaca;
+}
 
-                    <div>
-                        <strong>
-                            🤖 Missing Skills?
-                        </strong>
 
-                        <p>
-                            AI can identify skills frequently
-                            requested for your target role.
-                        </p>
-                    </div>
+/* =========================================================
+   ATS SCORE PANEL
+========================================================= */
 
-                    <button
-                        type="button"
-                        id="suggestSkillsBtn"
-                        class="ai-btn">
+.ats-card {
+    padding: 22px;
 
-                        💡 Suggest Skills
+    background: white;
 
-                    </button>
+    border: 1px solid var(--rb-border);
 
-                </div>
+    border-radius: var(--rb-radius);
 
-            </section>
+    box-shadow: var(--rb-shadow-sm);
+}
 
+.ats-header {
+    display: flex;
 
+    justify-content: space-between;
 
-            <!-- =============================================
-                 EXPERIENCE
-            ============================================== -->
+    align-items: center;
 
-            <section class="builder-section"
-                     id="experienceSection">
+    margin-bottom: 18px;
+}
 
-                <div class="builder-section-header">
+.ats-header h3 {
+    margin: 0;
 
-                    <div class="section-icon orange">
-                        💼
-                    </div>
+    color: var(--rb-heading);
 
-                    <div>
+    font-size: 16px;
+}
 
-                        <span class="section-number">
-                            06
-                        </span>
+.ats-score-number {
+    color: var(--rb-primary);
 
-                        <h2>
-                            Work Experience
-                        </h2>
+    font-size: 24px;
+    font-weight: 800;
+}
 
-                        <p>
-                            Add internships and professional experience.
-                        </p>
+.ats-progress {
+    height: 10px;
 
-                    </div>
+    overflow: hidden;
 
-                    <button
-                        type="button"
-                        class="add-btn"
-                        id="addExperienceBtn">
+    border-radius: 20px;
 
-                        + Add Experience
+    background: #e2e8f0;
+}
 
-                    </button>
+.ats-progress-fill {
+    width: 0;
+    height: 100%;
 
-                </div>
+    border-radius: inherit;
 
+    background:
+        linear-gradient(
+            90deg,
+            #2563eb,
+            #7c3aed
+        );
 
-                <div id="experienceContainer">
+    transition: width 0.5s ease;
+}
 
-                    <div class="dynamic-item experience-item">
+.ats-status {
+    margin-top: 10px;
 
-                        <div class="dynamic-item-header">
+    color: var(--rb-muted);
 
-                            <strong>
-                                Work Experience
-                            </strong>
+    font-size: 11px;
+}
 
-                            <button
-                                type="button"
-                                class="remove-btn">
 
-                                🗑
+/* =========================================================
+   PREVIEW AREA
+========================================================= */
 
-                            </button>
+.resume-preview-wrapper {
+    position: sticky;
+    top: 88px;
 
-                        </div>
+    min-width: 0;
+}
 
+.preview-toolbar {
+    display: flex;
 
-                        <div class="form-grid">
+    align-items: center;
+    justify-content: space-between;
 
-                            <div class="form-group">
+    gap: 12px;
 
-                                <label>
-                                    Job Title
-                                </label>
+    padding: 11px 14px;
 
-                                <input
-                                    type="text"
-                                    name="job_title[]"
-                                    placeholder="Software Developer Intern">
+    margin-bottom: 13px;
 
-                            </div>
+    background: white;
 
+    border: 1px solid var(--rb-border);
 
-                            <div class="form-group">
+    border-radius: 11px;
 
-                                <label>
-                                    Company
-                                </label>
+    box-shadow: var(--rb-shadow-sm);
+}
 
-                                <input
-                                    type="text"
-                                    name="company[]"
-                                    placeholder="Company Name">
+.preview-toolbar strong {
+    color: var(--rb-heading);
 
-                            </div>
+    font-size: 13px;
+}
 
+.preview-actions {
+    display: flex;
 
-                            <div class="form-group">
+    gap: 7px;
+}
 
-                                <label>
-                                    Start Date
-                                </label>
 
-                                <input
-                                    type="month"
-                                    name="experience_start[]">
+/* =========================================================
+   RESUME PAPER
+========================================================= */
 
-                            </div>
+.resume-paper {
+    width: 100%;
 
+    max-width: 850px;
 
-                            <div class="form-group">
+    min-height: 1100px;
 
-                                <label>
-                                    End Date
-                                </label>
+    margin: 0 auto;
 
-                                <input
-                                    type="month"
-                                    name="experience_end[]">
+    padding: 55px 60px;
 
-                            </div>
+    background: white;
 
+    color: #1f2937;
 
-                            <div class="form-group full">
+    border: 1px solid #e5e7eb;
 
-                                <label>
-                                    Responsibilities & Achievements
-                                </label>
+    box-shadow:
+        0 20px 55px rgba(15, 23, 42, 0.14);
+}
 
-                                <textarea
-                                    name="experience_description[]"
-                                    rows="6"
-                                    placeholder="Describe your work, technologies used and measurable results..."></textarea>
 
-                            </div>
+/* =========================================================
+   RESUME HEADER
+========================================================= */
 
-                        </div>
+.resume-header {
+    padding-bottom: 20px;
 
+    margin-bottom: 22px;
 
-                        <button
-                            type="button"
-                            class="ai-bullet-btn improveExperienceBtn">
+    border-bottom: 2px solid #111827;
+}
 
-                            ✨ Improve Experience Bullets
+.resume-name {
+    margin: 0;
 
-                        </button>
+    color: #111827;
 
-                    </div>
+    font-size: 32px;
 
-                </div>
+    line-height: 1.15;
 
-            </section>
+    font-weight: 800;
 
+    letter-spacing: -0.8px;
+}
 
+.resume-job-title {
+    margin: 5px 0 10px;
 
-            <!-- =============================================
-                 PROJECTS
-            ============================================== -->
+    color: #2563eb;
 
-            <section class="builder-section"
-                     id="projectsSection">
+    font-size: 14px;
 
-                <div class="builder-section-header">
+    font-weight: 700;
+}
 
-                    <div class="section-icon purple">
-                        🚀
-                    </div>
+.resume-contact {
+    display: flex;
 
-                    <div>
+    flex-wrap: wrap;
 
-                        <span class="section-number">
-                            07
-                        </span>
+    gap: 7px 16px;
 
-                        <h2>
-                            Projects
-                        </h2>
+    color: #475569;
 
-                        <p>
-                            Showcase projects that demonstrate your skills.
-                        </p>
+    font-size: 10px;
+}
 
-                    </div>
+.resume-contact span {
+    display: inline-flex;
 
-                    <button
-                        type="button"
-                        class="add-btn"
-                        id="addProjectBtn">
+    align-items: center;
 
-                        + Add Project
+    gap: 4px;
+}
 
-                    </button>
 
-                </div>
+/* =========================================================
+   RESUME SECTIONS
+========================================================= */
 
+.resume-section {
+    margin-bottom: 21px;
+}
 
-                <div id="projectsContainer">
+.resume-section-title {
+    display: flex;
 
-                    <div class="dynamic-item project-item">
+    align-items: center;
 
-                        <div class="dynamic-item-header">
+    gap: 9px;
 
-                            <strong>
-                                Project
-                            </strong>
+    padding-bottom: 5px;
 
-                            <button
-                                type="button"
-                                class="remove-btn">
+    margin-bottom: 10px;
 
-                                🗑
+    color: #111827;
 
-                            </button>
+    font-size: 13px;
 
-                        </div>
+    font-weight: 800;
 
+    text-transform: uppercase;
 
-                        <div class="form-grid">
+    letter-spacing: 0.7px;
 
-                            <div class="form-group">
+    border-bottom: 1px solid #dbe2ea;
+}
 
-                                <label>
-                                    Project Name
-                                </label>
+.resume-section-title::before {
+    content: "";
 
-                                <input
-                                    type="text"
-                                    name="project_name[]"
-                                    placeholder="Placement Training Portal">
+    width: 4px;
+    height: 16px;
 
-                            </div>
+    border-radius: 2px;
 
+    background: #2563eb;
+}
 
-                            <div class="form-group">
 
-                                <label>
-                                    Project Type
-                                </label>
+/* =========================================================
+   SUMMARY
+========================================================= */
 
-                                <select name="project_type[]">
+.resume-summary {
+    margin: 0;
 
-                                    <option value="">
-                                        Select Type
-                                    </option>
+    color: #374151;
 
-                                    <option>
-                                        Academic
-                                    </option>
+    font-size: 10.5px;
 
-                                    <option>
-                                        Personal
-                                    </option>
+    line-height: 1.7;
 
-                                    <option>
-                                        Internship
-                                    </option>
+    text-align: justify;
+}
 
-                                    <option>
-                                        Freelance
-                                    </option>
 
-                                </select>
+/* =========================================================
+   EXPERIENCE / EDUCATION
+========================================================= */
 
-                            </div>
+.resume-entry {
+    margin-bottom: 15px;
+}
 
+.resume-entry:last-child {
+    margin-bottom: 0;
+}
 
-                            <div class="form-group">
+.resume-entry-header {
+    display: flex;
 
-                                <label>
-                                    GitHub URL
-                                </label>
+    justify-content: space-between;
 
-                                <input
-                                    type="url"
-                                    name="project_github[]"
-                                    placeholder="https://github.com/...">
+    gap: 15px;
+}
 
-                            </div>
+.resume-entry-title {
+    margin: 0;
 
+    color: #111827;
 
-                            <div class="form-group">
+    font-size: 12px;
 
-                                <label>
-                                    Live Demo
-                                </label>
+    font-weight: 800;
+}
 
-                                <input
-                                    type="url"
-                                    name="project_demo[]"
-                                    placeholder="https://...">
+.resume-entry-company {
+    margin: 2px 0 0;
 
-                            </div>
+    color: #2563eb;
 
+    font-size: 10px;
 
-                            <div class="form-group full">
+    font-weight: 700;
+}
 
-                                <label>
-                                    Technologies
-                                </label>
+.resume-entry-date {
+    flex-shrink: 0;
 
-                                <input
-                                    type="text"
-                                    name="project_technologies[]"
-                                    placeholder="Flask, MySQL, JavaScript, HTML, CSS">
+    color: #64748b;
 
-                            </div>
+    font-size: 9.5px;
 
+    font-weight: 600;
+}
 
-                            <div class="form-group full">
+.resume-entry-description {
+    margin: 6px 0 0;
 
-                                <label>
-                                    Project Description
-                                </label>
+    color: #374151;
 
-                                <textarea
-                                    name="project_description[]"
-                                    rows="6"
-                                    placeholder="Explain what you built, how you built it and the impact/results..."></textarea>
+    font-size: 10px;
 
-                            </div>
+    line-height: 1.65;
+}
 
-                        </div>
 
+/* =========================================================
+   BULLET LIST
+========================================================= */
 
-                        <button
-                            type="button"
-                            class="ai-bullet-btn improveProjectBtn">
+.resume-paper ul {
+    margin: 6px 0 0;
 
-                            ✨ Improve Project Description
+    padding-left: 17px;
+}
 
-                        </button>
+.resume-paper li {
+    margin-bottom: 4px;
 
-                    </div>
+    color: #374151;
 
-                </div>
+    font-size: 10px;
 
-            </section>
+    line-height: 1.6;
+}
 
 
+/* =========================================================
+   SKILL DISPLAY
+========================================================= */
 
-            <!-- =============================================
-                 CERTIFICATIONS
-            ============================================== -->
+.resume-skills {
+    display: flex;
 
-            <section class="builder-section"
-                     id="certificationSection">
+    flex-wrap: wrap;
 
-                <div class="builder-section-header">
+    gap: 6px;
+}
 
-                    <div class="section-icon green">
-                        🏆
-                    </div>
+.resume-skill {
+    padding: 4px 8px;
 
-                    <div>
+    border-radius: 4px;
 
-                        <span class="section-number">
-                            08
-                        </span>
+    background: #f1f5f9;
 
-                        <h2>
-                            Certifications
-                        </h2>
+    color: #334155;
 
-                    </div>
+    font-size: 9.5px;
 
-                    <button
-                        type="button"
-                        class="add-btn"
-                        id="addCertificationBtn">
+    font-weight: 600;
+}
 
-                        + Add Certification
 
-                    </button>
+/* =========================================================
+   PROJECTS
+========================================================= */
 
-                </div>
+.resume-project {
+    margin-bottom: 13px;
+}
 
+.resume-project-title {
+    margin: 0;
 
-                <div id="certificationContainer">
+    color: #111827;
 
-                    <div class="dynamic-item">
+    font-size: 11px;
 
-                        <div class="form-grid">
+    font-weight: 800;
+}
 
-                            <div class="form-group">
+.resume-project-tech {
+    margin-left: 5px;
 
-                                <label>
-                                    Certification Name
-                                </label>
+    color: #2563eb;
 
-                                <input
-                                    type="text"
-                                    name="certification_name[]"
-                                    placeholder="Java Programming">
+    font-size: 9px;
 
-                            </div>
+    font-weight: 600;
+}
 
+.resume-project-description {
+    margin: 4px 0 0;
 
-                            <div class="form-group">
+    color: #374151;
 
-                                <label>
-                                    Issuing Organization
-                                </label>
+    font-size: 10px;
 
-                                <input
-                                    type="text"
-                                    name="certification_org[]"
-                                    placeholder="Organization">
+    line-height: 1.6;
+}
 
-                            </div>
 
+/* =========================================================
+   CERTIFICATIONS
+========================================================= */
 
-                            <div class="form-group">
+.certification-item {
+    display: flex;
 
-                                <label>
-                                    Year
-                                </label>
+    justify-content: space-between;
 
-                                <input
-                                    type="text"
-                                    name="certification_year[]"
-                                    placeholder="2026">
+    gap: 15px;
 
-                            </div>
+    padding: 6px 0;
 
+    border-bottom: 1px dashed #dbe2ea;
+}
 
-                            <div class="form-group">
+.certification-item:last-child {
+    border-bottom: none;
+}
 
-                                <label>
-                                    Credential URL
-                                </label>
+.certification-name {
+    color: #1f2937;
 
-                                <input
-                                    type="url"
-                                    name="certification_url[]"
-                                    placeholder="https://...">
+    font-size: 10px;
 
-                            </div>
+    font-weight: 700;
+}
 
-                        </div>
+.certification-provider {
+    color: #64748b;
 
-                    </div>
+    font-size: 9px;
+}
 
-                </div>
 
-            </section>
+/* =========================================================
+   PORTFOLIO LINKS
+========================================================= */
 
+.resume-links {
+    display: flex;
 
+    flex-wrap: wrap;
 
-            <!-- =============================================
-                 ACHIEVEMENTS
-            ============================================== -->
+    gap: 10px;
+}
 
-            <section class="builder-section">
+.resume-link {
+    color: #2563eb;
 
-                <div class="builder-section-header">
+    font-size: 9.5px;
 
-                    <div class="section-icon orange">
-                        🥇
-                    </div>
+    font-weight: 600;
+}
 
-                    <div>
 
-                        <span class="section-number">
-                            09
-                        </span>
+/* =========================================================
+   RESUME TEMPLATE VARIATIONS
+========================================================= */
 
-                        <h2>
-                            Achievements
-                        </h2>
+.template-modern .resume-header {
+    border-bottom: 3px solid #2563eb;
+}
 
-                        <p>
-                            Add awards, competitions and measurable achievements.
-                        </p>
+.template-minimal .resume-header {
+    border-bottom: 1px solid #cbd5e1;
+}
 
-                    </div>
+.template-minimal .resume-section-title::before {
+    display: none;
+}
 
-                    <button
-                        type="button"
-                        class="add-btn"
-                        id="addAchievementBtn">
+.template-minimal .resume-section-title {
+    border-bottom: none;
+}
 
-                        + Add Achievement
+.template-professional .resume-header {
+    border-bottom: 2px solid #111827;
+}
 
-                    </button>
 
-                </div>
+/* =========================================================
+   TEMPLATE SELECTOR
+========================================================= */
 
+.template-grid {
+    display: grid;
 
-                <div id="achievementContainer">
+    grid-template-columns:
+        repeat(3, 1fr);
 
-                    <div class="dynamic-item">
+    gap: 10px;
+}
 
-                        <div class="form-group">
+.template-option {
+    padding: 9px;
 
-                            <label>
-                                Achievement
-                            </label>
+    background: white;
 
-                            <textarea
-                                name="achievement[]"
-                                rows="3"
-                                placeholder="e.g. Secured top position in coding competition..."></textarea>
+    border: 2px solid var(--rb-border);
 
-                        </div>
+    border-radius: 10px;
 
-                    </div>
+    cursor: pointer;
 
-                </div>
+    transition: var(--rb-transition);
+}
 
-            </section>
+.template-option:hover {
+    border-color: #93c5fd;
+}
 
+.template-option.active {
+    border-color: var(--rb-primary);
 
+    background: var(--rb-primary-soft);
+}
 
-            <!-- =============================================
-                 EXTRA INFORMATION
-            ============================================== -->
+.template-preview {
+    height: 100px;
 
-            <section class="builder-section">
+    border-radius: 5px;
 
-                <div class="builder-section-header">
+    background:
+        linear-gradient(
+            180deg,
+            #e2e8f0 0 8px,
+            white 8px 100%
+        );
 
-                    <div class="section-icon blue">
-                        🌐
-                    </div>
+    border: 1px solid #dbe2ea;
+}
 
-                    <div>
+.template-option span {
+    display: block;
 
-                        <span class="section-number">
-                            10
-                        </span>
+    margin-top: 6px;
 
-                        <h2>
-                            Additional Information
-                        </h2>
+    color: var(--rb-heading);
 
-                    </div>
+    text-align: center;
 
-                </div>
+    font-size: 10px;
+    font-weight: 700;
+}
 
 
-                <div class="form-grid">
+/* =========================================================
+   COMPLETENESS CHECK
+========================================================= */
 
-                    <div class="form-group">
+.completeness-card {
+    padding: 20px;
 
-                        <label>
-                            Languages
-                        </label>
+    background: white;
 
-                        <input
-                            type="text"
-                            id="languages"
-                            placeholder="English, Hindi, Marathi">
+    border: 1px solid var(--rb-border);
 
-                    </div>
+    border-radius: var(--rb-radius);
 
+    box-shadow: var(--rb-shadow-sm);
+}
 
-                    <div class="form-group">
+.completeness-header {
+    display: flex;
 
-                        <label>
-                            Relevant Coursework
-                        </label>
+    align-items: center;
+    justify-content: space-between;
 
-                        <input
-                            type="text"
-                            id="coursework"
-                            placeholder="DSA, DBMS, OS, OOP">
+    margin-bottom: 12px;
+}
 
-                    </div>
+.completeness-header h3 {
+    margin: 0;
 
+    color: var(--rb-heading);
 
-                    <div class="form-group full">
+    font-size: 15px;
+}
 
-                        <label>
-                            Interests
-                        </label>
+.completeness-percent {
+    color: var(--rb-success);
 
-                        <input
-                            type="text"
-                            id="interests"
-                            placeholder="Technology, Open Source, Problem Solving">
+    font-size: 18px;
 
-                    </div>
+    font-weight: 800;
+}
 
-                </div>
+.completeness-bar {
+    height: 9px;
 
-            </section>
+    overflow: hidden;
 
+    border-radius: 20px;
 
+    background: #e2e8f0;
+}
 
-            <!-- =============================================
-                 FINAL ACTIONS
-            ============================================== -->
+.completeness-fill {
+    width: 0;
 
-            <section class="builder-final-actions">
+    height: 100%;
 
-                <button
-                    type="button"
-                    class="secondary-large-btn"
-                    id="clearResumeBtn">
+    border-radius: inherit;
 
-                    🗑 Clear
+    background: var(--rb-success);
 
-                </button>
+    transition: width 0.5s ease;
+}
 
 
-                <button
-                    type="button"
-                    class="secondary-large-btn"
-                    id="saveDraftBtn">
+/* =========================================================
+   CHECKLIST
+========================================================= */
 
-                    💾 Save Draft
+.resume-checklist {
+    display: grid;
 
-                </button>
+    gap: 7px;
 
+    margin-top: 14px;
+}
 
-                <button
-                    type="button"
-                    class="primary-large-btn"
-                    id="generateResumeBtn">
+.checklist-item {
+    display: flex;
 
-                    🚀 Generate Resume
+    align-items: center;
 
-                </button>
+    gap: 8px;
 
-            </section>
+    color: var(--rb-text);
 
+    font-size: 11px;
+}
 
-        </main>
+.checklist-item.completed {
+    color: var(--rb-success);
+}
 
+.checklist-item.pending {
+    color: var(--rb-warning);
+}
 
 
-        <!-- =================================================
-             RIGHT SIDEBAR
-        ================================================== -->
+/* =========================================================
+   ALERTS
+========================================================= */
 
-        <aside class="resume-sidebar">
+.rb-alert {
+    display: flex;
 
+    align-items: flex-start;
 
-            <!-- =============================================
-                 ATS SCORE
-            ============================================== -->
+    gap: 10px;
 
-            <section class="ats-card">
+    padding: 12px 14px;
 
-                <div class="ats-header">
+    margin-bottom: 15px;
 
-                    <div>
+    border-radius: 9px;
 
-                        <span>
-                            ATS READINESS
-                        </span>
+    font-size: 11px;
+}
 
-                        <h2>
-                            Resume Score
-                        </h2>
+.rb-alert-success {
+    background: var(--rb-success-soft);
 
-                    </div>
+    border: 1px solid #bbf7d0;
 
-                    <div class="ats-circle"
-                         id="atsScoreCircle">
+    color: #166534;
+}
 
-                        <strong id="atsScore">
-                            0
-                        </strong>
+.rb-alert-warning {
+    background: var(--rb-warning-soft);
 
-                        <small>
-                            /100
-                        </small>
+    border: 1px solid #fde68a;
 
-                    </div>
+    color: #92400e;
+}
 
-                </div>
+.rb-alert-danger {
+    background: var(--rb-danger-soft);
 
+    border: 1px solid #fecaca;
 
-                <div class="ats-progress">
+    color: #991b1b;
+}
 
-                    <div
-                        id="atsProgressFill">
-                    </div>
 
-                </div>
+/* =========================================================
+   LOADING
+========================================================= */
 
+.resume-loading {
+    position: fixed;
 
-                <p id="atsStatus">
-                    Complete your resume to calculate your score.
-                </p>
+    inset: 0;
 
+    z-index: 9999;
 
-                <button
-                    type="button"
-                    class="ats-check-btn"
-                    id="verifyResumeBtn">
+    display: none;
 
-                    🤖 Verify Resume
+    align-items: center;
+    justify-content: center;
 
-                </button>
+    flex-direction: column;
 
-            </section>
+    background:
+        rgba(248, 250, 252, 0.88);
 
+    backdrop-filter: blur(5px);
+}
 
+.resume-loading.active {
+    display: flex;
+}
 
-            <!-- =============================================
-                 ATS CHECKLIST
-            ============================================== -->
+.resume-loader {
+    width: 42px;
+    height: 42px;
 
-            <section class="sidebar-card">
+    border: 4px solid #dbeafe;
 
-                <div class="sidebar-card-header">
+    border-top-color: var(--rb-primary);
 
-                    <h3>
-                        ✅ Resume Checklist
-                    </h3>
+    border-radius: 50%;
 
-                </div>
+    animation:
+        rbSpin 0.8s linear infinite;
+}
 
+.resume-loading p {
+    margin-top: 12px;
 
-                <div class="checklist">
+    color: var(--rb-muted);
 
-                    <div class="check-item"
-                         id="checkContact">
+    font-size: 12px;
+}
 
-                        <span>
-                            ○
-                        </span>
+@keyframes rbSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
 
-                        <p>
-                            Contact information
-                        </p>
 
-                    </div>
+/* =========================================================
+   TOAST
+========================================================= */
 
+.resume-toast {
+    position: fixed;
 
-                    <div class="check-item"
-                         id="checkSummary">
+    right: 25px;
+    bottom: 25px;
 
-                        <span>
-                            ○
-                        </span>
+    z-index: 10000;
 
-                        <p>
-                            Professional summary
-                        </p>
+    max-width: 350px;
 
-                    </div>
+    padding: 13px 17px;
 
+    border-radius: 10px;
 
-                    <div class="check-item"
-                         id="checkEducation">
+    background: #0f172a;
 
-                        <span>
-                            ○
-                        </span>
+    color: white;
 
-                        <p>
-                            Education
-                        </p>
+    font-size: 12px;
+    font-weight: 600;
 
-                    </div>
+    box-shadow:
+        0 12px 35px rgba(15, 23, 42, 0.22);
 
+    opacity: 0;
 
-                    <div class="check-item"
-                         id="checkSkills">
+    transform: translateY(15px);
 
-                        <span>
-                            ○
-                        </span>
+    pointer-events: none;
 
-                        <p>
-                            Technical skills
-                        </p>
+    transition: var(--rb-transition);
+}
 
-                    </div>
+.resume-toast.show {
+    opacity: 1;
 
+    transform: translateY(0);
+}
 
-                    <div class="check-item"
-                         id="checkProjects">
 
-                        <span>
-                            ○
-                        </span>
+/* =========================================================
+   MODAL
+========================================================= */
 
-                        <p>
-                            Projects
-                        </p>
+.resume-modal {
+    position: fixed;
 
-                    </div>
+    inset: 0;
 
+    z-index: 9998;
 
-                    <div class="check-item"
-                         id="checkExperience">
+    display: none;
 
-                        <span>
-                            ○
-                        </span>
+    align-items: center;
+    justify-content: center;
 
-                        <p>
-                            Experience
-                        </p>
+    padding: 20px;
 
-                    </div>
+    background:
+        rgba(15, 23, 42, 0.65);
 
-                </div>
+    backdrop-filter: blur(5px);
+}
 
-            </section>
+.resume-modal.show {
+    display: flex;
+}
 
+.resume-modal-content {
+    width: min(700px, 100%);
 
+    max-height: 90vh;
 
-            <!-- =============================================
-                 AI TOOLS
-            ============================================== -->
+    overflow-y: auto;
 
-            <section class="sidebar-card ai-tools-card">
+    padding: 25px;
 
-                <div class="sidebar-card-header">
+    border-radius: 16px;
 
-                    <div>
+    background: white;
 
-                        <span class="ai-label">
-                            AI TOOLS
-                        </span>
+    box-shadow: var(--rb-shadow-lg);
 
-                        <h3>
-                            Resume Assistant
-                        </h3>
+    animation:
+        rbModalIn 0.25s ease;
+}
 
-                    </div>
+@keyframes rbModalIn {
+    from {
+        opacity: 0;
 
-                    🤖
+        transform:
+            translateY(20px)
+            scale(0.97);
+    }
 
-                </div>
+    to {
+        opacity: 1;
 
+        transform:
+            translateY(0)
+            scale(1);
+    }
+}
 
-                <button
-                    type="button"
-                    class="ai-tool-btn"
-                    id="tailorResumeBtn">
+.resume-modal-header {
+    display: flex;
 
-                    🎯 Tailor Resume to Job
+    align-items: center;
+    justify-content: space-between;
 
-                </button>
+    gap: 15px;
 
+    margin-bottom: 18px;
+}
 
-                <button
-                    type="button"
-                    class="ai-tool-btn"
-                    id="missingKeywordsBtn">
+.resume-modal-header h2 {
+    margin: 0;
 
-                    🔍 Find Missing Keywords
+    color: var(--rb-heading);
 
-                </button>
+    font-size: 20px;
+}
 
+.modal-close {
+    width: 36px;
+    height: 36px;
 
-                <button
-                    type="button"
-                    class="ai-tool-btn"
-                    id="generateAchievementBtn">
+    border: none;
 
-                    🏆 Generate Achievement
+    border-radius: 8px;
 
-                </button>
+    background: #f1f5f9;
 
+    color: #475569;
 
-                <button
-                    type="button"
-                    class="ai-tool-btn"
-                    id="resumeSuggestionsBtn">
+    font-size: 18px;
+}
 
-                    💡 Get Resume Suggestions
+.modal-close:hover {
+    background: #fee2e2;
 
-                </button>
+    color: var(--rb-danger);
+}
 
-            </section>
 
+/* =========================================================
+   MOBILE ACTION BAR
+========================================================= */
 
+.mobile-action-bar {
+    display: none;
+}
 
-            <!-- =============================================
-                 QUICK TIPS
-            ============================================== -->
 
-            <section class="sidebar-card tips-card">
+/* =========================================================
+   TABLET
+========================================================= */
 
-                <h3>
-                    💡 Resume Tips
-                </h3>
+@media (max-width: 1100px) {
 
-                <ul>
+    .resume-builder-grid {
+        grid-template-columns: 1fr;
+    }
 
-                    <li>
-                        Use measurable achievements.
-                    </li>
+    .resume-preview-wrapper {
+        position: static;
+    }
 
-                    <li>
-                        Match keywords with the job description.
-                    </li>
+    .resume-paper {
+        max-width: 850px;
+    }
+}
 
-                    <li>
-                        Keep formatting simple and readable.
-                    </li>
 
-                    <li>
-                        Focus on relevant technical skills.
-                    </li>
+/* =========================================================
+   TABLET / SMALL LAPTOP
+========================================================= */
 
-                    <li>
-                        Avoid unnecessary personal information.
-                    </li>
+@media (max-width: 800px) {
 
-                </ul>
+    .resume-builder {
+        width: 94%;
+        margin-top: 20px;
+    }
 
-            </section>
+    .resume-toolbar {
+        position: static;
 
-        </aside>
+        flex-direction: column;
 
-    </div>
+        align-items: stretch;
+    }
 
-</div>
+    .toolbar-left,
+    .toolbar-right {
+        width: 100%;
+    }
 
+    .toolbar-left .rb-btn,
+    .toolbar-right .rb-btn {
+        flex: 1;
+    }
 
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
 
-<!-- =========================================================
-     AI VERIFICATION MODAL
-========================================================== -->
+    .form-group.full {
+        grid-column: auto;
+    }
 
-<div
-    class="resume-modal"
-    id="verificationModal"
-    aria-hidden="true">
+    .profile-grid {
+        grid-template-columns: 1fr;
+    }
 
-    <div class="modal-overlay"
-         data-close-modal="verificationModal">
-    </div>
+    .profile-photo {
+        width: 90px;
+        height: 90px;
+    }
 
+    .template-grid {
+        grid-template-columns:
+            repeat(3, 1fr);
+    }
+}
 
-    <div class="modal-container">
 
-        <div class="modal-header">
+/* =========================================================
+   MOBILE
+========================================================= */
 
-            <div>
+@media (max-width: 600px) {
 
-                <span class="modal-label">
-                    AI ANALYSIS
-                </span>
+    body {
+        font-size: 14px;
+    }
 
-                <h2>
-                    🤖 Resume Verification
-                </h2>
+    .resume-builder {
+        width: 94%;
+        margin: 15px auto 40px;
+    }
 
-            </div>
+    .resume-page-header h1 {
+        font-size: 27px;
+    }
 
-            <button
-                type="button"
-                class="modal-close"
-                data-close-modal="verificationModal">
+    .resume-page-header p {
+        font-size: 12px;
+    }
 
-                ✕
+    .editor-card {
+        padding: 16px;
 
-            </button>
+        border-radius: 12px;
+    }
 
-        </div>
+    .editor-section-header {
+        align-items: flex-start;
+    }
 
+    .form-grid {
+        gap: 12px;
+    }
 
-        <div id="verificationLoading"
-             class="verification-loading">
+    .rb-btn {
+        min-height: 42px;
 
-            <div class="ai-loader">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
+        font-size: 11px;
 
-            <h3>
-                Analyzing your resume...
-            </h3>
+        padding: 0 11px;
+    }
 
-            <p>
-                Checking content, structure, keywords and ATS readability.
-            </p>
+    .dynamic-item {
+        padding: 13px;
+    }
 
-        </div>
+    .ai-verification-card {
+        padding: 17px;
+    }
 
+    .ai-header {
+        align-items: flex-start;
+    }
 
-        <div id="verificationResult"
-             class="verification-result"
-             style="display:none;">
+    .ai-score {
+        width: 65px;
+        height: 65px;
+    }
 
-            <div class="verification-score">
+    .ai-score strong {
+        font-size: 18px;
+    }
 
-                <div class="big-score"
-                     id="verificationScore">
+    .preview-toolbar {
+        flex-direction: column;
 
-                    0
+        align-items: stretch;
+    }
 
-                </div>
+    .preview-actions {
+        display: grid;
 
-                <span>
-                    ATS Readiness Score
-                </span>
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
 
-            </div>
+    /*
+       IMPORTANT:
+       Keep preview readable on mobile.
+       Do not squash the A4 document.
+    */
 
+    .resume-preview-wrapper {
+        overflow-x: auto;
 
-            <div class="verification-grid">
+        padding-bottom: 10px;
+    }
 
-                <div class="verification-stat">
+    .resume-paper {
+        width: 794px;
 
-                    <strong id="keywordScore">
-                        0%
-                    </strong>
+        min-height: 1123px;
 
-                    <span>
-                        Keyword Match
-                    </span>
+        padding: 45px 50px;
 
-                </div>
+        transform-origin: top left;
+    }
 
+    .resume-name {
+        font-size: 29px;
+    }
 
-                <div class="verification-stat">
+    .resume-contact {
+        gap: 5px 12px;
+    }
 
-                    <strong id="contentScore">
-                        0%
-                    </strong>
+    .resume-section {
+        margin-bottom: 18px;
+    }
 
-                    <span>
-                        Content Quality
-                    </span>
+    .resume-section-title {
+        font-size: 12px;
+    }
 
-                </div>
+    .resume-summary,
+    .resume-entry-description,
+    .resume-paper li {
+        font-size: 9.5px;
+    }
 
+    .resume-entry-title {
+        font-size: 11px;
+    }
 
-                <div class="verification-stat">
+    .resume-entry-company {
+        font-size: 9px;
+    }
 
-                    <strong id="formatScore">
-                        0%
-                    </strong>
+    .resume-entry-date {
+        font-size: 8.5px;
+    }
 
-                    <span>
-                        ATS Formatting
-                    </span>
+    .template-grid {
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
 
-                </div>
+    .resume-toast {
+        left: 15px;
+        right: 15px;
 
+        bottom: 15px;
 
-                <div class="verification-stat">
+        max-width: none;
 
-                    <strong id="skillsScore">
-                        0%
-                    </strong>
+        text-align: center;
+    }
+}
 
-                    <span>
-                        Skills Match
-                    </span>
 
-                </div>
+/* =========================================================
+   VERY SMALL MOBILE
+========================================================= */
 
-            </div>
+@media (max-width: 400px) {
 
+    .resume-page-header h1 {
+        font-size: 24px;
+    }
 
-            <div class="analysis-columns">
+    .editor-card {
+        padding: 13px;
+    }
 
-                <div class="analysis-box success">
+    .toolbar-left,
+    .toolbar-right {
+        display: grid;
 
-                    <h3>
-                        ✅ Strengths
-                    </h3>
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
 
-                    <ul id="strengthsList">
-                    </ul>
+    .toolbar-left .rb-btn,
+    .toolbar-right .rb-btn {
+        width: 100%;
+    }
 
-                </div>
+    .preview-actions {
+        grid-template-columns: 1fr;
+    }
 
+    .template-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
 
-                <div class="analysis-box warning">
 
-                    <h3>
-                        ⚠ Improvements
-                    </h3>
+/* =========================================================
+   PRINT / PDF
+========================================================= */
 
-                    <ul id="improvementsList">
-                    </ul>
+@media print {
 
-                </div>
+    body {
+        background: white !important;
+    }
 
-            </div>
+    body * {
+        visibility: hidden;
+    }
 
+    .resume-paper,
+    .resume-paper * {
+        visibility: visible;
+    }
 
-            <div class="missing-keywords">
+    .resume-paper {
+        position: absolute;
 
-                <h3>
-                    🔍 Missing Keywords
-                </h3>
+        left: 0;
+        top: 0;
 
-                <div id="missingKeywordsList">
-                </div>
+        width: 210mm;
 
-            </div>
+        min-height: 297mm;
 
-        </div>
+        margin: 0;
 
+        padding: 18mm;
 
-        <div class="modal-footer">
+        border: none;
 
-            <button
-                type="button"
-                class="secondary-large-btn"
-                data-close-modal="verificationModal">
+        box-shadow: none;
+    }
 
-                Close
+    .resume-toolbar,
+    .resume-editor,
+    .preview-toolbar,
+    .resume-toast,
+    .resume-modal,
+    .resume-loading {
+        display: none !important;
+    }
+}
 
-            </button>
 
-            <button
-                type="button"
-                class="primary-large-btn"
-                id="applyAISuggestionsBtn">
+/* =========================================================
+   ACCESSIBILITY
+========================================================= */
 
-                ✨ Apply Suggestions
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+    outline: 3px solid rgba(37, 99, 235, 0.2);
 
-            </button>
+    outline-offset: 2px;
+}
 
-        </div>
 
-    </div>
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
 
-</div>
+@media (prefers-reduced-motion: reduce) {
 
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
 
+        animation-iteration-count: 1 !important;
 
-<!-- =========================================================
-     PREVIEW MODAL
-========================================================== -->
+        transition-duration: 0.01ms !important;
 
-<div
-    class="resume-modal"
-    id="previewModal"
-    aria-hidden="true">
-
-    <div class="modal-overlay"
-         data-close-modal="previewModal">
-    </div>
-
-
-    <div class="preview-container">
-
-        <div class="preview-header">
-
-            <h2>
-                Resume Preview
-            </h2>
-
-            <div>
-
-                <button
-                    type="button"
-                    class="header-btn"
-                    id="printResumeBtn">
-
-                    🖨 Print
-
-                </button>
-
-                <button
-                    type="button"
-                    class="modal-close"
-                    data-close-modal="previewModal">
-
-                    ✕
-
-                </button>
-
-            </div>
-
-        </div>
-
-
-        <div
-            id="resumePreview"
-            class="resume-preview">
-
-            <!-- JS will generate live resume preview here -->
-
-            <div class="preview-placeholder">
-
-                <div>
-                    📄
-                </div>
-
-                <h2>
-                    Your Resume Preview
-                </h2>
-
-                <p>
-                    Start filling the form to see your resume here.
-                </p>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
-
-
-
-<!-- =========================================================
-     TOAST
-========================================================== -->
-
-<div
-    id="resumeToast"
-    class="resume-toast">
-
-</div>
-
-
-
-<!-- =========================================================
-     LOADING
-========================================================== -->
-
-<div
-    id="resumeLoading"
-    class="resume-loading">
-
-    <div class="loader-spinner"></div>
-
-    <h3>
-        Processing...
-    </h3>
-
-    <p>
-        Please wait.
-    </p>
-
-</div>
-
-
-{% endblock %}
-
-
-
-{% block js %}
-
-<script src="{{ url_for('static', filename='js/resume_builder.js') }}"
-        defer>
-</script>
-
-{% endblock %}
+        scroll-behavior: auto !important;
+    }
+}
