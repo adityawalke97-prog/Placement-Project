@@ -2330,7 +2330,304 @@ def logout():
     return redirect("/")
 
 
+@app.post("/api/resume/improve-summary")
+def api_improve_summary():
 
+    data = request.get_json() or {}
+
+    summary = data.get("summary", "").strip()
+    target_job = data.get("target_job", "Software Engineer")
+
+    if not summary:
+        return jsonify({
+            "success": False,
+            "error": "Summary is required"
+        }), 400
+
+    try:
+
+        result = improve_summary(
+            summary,
+            target_job
+        )
+
+        return jsonify({
+            "success": True,
+            "result": result
+        })
+
+    except Exception as e:
+
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
+
+
+@app.post("/api/resume/improve-experience")
+def api_improve_experience():
+
+    data = request.get_json() or {}
+
+    description = data.get("description", "").strip()
+    target_job = data.get(
+        "target_job",
+        "Software Engineer"
+    )
+
+    if not description:
+        return jsonify({
+            "success": False,
+            "error": "Experience description is required"
+        }), 400
+
+    try:
+
+        result = improve_experience(
+            description,
+            target_job
+        )
+
+        return jsonify({
+            "success": True,
+            "result": result
+        })
+
+    except Exception as e:
+
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
+
+
+@app.post("/api/resume/improve-project")
+def api_improve_project():
+
+    data = request.get_json() or {}
+
+    description = data.get("description", "").strip()
+    project_name = data.get("project_name", "")
+    technologies = data.get("technologies", "")
+
+    if not description:
+        return jsonify({
+            "success": False,
+            "error": "Project description is required"
+        }), 400
+
+    try:
+
+        result = improve_project(
+            description,
+            project_name,
+            technologies
+        )
+
+        return jsonify({
+            "success": True,
+            "result": result
+        })
+
+    except Exception as e:
+
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
+
+
+@app.post("/api/resume/suggest-skills")
+def api_suggest_skills():
+
+    data = request.get_json() or {}
+
+    target_job = data.get("target_job", "").strip()
+    job_description = data.get(
+        "job_description",
+        ""
+    ).strip()
+
+    if not target_job and not job_description:
+        return jsonify({
+            "success": False,
+            "error": "Target job or job description required"
+        }), 400
+
+    try:
+
+        result = suggest_skills(
+            target_job,
+            job_description
+        )
+
+        return jsonify({
+            "success": True,
+            **result
+        })
+
+    except Exception as e:
+
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
+
+
+@app.post("/api/resume/analyze-job")
+def api_analyze_job():
+
+    data = request.get_json() or {}
+
+    resume_text = data.get(
+        "resume_text",
+        ""
+    ).strip()
+
+    job_description = data.get(
+        "job_description",
+        ""
+    ).strip()
+
+    if not job_description:
+        return jsonify({
+            "success": False,
+            "error": "Job description is required"
+        }), 400
+
+    try:
+
+        result = analyze_job(
+            resume_text,
+            job_description
+        )
+
+        return jsonify({
+            "success": True,
+            **result
+        })
+
+    except Exception as e:
+
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
+
+
+@app.post("/api/resume/verify")
+def api_verify_resume():
+
+    data = request.get_json() or {}
+
+    resume_text = data.get(
+        "resume_text",
+        ""
+    ).strip()
+
+    job_description = data.get(
+        "job_description",
+        ""
+    ).strip()
+
+    if not resume_text:
+        return jsonify({
+            "success": False,
+            "error": "Resume data is required"
+        }), 400
+
+    try:
+
+        result = verify_resume(
+            resume_text,
+            job_description
+        )
+
+        return jsonify({
+            "success": True,
+            **result
+        })
+
+    except Exception as e:
+
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
+
+
+@app.post("/api/resume/generate-achievement")
+def api_generate_achievement():
+
+    data = request.get_json() or {}
+
+    context = data.get(
+        "context",
+        ""
+    ).strip()
+
+    if not context:
+        return jsonify({
+            "success": False,
+            "error": "Context is required"
+        }), 400
+
+    try:
+
+        result = generate_achievement(context)
+
+        return jsonify({
+            "success": True,
+            "result": result
+        })
+
+    except Exception as e:
+
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
+
+
+@app.post("/api/resume/suggestions")
+def api_resume_suggestions():
+
+    data = request.get_json() or {}
+
+    resume_text = data.get(
+        "resume_text",
+        ""
+    ).strip()
+
+    target_job = data.get(
+        "target_job",
+        ""
+    ).strip()
+
+    if not resume_text:
+        return jsonify({
+            "success": False,
+            "error": "Resume data is required"
+        }), 400
+
+    try:
+
+        result = resume_suggestions(
+            resume_text,
+            target_job
+        )
+
+        return jsonify({
+            "success": True,
+            **result
+        })
+
+    except Exception as e:
+
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
 
 
 # ==============================
