@@ -1,3 +1,218 @@
+// ======================================================
+// AI RESUME FEATURES
+// ======================================================
+
+async function callResumeAI(endpoint, text, extraData = {}) {
+    try {
+        const response = await fetch(endpoint, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                text: text,
+                ...extraData
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            throw new Error(data.error || "AI request failed");
+        }
+
+        return data.result;
+
+    } catch (error) {
+        console.error("AI Error:", error);
+        alert("AI error: " + error.message);
+        return null;
+    }
+}
+
+
+// ======================================================
+// IMPROVE WITH AI
+// ======================================================
+
+async function improveWithAI() {
+
+    const textarea =
+        document.querySelector("#summary") ||
+        document.querySelector("#resume-summary");
+
+    if (!textarea) {
+        alert("Summary field not found.");
+        return;
+    }
+
+    const text = textarea.value.trim();
+
+    if (!text) {
+        alert("Pehle summary likho.");
+        return;
+    }
+
+    const button = document.querySelector("#improveWithAI");
+
+    if (button) {
+        button.disabled = true;
+        button.innerText = "🤖 Improving...";
+    }
+
+    const result = await callResumeAI(
+        "/api/ai/improve",
+        text
+    );
+
+    if (result) {
+        textarea.value = result;
+    }
+
+    if (button) {
+        button.disabled = false;
+        button.innerText = "✨ Improve with AI";
+    }
+}
+
+
+// ======================================================
+// GENERATE SUMMARY
+// ======================================================
+
+async function generateSummaryWithAI() {
+
+    const role =
+        document.querySelector("#job_title")?.value ||
+        document.querySelector("#jobTitle")?.value ||
+        "";
+
+    if (!role.trim()) {
+        alert("Pehle Job Title enter karo.");
+        return;
+    }
+
+    const button = document.querySelector("#generateSummaryAI");
+
+    if (button) {
+        button.disabled = true;
+        button.innerText = "🤖 Generating...";
+    }
+
+    const result = await callResumeAI(
+        "/api/ai/generate-summary",
+        role,
+        {
+            job_title: role
+        }
+    );
+
+    if (result) {
+
+        const textarea =
+            document.querySelector("#summary") ||
+            document.querySelector("#resume-summary");
+
+        if (textarea) {
+            textarea.value = result;
+        }
+    }
+
+    if (button) {
+        button.disabled = false;
+        button.innerText = "✨ Generate Summary";
+    }
+}
+
+
+// ======================================================
+// GENERATE SKILLS
+// ======================================================
+
+async function generateSkillsWithAI() {
+
+    const role =
+        document.querySelector("#job_title")?.value ||
+        document.querySelector("#jobTitle")?.value ||
+        "";
+
+    if (!role.trim()) {
+        alert("Pehle Job Title enter karo.");
+        return;
+    }
+
+    const button = document.querySelector("#generateSkillsAI");
+
+    if (button) {
+        button.disabled = true;
+        button.innerText = "🤖 Generating...";
+    }
+
+    const result = await callResumeAI(
+        "/api/ai/generate-skills",
+        role,
+        {
+            job_title: role
+        }
+    );
+
+    if (result) {
+
+        const skills =
+            document.querySelector("#skills") ||
+            document.querySelector("#resume-skills");
+
+        if (skills) {
+            skills.value = result;
+        }
+    }
+
+    if (button) {
+        button.disabled = false;
+        button.innerText = "💡 Generate Skills";
+    }
+}
+
+
+// ======================================================
+// BUTTON EVENTS
+// ======================================================
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const improveBtn =
+        document.querySelector("#improveWithAI");
+
+    const summaryBtn =
+        document.querySelector("#generateSummaryAI");
+
+    const skillsBtn =
+        document.querySelector("#generateSkillsAI");
+
+
+    if (improveBtn) {
+        improveBtn.addEventListener(
+            "click",
+            improveWithAI
+        );
+    }
+
+    if (summaryBtn) {
+        summaryBtn.addEventListener(
+            "click",
+            generateSummaryWithAI
+        );
+    }
+
+    if (skillsBtn) {
+        skillsBtn.addEventListener(
+            "click",
+            generateSkillsWithAI
+        );
+    }
+
+});
+
 /* =========================================================
    AI RESUME BUILDER
    Complete Frontend Controller
