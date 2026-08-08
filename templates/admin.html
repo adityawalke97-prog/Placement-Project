@@ -1,112 +1,1451 @@
+{% extends "layout.html" %}
 
-{% extends 'layout.html' %}
+{% block title %}Advanced Admin Dashboard{% endblock %}
 
-{% block title %}Admin Dashboard{% endblock %}
+{% block css %}
+<style>
+
+/* =========================================================
+   ADMIN DASHBOARD
+========================================================= */
+
+.admin-page {
+    padding: 28px;
+    max-width: 1600px;
+    margin: auto;
+}
+
+/* HEADER */
+
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 28px;
+}
+
+.admin-title h1 {
+    margin: 0;
+    font-size: 30px;
+}
+
+.admin-title p {
+    margin: 6px 0 0;
+    opacity: .7;
+}
+
+.admin-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.admin-btn {
+    border: 0;
+    border-radius: 10px;
+    padding: 11px 16px;
+    cursor: pointer;
+    font-weight: 600;
+    background: var(--primary, #2563eb);
+    color: white;
+}
+
+.admin-btn.secondary {
+    background: #e5e7eb;
+    color: #111827;
+}
+
+
+/* =========================================================
+   STAT GRID
+========================================================= */
+
+.stats-grid {
+    display: grid;
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+    gap: 18px;
+    margin-bottom: 22px;
+}
+
+.stat-card {
+    background: var(--card-bg, #ffffff);
+    border: 1px solid rgba(0,0,0,.08);
+    border-radius: 16px;
+    padding: 22px;
+    box-shadow: 0 5px 20px rgba(0,0,0,.05);
+}
+
+.stat-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.stat-icon {
+    width: 45px;
+    height: 45px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    font-size: 22px;
+    background: rgba(37,99,235,.10);
+}
+
+.stat-card h2 {
+    font-size: 30px;
+    margin: 18px 0 4px;
+}
+
+.stat-card p {
+    margin: 0;
+    opacity: .65;
+}
+
+.stat-change {
+    margin-top: 14px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.stat-change.up {
+    color: #16a34a;
+}
+
+.stat-change.down {
+    color: #dc2626;
+}
+
+
+/* =========================================================
+   GRID
+========================================================= */
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns:
+        1.5fr 1fr;
+    gap: 20px;
+    margin-bottom: 22px;
+}
+
+.dashboard-card {
+    background: var(--card-bg, #fff);
+    border: 1px solid rgba(0,0,0,.08);
+    border-radius: 16px;
+    padding: 22px;
+    box-shadow: 0 5px 20px rgba(0,0,0,.04);
+}
+
+.dashboard-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.dashboard-card-header h3 {
+    margin: 0;
+    font-size: 18px;
+}
+
+.dashboard-card-header span {
+    font-size: 13px;
+    opacity: .6;
+}
+
+
+/* =========================================================
+   CHART
+========================================================= */
+
+.chart-container {
+    width: 100%;
+    height: 300px;
+    position: relative;
+}
+
+.chart-container canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+
+/* =========================================================
+   PERFORMANCE
+========================================================= */
+
+.performance-list {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.performance-item {
+    display: grid;
+    grid-template-columns:
+        130px 1fr 55px;
+    align-items: center;
+    gap: 12px;
+}
+
+.performance-name {
+    font-weight: 600;
+}
+
+.performance-bar {
+    height: 9px;
+    background: #e5e7eb;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.performance-fill {
+    height: 100%;
+    width: var(--value);
+    background: var(--primary, #2563eb);
+    border-radius: inherit;
+}
+
+.performance-score {
+    text-align: right;
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   AGE ANALYTICS
+========================================================= */
+
+.age-grid {
+    display: grid;
+    grid-template-columns:
+        repeat(3, 1fr);
+    gap: 12px;
+}
+
+.age-box {
+    text-align: center;
+    padding: 18px 10px;
+    border-radius: 12px;
+    background: rgba(37,99,235,.06);
+}
+
+.age-box strong {
+    display: block;
+    font-size: 25px;
+}
+
+.age-box span {
+    font-size: 12px;
+    opacity: .65;
+}
+
+
+/* =========================================================
+   ACTIVITY
+========================================================= */
+
+.activity-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.activity-item {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(0,0,0,.07);
+}
+
+.activity-item:last-child {
+    border-bottom: 0;
+}
+
+.activity-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+    background: rgba(37,99,235,.08);
+}
+
+.activity-content {
+    flex: 1;
+}
+
+.activity-content strong {
+    display: block;
+}
+
+.activity-content small {
+    opacity: .6;
+}
+
+
+/* =========================================================
+   STUDENT TABLE
+========================================================= */
+
+.student-card {
+    margin-bottom: 22px;
+}
+
+.student-toolbar {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.student-search {
+    flex: 1;
+    max-width: 400px;
+    padding: 11px 14px;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    outline: none;
+}
+
+.student-filter {
+    padding: 11px 14px;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+}
+
+.table-wrapper {
+    overflow-x: auto;
+}
+
+.student-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.student-table th,
+.student-table td {
+    padding: 14px 12px;
+    text-align: left;
+    border-bottom: 1px solid rgba(0,0,0,.08);
+}
+
+.student-table th {
+    font-size: 13px;
+    opacity: .65;
+}
+
+.student-table td {
+    font-size: 14px;
+}
+
+.student-name {
+    font-weight: 700;
+}
+
+.status {
+    display: inline-flex;
+    padding: 5px 9px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.status.active {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.status.inactive {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.view-btn {
+    border: 0;
+    padding: 7px 11px;
+    border-radius: 8px;
+    cursor: pointer;
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+
+/* =========================================================
+   INSIGHTS
+========================================================= */
+
+.insights-grid {
+    display: grid;
+    grid-template-columns:
+        repeat(3, 1fr);
+    gap: 15px;
+}
+
+.insight {
+    padding: 18px;
+    border-radius: 13px;
+    background: rgba(0,0,0,.03);
+}
+
+.insight strong {
+    display: block;
+    margin-bottom: 7px;
+}
+
+.insight p {
+    margin: 0;
+    font-size: 14px;
+    opacity: .7;
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   QUICK ACTIONS
+========================================================= */
+
+.quick-actions {
+    display: grid;
+    grid-template-columns:
+        repeat(4, 1fr);
+    gap: 14px;
+}
+
+.quick-action {
+    text-decoration: none;
+    color: inherit;
+    padding: 18px;
+    border-radius: 13px;
+    border: 1px solid rgba(0,0,0,.08);
+    transition: .2s;
+}
+
+.quick-action:hover {
+    transform: translateY(-3px);
+}
+
+.quick-action strong {
+    display: block;
+    margin-top: 8px;
+}
+
+.quick-action span {
+    font-size: 13px;
+    opacity: .6;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:1100px) {
+
+    .stats-grid {
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .quick-actions {
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+
+}
+
+@media(max-width:700px) {
+
+    .admin-page {
+        padding: 15px;
+    }
+
+    .admin-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .age-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .insights-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .quick-actions {
+        grid-template-columns: 1fr;
+    }
+
+    .student-toolbar {
+        flex-direction: column;
+    }
+
+    .student-search {
+        max-width: none;
+    }
+
+}
+
+</style>
+{% endblock %}
+
 
 {% block content %}
 
-<style>
-    .cards{
-        display:grid;
-        grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-        gap:20px;
-        margin-top:30px;
-    }
+<div class="admin-page">
 
-    .card{
-        background:white;
-        padding:30px;
-        border-radius:10px;
-        box-shadow:0 2px 10px rgba(0,0,0,0.1);
-        text-align:center;
-    }
 
-    .card h2{
-        color:#007bff;
-        margin-bottom:15px;
-    }
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
 
-    .card p{
-        color:#555;
-        margin-bottom:20px;
-    }
+    <header class="admin-header">
 
-    .btn{
-        text-decoration:none;
-        background:#007bff;
-        color:white;
-        padding:10px 20px;
-        border-radius:5px;
-    }
+        <div class="admin-title">
 
-    .stats{
-        display:grid;
-        grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-        gap:20px;
-        margin-top:20px;
-    }
+            <h1>Admin Analytics Dashboard</h1>
 
-    .stat-box{
-        background:#007bff;
-        color:white;
-        padding:25px;
-        border-radius:10px;
-        text-align:center;
-    }
+            <p>
+                Monitor student activity, performance and
+                placement preparation.
+            </p>
 
-    .stat-box h1{
-        margin-bottom:10px;
-    }
-</style>
+        </div>
 
-<h1>Admin Dashboard</h1>
+        <div class="admin-actions">
 
-<div class="stats">
+            <button
+                class="admin-btn secondary"
+                onclick="location.reload()">
 
-    <div class="stat-box">
-        <h1>{{ total_users }}</h1>
-        <p>Total Students</p>
-    </div>
+                🔄 Refresh
 
-    <div class="stat-box">
-        <h1>{{ total_tests }}</h1>
-        <p>Mock Tests</p>
-    </div>
+            </button>
 
-    <div class="stat-box">
-        <h1>{{ total_questions }}</h1>
-        <p>Interview Questions</p>
-    </div>
+            <button
+                class="admin-btn"
+                onclick="window.print()">
+
+                📊 Export
+
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <!-- =====================================================
+         MAIN STATS
+    ====================================================== -->
+
+    <section class="stats-grid">
+
+
+        <div class="stat-card">
+
+            <div class="stat-top">
+
+                <div>
+                    <p>Total Students</p>
+                    <h2>{{ total_users|default(0) }}</h2>
+                </div>
+
+                <div class="stat-icon">
+                    👨‍🎓
+                </div>
+
+            </div>
+
+            <div class="stat-change up">
+                ↑ {{ new_users|default(0) }} new this month
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-top">
+
+                <div>
+                    <p>Active Students</p>
+                    <h2>{{ active_users|default(0) }}</h2>
+                </div>
+
+                <div class="stat-icon">
+                    🟢
+                </div>
+
+            </div>
+
+            <div class="stat-change up">
+                {{ active_percentage|default(0) }}% active rate
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-top">
+
+                <div>
+                    <p>Average Age</p>
+                    <h2>{{ average_age|default(0) }}</h2>
+                </div>
+
+                <div class="stat-icon">
+                    🎂
+                </div>
+
+            </div>
+
+            <div class="stat-change">
+                Student demographic
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-top">
+
+                <div>
+                    <p>Average Score</p>
+                    <h2>{{ average_score|default(0) }}%</h2>
+                </div>
+
+                <div class="stat-icon">
+                    🎯
+                </div>
+
+            </div>
+
+            <div class="stat-change up">
+                Overall test performance
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         CHARTS
+    ====================================================== -->
+
+    <section class="dashboard-grid">
+
+
+        <div class="dashboard-card">
+
+            <div class="dashboard-card-header">
+
+                <h3>User Registration Trend</h3>
+
+                <span>
+                    Last 30 days
+                </span>
+
+            </div>
+
+            <div class="chart-container">
+
+                <canvas id="registrationChart"></canvas>
+
+            </div>
+
+        </div>
+
+
+        <div class="dashboard-card">
+
+            <div class="dashboard-card-header">
+
+                <h3>Age Distribution</h3>
+
+                <span>
+                    Students
+                </span>
+
+            </div>
+
+            <div class="chart-container">
+
+                <canvas id="ageChart"></canvas>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         PERFORMANCE + AGE
+    ====================================================== -->
+
+    <section class="dashboard-grid">
+
+
+        <div class="dashboard-card">
+
+            <div class="dashboard-card-header">
+
+                <h3>Category Performance</h3>
+
+                <span>
+                    Average score
+                </span>
+
+            </div>
+
+
+            <div class="performance-list">
+
+                {% for category in category_performance|default([]) %}
+
+                <div class="performance-item">
+
+                    <div class="performance-name">
+                        {{ category.name }}
+                    </div>
+
+                    <div class="performance-bar">
+
+                        <div
+                            class="performance-fill"
+                            style="--value: {{ category.score }}%;">
+                        </div>
+
+                    </div>
+
+                    <div class="performance-score">
+                        {{ category.score }}%
+                    </div>
+
+                </div>
+
+                {% else %}
+
+                <p>
+                    No performance data available.
+                </p>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+
+        <div class="dashboard-card">
+
+            <div class="dashboard-card-header">
+
+                <h3>Student Age Groups</h3>
+
+            </div>
+
+
+            <div class="age-grid">
+
+                <div class="age-box">
+
+                    <strong>
+                        {{ age_groups.young|default(0) }}
+                    </strong>
+
+                    <span>
+                        Under 18
+                    </span>
+
+                </div>
+
+
+                <div class="age-box">
+
+                    <strong>
+                        {{ age_groups.adult|default(0) }}
+                    </strong>
+
+                    <span>
+                        18–21
+                    </span>
+
+                </div>
+
+
+                <div class="age-box">
+
+                    <strong>
+                        {{ age_groups.senior|default(0) }}
+                    </strong>
+
+                    <span>
+                        22+
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         STUDENT MANAGEMENT
+    ====================================================== -->
+
+    <section class="dashboard-card student-card">
+
+        <div class="dashboard-card-header">
+
+            <div>
+
+                <h3>
+                    Student Management
+                </h3>
+
+                <span>
+                    Registered students
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="student-toolbar">
+
+            <input
+                type="search"
+                id="studentSearch"
+                class="student-search"
+                placeholder="🔍 Search student or email...">
+
+
+            <select
+                id="studentFilter"
+                class="student-filter">
+
+                <option value="all">
+                    All Students
+                </option>
+
+                <option value="active">
+                    Active
+                </option>
+
+                <option value="inactive">
+                    Inactive
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="table-wrapper">
+
+            <table class="student-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Student</th>
+
+                        <th>Email</th>
+
+                        <th>Age</th>
+
+                        <th>Tests</th>
+
+                        <th>Avg Score</th>
+
+                        <th>Last Active</th>
+
+                        <th>Status</th>
+
+                        <th></th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="studentTableBody">
+
+                    {% for student in students|default([]) %}
+
+                    <tr
+                        data-status="{{ student.status|default('inactive') }}">
+
+                        <td class="student-name">
+                            {{ student.name }}
+                        </td>
+
+                        <td>
+                            {{ student.email }}
+                        </td>
+
+                        <td>
+                            {{ student.age|default('-') }}
+                        </td>
+
+                        <td>
+                            {{ student.tests|default(0) }}
+                        </td>
+
+                        <td>
+                            {{ student.avg_score|default(0) }}%
+                        </td>
+
+                        <td>
+                            {{ student.last_active|default('-') }}
+                        </td>
+
+                        <td>
+
+                            <span
+                                class="status
+                                {{ 'active' if student.status == 'active'
+                                   else 'inactive' }}">
+
+                                {{ student.status|default('inactive')|capitalize }}
+
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <a
+                                href="{{ url_for('admin_users') }}"
+                                class="view-btn">
+
+                                View
+
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+                    {% else %}
+
+                    <tr>
+
+                        <td
+                            colspan="8"
+                            style="text-align:center;padding:30px;">
+
+                            No students found.
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         INSIGHTS
+    ====================================================== -->
+
+    <section class="dashboard-card">
+
+        <div class="dashboard-card-header">
+
+            <h3>🤖 Admin Insights</h3>
+
+            <span>
+                Automatically calculated
+            </span>
+
+        </div>
+
+
+        <div class="insights-grid">
+
+
+            <div class="insight">
+
+                <strong>
+                    📈 User Growth
+                </strong>
+
+                <p>
+                    {{ new_users|default(0) }}
+                    students joined this month.
+                </p>
+
+            </div>
+
+
+            <div class="insight">
+
+                <strong>
+                    🎯 Performance
+                </strong>
+
+                <p>
+                    Average student score is
+                    {{ average_score|default(0) }}%.
+                </p>
+
+            </div>
+
+
+            <div class="insight">
+
+                <strong>
+                    ⚠️ Attention Needed
+                </strong>
+
+                <p>
+                    {{ inactive_users|default(0) }}
+                    students are currently inactive.
+                </p>
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         RECENT ACTIVITY
+    ====================================================== -->
+
+    <section class="dashboard-card"
+             style="margin-top:22px;">
+
+        <div class="dashboard-card-header">
+
+            <h3>⚡ Recent Activity</h3>
+
+            <span>
+                Latest student actions
+            </span>
+
+        </div>
+
+
+        <div class="activity-list">
+
+            {% for activity in recent_activity|default([]) %}
+
+            <div class="activity-item">
+
+                <div class="activity-icon">
+                    {{ activity.icon|default('📌') }}
+                </div>
+
+                <div class="activity-content">
+
+                    <strong>
+                        {{ activity.message }}
+                    </strong>
+
+                    <small>
+                        {{ activity.time }}
+                    </small>
+
+                </div>
+
+            </div>
+
+            {% else %}
+
+            <div class="activity-item">
+
+                <div class="activity-icon">
+                    📌
+                </div>
+
+                <div class="activity-content">
+
+                    <strong>
+                        No recent activity
+                    </strong>
+
+                    <small>
+                        Activity will appear here.
+                    </small>
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         QUICK ACTIONS
+    ====================================================== -->
+
+    <section class="dashboard-card"
+             style="margin-top:22px;">
+
+        <div class="dashboard-card-header">
+
+            <h3>⚡ Quick Actions</h3>
+
+        </div>
+
+
+        <div class="quick-actions">
+
+
+            <a
+                href="{{ url_for('admin_users') }}"
+                class="quick-action">
+
+                👨‍🎓
+
+                <strong>
+                    Manage Students
+                </strong>
+
+                <span>
+                    View and manage users
+                </span>
+
+            </a>
+
+
+            <a
+                href="{{ url_for('admin_questions') }}"
+                class="quick-action">
+
+                📝
+
+                <strong>
+                    Mock Questions
+                </strong>
+
+                <span>
+                    Manage test questions
+                </span>
+
+            </a>
+
+
+            <a
+                href="{{ url_for('admin_interview') }}"
+                class="quick-action">
+
+                💬
+
+                <strong>
+                    Interview Questions
+                </strong>
+
+                <span>
+                    Manage interview database
+                </span>
+
+            </a>
+
+
+            <a
+                href="{{ url_for('admin_results') }}"
+                class="quick-action">
+
+                📊
+
+                <strong>
+                    Test Results
+                </strong>
+
+                <span>
+                    View student performance
+                </span>
+
+            </a>
+
+
+        </div>
+
+    </section>
 
 </div>
 
-<div class="cards">
 
-    <div class="card">
-        <h2>Manage Students</h2>
-        <p>View and manage registered students.</p>
-        <a href="/admin/users" class="btn">Open</a>
-    </div>
+<!-- =========================================================
+     CHART.JS
+========================================================= -->
 
-    <div class="card">
-        <h2>Add Mock Questions</h2>
-        <p>Add aptitude and technical questions.</p>
-        <a href="/admin/questions" class="btn">Open</a>
-    </div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <div class="card">
-        <h2>Interview Questions</h2>
-        <p>Add or delete interview questions.</p>
-        <a href="/admin/interview" class="btn">Open</a>
-    </div>
 
-    <div class="card">
-        <h2>View Results</h2>
-        <p>Check student test scores and reports.</p>
-        <a href="/admin/results" class="btn">Open</a>
-    </div>
+<script>
 
-</div>
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+
+        /* ================================================
+           REGISTRATION CHART
+        ================================================= */
+
+        const registrationCanvas =
+            document.getElementById(
+                "registrationChart"
+            );
+
+        if (registrationCanvas) {
+
+            new Chart(
+                registrationCanvas,
+                {
+                    type: "line",
+
+                    data: {
+
+                        labels:
+                            {{ registration_labels|default([])|tojson }},
+
+                        datasets: [
+
+                            {
+                                label:
+                                    "New Students",
+
+                                data:
+                                    {{ registration_data|default([])|tojson }},
+
+                                tension: 0.35,
+
+                                fill: true
+                            }
+
+                        ]
+
+                    },
+
+                    options: {
+
+                        responsive: true,
+
+                        maintainAspectRatio: false,
+
+                        plugins: {
+
+                            legend: {
+                                display: false
+                            }
+
+                        }
+
+                    }
+
+                }
+            );
+
+        }
+
+
+        /* ================================================
+           AGE CHART
+        ================================================= */
+
+        const ageCanvas =
+            document.getElementById(
+                "ageChart"
+            );
+
+        if (ageCanvas) {
+
+            new Chart(
+                ageCanvas,
+                {
+
+                    type: "bar",
+
+                    data: {
+
+                        labels: [
+                            "Under 18",
+                            "18–21",
+                            "22+"
+                        ],
+
+                        datasets: [
+
+                            {
+
+                                label:
+                                    "Students",
+
+                                data: [
+
+                                    {{ age_groups.young|default(0) }},
+
+                                    {{ age_groups.adult|default(0) }},
+
+                                    {{ age_groups.senior|default(0) }}
+
+                                ]
+
+                            }
+
+                        ]
+
+                    },
+
+                    options: {
+
+                        responsive: true,
+
+                        maintainAspectRatio: false,
+
+                        plugins: {
+
+                            legend: {
+                                display: false
+                            }
+
+                        },
+
+                        scales: {
+
+                            y: {
+
+                                beginAtZero: true,
+
+                                ticks: {
+                                    precision: 0
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            );
+
+        }
+
+
+        /* ================================================
+           STUDENT SEARCH
+        ================================================= */
+
+        const search =
+            document.getElementById(
+                "studentSearch"
+            );
+
+        const filter =
+            document.getElementById(
+                "studentFilter"
+            );
+
+        const rows =
+            document.querySelectorAll(
+                "#studentTableBody tr"
+            );
+
+
+        function filterStudents() {
+
+            const searchText =
+                search.value.toLowerCase();
+
+            const selectedStatus =
+                filter.value;
+
+
+            rows.forEach(
+                function (row) {
+
+                    const text =
+                        row.textContent.toLowerCase();
+
+                    const status =
+                        row.dataset.status;
+
+
+                    const matchesSearch =
+                        text.includes(
+                            searchText
+                        );
+
+                    const matchesStatus =
+                        selectedStatus === "all" ||
+                        status === selectedStatus;
+
+
+                    row.style.display =
+                        matchesSearch &&
+                        matchesStatus
+                            ? ""
+                            : "none";
+
+                }
+            );
+
+        }
+
+
+        if (search) {
+
+            search.addEventListener(
+                "input",
+                filterStudents
+            );
+
+        }
+
+
+        if (filter) {
+
+            filter.addEventListener(
+                "change",
+                filterStudents
+            );
+
+        }
+
+    }
+
+);
+
+</script>
 
 {% endblock %}
-```
