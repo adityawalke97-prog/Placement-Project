@@ -1767,3 +1767,90 @@ async function improveExperience(button) {
 
     const description =
         getItemValue(
+
+
+
+
+async function callResumeAI(endpoint, data) {
+
+    showResumeLoading();
+
+    try {
+
+        const response = await fetch(endpoint, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+            throw new Error(
+                result.error || "AI request failed"
+            );
+        }
+
+        return result;
+
+    } catch (error) {
+
+        console.error("AI Error:", error);
+
+        showResumeToast(
+            error.message || "AI service failed",
+            "error"
+        );
+
+        return null;
+
+    } finally {
+
+        hideResumeLoading();
+
+    }
+}
+async function callResumeAI(endpoint, data) {
+
+    showResumeLoading();
+
+    try {
+
+        const response = await fetch(endpoint, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+            throw new Error(
+                result.error || "AI request failed"
+            );
+        }
+
+        return result;
+
+    } catch (error) {
+
+        console.error("AI Error:", error);
+
+        showResumeToast(
+            error.message || "AI service failed",
+            "error"
+        );
+
+        return null;
+
+    } finally {
+
+        hideResumeLoading();
+
+    }
+}
+       
