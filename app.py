@@ -322,7 +322,8 @@ def signup():
     return render_template("signup.html")
 
 @app.route("/resume_builder", methods=["GET", "POST"])
-@login_required
+
+
 def resume_builder():
 
     if request.method == "POST":
