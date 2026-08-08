@@ -93,7 +93,6 @@ function initializeInterviewPage() {
 /* =========================
    SHOW / HIDE ANSWER
 ========================= */
-
 function toggleAnswer(button) {
     const card = button.closest(".question-card");
 
@@ -111,18 +110,17 @@ function toggleAnswer(button) {
 
     const questionId = card.dataset.id;
 
-    const isVisible =
-        window.getComputedStyle(answerBox).display !== "none";
+    const isVisible = answerBox.classList.contains("show");
 
     if (isVisible) {
-        answerBox.style.display = "none";
+        answerBox.classList.remove("show");
 
         button.innerHTML = `
             <i class="fas fa-lightbulb"></i>
             Show Answer
         `;
     } else {
-        answerBox.style.display = "block";
+        answerBox.classList.add("show");
 
         button.innerHTML = `
             <i class="fas fa-eye-slash"></i>
@@ -131,11 +129,10 @@ function toggleAnswer(button) {
 
         if (questionId) {
             viewedQuestions.add(questionId);
+            saveProgress();
+            updateProgress();
+            saveRecent(questionId);
         }
-
-        saveProgress();
-        updateProgress();
-        saveRecent(questionId);
     }
 }
 
