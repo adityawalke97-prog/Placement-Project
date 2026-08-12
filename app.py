@@ -612,151 +612,64 @@ def mock_test():
 # ==============================
 
 
-@app.route(
-    "/submit_test",
-    methods=["POST"]
-)
-
+@app.route("/submit_test", methods=["POST"])
 def submit_test():
-
-
     if "user_id" not in session:
-
-        return redirect("/login")
-
-
+        return redirect(url_for("login"))
 
     conn = get_db_connection()
-
-    cur = conn.cursor()
-
-
+    cur = conn.cursor(pymysql.cursors.DictCursor)
 
     cur.execute("""
-
-    SELECT
-
-        id,
-
-        correct_answer
-
-
-    FROM mock_questions
-
-
-    LIMIT 20
-
-
+        SELECT
+            id,
+            correct_answer
+        FROM questions
+        ORDER BY RAND()
+        LIMIT 20
     """)
-
-
 
     answers = cur.fetchall()
 
-
-
     score = 0
-
     total = len(answers)
 
-
-
     for q in answers:
-
-
         question_id = q["id"]
-
         correct = q["correct_answer"]
 
-
-
-        user_answer = request.form.get(
-
-            f"q{question_id}"
-
-        )
-
-
+        user_answer = request.form.get(f"q{question_id}")
 
         if user_answer == correct:
-
             score += 1
-
-
 
     percentage = 0
 
-
     if total > 0:
-
-        percentage = (
-            score / total
-        ) * 100
-
-
-
+        percentage = (score / total) * 100
 
     cur.execute("""
-
-    INSERT INTO results
-
-    (
-
-        user_id,
-
-        total_questions,
-
-        score,
-
-        percentage
-
-    )
-
-
-    VALUES
-
-    (%s,%s,%s,%s)
-
-
-    """,
-
-    (
-
+        INSERT INTO results
+            (user_id, total_questions, score, percentage)
+        VALUES
+            (%s, %s, %s, %s)
+    """, (
         session["user_id"],
-
         total,
-
         score,
-
         percentage
-
     ))
-
-
 
     conn.commit()
 
-
-
     cur.close()
-
     conn.close()
 
-
-
     return render_template(
-
         "result.html",
-
         score=score,
-
         total=total,
-
-        percentage=round(
-            percentage,
-            2
-        )
-
+        percentage=round(percentage, 2)
     )
     # ==============================
 # SAVE RESUME
