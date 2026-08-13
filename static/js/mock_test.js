@@ -1,18 +1,9 @@
-/*==================================================
-        PLACEMENT MOCK TEST
-        PART 1
-        VARIABLES + TIMER + NAVIGATION
-==================================================*/
-
-// ==========================
-// GLOBAL VARIABLES
-// ==========================
 
 let currentQuestion = 1;
 
 const totalQuestions = window.totalQuestions || 0;
 
-let totalTime = 20 * 60; // 20 Minutes
+let totalTime = 100 * 60; // 20 Minutes
 
 let timerInterval = null;
 
