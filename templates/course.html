@@ -4,1876 +4,698 @@
 {{ course_name }} Learning
 {% endblock %}
 
-
 {% block css %}
-
 <style>
-
-*{
-box-sizing:border-box;
+html, body {
+  width: 100%;
+  overflow-x: hidden;
 }
 
-
-.course-wrapper{
-
-max-width:1200px;
-margin:auto;
-padding:25px;
-
-font-family:
-'Segoe UI',
-sans-serif;
-
+* {
+  box-sizing: border-box;
 }
 
+.course-wrapper {
+  max-width: 1200px;
+  margin: auto;
+  padding: 25px;
+  font-family: 'Segoe UI', sans-serif;
+}
 
 /* HEADER */
-
-.course-header{
-
-display:flex;
-justify-content:space-between;
-align-items:center;
-
-background:
-linear-gradient(
-135deg,
-#2563eb,
-#06b6d4
-);
-
-color:white;
-
-padding:30px;
-
-border-radius:25px;
-
-box-shadow:
-0 15px 40px #0003;
-
+.course-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(135deg, #2563eb, #06b6d4);
+  color: white;
+  padding: 30px;
+  border-radius: 25px;
+  box-shadow: 0 15px 40px #0003;
+  gap: 20px;
 }
 
-
-.course-header h1{
-
-font-size:38px;
-margin:0;
-
+.course-header h1 {
+  font-size: 38px;
+  margin: 0;
 }
 
-
-.course-header p{
-
-opacity:.9;
-font-size:18px;
-
+.course-header p {
+  opacity: .9;
+  font-size: 18px;
+  margin-top: 8px;
 }
-
-
 
 /* STATS */
-
-
-.stats{
-
-display:flex;
-gap:15px;
-
+.stats {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
 }
 
-
-.stat{
-
-background:white;
-
-color:#111827;
-
-padding:15px 20px;
-
-border-radius:18px;
-
-min-width:110px;
-
-text-align:center;
-
+.stat {
+  background: white;
+  color: #111827;
+  padding: 15px 20px;
+  border-radius: 18px;
+  min-width: 110px;
+  text-align: center;
 }
 
-
-.stat b{
-
-display:block;
-
-font-size:28px;
-
-color:#2563eb;
-
+.stat b {
+  display: block;
+  font-size: 28px;
+  color: #2563eb;
 }
 
-
-.stat span{
-
-font-size:13px;
-
-color:#6b7280;
-
+.stat span {
+  font-size: 13px;
+  color: #6b7280;
 }
-
-
 
 /* PROGRESS */
-
-
-.progress-card{
-
-margin-top:25px;
-
-background:white;
-
-padding:25px;
-
-border-radius:22px;
-
-box-shadow:
-0 10px 30px #0002;
-
+.progress-card {
+  margin-top: 25px;
+  background: white;
+  padding: 25px;
+  border-radius: 22px;
+  box-shadow: 0 10px 30px #0002;
 }
 
-
-.progress-title{
-
-display:flex;
-
-justify-content:space-between;
-
-font-size:18px;
-
-font-weight:600;
-
+.progress-title {
+  display: flex;
+  justify-content: space-between;
+  font-size: 18px;
+  font-weight: 600;
 }
 
-
-.progress-container{
-
-height:15px;
-
-background:#e5e7eb;
-
-border-radius:20px;
-
-overflow:hidden;
-
-margin-top:15px;
-
+.progress-container {
+  height: 15px;
+  background: #e5e7eb;
+  border-radius: 20px;
+  overflow: hidden;
+  margin-top: 15px;
 }
 
-
-.progress-fill{
-
-height:100%;
-
-width:0%;
-
-background:
-linear-gradient(
-90deg,
-#2563eb,
-#10b981
-);
-
-transition:.5s;
-
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #2563eb, #10b981);
+  transition: .5s;
 }
-
-
 
 /* LEARNING */
-
-
-.learning-box{
-
-margin-top:25px;
-
-background:white;
-
-padding:30px;
-
-border-radius:25px;
-
-box-shadow:
-0 10px 30px #0002;
-
+.learning-box {
+  margin-top: 25px;
+  background: white;
+  padding: 30px;
+  border-radius: 25px;
+  box-shadow: 0 10px 30px #0002;
 }
 
-
-
-.day-title{
-
-display:flex;
-
-justify-content:space-between;
-
-align-items:center;
-
+.day-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
 }
 
-
-.day-badge{
-
-background:#2563eb;
-
-color:white;
-
-padding:10px 18px;
-
-border-radius:20px;
-
+.day-badge {
+  background: #2563eb;
+  color: white;
+  padding: 10px 18px;
+  border-radius: 20px;
 }
 
-
-.bookmark-btn{
-
-border:none;
-
-background:#fef3c7;
-
-padding:12px 20px;
-
-border-radius:15px;
-
-cursor:pointer;
-
+.bookmark-btn {
+  border: none;
+  background: #fef3c7;
+  padding: 12px 20px;
+  border-radius: 15px;
+  cursor: pointer;
 }
 
-
-
-.notes{
-
-margin-top:20px;
-
-font-size:17px;
-
-line-height:1.8;
-
-color:#374151;
-
+.notes {
+  margin-top: 20px;
+  font-size: 17px;
+  line-height: 1.8;
+  color: #374151;
+  overflow-wrap: anywhere;
 }
-
-
-
 
 /* TASK */
-
-
-.task-box{
-
-margin-top:30px;
-
-background:#f9fafb;
-
-padding:20px;
-
-border-radius:20px;
-
+.task-box {
+  margin-top: 30px;
+  background: #f9fafb;
+  padding: 20px;
+  border-radius: 20px;
 }
 
-
-.task-box label{
-
-display:block;
-
-padding:12px;
-
-cursor:pointer;
-
+.task-box label {
+  display: block;
+  padding: 12px;
+  cursor: pointer;
 }
-
-
 
 /* BUTTONS */
-
-
-.buttons{
-
-display:flex;
-
-gap:15px;
-
-margin-top:25px;
-
+.buttons {
+  display: flex;
+  gap: 15px;
+  margin-top: 25px;
+  flex-wrap: wrap;
 }
 
-
-.btn{
-
-padding:14px 25px;
-
-border:none;
-
-border-radius:15px;
-
-cursor:pointer;
-
-font-weight:600;
-
+.btn {
+  padding: 14px 25px;
+  border: none;
+  border-radius: 15px;
+  cursor: pointer;
+  font-weight: 600;
 }
 
-
-.next{
-
-background:#2563eb;
-
-color:white;
-
+.next {
+  background: #2563eb;
+  color: white;
 }
 
-
-.prev{
-
-background:#6b7280;
-
-color:white;
-
+.prev {
+  background: #6b7280;
+  color: white;
 }
 
-
-.quiz{
-
-background:#7c3aed;
-
-color:white;
-
+.quiz {
+  background: #7c3aed;
+  color: white;
 }
 
-
-.download{
-
-background:#059669;
-
-color:white;
-
+.download {
+  background: #059669;
+  color: white;
 }
 
+/* AI BUTTON */
+.ai-button {
+  position: fixed;
+  right: 25px;
+  bottom: 25px;
+  border: none;
+  background: #111827;
+  color: white;
+  padding: 14px 18px;
+  border-radius: 999px;
+  cursor: pointer;
+  box-shadow: 0 10px 30px #0004;
+  z-index: 999;
+}
 
+/* DESKTOP */
+@media (min-width: 1024px) {
+  .course-wrapper {
+    padding: 25px;
+  }
 
+  .course-header {
+    flex-direction: row;
+  }
+
+  .stats {
+    flex-direction: row;
+    justify-content: flex-end;
+  }
+
+  .buttons {
+    flex-direction: row;
+    justify-content: flex-start;
+  }
+
+  #aiBox {
+    width: 330px;
+  }
+}
+
+/* TABLET */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .course-wrapper {
+    padding: 18px;
+  }
+
+  .course-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .stats {
+    width: 100%;
+  }
+
+  .stat {
+    min-width: 140px;
+  }
+
+  .buttons {
+    flex-direction: row;
+  }
+
+  #aiBox {
+    width: 320px;
+  }
+}
+
+/* MOBILE */
+@media (max-width: 767px) {
+  .course-wrapper {
+    padding: 12px;
+  }
+
+  .course-header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 20px;
+    border-radius: 18px;
+  }
+
+  .course-header h1 {
+    font-size: 26px;
+    line-height: 1.2;
+  }
+
+  .course-header p {
+    font-size: 15px;
+  }
+
+  .stats {
+    width: 100%;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .stat {
+    min-width: 100%;
+  }
+
+  .progress-card,
+  .learning-box {
+    padding: 18px;
+    border-radius: 18px;
+  }
+
+  .progress-title {
+    font-size: 15px;
+  }
+
+  .day-title {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .bookmark-btn,
+  .btn {
+    width: 100%;
+  }
+
+  .buttons {
+    flex-direction: column;
+  }
+
+  .notes {
+    font-size: 16px;
+    line-height: 1.7;
+  }
+
+  .ai-button {
+    right: 12px;
+    bottom: 12px;
+    padding: 12px 16px;
+  }
+
+  #aiBox {
+    width: calc(100% - 24px) !important;
+    right: 12px !important;
+    left: 12px !important;
+    bottom: 72px !important;
+  }
+}
 </style>
-
 {% endblock %}
-{% block content %}
 
+{% block content %}
 <div class="course-wrapper">
 
+  <div class="course-header">
+    <div>
+      <h1>{{ course_name }} 🚀</h1>
+      <p>Master {{ course_name }} with practical learning</p>
+    </div>
 
-<!-- COURSE HEADER -->
+    <div class="stats">
+      <div class="stat">
+        <b id="xp">250</b>
+        <span>XP Points</span>
+      </div>
 
-<div class="course-header">
+      <div class="stat">
+        <b id="level">1</b>
+        <span>Level</span>
+      </div>
 
-<div>
+      <div class="stat">
+        <b id="streak">1</b>
+        <span>Day Streak</span>
+      </div>
+    </div>
+  </div>
 
-<h1>
-{{ course_name }} 🚀
-</h1>
+  <div class="progress-card">
+    <div class="progress-title">
+      <span>Learning Progress</span>
+      <span id="progressText">0%</span>
+    </div>
 
-<p>
-Master {{ course_name }} with practical learning
-</p>
+    <div class="progress-container">
+      <div id="progressBar" class="progress-fill"></div>
+    </div>
 
-</div>
+    <p>Complete lessons and unlock next chapters 🔓</p>
+  </div>
 
+  <div class="learning-box">
+    <div class="day-title">
+      <span class="day-badge" id="dayNumber">Day 1</span>
+      <button class="bookmark-btn" onclick="bookmarkLesson()">⭐ Bookmark</button>
+    </div>
 
-<div class="stats">
+    <h2 id="topicTitle">Loading Topic...</h2>
 
+    <div id="lessonContent" class="notes">Loading lesson...</div>
 
-<div class="stat">
+    <div class="task-box">
+      <h3>Today's Tasks ✅</h3>
+      <label><input type="checkbox" class="task"> Understand Concept</label>
+      <label><input type="checkbox" class="task"> Write Practice Code</label>
+      <label><input type="checkbox" class="task"> Solve Interview Question</label>
+    </div>
 
-<b id="xp">
-250
-</b>
+    <div class="buttons">
+      <button class="btn prev" onclick="previousDay()">⬅ Previous</button>
+      <button class="btn download" onclick="downloadNotes()">📄 Notes</button>
+      <button class="btn quiz" onclick="startQuiz()">📝 Quiz</button>
+      <button class="btn next" onclick="nextDay()">Next ➡</button>
+    </div>
 
-<span>
-XP Points
-</span>
+    <div id="certificate" style="display:none; margin-top:30px; text-align:center;">
+      <h2>🏆 Congratulations</h2>
+      <p>You completed {{ course_name }}</p>
+      <button class="btn download" onclick="generateCertificate()">Download Certificate</button>
+    </div>
+  </div>
 
-</div>
+  <button class="ai-button" onclick="openAI()">🤖 Ask AI</button>
 
+  <div id="aiBox" style="display:none; position:fixed; right:25px; bottom:90px; background:white; width:330px; padding:20px; border-radius:20px; box-shadow:0 10px 40px #0004; z-index:1000;">
+    <h3 style="display:flex; justify-content:space-between; align-items:center;">
+      <span>🤖 AI Assistant</span>
+      <span onclick="closeAI()" style="cursor:pointer;">✖</span>
+    </h3>
 
+    <div id="aiReply">Hello 👋<br>Ask your doubt.</div>
 
-<div class="stat">
+    <input id="aiQuestion" placeholder="Ask question..." style="width:100%; padding:10px; margin-top:10px; border-radius:10px; border:1px solid #ddd;">
 
-<b id="level">
-1
-</b>
-
-<span>
-Level
-</span>
-
-</div>
-
-
-
-<div class="stat">
-
-<b id="streak">
-1
-</b>
-
-<span>
-Day Streak
-</span>
-
-</div>
-
-
-</div>
-
-</div>
-
-
-
-
-
-<!-- PROGRESS -->
-
-<div class="progress-card">
-
-
-<div class="progress-title">
-
-<span>
-Learning Progress
-</span>
-
-
-<span id="progressText">
-0%
-</span>
-
+    <button onclick="askAI()" class="btn next" style="margin-top:10px; width:100%;">Send</button>
+  </div>
 
 </div>
-
-
-
-<div class="progress-container">
-
-<div 
-id="progressBar"
-class="progress-fill">
-
-</div>
-
-</div>
-
-
-<p>
-Complete lessons and unlock next chapters 🔓
-</p>
-
-
-</div>
-
-
-
-
-
-
-<!-- MAIN LEARNING -->
-
-<div class="learning-box">
-
-
-
-<div class="day-title">
-
-
-<span 
-class="day-badge"
-id="dayNumber">
-
-Day 1
-
-</span>
-
-
-
-<button 
-class="bookmark-btn"
-onclick="bookmarkLesson()">
-
-⭐ Bookmark
-
-</button>
-
-
-</div>
-
-
-
-
-
-<h2 id="topicTitle">
-
-Loading Topic...
-
-</h2>
-
-
-
-
-
-<div 
-id="lessonContent"
-class="notes">
-
-
-Loading lesson...
-
-</div>
-
-
-
-
-
-
-
-<!-- TASK SECTION -->
-
-
-<div class="task-box">
-
-
-<h3>
-Today's Tasks ✅
-</h3>
-
-
-
-<label>
-
-<input 
-type="checkbox"
-class="task">
-
-Understand Concept
-
-</label>
-
-
-
-<label>
-
-<input 
-type="checkbox"
-class="task">
-
-Write Practice Code
-
-</label>
-
-
-
-<label>
-
-<input 
-type="checkbox"
-class="task">
-
-Solve Interview Question
-
-</label>
-
-
-
-</div>
-
-
-
-
-
-
-
-
-
-<!-- ACTION BUTTONS -->
-
-
-<div class="buttons">
-
-
-<button 
-class="btn prev"
-onclick="previousDay()">
-
-⬅ Previous
-
-</button>
-
-
-
-<button 
-class="btn download"
-onclick="downloadNotes()">
-
-📄 Notes
-
-</button>
-
-
-
-
-<button 
-class="btn quiz"
-onclick="startQuiz()">
-
-📝 Quiz
-
-</button>
-
-
-
-
-<button 
-class="btn next"
-onclick="nextDay()">
-
-Next ➡
-
-</button>
-
-
-</div>
-
-
-
-
-
-
-<!-- CERTIFICATE -->
-
-<div 
-id="certificate"
-style="display:none;
-margin-top:30px;
-text-align:center;">
-
-
-<h2>
-🏆 Congratulations
-</h2>
-
-
-<p>
-You completed {{course_name}}
-</p>
-
-
-
-<button
-class="btn download"
-onclick="generateCertificate()">
-
-Download Certificate
-
-</button>
-
-
-</div>
-
-
-
-</div>
-
-
-
-
-
-
-<!-- AI ASSISTANT -->
-
-
-<button
-class="ai-button"
-onclick="openAI()">
-
-🤖 Ask AI
-
-</button>
-
-
-
-
-<div 
-id="aiBox"
-style="
-display:none;
-position:fixed;
-right:25px;
-bottom:90px;
-background:white;
-width:330px;
-padding:20px;
-border-radius:20px;
-box-shadow:0 10px 40px #0004;
-">
-
-
-<h3>
-🤖 AI Assistant
-
-<span 
-onclick="closeAI()"
-style="cursor:pointer">
-
-✖
-
-</span>
-
-</h3>
-
-
-
-<div 
-id="aiReply">
-
-Hello 👋  
-Ask your doubt.
-
-</div>
-
-
-
-
-<input
-id="aiQuestion"
-placeholder="Ask question..."
-style="
-width:100%;
-padding:10px;
-margin-top:10px;
-border-radius:10px;
-border:1px solid #ddd;
-">
-
-
-
-<button
-onclick="askAI()"
-class="btn next"
-style="margin-top:10px;width:100%;">
-
-Send
-
-</button>
-
-
-</div>
-
-
-
-
-
-</div>
-
-
 {% endblock %}
+
 {% block scripts %}
-
 <script>
-
-
 const courseName = "{{ course_name }}";
-
 const totalDays = Number("{{ day_count }}") || 30;
 
-
-
-let currentDay =
-Number(
-localStorage.getItem(courseName+"_day")
-) || 1;
-
-
-
-let xp =
-Number(
-localStorage.getItem(courseName+"_xp")
-) || 250;
-
-
-
-let streak =
-Number(
-localStorage.getItem(courseName+"_streak")
-) || 1;
-
-
-
-let bookmarks =
-JSON.parse(
-localStorage.getItem(courseName+"_bookmarks")
-) || [];
-
-
-
-
-
-/*
- COURSE CONTENT DATABASE
-*/
-
+let currentDay = Number(localStorage.getItem(courseName + "_day")) || 1;
+let xp = Number(localStorage.getItem(courseName + "_xp")) || 250;
+let streak = Number(localStorage.getItem(courseName + "_streak")) || 1;
+let bookmarks = JSON.parse(localStorage.getItem(courseName + "_bookmarks")) || [];
 
 const lessons = {
-
-
-1:{
-
-title:"Introduction & Setup",
-
-content:`
-
-<h3>
-Welcome to ${courseName}
-</h3>
-
-<p>
-Today you will understand the course roadmap.
-</p>
-
-
-<ul>
-
-<li>
-Install required tools
-</li>
-
-<li>
-Understand basics
-</li>
-
-<li>
-Create first practice program
-</li>
-
-</ul>
-
-`
-
-},
-
-
-
-
-2:{
-
-title:"Variables and Data Types",
-
-content:`
-
-<h3>
-Variables
-</h3>
-
-
-<p>
-Learn how data is stored inside programs.
-</p>
-
-
-<ul>
-
-<li>
-Variables
-</li>
-
-<li>
-Data Types
-</li>
-
-<li>
-Memory Concept
-</li>
-
-</ul>
-
-`
-
-},
-
-
-
-
-3:{
-
-title:"Operators and Conditions",
-
-content:`
-
-<h3>
-Decision Making
-</h3>
-
-
-<p>
-Control program flow using operators.
-</p>
-
-
-<ul>
-
-<li>
-Arithmetic Operators
-</li>
-
-<li>
-Logical Operators
-</li>
-
-<li>
-If Else Statement
-</li>
-
-
-</ul>
-
-
-`
-
-},
-
-
-
-
-4:{
-
-title:"Loops",
-
-content:`
-
-<h3>
-Iteration Concept
-</h3>
-
-
-<p>
-Repeat tasks using loops.
-</p>
-
-
-<ul>
-
-<li>
-For Loop
-</li>
-
-<li>
-While Loop
-</li>
-
-<li>
-Nested Loop
-</li>
-
-</ul>
-
-`
-
-},
-
-
-
-
-5:{
-
-title:"Functions",
-
-content:`
-
-<h3>
-Reusable Code
-
-</h3>
-
-
-<p>
-Create modular and clean programs.
-</p>
-
-
-<ul>
-
-<li>
-Function Creation
-</li>
-
-<li>
-Parameters
-</li>
-
-<li>
-Return Values
-</li>
-
-</ul>
-
-
-`
-
-}
-
-
+  1: {
+    title: "Introduction & Setup",
+    content: `
+      <h3>Welcome to ${courseName}</h3>
+      <p>Today you will understand the course roadmap.</p>
+      <ul>
+        <li>Install required tools</li>
+        <li>Understand basics</li>
+        <li>Create first practice program</li>
+      </ul>
+    `
+  },
+  2: {
+    title: "Variables and Data Types",
+    content: `
+      <h3>Variables</h3>
+      <p>Learn how data is stored inside programs.</p>
+      <ul>
+        <li>Variables</li>
+        <li>Data Types</li>
+        <li>Memory Concept</li>
+      </ul>
+    `
+  },
+  3: {
+    title: "Operators and Conditions",
+    content: `
+      <h3>Decision Making</h3>
+      <p>Control program flow using operators.</p>
+      <ul>
+        <li>Arithmetic Operators</li>
+        <li>Logical Operators</li>
+        <li>If Else Statement</li>
+      </ul>
+    `
+  },
+  4: {
+    title: "Loops",
+    content: `
+      <h3>Iteration Concept</h3>
+      <p>Repeat tasks using loops.</p>
+      <ul>
+        <li>For Loop</li>
+        <li>While Loop</li>
+        <li>Nested Loop</li>
+      </ul>
+    `
+  },
+  5: {
+    title: "Functions",
+    content: `
+      <h3>Reusable Code</h3>
+      <p>Create modular and clean programs.</p>
+      <ul>
+        <li>Function Creation</li>
+        <li>Parameters</li>
+        <li>Return Values</li>
+      </ul>
+    `
+  }
 };
 
+function loadLesson() {
+  localStorage.setItem(courseName + "_day", currentDay);
 
+  let percentage = Math.floor((currentDay / totalDays) * 100);
+  percentage = Math.min(100, percentage);
 
+  document.getElementById("progressBar").style.width = percentage + "%";
+  document.getElementById("progressText").innerHTML = percentage + "%";
+  document.getElementById("dayNumber").innerHTML = "Day " + currentDay;
 
+  if (lessons[currentDay]) {
+    document.getElementById("topicTitle").innerHTML = lessons[currentDay].title;
+    document.getElementById("lessonContent").innerHTML = lessons[currentDay].content;
+  } else {
+    document.getElementById("topicTitle").innerHTML = "Advanced Practice Day " + currentDay;
+    document.getElementById("lessonContent").innerHTML = `
+      <h3>Real World Practice</h3>
+      <p>Solve projects and interview problems.</p>
+    `;
+  }
 
-
-function loadLesson(){
-
-
-
-// Save Current Day
-
-localStorage.setItem(
-courseName+"_day",
-currentDay
-);
-
-
-
-
-
-// Progress
-
-let percentage =
-Math.floor(
-(currentDay / totalDays)*100
-);
-
-
-
-document.getElementById(
-"progressBar"
-).style.width =
-percentage+"%";
-
-
-
-document.getElementById(
-"progressText"
-).innerHTML =
-percentage+"%";
-
-
-
-
-
-document.getElementById(
-"dayNumber"
-).innerHTML =
-"Day "+currentDay;
-
-
-
-
-
-// Load Topic
-
-
-if(lessons[currentDay]){
-
-
-document.getElementById(
-"topicTitle"
-).innerHTML =
-lessons[currentDay].title;
-
-
-
-document.getElementById(
-"lessonContent"
-).innerHTML =
-lessons[currentDay].content;
-
-
-
+  document.getElementById("xp").innerHTML = xp;
+  document.getElementById("streak").innerHTML = streak;
+  document.getElementById("level").innerHTML = Math.floor(xp / 500) + 1;
+  checkCourseComplete();
 }
 
-else{
-
-
-document.getElementById(
-"topicTitle"
-).innerHTML =
-"Advanced Practice Day "+currentDay;
-
-
-
-document.getElementById(
-"lessonContent"
-).innerHTML =
-
-`
-
-<h3>
-Real World Practice
-</h3>
-
-
-<p>
-Solve projects and interview problems.
-</p>
-
-`;
-
-
-
+function increaseXP() {
+  xp += 50;
+  streak += 1;
+  localStorage.setItem(courseName + "_xp", xp);
+  localStorage.setItem(courseName + "_streak", streak);
 }
 
-
-
-
-
-
-// Stats
-
-
-document.getElementById(
-"xp"
-).innerHTML=xp;
-
-
-
-document.getElementById(
-"streak"
-).innerHTML=streak;
-
-
-
-document.getElementById(
-"level"
-).innerHTML=
-
-Math.floor(xp/500)+1;
-
-
-
+function nextDay() {
+  if (currentDay < totalDays) {
+    currentDay++;
+    increaseXP();
+    loadLesson();
+  } else {
+    document.getElementById("certificate").style.display = "block";
+    alert("🎉 Course Completed");
+  }
 }
 
-
-
-
-
-
-/*
- NEXT DAY
-*/
-
-
-function nextDay(){
-
-
-
-if(currentDay < totalDays){
-
-
-currentDay++;
-
-
-increaseXP();
-
-
-
-loadLesson();
-
-
-
+function previousDay() {
+  if (currentDay > 1) {
+    currentDay--;
+    loadLesson();
+  }
 }
 
-
-else{
-
-
-document.getElementById(
-"certificate"
-).style.display="block";
-
-
-alert(
-"🎉 Course Completed"
-);
-
-
-}
-
-}
-
-
-
-
-
-/*
- PREVIOUS DAY
-*/
-
-
-function previousDay(){
-
-
-if(currentDay>1){
-
-
-currentDay--;
-
-
-loadLesson();
-
-
-}
-
-
-}
-
-
-
-
-
-
-
-/*
- XP SYSTEM
-*/
-
-
-function increaseXP(){
-
-
-xp += 50;
-
-
-streak +=1;
-
-
-
-localStorage.setItem(
-courseName+"_xp",
-xp
-);
-
-
-
-localStorage.setItem(
-courseName+"_streak",
-streak
-);
-
-
-
-}
-
-
-
-
-
-/*
- TASK BONUS
-*/
-
-
-document
-.querySelectorAll(".task")
-.forEach(task=>{
-
-
-task.addEventListener(
-"change",
-function(){
-
-
-
-if(this.checked){
-
-
-xp +=10;
-
-
-
-localStorage.setItem(
-courseName+"_xp",
-xp
-);
-
-
-
-document.getElementById(
-"xp"
-).innerHTML=xp;
-
-
-
-}
-
-
-
+document.querySelectorAll(".task").forEach(task => {
+  task.addEventListener("change", function () {
+    if (this.checked) {
+      xp += 10;
+      localStorage.setItem(courseName + "_xp", xp);
+      document.getElementById("xp").innerHTML = xp;
+    }
+  });
 });
 
+function bookmarkLesson() {
+  let title = lessons[currentDay]?.title || "Day " + currentDay;
 
-});
+  if (!bookmarks.includes(title)) {
+    bookmarks.push(title);
+    alert("⭐ Added to Bookmark");
+  } else {
+    alert("Already Bookmarked");
+  }
 
-
-
-
-
-
-
-/*
- BOOKMARK
-*/
-
-
-function bookmarkLesson(){
-
-
-let title =
-lessons[currentDay]?.title
-||
-"Day "+currentDay;
-
-
-
-if(
-!bookmarks.includes(title)
-){
-
-
-bookmarks.push(title);
-
-
-alert(
-"⭐ Added to Bookmark"
-);
-
-
+  localStorage.setItem(courseName + "_bookmarks", JSON.stringify(bookmarks));
 }
 
-else{
+function downloadNotes() {
+  let title = document.getElementById("topicTitle").innerText;
+  let notes = document.getElementById("lessonContent").innerText;
 
-
-alert(
-"Already Bookmarked"
-);
-
-
-}
-
-
-
-localStorage.setItem(
-
-courseName+"_bookmarks",
-
-JSON.stringify(bookmarks)
-
-);
-
-
-
-}
-
-
-
-
-
-
-/*
- NOTES DOWNLOAD
-*/
-
-
-function downloadNotes(){
-
-
-
-let title =
-document.getElementById(
-"topicTitle"
-).innerText;
-
-
-
-let notes =
-document.getElementById(
-"lessonContent"
-).innerText;
-
-
-
-let text =
-
-`
-
+  let text = `
 ${courseName}
 
 ${title}
 
-
 ${notes}
 
-
 Generated by Placement Training Portal
-
 `;
 
-
-
-
-let file =
-new Blob(
-[text],
-{
-type:"text/plain"
-}
-);
-
-
-
-let link =
-document.createElement("a");
-
-
-
-link.href =
-URL.createObjectURL(file);
-
-
-
-link.download =
-title+".txt";
-
-
-
-link.click();
-
-
-
+  let file = new Blob([text], { type: "text/plain" });
+  let link = document.createElement("a");
+  link.href = URL.createObjectURL(file);
+  link.download = title + ".txt";
+  link.click();
 }
 
-
-
-
-
-
-/*
- QUIZ
-*/
-
-
-function startQuiz(){
-
-
-window.location.href =
-"/quiz/"+courseName+"/"+currentDay;
-
-
-
+function startQuiz() {
+  window.location.href = "/quiz/" + encodeURIComponent(courseName) + "/" + currentDay;
 }
 
-
-
-
-
-
-loadLesson();
-
-
-
-</script>
-/* =========================
-   AI ASSISTANT
-========================= */
-
-
-function openAI(){
-
-
-document.getElementById(
-"aiBox"
-).style.display="block";
-
-
+function openAI() {
+  document.getElementById("aiBox").style.display = "block";
 }
 
-
-
-function closeAI(){
-
-
-document.getElementById(
-"aiBox"
-).style.display="none";
-
-
+function closeAI() {
+  document.getElementById("aiBox").style.display = "none";
 }
 
+function askAI() {
+  let question = document.getElementById("aiQuestion").value.trim();
 
+  if (question === "") {
+    alert("Please enter your question");
+    return;
+  }
 
+  document.getElementById("aiReply").innerHTML = `
+    <b>You:</b> ${question}
+    <br><br>
+    <span>🤖 AI:</span>
+    <br>
+    Keep practicing this topic daily. Understand the concept, write code examples and solve interview questions.
+  `;
 
-
-function askAI(){
-
-
-let question =
-document.getElementById(
-"aiQuestion"
-).value.trim();
-
-
-
-if(question==""){
-
-alert(
-"Please enter your question"
-);
-
-return;
-
+  document.getElementById("aiQuestion").value = "";
 }
 
-
-
-
-let reply =
-document.getElementById(
-"aiReply"
-);
-
-
-
-reply.innerHTML =
-
-`
-<b>You:</b>
-${question}
-
-<br><br>
-
-<span>
-🤖 AI:
-</span>
-
-<br>
-
-Keep practicing this topic daily.
-Understand the concept,
-write code examples and solve interview questions.
-
-`;
-
-
-
-document.getElementById(
-"aiQuestion"
-).value="";
-
-
-}
-
-
-
-
-
-
-/* =========================
-   CERTIFICATE GENERATOR
-========================= */
-
-
-
-function generateCertificate(){
-
-
-let certificateText =
-
-`
-
+function generateCertificate() {
+  let certificateText = `
 ================================
 
 CERTIFICATE OF COMPLETION
 
 ================================
 
-
 Congratulations!
-
 
 This certificate is awarded to
 
-
 Student
-
 
 For successfully completing
 
-
 ${courseName}
 
-
 Placement Training Portal
-
-
 
 Date:
 ${new Date().toLocaleDateString()}
 
-
-
 ================================
-
 `;
 
-
-
-
-
-let blob =
-new Blob(
-[
-certificateText
-],
-{
-type:
-"text/plain"
-}
-);
-
-
-
-
-let link =
-document.createElement("a");
-
-
-
-link.href =
-URL.createObjectURL(blob);
-
-
-
-link.download =
-courseName+"_Certificate.txt";
-
-
-
-link.click();
-
-
-
+  let blob = new Blob([certificateText], { type: "text/plain" });
+  let link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = courseName + "_Certificate.txt";
+  link.click();
 }
 
-
-
-
-
-
-
-/* =========================
-   SAVE PROGRESS DATABASE
-========================= */
-
-
-
-function saveProgress(){
-
-
-
-fetch(
-"/save-progress",
-{
-
-method:"POST",
-
-headers:
-{
-
-"Content-Type":
-"application/json"
-
-},
-
-
-body:
-JSON.stringify(
-{
-
-course:
-courseName,
-
-
-day:
-currentDay,
-
-
-xp:
-xp,
-
-
-streak:
-streak
-
+function saveProgress() {
+  fetch("/save-progress", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      course: courseName,
+      day: currentDay,
+      xp: xp,
+      streak: streak
+    })
+  })
+    .then(response => response.json())
+    .then(data => console.log("Progress Saved", data))
+    .catch(error => console.log("Save Error", error));
 }
 
-)
-
+function checkCourseComplete() {
+  if (currentDay >= totalDays) {
+    document.getElementById("certificate").style.display = "block";
+  }
 }
 
-)
-
-.then(
-response=>response.json()
-)
-
-.then(
-data=>{
-
-
-console.log(
-"Progress Saved",
-data
-);
-
-
-}
-
-)
-
-.catch(
-error=>{
-
-
-console.log(
-"Save Error",
-error
-);
-
-
-}
-
-);
-
-
-
-}
-
-
-
-
-
-
-
-/* =========================
-   AUTO SAVE
-========================= */
-
-
-setInterval(
-function(){
-
-
-saveProgress();
-
-
-},
-30000
-);
-
-
-
-
-
-
-/* =========================
-   BUTTON ANIMATION
-========================= */
-
-
-document
-.querySelectorAll(".btn")
-.forEach(
-button=>{
-
-
-button.addEventListener(
-"mouseenter",
-()=>{
-
-
-button.style.transform=
-"translateY(-3px)";
-
-
-button.style.transition=
-".3s";
-
-
-}
-
-);
-
-
-
-button.addEventListener(
-"mouseleave",
-()=>{
-
-
-button.style.transform=
-"translateY(0)";
-
-
-}
-
-);
-
-
-
-}
-);
-
-
-
-
-
-/* =========================
-   COMPLETE COURSE CHECK
-========================= */
-
-
-function checkCourseComplete(){
-
-
-if(
-currentDay>=totalDays
-){
-
-
-document.getElementById(
-"certificate"
-).style.display=
-"block";
-
-
-}
-
-
-
-}
-
-
-
-
-checkCourseComplete();
-
-
-
+loadLesson();
+setInterval(saveProgress, 30000);
+
+document.querySelectorAll(".btn").forEach(button => {
+  button.addEventListener("mouseenter", () => {
+    button.style.transform = "translateY(-3px)";
+    button.style.transition = ".3s";
+  });
+
+  button.addEventListener("mouseleave", () => {
+    button.style.transform = "translateY(0)";
+  });
+});
 </script>
-
 {% endblock %}
