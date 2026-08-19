@@ -443,27 +443,16 @@ def login():
 # --------------------------------------------------
 # DASHBOARD
 # --------------------------------------------------
-
 @app.route("/dashboard")
 def dashboard():
-
-
+    session["user_id"] = USER["id"]
+    session["name"] = USER["name"]
     return render_template(
-
         "dashboard.html",
-
-        logged_in="user_id" in session,
-
-        name=session.get("name"),
-
-        profile_pic=session.get(
-            "profile_pic"
-        )
-
+        user=USER,
+        activities=ACTIVITIES,
+        weekly=get_weekly_data()
     )
-
-
-
 
 # ==============================
 # INTERVIEW QUESTIONS
