@@ -1,96 +1,936 @@
-{% extends 'layout.html' %} 
- 
-{% block title %}Dashboard{% endblock %} 
- 
-{% block extra_css %} 
-    <link rel="stylesheet" 
-          href="{{ url_for('static', filename='css/dashboard.css') }}"> 
-{% endblock %} 
- 
-{% block content %} 
-<div class="dashboard-header"> 
-    <div> 
-        <h1>Welcome, {{ name }} 👋</h1> 
-        <p>Track your placement preparation and improve your skills.</p> 
-    </div> 
-    <a href="/certificate/{{ session['user_id'] }}" 
-       class="certificate-btn"> 
-        <i class="fas fa-download"></i> 
-        Certificate 
-    </a> 
-</div> 
- 
-<div class="stats"> 
-    <div class="stat-card fade-up"> 
-        <i class="fas fa-file-circle-question"></i> 
-        <h2>{{ total_tests or 0 }}</h2> 
-        <p>Mock Tests</p> 
-    </div> 
-    <div class="stat-card fade-up"> 
-        <i class="fas fa-trophy"></i> 
-        <h2>{{ best_score or 0 }}</h2> 
-        <p>Best Score</p> 
-    </div> 
-    <div class="stat-card fade-up"> 
-        <i class="fas fa-book"></i> 
-        <h2>{{ materials or 0 }}</h2> 
-        <p>Study Materials</p> 
-    </div> 
-</div> 
- 
-<!-- Features Cards --> 
-<div class="cards"> 
-    <div class="card fade-up"> 
-        <i class="fas fa-book-open"></i> 
-        <h2>Courses</h2> 
-        <p>Explore Java, Python, HTML, CSS and Full Stack courses.</p> 
-        <a href="/courses">View</a> 
-    </div> 
-    <div class="card fade-up"> 
-        <i class="fas fa-clipboard-check"></i> 
-        <h2>Mock Test</h2> 
-        <p>Practice coding and technical MCQ tests for placement preparation.</p> 
-        <a href="/mock_test">View</a> 
-    </div> 
-    <div class="card fade-up"> 
-        <i class="fas fa-user-tie"></i> 
-        <h2>Interview Questions</h2> 
-        <p>Java, DBMS, OS and HR questions with answers.</p> 
-        <a href="/interview_questions">View</a> 
-    </div> 
-    <div class="card fade-up"> 
-        <i class="fas fa-comments"></i> 
-        <h2>Communication</h2> 
-        <p>Improve English speaking and communication.</p> 
-        <a href="/communication">View</a> 
-    </div> 
-    <div class="card fade-up"> 
-        <i class="fas fa-file-lines"></i> 
-        <h2>Resume Builder</h2> 
-        <p>Create and download professional resume.</p> 
-        <a href="/resume_builder">Build Resume</a> 
-    </div> 
-    <div class="card fade-up"> 
-        <i class="fas fa-trophy"></i> 
-        <h2>Leaderboard</h2> 
-        <p>Check your rank among students.</p> 
-        <a href="/leaderboard">View</a> 
-    </div> 
-</div> 
-{% endblock %} 
- 
-{% block scripts %} 
-<script> 
-    const observer = new IntersectionObserver(entries => { 
-        entries.forEach(entry => { 
-            if (entry.isIntersecting) { 
-                entry.target.classList.add("show"); 
-            } 
-        }); 
-    }); 
- 
-    document.querySelectorAll(".fade-up").forEach(el => { 
-        observer.observe(el); 
-    }); 
-</script> 
+{% extends "layout.html" %}
+
+{% block title %}Dashboard | Placement Training Portal{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-page">
+
+    <!-- =========================
+         TOP HEADER
+    ========================== -->
+    <header class="dashboard-header">
+
+        <div class="header-left">
+            <div class="welcome-text">
+                <span class="eyebrow">PLACEMENT TRAINING PORTAL</span>
+
+                <h1>
+                    Welcome back,
+                    <span>{{ session.get('admin_name') or session.get('user_name') or session.get('name') or 'Student' }}</span> 👋
+                </h1>
+
+                <p>
+                    Track your preparation, improve your skills and stay placement ready.
+                </p>
+            </div>
+        </div>
+
+        <div class="header-right">
+
+            <div class="header-date">
+                <span class="date-icon">📅</span>
+                <div>
+                    <small>Today</small>
+                    <strong id="currentDate">Loading...</strong>
+                </div>
+            </div>
+
+            <div class="profile-mini">
+                <div class="profile-avatar">
+                    {{ (session.get('user_name') or session.get('name') or 'S')[0]|upper }}
+                </div>
+
+                <div class="profile-info">
+                    <strong>
+                        {{ session.get('user_name') or session.get('name') or 'Student' }}
+                    </strong>
+                    <small>Placement Candidate</small>
+                </div>
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <!-- =========================
+         READINESS HERO
+    ========================== -->
+    <section class="readiness-card">
+
+        <div class="readiness-content">
+
+            <div class="readiness-badge">
+                <span class="pulse-dot"></span>
+                Placement Readiness
+            </div>
+
+            <h2>
+                Your placement journey is
+                <span>progressing 🚀</span>
+            </h2>
+
+            <p>
+                Keep practicing mock tests, interview questions and communication skills
+                to improve your placement readiness.
+            </p>
+
+            <div class="readiness-actions">
+
+                <a href="{{ url_for('mock_categories') }}" class="btn-primary">
+                    Start Mock Test
+                    <span>→</span>
+                </a>
+
+                <a href="{{ url_for('interview_questions') }}" class="btn-secondary">
+                    Practice Interview
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <div class="readiness-score">
+
+            <div class="score-circle">
+
+                <svg viewBox="0 0 120 120">
+
+                    <circle
+                        class="score-bg"
+                        cx="60"
+                        cy="60"
+                        r="50">
+                    </circle>
+
+                    <circle
+                        class="score-progress"
+                        cx="60"
+                        cy="60"
+                        r="50">
+                    </circle>
+
+                </svg>
+
+                <div class="score-value">
+                    <strong id="readinessScore">0%</strong>
+                    <span>Ready</span>
+                </div>
+
+            </div>
+
+            <span class="score-label">
+                Overall Readiness
+            </span>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         STAT CARDS
+    ========================== -->
+    <section class="stats-grid">
+
+        <div class="stat-card">
+
+            <div class="stat-icon blue">
+                📝
+            </div>
+
+            <div class="stat-content">
+                <span>Mock Tests</span>
+                <strong id="mockTestsCount">
+                    {{ mock_tests_attempted|default(0) }}
+                </strong>
+
+                <small class="positive">
+                    ↑ Keep practicing
+                </small>
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon purple">
+                💬
+            </div>
+
+            <div class="stat-content">
+                <span>Interview Questions</span>
+
+                <strong id="interviewCount">
+                    {{ interview_completed|default(0) }}
+                </strong>
+
+                <small class="positive">
+                    Questions practiced
+                </small>
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon green">
+                📄
+            </div>
+
+            <div class="stat-content">
+                <span>Resume Status</span>
+
+                <strong>
+                    {{ resume_progress|default(0) }}%
+                </strong>
+
+                <small class="positive">
+                    Profile completion
+                </small>
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon orange">
+                🔥
+            </div>
+
+            <div class="stat-content">
+                <span>Preparation Streak</span>
+
+                <strong>
+                    {{ streak|default(0) }} Days
+                </strong>
+
+                <small class="positive">
+                    Stay consistent
+                </small>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         MAIN GRID
+    ========================== -->
+    <section class="dashboard-grid">
+
+
+        <!-- =====================
+             PERFORMANCE
+        ====================== -->
+        <div class="dashboard-card performance-card">
+
+            <div class="card-header">
+
+                <div>
+                    <span class="card-label">PERFORMANCE</span>
+                    <h3>Preparation Overview</h3>
+                </div>
+
+                <select id="performanceFilter">
+                    <option value="week">This Week</option>
+                    <option value="month">This Month</option>
+                    <option value="all">All Time</option>
+                </select>
+
+            </div>
+
+
+            <div class="performance-chart">
+
+                <div class="chart-y-axis">
+                    <span>100</span>
+                    <span>75</span>
+                    <span>50</span>
+                    <span>25</span>
+                    <span>0</span>
+                </div>
+
+                <div class="chart-area">
+
+                    <div class="chart-grid-lines">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+
+                    <div class="chart-bars">
+
+                        <div class="chart-column">
+                            <div class="bar" style="height: 38%;"></div>
+                            <span>Mon</span>
+                        </div>
+
+                        <div class="chart-column">
+                            <div class="bar" style="height: 55%;"></div>
+                            <span>Tue</span>
+                        </div>
+
+                        <div class="chart-column">
+                            <div class="bar" style="height: 47%;"></div>
+                            <span>Wed</span>
+                        </div>
+
+                        <div class="chart-column">
+                            <div class="bar" style="height: 72%;"></div>
+                            <span>Thu</span>
+                        </div>
+
+                        <div class="chart-column">
+                            <div class="bar active" style="height: 84%;"></div>
+                            <span>Fri</span>
+                        </div>
+
+                        <div class="chart-column">
+                            <div class="bar" style="height: 63%;"></div>
+                            <span>Sat</span>
+                        </div>
+
+                        <div class="chart-column">
+                            <div class="bar" style="height: 76%;"></div>
+                            <span>Sun</span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================
+             SKILLS
+        ====================== -->
+        <div class="dashboard-card skills-card">
+
+            <div class="card-header">
+
+                <div>
+                    <span class="card-label">SKILLS</span>
+                    <h3>Skill Progress</h3>
+                </div>
+
+                <span class="skill-target">
+                    Target: 80%
+                </span>
+
+            </div>
+
+
+            <div class="skill-list">
+
+                <div class="skill-item">
+
+                    <div class="skill-info">
+                        <span>Java</span>
+                        <strong>{{ java_progress|default(72) }}%</strong>
+                    </div>
+
+                    <div class="progress-track">
+                        <div
+                            class="progress-fill blue-fill"
+                            style="width: {{ java_progress|default(72) }}%;">
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div class="skill-item">
+
+                    <div class="skill-info">
+                        <span>Python</span>
+                        <strong>{{ python_progress|default(68) }}%</strong>
+                    </div>
+
+                    <div class="progress-track">
+                        <div
+                            class="progress-fill purple-fill"
+                            style="width: {{ python_progress|default(68) }}%;">
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div class="skill-item">
+
+                    <div class="skill-info">
+                        <span>DBMS</span>
+                        <strong>{{ dbms_progress|default(61) }}%</strong>
+                    </div>
+
+                    <div class="progress-track">
+                        <div
+                            class="progress-fill green-fill"
+                            style="width: {{ dbms_progress|default(61) }}%;">
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div class="skill-item">
+
+                    <div class="skill-info">
+                        <span>Frontend</span>
+                        <strong>{{ frontend_progress|default(56) }}%</strong>
+                    </div>
+
+                    <div class="progress-track">
+                        <div
+                            class="progress-fill orange-fill"
+                            style="width: {{ frontend_progress|default(56) }}%;">
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div class="skill-item">
+
+                    <div class="skill-info">
+                        <span>Communication</span>
+                        <strong>{{ communication_progress|default(64) }}%</strong>
+                    </div>
+
+                    <div class="progress-track">
+                        <div
+                            class="progress-fill pink-fill"
+                            style="width: {{ communication_progress|default(64) }}%;">
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================
+             QUICK ACTIONS
+        ====================== -->
+        <div class="dashboard-card quick-actions-card">
+
+            <div class="card-header">
+
+                <div>
+                    <span class="card-label">QUICK ACTIONS</span>
+                    <h3>Continue Learning</h3>
+                </div>
+
+            </div>
+
+
+            <div class="quick-actions">
+
+                <a href="{{ url_for('mock_categories') }}" class="quick-action">
+
+                    <div class="quick-icon blue">
+                        🧠
+                    </div>
+
+                    <div>
+                        <strong>Mock Test</strong>
+                        <span>Test your technical skills</span>
+                    </div>
+
+                    <b>→</b>
+
+                </a>
+
+
+                <a href="{{ url_for('interview_questions') }}" class="quick-action">
+
+                    <div class="quick-icon purple">
+                        🎤
+                    </div>
+
+                    <div>
+                        <strong>Interview Questions</strong>
+                        <span>Prepare for interviews</span>
+                    </div>
+
+                    <b>→</b>
+
+                </a>
+
+
+                <a href="{{ url_for('resume_builder') }}" class="quick-action">
+
+                    <div class="quick-icon green">
+                        📄
+                    </div>
+
+                    <div>
+                        <strong>Resume Builder</strong>
+                        <span>Build your professional resume</span>
+                    </div>
+
+                    <b>→</b>
+
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================
+             RECENT TESTS
+        ====================== -->
+        <div class="dashboard-card recent-card">
+
+            <div class="card-header">
+
+                <div>
+                    <span class="card-label">ACTIVITY</span>
+                    <h3>Recent Mock Tests</h3>
+                </div>
+
+                <a href="{{ url_for('mock_test_history') }}" class="view-all">
+                    View All →
+                </a>
+
+            </div>
+
+
+            <div class="test-list">
+
+                {% if recent_tests %}
+
+                    {% for test in recent_tests %}
+
+                    <div class="test-row">
+
+                        <div class="test-subject">
+
+                            <div class="subject-icon">
+                                📝
+                            </div>
+
+                            <div>
+                                <strong>
+                                    {{ test.category|default('Mock Test') }}
+                                </strong>
+
+                                <span>
+                                    {{ test.test_date|default('Recently') }}
+                                </span>
+                            </div>
+
+                        </div>
+
+
+                        <div class="test-score">
+
+                            <strong>
+                                {{ test.score|default(0) }}/{{ test.total_questions|default(20) }}
+                            </strong>
+
+                            <span>
+                                {{ test.percentage|default(0) }}%
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    {% endfor %}
+
+                {% else %}
+
+                    <div class="empty-state">
+
+                        <div class="empty-icon">
+                            📊
+                        </div>
+
+                        <h4>No test attempts yet</h4>
+
+                        <p>
+                            Take your first mock test to see your performance here.
+                        </p>
+
+                        <a href="{{ url_for('mock_categories') }}" class="small-btn">
+                            Take Mock Test
+                        </a>
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================
+             TODAY'S TARGET
+        ====================== -->
+        <div class="dashboard-card target-card">
+
+            <div class="target-top">
+
+                <div>
+                    <span class="card-label">TODAY'S TARGET</span>
+                    <h3>Stay Consistent 🎯</h3>
+                </div>
+
+                <div class="target-percent">
+                    <span id="targetPercent">0%</span>
+                </div>
+
+            </div>
+
+
+            <div class="target-progress">
+
+                <div class="target-progress-fill" id="targetProgress"></div>
+
+            </div>
+
+
+            <div class="target-list">
+
+                <label class="target-item">
+
+                    <input type="checkbox" class="target-checkbox">
+
+                    <span class="custom-check"></span>
+
+                    <span>
+                        Complete 10 interview questions
+                    </span>
+
+                </label>
+
+
+                <label class="target-item">
+
+                    <input type="checkbox" class="target-checkbox">
+
+                    <span class="custom-check"></span>
+
+                    <span>
+                        Complete one mock test
+                    </span>
+
+                </label>
+
+
+                <label class="target-item">
+
+                    <input type="checkbox" class="target-checkbox">
+
+                    <span class="custom-check"></span>
+
+                    <span>
+                        Practice communication
+                    </span>
+
+                </label>
+
+
+                <label class="target-item">
+
+                    <input type="checkbox" class="target-checkbox">
+
+                    <span class="custom-check"></span>
+
+                    <span>
+                        Review weak topics
+                    </span>
+
+                </label>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         PLACEMENT ROADMAP
+    ========================== -->
+    <section class="roadmap-section">
+
+        <div class="section-heading">
+
+            <div>
+                <span class="card-label">YOUR JOURNEY</span>
+                <h2>Placement Roadmap</h2>
+            </div>
+
+            <p>
+                Follow each stage to become placement ready.
+            </p>
+
+        </div>
+
+
+        <div class="roadmap">
+
+            <div class="roadmap-line"></div>
+
+
+            <div class="roadmap-step completed">
+
+                <div class="roadmap-number">
+                    ✓
+                </div>
+
+                <div class="roadmap-content">
+                    <span>01</span>
+                    <strong>Build Foundation</strong>
+                    <small>Programming fundamentals</small>
+                </div>
+
+            </div>
+
+
+            <div class="roadmap-step active">
+
+                <div class="roadmap-number">
+                    02
+                </div>
+
+                <div class="roadmap-content">
+                    <span>02</span>
+                    <strong>Technical Preparation</strong>
+                    <small>Java • Python • DBMS • DSA</small>
+                </div>
+
+            </div>
+
+
+            <div class="roadmap-step">
+
+                <div class="roadmap-number">
+                    03
+                </div>
+
+                <div class="roadmap-content">
+                    <span>03</span>
+                    <strong>Interview Preparation</strong>
+                    <small>Technical + HR questions</small>
+                </div>
+
+            </div>
+
+
+            <div class="roadmap-step">
+
+                <div class="roadmap-number">
+                    04
+                </div>
+
+                <div class="roadmap-content">
+                    <span>04</span>
+                    <strong>Placement Ready</strong>
+                    <small>Apply & crack interviews 🚀</small>
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         FOOTER
+    ========================== -->
+    <footer class="dashboard-footer">
+
+        <div>
+            <strong>Placement Training Portal</strong>
+            <span>Build skills. Practice. Get placed.</span>
+        </div>
+
+        <div>
+            <span>Keep learning, keep growing 🚀</span>
+        </div>
+
+    </footer>
+
+</div>
+
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    /* =========================
+       CURRENT DATE
+    ========================== */
+
+    const dateElement = document.getElementById("currentDate");
+
+    if (dateElement) {
+
+        const now = new Date();
+
+        dateElement.textContent =
+            now.toLocaleDateString("en-IN", {
+                day: "numeric",
+                month: "short",
+                year: "numeric"
+            });
+
+    }
+
+
+    /* =========================
+       READINESS SCORE
+    ========================== */
+
+    const readinessScore =
+        Number("{{ readiness_score|default(0) }}");
+
+    const scoreElement =
+        document.getElementById("readinessScore");
+
+    const progressCircle =
+        document.querySelector(".score-progress");
+
+    if (scoreElement) {
+
+        let current = 0;
+
+        const interval = setInterval(() => {
+
+            current += 1;
+
+            scoreElement.textContent =
+                current + "%";
+
+            if (current >= readinessScore) {
+                clearInterval(interval);
+            }
+
+        }, 12);
+
+    }
+
+
+    if (progressCircle) {
+
+        const circumference = 314;
+
+        const offset =
+            circumference -
+            (readinessScore / 100) * circumference;
+
+        progressCircle.style.strokeDasharray =
+            circumference;
+
+        progressCircle.style.strokeDashoffset =
+            offset;
+
+    }
+
+
+    /* =========================
+       TODAY TARGET
+    ========================== */
+
+    const checkboxes =
+        document.querySelectorAll(".target-checkbox");
+
+    const targetPercent =
+        document.getElementById("targetPercent");
+
+    const targetProgress =
+        document.getElementById("targetProgress");
+
+
+    function updateTargetProgress() {
+
+        const total = checkboxes.length;
+
+        const completed =
+            document.querySelectorAll(
+                ".target-checkbox:checked"
+            ).length;
+
+        const percentage =
+            total === 0
+                ? 0
+                : Math.round((completed / total) * 100);
+
+
+        if (targetPercent) {
+            targetPercent.textContent =
+                percentage + "%";
+        }
+
+
+        if (targetProgress) {
+            targetProgress.style.width =
+                percentage + "%";
+        }
+
+    }
+
+
+    checkboxes.forEach((checkbox) => {
+
+        checkbox.addEventListener(
+            "change",
+            updateTargetProgress
+        );
+
+    });
+
+
+    updateTargetProgress();
+
+
+    /* =========================
+       PERFORMANCE FILTER
+    ========================== */
+
+    const filter =
+        document.getElementById(
+            "performanceFilter"
+        );
+
+    if (filter) {
+
+        filter.addEventListener(
+            "change",
+            function () {
+
+                console.log(
+                    "Performance filter:",
+                    this.value
+                );
+
+            }
+        );
+
+    }
+
+});
+
+</script>
+
 {% endblock %}
