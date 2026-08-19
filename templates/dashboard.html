@@ -1,159 +1,96 @@
-{% extends 'layout.html' %}
-
-{% block title %}Dashboard – {{ user.name }}{% endblock %}
-
-{% block extra_css %}
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='css/dashboard.css') }}">
-{% endblock %}
-
-{% block content %}
-<!-- Header -->
-<div class="dashboard-header fade-up">
-    <div class="header-left">
-        <h1>Welcome, {{ user.name }} 👋</h1>
-        <p>Track your placement preparation and improve your skills.</p>
-    </div>
-    <div class="header-right">
-        <a href="/certificate/{{ session['user_id'] }}" class="btn-primary">
-            <i class="fas fa-download"></i> Certificate
-        </a>
-    </div>
-</div>
-
-<!-- Stats Cards -->
-<div class="stats-grid">
-    <div class="stat-card fade-up">
-        <div class="stat-icon"><i class="fas fa-file-circle-question"></i></div>
-        <div class="stat-details">
-            <h3>Mock Tests</h3>
-            <p class="stat-value">{{ user.stats.total_tests }}</p>
-        </div>
-    </div>
-    <div class="stat-card fade-up">
-        <div class="stat-icon"><i class="fas fa-trophy"></i></div>
-        <div class="stat-details">
-            <h3>Best Score</h3>
-            <p class="stat-value">{{ user.stats.best_score }}%</p>
-        </div>
-    </div>
-    <div class="stat-card fade-up">
-        <div class="stat-icon"><i class="fas fa-book"></i></div>
-        <div class="stat-details">
-            <h3>Study Materials</h3>
-            <p class="stat-value">{{ user.stats.materials }}</p>
-        </div>
-    </div>
-    <div class="stat-card fade-up">
-        <div class="stat-icon"><i class="fas fa-clock"></i></div>
-        <div class="stat-details">
-            <h3>Hours Studied</h3>
-            <p class="stat-value">{{ user.stats.hours_studied }}h</p>
-        </div>
-    </div>
-</div>
-
-<!-- Main Grid: Skills + Chart + Activity -->
-<div class="main-grid">
-    <!-- Skills Progress -->
-    <div class="card fade-up">
-        <h2><i class="fas fa-chart-line"></i> Skill Progress</h2>
-        <div class="skills-container">
-            {% for skill, progress in user.skills.items() %}
-            <div class="skill-item">
-                <div class="skill-header">
-                    <span>{{ skill }}</span>
-                    <span>{{ progress }}%</span>
-                </div>
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width: {{ progress }}%"></div>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-    </div>
-
-    <!-- Weekly Performance Chart -->
-    <div class="card fade-up">
-        <h2><i class="fas fa-chart-area"></i> Weekly Performance</h2>
-        <div class="chart-container">
-            <canvas id="weeklyChart"></canvas>
-        </div>
-    </div>
-</div>
-
-<!-- Recent Activity -->
-<div class="card fade-up" style="margin-top: 25px;">
-    <h2><i class="fas fa-history"></i> Recent Activity</h2>
-    <div class="activity-list">
-        {% for activity in activities %}
-        <div class="activity-item">
-            <div class="activity-icon">
-                <i class="fas {% if activity.type == 'Mock Test' %}fa-clipboard-check
-                            {% elif activity.type == 'Course' %}fa-book-open
-                            {% elif activity.type == 'Resume' %}fa-file-lines
-                            {% else %}fa-star{% endif %}"></i>
-            </div>
-            <div class="activity-details">
-                <p class="activity-title">{{ activity.title }}</p>
-                <p class="activity-meta">{{ activity.type }} • {{ activity.date }}
-                    {% if activity.score %} • Score: {{ activity.score }}%{% endif %}
-                </p>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-</div>
-
-<!-- Feature Cards -->
-<div class="feature-cards">
-    <div class="feature-card fade-up">
-        <i class="fas fa-book-open"></i>
-        <h3>Courses</h3>
-        <p>Java, Python, HTML, CSS, Full Stack</p>
-        <a href="/courses">Explore</a>
-    </div>
-    <div class="feature-card fade-up">
-        <i class="fas fa-clipboard-check"></i>
-        <h3>Mock Test</h3>
-        <p>Coding & MCQ practice</p>
-        <a href="/mock_test">Start</a>
-    </div>
-    <div class="feature-card fade-up">
-        <i class="fas fa-user-tie"></i>
-        <h3>Interview Qs</h3>
-        <p>Technical & HR questions</p>
-        <a href="/interview_questions">View</a>
-    </div>
-    <div class="feature-card fade-up">
-        <i class="fas fa-comments"></i>
-        <h3>Communication</h3>
-        <p>English speaking practice</p>
-        <a href="/communication">Improve</a>
-    </div>
-    <div class="feature-card fade-up">
-        <i class="fas fa-file-lines"></i>
-        <h3>Resume Builder</h3>
-        <p>Create professional resume</p>
-        <a href="/resume_builder">Build</a>
-    </div>
-    <div class="feature-card fade-up">
-        <i class="fas fa-trophy"></i>
-        <h3>Leaderboard</h3>
-        <p>Check your rank</p>
-        <a href="/leaderboard">View</a>
-    </div>
-</div>
-{% endblock %}
-
-{% block scripts %}
-<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
-<script>
-    // Initialize chart with data from backend
-    const weeklyData = {
-        days: {{ weekly.days | tojson }},
-        scores: {{ weekly.scores | tojson }}
-    };
-    initWeeklyChart(weeklyData);
-</script>
+{% extends 'layout.html' %} 
+ 
+{% block title %}Dashboard{% endblock %} 
+ 
+{% block extra_css %} 
+    <link rel="stylesheet" 
+          href="{{ url_for('static', filename='css/dashboard.css') }}"> 
+{% endblock %} 
+ 
+{% block content %} 
+<div class="dashboard-header"> 
+    <div> 
+        <h1>Welcome, {{ name }} 👋</h1> 
+        <p>Track your placement preparation and improve your skills.</p> 
+    </div> 
+    <a href="/certificate/{{ session['user_id'] }}" 
+       class="certificate-btn"> 
+        <i class="fas fa-download"></i> 
+        Certificate 
+    </a> 
+</div> 
+ 
+<div class="stats"> 
+    <div class="stat-card fade-up"> 
+        <i class="fas fa-file-circle-question"></i> 
+        <h2>{{ total_tests or 0 }}</h2> 
+        <p>Mock Tests</p> 
+    </div> 
+    <div class="stat-card fade-up"> 
+        <i class="fas fa-trophy"></i> 
+        <h2>{{ best_score or 0 }}</h2> 
+        <p>Best Score</p> 
+    </div> 
+    <div class="stat-card fade-up"> 
+        <i class="fas fa-book"></i> 
+        <h2>{{ materials or 0 }}</h2> 
+        <p>Study Materials</p> 
+    </div> 
+</div> 
+ 
+<!-- Features Cards --> 
+<div class="cards"> 
+    <div class="card fade-up"> 
+        <i class="fas fa-book-open"></i> 
+        <h2>Courses</h2> 
+        <p>Explore Java, Python, HTML, CSS and Full Stack courses.</p> 
+        <a href="/courses">View</a> 
+    </div> 
+    <div class="card fade-up"> 
+        <i class="fas fa-clipboard-check"></i> 
+        <h2>Mock Test</h2> 
+        <p>Practice coding and technical MCQ tests for placement preparation.</p> 
+        <a href="/mock_test">View</a> 
+    </div> 
+    <div class="card fade-up"> 
+        <i class="fas fa-user-tie"></i> 
+        <h2>Interview Questions</h2> 
+        <p>Java, DBMS, OS and HR questions with answers.</p> 
+        <a href="/interview_questions">View</a> 
+    </div> 
+    <div class="card fade-up"> 
+        <i class="fas fa-comments"></i> 
+        <h2>Communication</h2> 
+        <p>Improve English speaking and communication.</p> 
+        <a href="/communication">View</a> 
+    </div> 
+    <div class="card fade-up"> 
+        <i class="fas fa-file-lines"></i> 
+        <h2>Resume Builder</h2> 
+        <p>Create and download professional resume.</p> 
+        <a href="/resume_builder">Build Resume</a> 
+    </div> 
+    <div class="card fade-up"> 
+        <i class="fas fa-trophy"></i> 
+        <h2>Leaderboard</h2> 
+        <p>Check your rank among students.</p> 
+        <a href="/leaderboard">View</a> 
+    </div> 
+</div> 
+{% endblock %} 
+ 
+{% block scripts %} 
+<script> 
+    const observer = new IntersectionObserver(entries => { 
+        entries.forEach(entry => { 
+            if (entry.isIntersecting) { 
+                entry.target.classList.add("show"); 
+            } 
+        }); 
+    }); 
+ 
+    document.querySelectorAll(".fade-up").forEach(el => { 
+        observer.observe(el); 
+    }); 
+</script> 
 {% endblock %}
