@@ -445,15 +445,154 @@ def login():
 # --------------------------------------------------
 @app.route("/dashboard")
 def dashboard():
-    session["user_id"] = USER["id"]
-    session["name"] = USER["name"]
+    # Login check
+    if "user_id" not in session and "admin_id" not in session:
+        return redirect(url_for("login"))
+
+    # Default values
+    readiness_score = 0
+    mock_tests_attempted = 0
+    interview_completed = 0
+    resume_progress = 0
+    streak = 0
+
+    java_progress = 0
+    python_progress = 0
+    dbms_progress = 0
+    frontend_progress = 0
+    communication_progress = 0
+
+    recent_tests = []
+
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        # --------------------------------
+        # USER ID
+        # --------------------------------
+        user_id = session.get("user_id")
+
+        # --------------------------------
+        # MOCK TEST STATISTICS
+        # --------------------------------
+        if user_id:
+
+            cursor.execute("""
+                SELECT
+                    COUNT(*) AS total_tests,
+                    COALESCE(AVG(percentage), 0) AS avg_percentage
+                FROM results
+                WHERE user_id = %s
+            """, (user_id,))
+
+            mock_data = cursor.fetchone()
+
+            if mock_data:
+                mock_tests_attempted = mock_data["total_tests"] or 0
+                avg_percentage = float(
+                    mock_data["avg_percentage"] or 0
+                )
+            else:
+                avg_percentage = 0
+
+            # --------------------------------
+            # RECENT TESTS
+            # --------------------------------
+            cursor.execute("""
+                SELECT
+                    score,
+                    total_questions,
+                    percentage,
+                    test_date
+                FROM results
+                WHERE user_id = %s
+                ORDER BY test_date DESC
+                LIMIT 5
+            """, (user_id,))
+
+            recent_tests = cursor.fetchall()
+
+        else:
+            avg_percentage = 0
+
+        # --------------------------------
+        # INTERVIEW QUESTIONS
+        # --------------------------------
+        try:
+            cursor.execute("""
+                SELECT COUNT(*) AS total
+                FROM interview_progress
+                WHERE user_id = %s
+            """, (user_id,))
+
+            interview_data = cursor.fetchone()
+
+            if interview_data:
+                interview_completed = (
+                    interview_data["total"] or 0
+                )
+
+        except Exception:
+            # Table may not exist yet
+            interview_completed = 0
+
+        # --------------------------------
+        # READINESS SCORE
+        # --------------------------------
+        readiness_score = round(
+            (
+                avg_percentage * 0.50
+                + min(interview_completed, 100) * 0.20
+                + resume_progress * 0.20
+                + min(streak, 10) * 1
+            ),
+            0
+        )
+
+        readiness_score = min(
+            max(int(readiness_score), 0),
+            100
+        )
+
+        # --------------------------------
+        # CLOSE
+        # --------------------------------
+        cursor.close()
+        conn.close()
+
+    except Exception as e:
+
+        print(
+            "Dashboard Error:",
+            e
+        )
+
     return render_template(
         "dashboard.html",
-        user=USER,
-        activities=ACTIVITIES,
-        weekly=get_weekly_data()
-    )
 
+        readiness_score=readiness_score,
+
+        mock_tests_attempted=mock_tests_attempted,
+
+        interview_completed=interview_completed,
+
+        resume_progress=resume_progress,
+
+        streak=streak,
+
+        java_progress=java_progress,
+
+        python_progress=python_progress,
+
+        dbms_progress=dbms_progress,
+
+        frontend_progress=frontend_progress,
+
+        communication_progress=communication_progress,
+
+        recent_tests=recent_tests
+    )
 # ==============================
 # INTERVIEW QUESTIONS
 # ==============================
