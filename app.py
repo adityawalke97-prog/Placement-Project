@@ -1,4 +1,4 @@
-from flask import (
+iufrom flask import (
     Flask,
     render_template,
     request,
@@ -122,27 +122,12 @@ google = oauth.register(
         "scope":"openid email profile"
     }
 
-)
-
-# --------------------------------------------------
-# HOME
-# --------------------------------------------------
-# --------------------------------------------------
-# HOME
-# --------------------------------------------------
-
-# --------------------------------------------------
-# HOME
-# --------------------------------------------------
-
 @app.route("/")
 def home():
     return redirect("/login")
 
 
-# --------------------------------------------------
-# GOOGLE LOGIN
-# --------------------------------------------------
+
 
 @app.route("/login/google")
 def google_login():
@@ -158,9 +143,7 @@ def google_login():
     return google.authorize_redirect(redirect_uri)
 
 
-# --------------------------------------------------
-# GOOGLE CALLBACK
-# --------------------------------------------------
+
 
 @app.route("/login/google/callback")
 def google_callback():
@@ -443,123 +426,264 @@ def login():
 # --------------------------------------------------
 # DASHBOARD
 # --------------------------------------------------
+# =========================================================
+# STUDENT DASHBOARD
+# =========================================================
+
 @app.route("/dashboard")
 def dashboard():
-    # Login check
-    if "user_id" not in session and "admin_id" not in session:
+
+    # -----------------------------------------
+    # LOGIN CHECK
+    # -----------------------------------------
+
+    if "user_id" not in session:
         return redirect(url_for("login"))
 
-    # Default values
-    readiness_score = 0
-    mock_tests_attempted = 0
-    interview_completed = 0
-    resume_progress = 0
-    streak = 0
+    user_id = session["user_id"]
 
-    java_progress = 0
-    python_progress = 0
-    dbms_progress = 0
-    frontend_progress = 0
-    communication_progress = 0
-
-    recent_tests = []
+    connection = None
+    cursor = None
 
     try:
-        conn = get_db_connection()
-        cursor = conn.cursor()
 
-        # --------------------------------
-        # USER ID
-        # --------------------------------
-        user_id = session.get("user_id")
+        # -----------------------------------------
+        # DATABASE CONNECTION
+        # -----------------------------------------
 
-        # --------------------------------
-        # MOCK TEST STATISTICS
-        # --------------------------------
-        if user_id:
+        connection = get_db_connection()
+        cursor = connection.cursor(dictionary=True)
 
-            cursor.execute("""
-                SELECT
-                    COUNT(*) AS total_tests,
-                    COALESCE(AVG(percentage), 0) AS avg_percentage
-                FROM results
-                WHERE user_id = %s
-            """, (user_id,))
+        # -----------------------------------------
+        # TOTAL COURSES
+        # -----------------------------------------
 
-            mock_data = cursor.fetchone()
+        cursor.execute("""
+            SELECT COUNT(*) AS total
+            FROM courses
+        """)
 
-            if mock_data:
-                mock_tests_attempted = mock_data["total_tests"] or 0
-                avg_percentage = float(
-                    mock_data["avg_percentage"] or 0
-                )
-            else:
-                avg_percentage = 0
+        row = cursor.fetchone()
 
-            # --------------------------------
-            # RECENT TESTS
-            # --------------------------------
-            cursor.execute("""
-                SELECT
-                    score,
-                    total_questions,
-                    percentage,
-                    test_date
-                FROM results
-                WHERE user_id = %s
-                ORDER BY test_date DESC
-                LIMIT 5
-            """, (user_id,))
+        total_courses = row["total"] if row else 0
 
-            recent_tests = cursor.fetchall()
 
-        else:
-            avg_percentage = 0
+        # -----------------------------------------
+        # TOTAL INTERVIEW QUESTIONS
+        # -----------------------------------------
 
-        # --------------------------------
-        # INTERVIEW QUESTIONS
-        # --------------------------------
+        cursor.execute("""
+            SELECT COUNT(*) AS total
+            FROM interview_questions
+        """)
+
+        row = cursor.fetchone()
+
+        total_questions = row["total"] if row else 0
+
+
+        # -----------------------------------------
+        # MOCK TEST ATTEMPTS
+        # -----------------------------------------
+
+        cursor.execute("""
+            SELECT COUNT(*) AS total
+            FROM results
+            WHERE user_id = %s
+        """, (user_id,))
+
+        row = cursor.fetchone()
+
+        mock_attempted = row["total"] if row else 0
+
+
+        # -----------------------------------------
+        # AVERAGE MOCK TEST SCORE
+        # -----------------------------------------
+
+        cursor.execute("""
+            SELECT AVG(percentage) AS average_score
+            FROM results
+            WHERE user_id = %s
+        """, (user_id,))
+
+        row = cursor.fetchone()
+
+        average_score = (
+            round(float(row["average_score"]), 1)
+            if row and row["average_score"] is not None
+            else 0
+        )
+
+
+        # -----------------------------------------
+        # COMPLETED COURSES
+        # -----------------------------------------
+
+        completed_courses = 0
+
+        # Agar tumhare project mein course_progress
+        # table hai to ye query use kar sakte ho.
+
         try:
+
+            cursor.execute("""
+                SELECT COUNT(*) AS total
+                FROM course_progress
+                WHERE user_id = %s
+                AND progress >= 100
+            """, (user_id,))
+
+            row = cursor.fetchone()
+
+            completed_courses = (
+                row["total"]
+                if row
+                else 0
+            )
+
+        except Exception:
+
+            # Table available nahi hone par
+            # dashboard crash nahi hoga.
+
+            completed_courses = 0
+
+
+        # -----------------------------------------
+        # INTERVIEW QUESTIONS SOLVED
+        # -----------------------------------------
+
+        interview_completed = 0
+
+        try:
+
             cursor.execute("""
                 SELECT COUNT(*) AS total
                 FROM interview_progress
                 WHERE user_id = %s
+                AND completed = 1
             """, (user_id,))
 
-            interview_data = cursor.fetchone()
+            row = cursor.fetchone()
 
-            if interview_data:
-                interview_completed = (
-                    interview_data["total"] or 0
+            interview_completed = (
+                row["total"]
+                if row
+                else 0
+            )
+
+        except Exception:
+
+            interview_completed = 0
+
+
+        # -----------------------------------------
+        # RESUME ATS SCORE
+        # -----------------------------------------
+
+        ats_score = 0
+
+        try:
+
+            cursor.execute("""
+                SELECT ats_score
+                FROM resumes
+                WHERE user_id = %s
+                ORDER BY id DESC
+                LIMIT 1
+            """, (user_id,))
+
+            row = cursor.fetchone()
+
+            if row and row["ats_score"] is not None:
+
+                ats_score = int(
+                    row["ats_score"]
                 )
 
         except Exception:
-            # Table may not exist yet
-            interview_completed = 0
 
-        # --------------------------------
-        # READINESS SCORE
-        # --------------------------------
-        readiness_score = round(
+            ats_score = 0
+
+
+        # -----------------------------------------
+        # DAILY STREAK
+        # -----------------------------------------
+
+        streak = 0
+
+        try:
+
+            cursor.execute("""
+                SELECT streak
+                FROM user_streaks
+                WHERE user_id = %s
+                LIMIT 1
+            """, (user_id,))
+
+            row = cursor.fetchone()
+
+            if row:
+
+                streak = int(
+                    row["streak"] or 0
+                )
+
+        except Exception:
+
+            streak = 0
+
+
+        # -----------------------------------------
+        # PLACEMENT READINESS
+        # -----------------------------------------
+
+        placement_score = round(
             (
-                avg_percentage * 0.50
-                + min(interview_completed, 100) * 0.20
-                + resume_progress * 0.20
-                + min(streak, 10) * 1
+                average_score * 0.40
+                +
+                ats_score * 0.20
+                +
+                min(completed_courses * 10, 100) * 0.20
+                +
+                min(interview_completed, 20) * 5 * 0.20
             ),
-            0
+            1
         )
 
-        readiness_score = min(
-            max(int(readiness_score), 0),
+        placement_score = min(
+            placement_score,
             100
         )
 
-        # --------------------------------
-        # CLOSE
-        # --------------------------------
-        cursor.close()
-        conn.close()
+
+        # -----------------------------------------
+        # RENDER DASHBOARD
+        # -----------------------------------------
+
+        return render_template(
+            "dashboard.html",
+
+            total_courses=total_courses,
+
+            total_questions=total_questions,
+
+            mock_attempted=mock_attempted,
+
+            average_score=average_score,
+
+            completed_courses=completed_courses,
+
+            interview_completed=interview_completed,
+
+            ats_score=ats_score,
+
+            streak=streak,
+
+            placement_score=placement_score
+        )
+
 
     except Exception as e:
 
@@ -568,31 +692,38 @@ def dashboard():
             e
         )
 
-    return render_template(
-        "dashboard.html",
+        return render_template(
+            "dashboard.html",
 
-        readiness_score=readiness_score,
+            total_courses=0,
 
-        mock_tests_attempted=mock_tests_attempted,
+            total_questions=0,
 
-        interview_completed=interview_completed,
+            mock_attempted=0,
 
-        resume_progress=resume_progress,
+            average_score=0,
 
-        streak=streak,
+            completed_courses=0,
 
-        java_progress=java_progress,
+            interview_completed=0,
 
-        python_progress=python_progress,
+            ats_score=0,
 
-        dbms_progress=dbms_progress,
+            streak=0,
 
-        frontend_progress=frontend_progress,
+            placement_score=0
+        )
 
-        communication_progress=communication_progress,
 
-        recent_tests=recent_tests
-    )
+    finally:
+
+        if cursor:
+
+            cursor.close()
+
+        if connection:
+
+            connection.close()
 # ==============================
 # INTERVIEW QUESTIONS
 # ==============================
