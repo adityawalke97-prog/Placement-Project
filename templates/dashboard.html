@@ -6,11 +6,13 @@
 
 <div class="dashboard">
 
-    <!-- ================= HERO SECTION ================= -->
+    <!-- ========================= -->
+    <!-- HERO SECTION -->
+    <!-- ========================= -->
 
-    <section class="hero">
+    <section class="hero-section">
 
-        <div class="hero-left">
+        <div class="hero-content">
 
             <h1>
                 Welcome Back,
@@ -19,104 +21,575 @@
             </h1>
 
             <p>
-                Continue your placement preparation and achieve your dream job.
+                Keep learning every day and improve your placement
+                preparation.
             </p>
 
             <div class="hero-buttons">
 
-                <a href="{{ url_for('courses') }}" class="btn btn-primary">
-                    Start Learning
+                <a href="{{ url_for('courses') }}" class="btn-primary">
+                    Continue Learning
                 </a>
 
-                <a href="{{ url_for('mock_categories') }}" class="btn btn-success">
-                    Mock Test
+                <a href="{{ url_for('mock_categories') }}" class="btn-secondary">
+                    Start Mock Test
                 </a>
 
             </div>
 
         </div>
 
-        <div class="hero-right">
+        <div class="hero-image">
 
             <img
-                src="{{ url_for('static', filename='images/dashboard.svg') }}"
+                src="{{ url_for('static',filename='images/dashboard.svg') }}"
                 alt="Dashboard">
 
         </div>
 
     </section>
 
-    <!-- ================= QUICK STATS ================= -->
+    <!-- ========================= -->
+    <!-- STATS -->
+    <!-- ========================= -->
 
-    <section class="stats">
+    <section class="stats-grid">
 
-        <div class="card">
+        <div class="stat-card">
+
             <i class="fas fa-book"></i>
+
             <h2>{{ total_courses }}</h2>
-            <p>Courses</p>
+
+            <p>Total Courses</p>
+
         </div>
 
-        <div class="card">
-            <i class="fas fa-laptop-code"></i>
-            <h2>{{ total_mock_tests }}</h2>
-            <p>Mock Tests</p>
-        </div>
+        <div class="stat-card">
 
-        <div class="card">
             <i class="fas fa-question-circle"></i>
+
             <h2>{{ total_questions }}</h2>
+
             <p>Interview Questions</p>
+
         </div>
 
-        <div class="card">
+        <div class="stat-card">
+
+            <i class="fas fa-laptop-code"></i>
+
+            <h2>{{ mock_attempted }}</h2>
+
+            <p>Mock Tests</p>
+
+        </div>
+
+        <div class="stat-card">
+
             <i class="fas fa-file-alt"></i>
-            <h2>{{ resume_score }}%</h2>
-            <p>Resume Score</p>
+
+            <h2>{{ ats_score }}%</h2>
+
+            <p>Resume ATS</p>
+
+        </div>
+
+        <div class="stat-card">
+
+            <i class="fas fa-fire"></i>
+
+            <h2>{{ streak }}</h2>
+
+            <p>Daily Streak</p>
+
+        </div>
+
+        <div class="stat-card">
+
+            <i class="fas fa-chart-line"></i>
+
+            <h2>{{ placement_score }}%</h2>
+
+            <p>Placement Ready</p>
+
         </div>
 
     </section>
 
-    <!-- ================= FEATURE CARDS ================= -->
+    <!-- ========================= -->
+    <!-- QUICK ACCESS -->
+    <!-- ========================= -->
 
-    <section class="feature-grid">
+    <section class="quick-grid">
 
-        <a href="{{ url_for('courses') }}" class="feature-card">
+        <a href="{{ url_for('courses') }}" class="quick-card">
+
             <i class="fas fa-book-open"></i>
+
             <h3>Courses</h3>
-            <p>Learn Java, Python, DBMS, Aptitude and more.</p>
+
+            <span>Learn New Skills</span>
+
         </a>
 
-        <a href="{{ url_for('interview_questions') }}" class="feature-card">
-            <i class="fas fa-comments"></i>
+        <a href="{{ url_for('interview_questions') }}" class="quick-card">
+
+            <i class="fas fa-user-tie"></i>
+
             <h3>Interview Questions</h3>
-            <p>Practice company interview questions.</p>
+
+            <span>Company Wise Questions</span>
+
         </a>
 
-        <a href="{{ url_for('mock_categories') }}" class="feature-card">
+        <a href="{{ url_for('mock_categories') }}" class="quick-card">
+
             <i class="fas fa-clipboard-check"></i>
-            <h3>Mock Test</h3>
-            <p>Attempt timed mock tests.</p>
+
+            <h3>Mock Tests</h3>
+
+            <span>Practice Daily</span>
+
         </a>
 
-        <a href="{{ url_for('communication') }}" class="feature-card">
-            <i class="fas fa-microphone"></i>
+        <a href="{{ url_for('communication') }}" class="quick-card">
+
+            <i class="fas fa-comments"></i>
+
             <h3>Communication</h3>
-            <p>Improve spoken English and HR skills.</p>
+
+            <span>Improve English</span>
+
         </a>
 
-        <a href="{{ url_for('resume_builder') }}" class="feature-card">
+        <a href="{{ url_for('resume_builder') }}" class="quick-card">
+
             <i class="fas fa-file"></i>
+
             <h3>Resume Builder</h3>
-            <p>Create an ATS-friendly resume.</p>
+
+            <span>Create ATS Resume</span>
+
         </a>
 
-        <a href="{{ url_for('profile') }}" class="feature-card">
+        <a href="{{ url_for('profile') }}" class="quick-card">
+
             <i class="fas fa-user-circle"></i>
+
             <h3>Profile</h3>
-            <p>Manage your account and progress.</p>
+
+            <span>Manage Account</span>
+
         </a>
 
     </section>
+
+    <!-- ========================= -->
+    <!-- LEARNING PROGRESS -->
+    <!-- ========================= -->
+
+    <section class="progress-container">
+
+        <div class="progress-card">
+
+            <h2>Learning Progress</h2>
+
+            <div class="progress-item">
+
+                <label>Java</label>
+
+                <div class="progress-bar">
+
+                    <div class="progress-fill"
+                         style="width:80%"></div>
+
+                </div>
+
+                <span>80%</span>
+
+            </div>
+
+            <div class="progress-item">
+
+                <label>Python</label>
+
+                <div class="progress-bar">
+
+                    <div class="progress-fill"
+                         style="width:65%"></div>
+
+                </div>
+
+                <span>65%</span>
+
+            </div>
+
+            <div class="progress-item">
+
+                <label>DBMS</label>
+
+                <div class="progress-bar">
+
+                    <div class="progress-fill"
+                         style="width:70%"></div>
+
+                </div>
+
+                <span>70%</span>
+
+            </div>
+
+            <div class="progress-item">
+
+                <label>Aptitude</label>
+
+                <div class="progress-bar">
+
+                    <div class="progress-fill"
+                         style="width:55%"></div>
+
+                </div>
+
+                <span>55%</span>
+
+            </div>
+
+        </div>
+
+        <div class="goal-card">
+
+            <h2>Today's Goal</h2>
+
+            <ul>
+
+                <li>✅ Complete Java Module</li>
+
+                <li>⬜ Solve 20 MCQs</li>
+
+                <li>⬜ Practice Interview Questions</li>
+
+                <li>⬜ Attempt Mock Test</li>
+
+                <li>⬜ Update Resume</li>
+
+            </ul>
+
+        </div>
+
+    </section>
+
+    <!-- ========================= -->
+    <!-- RECENT ACTIVITY -->
+    <!-- ========================= -->
+
+    <section class="activity-card">
+
+        <h2>Recent Activity</h2>
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>Activity</th>
+
+                    <th>Status</th>
+
+                    <th>Date</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                <tr>
+
+                    <td>Java Mock Test</td>
+
+                    <td>Completed</td>
+
+                    <td>Today</td>
+
+                </tr>
+
+                <tr>
+
+                    <td>Resume Updated</td>
+
+                    <td>Completed</td>
+
+                    <td>Yesterday</td>
+
+                </tr>
+
+                <tr>
+
+                    <td>Python Course</td>
+
+                    <td>Running</td>
+
+                    <td>Yesterday</td>
+
+                </tr>
+
+                <tr>
+
+                    <td>Communication Practice</td>
+
+                    <td>Pending</td>
+
+                    <td>Tomorrow</td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </section>
+    <!-- ========================= -->
+    <!-- PLACEMENT READINESS -->
+    <!-- ========================= -->
+
+    <section class="placement-grid">
+
+        <div class="placement-card">
+
+            <h2>Placement Readiness</h2>
+
+            <div class="circle-score">
+
+                <div class="circle">
+                    <h1>{{ placement_score }}%</h1>
+                </div>
+
+            </div>
+
+            <p>
+                Your current placement readiness based on
+                completed courses, mock tests and interview practice.
+            </p>
+
+        </div>
+
+        <div class="placement-card">
+
+            <h2>Quick Summary</h2>
+
+            <ul>
+
+                <li>
+                    <i class="fas fa-check-circle"></i>
+                    {{ completed_courses }} Courses Completed
+                </li>
+
+                <li>
+                    <i class="fas fa-laptop-code"></i>
+                    {{ mock_attempted }} Mock Tests Attempted
+                </li>
+
+                <li>
+                    <i class="fas fa-question-circle"></i>
+                    {{ interview_completed }} Interview Questions Solved
+                </li>
+
+                <li>
+                    <i class="fas fa-file-alt"></i>
+                    ATS Resume Score {{ ats_score }}%
+                </li>
+
+                <li>
+                    <i class="fas fa-fire"></i>
+                    {{ streak }} Day Learning Streak
+                </li>
+
+            </ul>
+
+        </div>
+
+    </section>
+
+
+    <!-- ========================= -->
+    <!-- RECOMMENDED NEXT STEP -->
+    <!-- ========================= -->
+
+    <section class="recommendation-card">
+
+        <h2>Recommended Next Step</h2>
+
+        <div class="recommend-grid">
+
+            <a href="{{ url_for('courses') }}" class="recommend-item">
+
+                <i class="fas fa-book-open"></i>
+
+                <h3>Continue Course</h3>
+
+                <p>
+                    Complete your pending modules.
+                </p>
+
+            </a>
+
+            <a href="{{ url_for('mock_categories') }}" class="recommend-item">
+
+                <i class="fas fa-clipboard-check"></i>
+
+                <h3>Take Mock Test</h3>
+
+                <p>
+                    Improve your coding score.
+                </p>
+
+            </a>
+
+            <a href="{{ url_for('interview_questions') }}" class="recommend-item">
+
+                <i class="fas fa-user-tie"></i>
+
+                <h3>Interview Practice</h3>
+
+                <p>
+                    Solve today's interview questions.
+                </p>
+
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <!-- ========================= -->
+    <!-- UPCOMING CAMPUS DRIVES -->
+    <!-- ========================= -->
+
+    <section class="campus-drive">
+
+        <h2>Upcoming Campus Drives</h2>
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>Company</th>
+
+                    <th>Role</th>
+
+                    <th>Date</th>
+
+                    <th>Status</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                <tr>
+
+                    <td>TCS</td>
+
+                    <td>Software Engineer</td>
+
+                    <td>25 Aug</td>
+
+                    <td>
+                        <span class="badge green">
+                            Open
+                        </span>
+                    </td>
+
+                </tr>
+
+                <tr>
+
+                    <td>Infosys</td>
+
+                    <td>System Engineer</td>
+
+                    <td>27 Aug</td>
+
+                    <td>
+
+                        <span class="badge orange">
+                            Apply
+                        </span>
+
+                    </td>
+
+                </tr>
+
+                <tr>
+
+                    <td>Capgemini</td>
+
+                    <td>Analyst</td>
+
+                    <td>30 Aug</td>
+
+                    <td>
+
+                        <span class="badge blue">
+                            Registered
+                        </span>
+
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </section>
+
+
+    <!-- ========================= -->
+    <!-- DAILY MOTIVATION -->
+    <!-- ========================= -->
+
+    <section class="motivation-card">
+
+        <i class="fas fa-lightbulb"></i>
+
+        <h2>Quote of the Day</h2>
+
+        <p>
+
+            Success doesn't come from what you do occasionally.
+            It comes from what you do consistently.
+
+        </p>
+
+    </section>
+
+
+    <!-- ========================= -->
+    <!-- FOOTER -->
+    <!-- ========================= -->
+
+    <footer class="dashboard-footer">
+
+        <p>
+
+            © 2026 Placement Training Portal
+
+        </p>
+
+        <p>
+
+            Built with Flask, HTML, CSS, JavaScript & MySQL
+
+        </p>
+
+    </footer>
 
 </div>
 
