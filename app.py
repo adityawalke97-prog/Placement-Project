@@ -5902,6 +5902,69 @@ def inject_global_data():
     }
 
 
+@app.route("/courses")
+def courses():
+
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    courses = [
+        {
+            "name": "Java",
+            "icon": "☕",
+            "days": 30
+        },
+        {
+            "name": "Python",
+            "icon": "🐍",
+            "days": 30
+        },
+        {
+            "name": "HTML",
+            "icon": "🌐",
+            "days": 15
+        },
+        {
+            "name": "CSS",
+            "icon": "🎨",
+            "days": 20
+        },
+        {
+            "name": "JavaScript",
+            "icon": "⚡",
+            "days": 30
+        },
+        {
+            "name": "DBMS",
+            "icon": "🗄️",
+            "days": 20
+        },
+        {
+            "name": "SQL",
+            "icon": "📊",
+            "days": 20
+        },
+        {
+            "name": "Operating System",
+            "icon": "💻",
+            "days": 25
+        },
+        {
+            "name": "Computer Networks",
+            "icon": "🌍",
+            "days": 20
+        },
+        {
+            "name": "DSA",
+            "icon": "📚",
+            "days": 45
+        }
+    ]
+
+    return render_template(
+        "courses.html",
+        courses=courses
+    )
 # =========================================================
 # APPLICATION STARTUP
 # =========================================================
