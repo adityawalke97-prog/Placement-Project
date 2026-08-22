@@ -8,6 +8,7 @@ iufrom flask import (
     send_file,
     Response,
     url_for
+    jsonify
 )
 
 from authlib.integrations.flask_client import OAuth
@@ -15,7 +16,7 @@ from flask_bcrypt import Bcrypt
 from dotenv import load_dotenv
 from werkzeug.middleware.proxy_fix import ProxyFix
 from datetime import timedelta
-
+from werkzeug.utils import secure_filename
 import pymysql
 import secrets
 import math
@@ -452,8 +453,9 @@ def dashboard():
         # -----------------------------------------
 
         connection = get_db_connection()
-        cursor = connection.cursor(dictionary=True)
-
+cursor = connection.cursor(
+    pymysql.cursors.DictCursor
+)
         # -----------------------------------------
         # TOTAL COURSES
         # -----------------------------------------
