@@ -7,7 +7,7 @@ from flask import (
     flash,
     send_file,
     Response,
-    url_for
+    url_for,
     jsonify
 )
 
