@@ -6147,145 +6147,145 @@ def admin_required():
 # ADMIN DASHBOARD
 # =========================================================
 
-@app.route("/admin")
-@app.route("/admin/dashboard")
-def admin_dashboard():
+# @app.route("/admin")
+# @app.route("/admin/dashboard")
+# def admin_dashboard():
 
-    if not admin_required():
-        flash("Admin access required.", "danger")
-        return redirect(url_for("dashboard"))
+#     if not admin_required():
+#         flash("Admin access required.", "danger")
+#         return redirect(url_for("dashboard"))
 
-    conn = None
-    cursor = None
+#     conn = None
+#     cursor = None
 
-    try:
+#     try:
 
-        conn = get_db_connection()
-        cursor = conn.cursor(
-            pymysql.cursors.DictCursor
-        )
+#         conn = get_db_connection()
+#         cursor = conn.cursor(
+#             pymysql.cursors.DictCursor
+#         )
 
-        # -------------------------------------------------
-        # TOTAL USERS
-        # -------------------------------------------------
+#         # -------------------------------------------------
+#         # TOTAL USERS
+#         # -------------------------------------------------
 
-        cursor.execute("""
-            SELECT COUNT(*) AS total
-            FROM users
-        """)
+#         cursor.execute("""
+#             SELECT COUNT(*) AS total
+#             FROM users
+#         """)
 
-        total_users = cursor.fetchone()["total"]
+#         total_users = cursor.fetchone()["total"]
 
-        # -------------------------------------------------
-        # TOTAL MOCK QUESTIONS
-        # -------------------------------------------------
+#         # -------------------------------------------------
+#         # TOTAL MOCK QUESTIONS
+#         # -------------------------------------------------
 
-        cursor.execute("""
-            SELECT COUNT(*) AS total
-            FROM mock_questions
-        """)
+#         cursor.execute("""
+#             SELECT COUNT(*) AS total
+#             FROM mock_questions
+#         """)
 
-        total_mock_questions = (
-            cursor.fetchone()["total"]
-        )
+#         total_mock_questions = (
+#             cursor.fetchone()["total"]
+#         )
 
-        # -------------------------------------------------
-        # TOTAL INTERVIEW QUESTIONS
-        # -------------------------------------------------
+#         # -------------------------------------------------
+#         # TOTAL INTERVIEW QUESTIONS
+#         # -------------------------------------------------
 
-        cursor.execute("""
-            SELECT COUNT(*) AS total
-            FROM interview_questions
-        """)
+#         cursor.execute("""
+#             SELECT COUNT(*) AS total
+#             FROM interview_questions
+#         """)
 
-        total_interview_questions = (
-            cursor.fetchone()["total"]
-        )
+#         total_interview_questions = (
+#             cursor.fetchone()["total"]
+#         )
 
-        # -------------------------------------------------
-        # TOTAL TEST ATTEMPTS
-        # -------------------------------------------------
+#         # -------------------------------------------------
+#         # TOTAL TEST ATTEMPTS
+#         # -------------------------------------------------
 
-        cursor.execute("""
-            SELECT COUNT(*) AS total
-            FROM results
-        """)
+#         cursor.execute("""
+#             SELECT COUNT(*) AS total
+#             FROM results
+#         """)
 
-        total_test_attempts = (
-            cursor.fetchone()["total"]
-        )
+#         total_test_attempts = (
+#             cursor.fetchone()["total"]
+#         )
 
-        # -------------------------------------------------
-        # RECENT USERS
-        # -------------------------------------------------
+#         # -------------------------------------------------
+#         # RECENT USERS
+#         # -------------------------------------------------
 
-        cursor.execute("""
-            SELECT
-                id,
-                name,
-                email,
-                role
-            FROM users
-            ORDER BY id DESC
-            LIMIT 10
-        """)
+#         cursor.execute("""
+#             SELECT
+#                 id,
+#                 name,
+#                 email,
+#                 role
+#             FROM users
+#             ORDER BY id DESC
+#             LIMIT 10
+#         """)
 
-        recent_users = cursor.fetchall()
+#         recent_users = cursor.fetchall()
 
-        # -------------------------------------------------
-        # RECENT RESULTS
-        # -------------------------------------------------
+#         # -------------------------------------------------
+#         # RECENT RESULTS
+#         # -------------------------------------------------
 
-        cursor.execute("""
-            SELECT
-                r.id,
-                r.score,
-                r.total_questions,
-                r.percentage,
-                r.test_date,
-                u.name,
-                u.email
-            FROM results r
-            LEFT JOIN users u
-                ON r.user_id = u.id
-            ORDER BY r.test_date DESC
-            LIMIT 10
-        """)
+#         cursor.execute("""
+#             SELECT
+#                 r.id,
+#                 r.score,
+#                 r.total_questions,
+#                 r.percentage,
+#                 r.test_date,
+#                 u.name,
+#                 u.email
+#             FROM results r
+#             LEFT JOIN users u
+#                 ON r.user_id = u.id
+#             ORDER BY r.test_date DESC
+#             LIMIT 10
+#         """)
 
-        recent_results = cursor.fetchall()
+#         recent_results = cursor.fetchall()
 
-        return render_template(
-            "admin/dashboard.html",
-            total_users=total_users,
-            total_mock_questions=total_mock_questions,
-            total_interview_questions=total_interview_questions,
-            total_test_attempts=total_test_attempts,
-            recent_users=recent_users,
-            recent_results=recent_results
-        )
+#         return render_template(
+#             "admin/dashboard.html",
+#             total_users=total_users,
+#             total_mock_questions=total_mock_questions,
+#             total_interview_questions=total_interview_questions,
+#             total_test_attempts=total_test_attempts,
+#             recent_users=recent_users,
+#             recent_results=recent_results
+#         )
 
-    except Exception:
+#     except Exception:
 
-        app.logger.exception(
-            "Admin dashboard error"
-        )
+#         app.logger.exception(
+#             "Admin dashboard error"
+#         )
 
-        flash(
-            "Unable to load admin dashboard.",
-            "danger"
-        )
+#         flash(
+#             "Unable to load admin dashboard.",
+#             "danger"
+#         )
 
-        return redirect(
-            url_for("dashboard")
-        )
+#         return redirect(
+#             url_for("dashboard")
+#         )
 
-    finally:
+#     finally:
 
-        if cursor:
-            cursor.close()
+#         if cursor:
+#             cursor.close()
 
-        if conn:
-            conn.close()
+#         if conn:
+#             conn.close()
 
 
 # =========================================================
