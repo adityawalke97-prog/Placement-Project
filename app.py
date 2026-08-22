@@ -4572,7 +4572,6 @@ def ai_interview():
 # =========================================================
 # AI GENERATE INTERVIEW QUESTION
 # =========================================================
-
 @app.route(
     "/api/ai-interview/question",
     methods=["POST"]
