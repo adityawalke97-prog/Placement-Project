@@ -122,13 +122,10 @@ google = oauth.register(
     client_kwargs={
         "scope":"openid email profile"
     }
-
+)
 @app.route("/")
 def home():
     return redirect("/login")
-
-
-
 
 @app.route("/login/google")
 def google_login():
@@ -453,13 +450,7 @@ def dashboard():
         # -----------------------------------------
 
         connection = get_db_connection()
-cursor = connection.cursor(
-    pymysql.cursors.DictCursor
-)
-        # -----------------------------------------
-        # TOTAL COURSES
-        # -----------------------------------------
-
+cursor = connection.cursor(pymysql.cursors.DictCursor)
         cursor.execute("""
             SELECT COUNT(*) AS total
             FROM courses
