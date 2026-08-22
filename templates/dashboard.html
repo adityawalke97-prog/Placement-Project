@@ -1,15 +1,7 @@
 {% extends "layout.html" %}
-
 {% block title %}Dashboard{% endblock %}
-
 {% block content %}
-
 <div class="dashboard">
-
-    <!-- ========================= -->
-    <!-- HERO SECTION -->
-    <!-- ========================= -->
-
     <section class="hero-section">
 
         <div class="hero-content">
@@ -19,15 +11,12 @@
                 {{ session.username }}
                 👋
             </h1>
-
             <p>
                 Keep learning every day and improve your placement
                 preparation.
             </p>
-
             <div class="hero-buttons">
-
-                <a href="{{ url_for('courses') }}" class="btn-primary">
+                <a href="{{ url_for('mock_categories') }}" class="btn-primary">
                     Continue Learning
                 </a>
 
