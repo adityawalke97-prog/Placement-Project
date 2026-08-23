@@ -74,7 +74,7 @@
             </a>
 
 
-            <!-- RESULTS -->
+            
             <!-- IMPORTANT: use results, NOT mock_result -->
             <a href="{{ url_for('results') }}"
                class="dashboard-nav-link">
@@ -120,25 +120,58 @@
 
             </button>
 
+<!-- user_progress / User Progress -->
+<a href="{{ url_for('user_progress') }}"
+   class="dashboard-user"
+   title="My Progress">
 
-            <!-- Profile -->
-            <a href="{{ url_for('profile') }}"
-               class="dashboard-user">
+    <div class="user-avatar">
 
-                <div class="user-avatar">
+        {% if session.get('profile_pic') %}
 
-                    {% if session.profile_pic %}
+            <img
+                src="{{ session.get('profile_pic') }}"
+                alt="Profile">
 
-                        <img src="{{ session.profile_pic }}"
-                             alt="Profile">
+        {% else %}
 
-                    {% else %}
+            <i class="fas fa-user"></i>
 
-                        <i class="fas fa-user"></i>
+        {% endif %}
 
-                    {% endif %}
+    </div>
 
-                </div>
+    <div class="user-details">
+
+        <strong>
+            {{ session.get('name') or session.get('username') or "Student" }}
+        </strong>
+
+        <span>
+            Student
+        </span>
+
+    </div>
+
+    <i class="fas fa-chevron-down user-arrow"></i>
+
+</a>
+
+    <div class="user-details">
+
+        <strong>
+            {{ session.name or session.username or "Student" }}
+        </strong>
+
+        <span>
+            Student
+        </span>
+
+    </div>
+
+    <i class="fas fa-chevron-down user-arrow"></i>
+
+</a>
 
 
                 <div class="user-details">
@@ -225,11 +258,11 @@
         </a>
 
 
-        <a href="{{ url_for('profile') }}"
+        <a href="{{ url_for('user_progress') }}"
            class="mobile-nav-item">
 
             <i class="fas fa-user"></i>
-            <span>Profile</span>
+            <span>user_progress</span>
 
         </a>
 
