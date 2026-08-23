@@ -5968,9 +5968,13 @@ def courses():
 
 
 
-@app.route("/profile")
-def profile():
-    return render_template("profile.html")
+@app.route("/notes")
+def notes():
+    return render_template("notes.html")
+    
+@app.route("/leaderboard")
+def leaderboard():
+    return render_template("leaderboard.html")
 # =========================================================
 # APPLICATION STARTUP
 # =========================================================
