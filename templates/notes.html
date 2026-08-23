@@ -5,6 +5,7 @@
 {% block content %}
 
 <style>
+
 /* =========================================================
    NOTES PAGE
    ========================================================= */
@@ -345,7 +346,7 @@
 }
 
 /* =========================================================
-   SPECIAL FEATURE SECTION
+   FEATURE SECTION
    ========================================================= */
 
 .feature-notes {
@@ -476,6 +477,7 @@
 .notes-empty {
     display: none;
     padding: 60px 20px;
+    margin-top: 25px;
     text-align: center;
     border-radius: 18px;
     background: #fff;
@@ -498,7 +500,7 @@
 }
 
 /* =========================================================
-   DARK MODE SUPPORT
+   DARK MODE
    ========================================================= */
 
 body.dark .notes-page,
@@ -564,6 +566,7 @@ body.dark .note-footer,
    ========================================================= */
 
 @media (max-width: 1100px) {
+
     .notes-grid {
         grid-template-columns: repeat(2, 1fr);
     }
@@ -574,12 +577,14 @@ body.dark .note-footer,
 }
 
 @media (max-width: 800px) {
+
     .feature-notes {
         grid-template-columns: 1fr;
     }
 }
 
 @media (max-width: 600px) {
+
     .notes-page {
         padding: 15px;
     }
@@ -639,6 +644,7 @@ body.dark .note-footer,
         font-size: 20px;
     }
 }
+
 </style>
 
 
@@ -692,33 +698,23 @@ body.dark .note-footer,
 
         <div class="notes-filter">
 
-            <button
-                class="filter-btn active"
-                data-filter="all">
+            <button class="filter-btn active" data-filter="all">
                 All
             </button>
 
-            <button
-                class="filter-btn"
-                data-filter="programming">
+            <button class="filter-btn" data-filter="programming">
                 Programming
             </button>
 
-            <button
-                class="filter-btn"
-                data-filter="web">
+            <button class="filter-btn" data-filter="web">
                 Web
             </button>
 
-            <button
-                class="filter-btn"
-                data-filter="database">
+            <button class="filter-btn" data-filter="database">
                 Database
             </button>
 
-            <button
-                class="filter-btn"
-                data-filter="interview">
+            <button class="filter-btn" data-filter="interview">
                 Interview
             </button>
 
@@ -734,7 +730,6 @@ body.dark .note-footer,
     <section class="notes-stats">
 
         <div class="note-stat">
-
             <div class="note-stat-icon">
                 <i class="fas fa-book"></i>
             </div>
@@ -743,12 +738,10 @@ body.dark .note-footer,
                 <h3>12+</h3>
                 <p>Subjects</p>
             </div>
-
         </div>
 
 
         <div class="note-stat">
-
             <div class="note-stat-icon">
                 <i class="fas fa-file-alt"></i>
             </div>
@@ -757,12 +750,10 @@ body.dark .note-footer,
                 <h3>150+</h3>
                 <p>Topics</p>
             </div>
-
         </div>
 
 
         <div class="note-stat">
-
             <div class="note-stat-icon">
                 <i class="fas fa-code"></i>
             </div>
@@ -771,12 +762,10 @@ body.dark .note-footer,
                 <h3>300+</h3>
                 <p>Examples</p>
             </div>
-
         </div>
 
 
         <div class="note-stat">
-
             <div class="note-stat-icon">
                 <i class="fas fa-user-tie"></i>
             </div>
@@ -785,7 +774,6 @@ body.dark .note-footer,
                 <h3>100+</h3>
                 <p>Interview Topics</p>
             </div>
-
         </div>
 
     </section>
@@ -837,12 +825,10 @@ body.dark .note-footer,
             </p>
 
             <div class="note-topics">
-
                 <span class="note-topic">OOP</span>
                 <span class="note-topic">Collections</span>
                 <span class="note-topic">Exception</span>
                 <span class="note-topic">Multithreading</span>
-
             </div>
 
             <div class="note-footer">
@@ -852,7 +838,9 @@ body.dark .note-footer,
                     30+ Topics
                 </span>
 
-                <a href="{{ url_for('java') }}" class="note-open">
+                <a
+                    href="{{ url_for('java') }}"
+                    class="note-open">
                     Study
                     <i class="fas fa-arrow-right"></i>
                 </a>
@@ -889,12 +877,10 @@ body.dark .note-footer,
             </p>
 
             <div class="note-topics">
-
                 <span class="note-topic">Syntax</span>
                 <span class="note-topic">Functions</span>
                 <span class="note-topic">OOP</span>
                 <span class="note-topic">Pandas</span>
-
             </div>
 
             <div class="note-footer">
@@ -904,7 +890,9 @@ body.dark .note-footer,
                     25+ Topics
                 </span>
 
-              <a href="{{ url_for('python') }}" class="note-open">
+                <a
+                    href="{{ url_for('python') }}"
+                    class="note-open">
                     Study
                     <i class="fas fa-arrow-right"></i>
                 </a>
@@ -941,13 +929,11 @@ body.dark .note-footer,
             </p>
 
             <div class="note-topics">
-
                 <span class="note-topic">Array</span>
                 <span class="note-topic">String</span>
                 <span class="note-topic">Stack</span>
                 <span class="note-topic">Queue</span>
                 <span class="note-topic">Tree</span>
-
             </div>
 
             <div class="note-footer">
@@ -957,7 +943,9 @@ body.dark .note-footer,
                     35+ Topics
                 </span>
 
-                <a href="{{ url_for('dsa') }}" class="note-open">
+                <a
+                    href="{{ url_for('dsa') }}"
+                    class="note-open">
                     Study
                     <i class="fas fa-arrow-right"></i>
                 </a>
@@ -967,7 +955,7 @@ body.dark .note-footer,
         </article>
 
 
-        <!-- C PROGRAMMING -->
+        <!-- C -->
 
         <article
             class="note-card"
@@ -977,7 +965,7 @@ body.dark .note-footer,
             <div class="note-card-top">
 
                 <div class="note-icon">
-                    <i class="fas fa-c"></i>
+                    <i class="fas fa-code"></i>
                 </div>
 
                 <span class="note-level">
@@ -994,12 +982,10 @@ body.dark .note-footer,
             </p>
 
             <div class="note-topics">
-
                 <span class="note-topic">Variables</span>
                 <span class="note-topic">Pointers</span>
                 <span class="note-topic">Arrays</span>
                 <span class="note-topic">Functions</span>
-
             </div>
 
             <div class="note-footer">
@@ -1010,7 +996,7 @@ body.dark .note-footer,
                 </span>
 
                 <a
-                    href="{{ url_for('static', filename='notes/c.html') }}"
+                    href="{{ url_for('c') }}"
                     class="note-open">
                     Study
                     <i class="fas fa-arrow-right"></i>
@@ -1069,12 +1055,10 @@ body.dark .note-footer,
             </p>
 
             <div class="note-topics">
-
                 <span class="note-topic">HTML5</span>
                 <span class="note-topic">Forms</span>
                 <span class="note-topic">Tables</span>
                 <span class="note-topic">SEO</span>
-
             </div>
 
             <div class="note-footer">
@@ -1084,7 +1068,7 @@ body.dark .note-footer,
                 </span>
 
                 <a
-                    href="{{ url_for('static', filename='notes/html.html') }}"
+                    href="{{ url_for('html') }}"
                     class="note-open">
                     Study
                     <i class="fas fa-arrow-right"></i>
@@ -1122,12 +1106,10 @@ body.dark .note-footer,
             </p>
 
             <div class="note-topics">
-
                 <span class="note-topic">Flexbox</span>
                 <span class="note-topic">Grid</span>
                 <span class="note-topic">Animation</span>
                 <span class="note-topic">Responsive</span>
-
             </div>
 
             <div class="note-footer">
@@ -1137,7 +1119,7 @@ body.dark .note-footer,
                 </span>
 
                 <a
-                    href="{{ url_for('static', filename='notes/css.html') }}"
+                    href="{{ url_for('css') }}"
                     class="note-open">
                     Study
                     <i class="fas fa-arrow-right"></i>
@@ -1175,12 +1157,10 @@ body.dark .note-footer,
             </p>
 
             <div class="note-topics">
-
                 <span class="note-topic">ES6</span>
                 <span class="note-topic">DOM</span>
                 <span class="note-topic">Events</span>
                 <span class="note-topic">Fetch API</span>
-
             </div>
 
             <div class="note-footer">
@@ -1188,7 +1168,10 @@ body.dark .note-footer,
                 <span class="note-pages">
                     30+ Topics
                 </span>
-               <a href="{{ url_for('javascript') }}" class="note-open">
+
+                <a
+                    href="{{ url_for('javascript') }}"
+                    class="note-open">
                     Study
                     <i class="fas fa-arrow-right"></i>
                 </a>
@@ -1225,12 +1208,10 @@ body.dark .note-footer,
             </p>
 
             <div class="note-topics">
-
                 <span class="note-topic">UI/UX</span>
                 <span class="note-topic">Responsive</span>
                 <span class="note-topic">API</span>
                 <span class="note-topic">React</span>
-
             </div>
 
             <div class="note-footer">
@@ -1240,7 +1221,8 @@ body.dark .note-footer,
                 </span>
 
                 <a
-                    href="{{ url_for('forentend') }}" class="note-open">
+                    href="{{ url_for('frontend') }}"
+                    class="note-open">
                     Study
                     <i class="fas fa-arrow-right"></i>
                 </a>
@@ -1277,12 +1259,10 @@ body.dark .note-footer,
             </p>
 
             <div class="note-topics">
-
                 <span class="note-topic">REST API</span>
                 <span class="note-topic">Flask</span>
                 <span class="note-topic">Auth</span>
                 <span class="note-topic">Security</span>
-
             </div>
 
             <div class="note-footer">
@@ -1292,7 +1272,7 @@ body.dark .note-footer,
                 </span>
 
                 <a
-                    href="{{ url_for('static', filename='notes/backend.html') }}"
+                    href="{{ url_for('backend') }}"
                     class="note-open">
                     Study
                     <i class="fas fa-arrow-right"></i>
@@ -1330,12 +1310,10 @@ body.dark .note-footer,
             </p>
 
             <div class="note-topics">
-
                 <span class="note-topic">Java</span>
                 <span class="note-topic">Spring Boot</span>
                 <span class="note-topic">MySQL</span>
                 <span class="note-topic">REST</span>
-
             </div>
 
             <div class="note-footer">
@@ -1345,7 +1323,7 @@ body.dark .note-footer,
                 </span>
 
                 <a
-                    href="{{ url_for('static', filename='notes/full_stack_java.html') }}"
+                    href="{{ url_for('full_stack_java') }}"
                     class="note-open">
                     Study
                     <i class="fas fa-arrow-right"></i>
@@ -1383,12 +1361,10 @@ body.dark .note-footer,
             </p>
 
             <div class="note-topics">
-
                 <span class="note-topic">Python</span>
                 <span class="note-topic">Flask</span>
                 <span class="note-topic">Django</span>
                 <span class="note-topic">MySQL</span>
-
             </div>
 
             <div class="note-footer">
@@ -1398,7 +1374,7 @@ body.dark .note-footer,
                 </span>
 
                 <a
-                    href="{{ url_for('static', filename='notes/full_stack_python.html') }}"
+                    href="{{ url_for('full_stack_python') }}"
                     class="note-open">
                     Study
                     <i class="fas fa-arrow-right"></i>
@@ -1412,7 +1388,7 @@ body.dark .note-footer,
 
 
     <!-- =====================================================
-         DATABASE & COMPUTER SCIENCE
+         CORE COMPUTER SCIENCE
          ===================================================== -->
 
     <div class="notes-section-title">
@@ -1457,12 +1433,10 @@ body.dark .note-footer,
             </p>
 
             <div class="note-topics">
-
                 <span class="note-topic">SQL</span>
                 <span class="note-topic">Joins</span>
                 <span class="note-topic">Normalization</span>
                 <span class="note-topic">Transactions</span>
-
             </div>
 
             <div class="note-footer">
@@ -1472,7 +1446,7 @@ body.dark .note-footer,
                 </span>
 
                 <a
-                    href="{{ url_for('static', filename='notes/dbms.html') }}"
+                    href="{{ url_for('dbms') }}"
                     class="note-open">
                     Study
                     <i class="fas fa-arrow-right"></i>
@@ -1483,7 +1457,7 @@ body.dark .note-footer,
         </article>
 
 
-        <!-- OPERATING SYSTEM -->
+        <!-- OS -->
 
         <article
             class="note-card"
@@ -1510,12 +1484,10 @@ body.dark .note-footer,
             </p>
 
             <div class="note-topics">
-
                 <span class="note-topic">Process</span>
                 <span class="note-topic">Thread</span>
                 <span class="note-topic">Deadlock</span>
                 <span class="note-topic">Memory</span>
-
             </div>
 
             <div class="note-footer">
@@ -1525,7 +1497,7 @@ body.dark .note-footer,
                 </span>
 
                 <a
-                    href="{{ url_for('static', filename='notes/os.html') }}"
+                    href="{{ url_for('os') }}"
                     class="note-open">
                     Study
                     <i class="fas fa-arrow-right"></i>
@@ -1563,12 +1535,10 @@ body.dark .note-footer,
             </p>
 
             <div class="note-topics">
-
                 <span class="note-topic">OSI</span>
                 <span class="note-topic">TCP/IP</span>
                 <span class="note-topic">HTTP</span>
                 <span class="note-topic">DNS</span>
-
             </div>
 
             <div class="note-footer">
@@ -1578,7 +1548,7 @@ body.dark .note-footer,
                 </span>
 
                 <a
-                    href="{{ url_for('static', filename='notes/cn.html') }}"
+                    href="{{ url_for('cn') }}"
                     class="note-open">
                     Study
                     <i class="fas fa-arrow-right"></i>
@@ -1616,12 +1586,10 @@ body.dark .note-footer,
             </p>
 
             <div class="note-topics">
-
                 <span class="note-topic">SDLC</span>
                 <span class="note-topic">Agile</span>
                 <span class="note-topic">Testing</span>
                 <span class="note-topic">UML</span>
-
             </div>
 
             <div class="note-footer">
@@ -1631,7 +1599,7 @@ body.dark .note-footer,
                 </span>
 
                 <a
-                    href="{{ url_for('static', filename='notes/software_engineering.html') }}"
+                    href="{{ url_for('software_engineering') }}"
                     class="note-open">
                     Study
                     <i class="fas fa-arrow-right"></i>
@@ -1690,11 +1658,9 @@ body.dark .note-footer,
             </p>
 
             <div class="note-topics">
-
                 <span class="note-topic">OOP</span>
                 <span class="note-topic">String</span>
                 <span class="note-topic">Collections</span>
-
             </div>
 
             <div class="note-footer">
@@ -1742,12 +1708,10 @@ body.dark .note-footer,
             </p>
 
             <div class="note-topics">
-
                 <span class="note-topic">Introduction</span>
                 <span class="note-topic">Strengths</span>
                 <span class="note-topic">Goals</span>
                 <span class="note-topic">HR</span>
-
             </div>
 
             <div class="note-footer">
@@ -1795,12 +1759,10 @@ body.dark .note-footer,
             </p>
 
             <div class="note-topics">
-
                 <span class="note-topic">DSA</span>
                 <span class="note-topic">DBMS</span>
                 <span class="note-topic">OS</span>
                 <span class="note-topic">CN</span>
-
             </div>
 
             <div class="note-footer">
@@ -1974,6 +1936,7 @@ body.dark .note-footer,
 
                     <div>
                         <strong>Daily Practice</strong>
+
                         <p>
                             Practice coding problems every day.
                         </p>
@@ -1990,6 +1953,7 @@ body.dark .note-footer,
 
                     <div>
                         <strong>Revise Regularly</strong>
+
                         <p>
                             Revise important concepts weekly.
                         </p>
@@ -2006,6 +1970,7 @@ body.dark .note-footer,
 
                     <div>
                         <strong>Practice Speaking</strong>
+
                         <p>
                             Improve your technical communication.
                         </p>
@@ -2022,6 +1987,7 @@ body.dark .note-footer,
 
                     <div>
                         <strong>Prepare Resume</strong>
+
                         <p>
                             Keep your resume updated.
                         </p>
@@ -2065,10 +2031,17 @@ body.dark .note-footer,
 
 document.addEventListener("DOMContentLoaded", function () {
 
-    const searchInput = document.getElementById("notesSearch");
-    const filterButtons = document.querySelectorAll(".filter-btn");
-    const cards = document.querySelectorAll(".note-card");
-    const emptyState = document.getElementById("notesEmpty");
+    const searchInput =
+        document.getElementById("notesSearch");
+
+    const filterButtons =
+        document.querySelectorAll(".filter-btn");
+
+    const cards =
+        document.querySelectorAll(".note-card");
+
+    const emptyState =
+        document.getElementById("notesEmpty");
 
     let currentFilter = "all";
 
@@ -2110,6 +2083,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (matchesSearch && matchesFilter) {
 
                 card.style.display = "flex";
+
                 visibleCount++;
 
             } else {
@@ -2121,15 +2095,10 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
 
-        if (visibleCount === 0) {
-
-            emptyState.style.display = "block";
-
-        } else {
-
-            emptyState.style.display = "none";
-
-        }
+        emptyState.style.display =
+            visibleCount === 0
+                ? "block"
+                : "none";
 
     }
 
@@ -2138,10 +2107,14 @@ document.addEventListener("DOMContentLoaded", function () {
        SEARCH
        ===================================================== */
 
-    searchInput.addEventListener(
-        "input",
-        filterNotes
-    );
+    if (searchInput) {
+
+        searchInput.addEventListener(
+            "input",
+            filterNotes
+        );
+
+    }
 
 
     /* =====================================================
@@ -2150,42 +2123,52 @@ document.addEventListener("DOMContentLoaded", function () {
 
     filterButtons.forEach(function (button) {
 
-        button.addEventListener("click", function () {
+        button.addEventListener(
+            "click",
+            function () {
 
-            filterButtons.forEach(function (btn) {
-                btn.classList.remove("active");
-            });
+                filterButtons.forEach(
+                    function (btn) {
+                        btn.classList.remove("active");
+                    }
+                );
 
-            this.classList.add("active");
+                this.classList.add("active");
 
-            currentFilter =
-                this.dataset.filter;
+                currentFilter =
+                    this.dataset.filter;
 
-            filterNotes();
+                filterNotes();
 
-        });
+            }
+        );
 
     });
 
 
     /* =====================================================
-       KEYBOARD SHORTCUT
+       CTRL + K SEARCH
        ===================================================== */
 
-    document.addEventListener("keydown", function (event) {
+    document.addEventListener(
+        "keydown",
+        function (event) {
 
-        if (
-            (event.ctrlKey || event.metaKey) &&
-            event.key.toLowerCase() === "k"
-        ) {
+            if (
+                (event.ctrlKey || event.metaKey) &&
+                event.key.toLowerCase() === "k"
+            ) {
 
-            event.preventDefault();
+                event.preventDefault();
 
-            searchInput.focus();
+                if (searchInput) {
+                    searchInput.focus();
+                }
+
+            }
 
         }
-
-    });
+    );
 
 
     /* =====================================================
@@ -2197,5 +2180,6 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 </script>
+
 
 {% endblock %}
