@@ -5967,7 +5967,50 @@ def courses():
 
 @app.route("/notes")
 def notes():
-    return render_template("notes.html")
+
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        cursor.execute("""
+            SELECT
+                id,
+                title,
+                slug,
+                category,
+                description,
+                icon,
+                level,
+                topics,
+                topic_count,
+                page_url
+            FROM notes
+            WHERE is_active = TRUE
+            ORDER BY id ASC
+        """)
+
+        notes_data = cursor.fetchall()
+
+        cursor.close()
+        conn.close()
+
+        return render_template(
+            "notes.html",
+            notes=notes_data
+        )
+
+    except Exception as e:
+        print("NOTES ERROR:", e)
+
+        flash("Unable to load notes.", "error")
+
+        return render_template(
+            "notes.html",
+            notes=[]
+        )
     
 @app.route("/leaderboard")
 def leaderboard():
