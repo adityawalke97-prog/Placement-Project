@@ -205,9 +205,7 @@ def google_callback():
                 picture,
                 verified
             ))
-
             conn.commit()
-
             session["user_id"] = cur.lastrowid
             session["name"] = name
             session["email"] = email
@@ -339,7 +337,6 @@ def login():
         )
 
     return render_template("login.html")
-
 
 # --------------------------------------------------
 # LOGOUT
@@ -6020,6 +6017,8 @@ def results():
             cursor.close()
         if conn:
             conn.close()
+
+
 # =========================================================
 # APPLICATION STARTUP
 # =========================================================
