@@ -1,0 +1,7 @@
+{% for result in results %}
+
+<a href="{{ url_for('mock_result', result_id=result.id) }}">
+    View Result
+</a>
+
+{% endfor %}
