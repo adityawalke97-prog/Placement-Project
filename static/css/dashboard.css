@@ -1,80 +1,73 @@
 /* =========================================================
    PLACEMENT TRAINING PORTAL
-   STUDENT DASHBOARD
+   PROFESSIONAL DASHBOARD CSS
+   PART 1
    ========================================================= */
 
-/* =========================
-   ROOT
-   ========================= */
-
-:root {
-    --primary: #2563eb;
-    --primary-dark: #1d4ed8;
-    --secondary: #7c3aed;
-    --success: #16a34a;
-    --warning: #f59e0b;
-    --danger: #dc2626;
-
-    --bg: #f5f7fb;
-    --card: #ffffff;
-    --text: #172033;
-    --muted: #64748b;
-    --border: #e5e7eb;
-
-    --shadow:
-        0 10px 30px rgba(15, 23, 42, 0.08);
-
-    --radius: 18px;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
+html {
+    scroll-behavior: smooth;
+}
 
-/* =========================
-   DASHBOARD
-   ========================= */
+body {
+    font-family: "Inter", "Segoe UI", Arial, sans-serif;
+    background: #f5f7fb;
+    color: #1f2937;
+    line-height: 1.6;
+}
+
+/* =========================================================
+   DASHBOARD MAIN
+   ========================================================= */
 
 .dashboard {
     width: 100%;
     max-width: 1500px;
     margin: 0 auto;
-    padding: 25px;
-    box-sizing: border-box;
+    padding: 30px;
 }
 
-
-/* =========================
+/* =========================================================
    HERO SECTION
-   ========================= */
+   ========================================================= */
 
 .hero-section {
-    position: relative;
+    width: 100%;
+    min-height: 300px;
+
     display: flex;
     align-items: center;
     justify-content: space-between;
 
-    min-height: 250px;
+    gap: 40px;
+    padding: 45px;
 
-    padding: 40px;
-
-    margin-bottom: 25px;
+    margin-bottom: 30px;
 
     border-radius: 24px;
 
     background:
         linear-gradient(
             135deg,
-            #2563eb,
-            #4f46e5,
-            #7c3aed
+            #4f46e5 0%,
+            #6366f1 50%,
+            #7c3aed 100%
         );
 
     color: #ffffff;
 
     overflow: hidden;
 
-    box-shadow:
-        0 20px 45px rgba(37, 99, 235, 0.22);
-}
+    position: relative;
 
+    box-shadow:
+        0 15px 40px rgba(79, 70, 229, 0.20);
+}
 
 .hero-section::before {
     content: "";
@@ -84,148 +77,176 @@
     width: 300px;
     height: 300px;
 
-    right: -100px;
-    top: -120px;
-
-    border-radius: 50%;
-
-    background: rgba(255, 255, 255, 0.12);
-}
-
-
-.hero-section::after {
-    content: "";
-
-    position: absolute;
-
-    width: 180px;
-    height: 180px;
-
-    left: 40%;
-
-    bottom: -120px;
+    right: 180px;
+    top: -150px;
 
     border-radius: 50%;
 
     background: rgba(255, 255, 255, 0.08);
 }
 
+.hero-section::after {
+    content: "";
 
-.hero-content {
-    position: relative;
-    z-index: 2;
+    position: absolute;
 
-    max-width: 700px;
+    width: 200px;
+    height: 200px;
+
+    right: -70px;
+    bottom: -100px;
+
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.08);
 }
 
+/* =========================================================
+   HERO CONTENT
+   ========================================================= */
+
+.hero-content {
+    flex: 1;
+
+    position: relative;
+    z-index: 2;
+}
 
 .hero-content h1 {
-    margin: 0 0 10px;
-
-    font-size: 34px;
-
+    font-size: 38px;
     font-weight: 800;
+
+    margin-bottom: 12px;
 
     letter-spacing: -0.5px;
 }
 
-
 .hero-content p {
-    margin: 0;
+    max-width: 620px;
 
-    max-width: 650px;
+    font-size: 17px;
 
     color: rgba(255, 255, 255, 0.88);
 
-    font-size: 16px;
-
-    line-height: 1.7;
+    margin-bottom: 28px;
 }
 
+/* =========================================================
+   HERO BUTTONS
+   ========================================================= */
 
 .hero-buttons {
     display: flex;
 
-    gap: 12px;
+    flex-wrap: wrap;
 
-    margin-top: 25px;
+    gap: 14px;
 }
 
+.hero-buttons a {
+    text-decoration: none;
 
-.btn-primary,
-.btn-secondary {
     display: inline-flex;
 
     align-items: center;
     justify-content: center;
 
-    padding: 12px 20px;
+    min-width: 160px;
 
-    border-radius: 10px;
+    padding: 13px 22px;
 
-    text-decoration: none;
+    border-radius: 12px;
 
-    font-size: 14px;
-
+    font-size: 15px;
     font-weight: 700;
 
-    transition: 0.25s ease;
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        background 0.25s ease;
 }
-
 
 .btn-primary {
     background: #ffffff;
 
-    color: var(--primary);
+    color: #4f46e5;
+
+    box-shadow:
+        0 8px 20px rgba(0, 0, 0, 0.12);
 }
 
+.btn-primary:hover {
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 12px 25px rgba(0, 0, 0, 0.18);
+}
 
 .btn-secondary {
-    background: rgba(255, 255, 255, 0.16);
+    background: rgba(255, 255, 255, 0.12);
 
     color: #ffffff;
 
     border: 1px solid rgba(255, 255, 255, 0.35);
 }
 
-
-.btn-primary:hover,
 .btn-secondary:hover {
     transform: translateY(-3px);
+
+    background: rgba(255, 255, 255, 0.2);
 }
 
-
-.btn-primary:hover {
-    box-shadow:
-        0 10px 25px rgba(0, 0, 0, 0.15);
-}
-
+/* =========================================================
+   HERO IMAGE
+   ========================================================= */
 
 .hero-image {
-    position: relative;
-
-    z-index: 2;
-
-    width: 300px;
+    width: 360px;
 
     display: flex;
 
+    align-items: center;
     justify-content: center;
-}
 
+    position: relative;
+
+    z-index: 2;
+}
 
 .hero-image img {
     width: 100%;
-
-    max-width: 300px;
+    max-width: 340px;
 
     height: auto;
+
+    display: block;
+
+    filter:
+        drop-shadow(
+            0 15px 25px rgba(0, 0, 0, 0.18)
+        );
+
+    animation: dashboardFloat 4s ease-in-out infinite;
 }
 
+@keyframes dashboardFloat {
 
-/* =========================
+    0% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-8px);
+    }
+
+    100% {
+        transform: translateY(0);
+    }
+}
+
+/* =========================================================
    STATS GRID
-   ========================= */
+   ========================================================= */
 
 .stats-grid {
     display: grid;
@@ -233,32 +254,44 @@
     grid-template-columns:
         repeat(6, minmax(0, 1fr));
 
-    gap: 16px;
+    gap: 18px;
 
-    margin-bottom: 25px;
+    margin-bottom: 30px;
 }
 
+/* =========================================================
+   STAT CARD
+   ========================================================= */
 
 .stat-card {
+    background: #ffffff;
+
+    border: 1px solid #e8ebf2;
+
+    border-radius: 18px;
+
+    padding: 24px 20px;
+
+    min-height: 145px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
     position: relative;
 
-    background: var(--card);
+    overflow: hidden;
 
-    border: 1px solid var(--border);
-
-    border-radius: var(--radius);
-
-    padding: 22px;
-
-    box-shadow: var(--shadow);
+    box-shadow:
+        0 5px 20px rgba(15, 23, 42, 0.05);
 
     transition:
         transform 0.25s ease,
-        box-shadow 0.25s ease;
-
-    overflow: hidden;
+        box-shadow 0.25s ease,
+        border-color 0.25s ease;
 }
-
 
 .stat-card::after {
     content: "";
@@ -273,99 +306,61 @@
 
     border-radius: 50%;
 
-    background: rgba(37, 99, 235, 0.06);
+    background: rgba(79, 70, 229, 0.06);
 }
-
 
 .stat-card:hover {
     transform: translateY(-5px);
 
+    border-color: #c7d2fe;
+
     box-shadow:
-        0 16px 35px rgba(15, 23, 42, 0.12);
+        0 12px 30px rgba(15, 23, 42, 0.10);
 }
 
-
 .stat-card i {
+    width: 44px;
+    height: 44px;
+
     display: flex;
 
     align-items: center;
     justify-content: center;
 
-    width: 46px;
-    height: 46px;
-
-    margin-bottom: 15px;
+    margin-bottom: 12px;
 
     border-radius: 12px;
 
-    background: #eff6ff;
+    background: #eef2ff;
 
-    color: var(--primary);
+    color: #4f46e5;
 
-    font-size: 19px;
+    font-size: 20px;
 }
-
-
-.stat-card:nth-child(2) i {
-    background: #f5f3ff;
-
-    color: var(--secondary);
-}
-
-
-.stat-card:nth-child(3) i {
-    background: #ecfdf5;
-
-    color: var(--success);
-}
-
-
-.stat-card:nth-child(4) i {
-    background: #fff7ed;
-
-    color: #ea580c;
-}
-
-
-.stat-card:nth-child(5) i {
-    background: #fef2f2;
-
-    color: var(--danger);
-}
-
-
-.stat-card:nth-child(6) i {
-    background: #fefce8;
-
-    color: #ca8a04;
-}
-
 
 .stat-card h2 {
-    margin: 0 0 5px;
+    font-size: 27px;
 
-    color: var(--text);
-
-    font-size: 26px;
+    line-height: 1.2;
 
     font-weight: 800;
+
+    color: #111827;
+
+    margin-bottom: 4px;
 }
 
-
 .stat-card p {
-    margin: 0;
-
-    color: var(--muted);
-
     font-size: 13px;
+
+    color: #6b7280;
 
     font-weight: 600;
 }
 
-
-/* =========================
-   QUICK ACCESS
-   ========================= */
+/* =========================================================
+   QUICK ACCESS GRID
+   ========================================================= */
 
 .quick-grid {
     display: grid;
@@ -373,116 +368,109 @@
     grid-template-columns:
         repeat(3, minmax(0, 1fr));
 
-    gap: 18px;
+    gap: 20px;
 
-    margin-bottom: 25px;
+    margin-bottom: 30px;
 }
 
+/* =========================================================
+   QUICK CARD
+   ========================================================= */
 
 .quick-card {
-    display: block;
+    position: relative;
 
-    padding: 24px;
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    padding: 26px;
+
+    min-height: 170px;
+
+    background: #ffffff;
+
+    border: 1px solid #e8ebf2;
+
+    border-radius: 20px;
 
     text-decoration: none;
 
-    background: var(--card);
+    color: #1f2937;
 
-    border: 1px solid var(--border);
-
-    border-radius: var(--radius);
-
-    box-shadow: var(--shadow);
-
-    transition: 0.25s ease;
-}
-
-
-.quick-card:hover {
-    transform: translateY(-5px);
-
-    border-color: rgba(37, 99, 235, 0.25);
+    overflow: hidden;
 
     box-shadow:
-        0 16px 35px rgba(15, 23, 42, 0.12);
+        0 5px 20px rgba(15, 23, 42, 0.05);
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        border-color 0.25s ease;
 }
 
+.quick-card:hover {
+    transform: translateY(-6px);
+
+    border-color: #c7d2fe;
+
+    box-shadow:
+        0 15px 35px rgba(15, 23, 42, 0.10);
+}
 
 .quick-card i {
+    width: 50px;
+    height: 50px;
+
     display: flex;
 
     align-items: center;
     justify-content: center;
 
-    width: 50px;
-    height: 50px;
-
-    margin-bottom: 15px;
+    margin-bottom: 16px;
 
     border-radius: 14px;
 
-    background: #eff6ff;
+    background: #eef2ff;
 
-    color: var(--primary);
+    color: #4f46e5;
 
-    font-size: 20px;
+    font-size: 22px;
+
+    transition:
+        transform 0.25s ease,
+        background 0.25s ease;
 }
 
+.quick-card:hover i {
+    transform: scale(1.08);
 
-.quick-card:nth-child(2) i {
-    background: #f5f3ff;
+    background: #4f46e5;
 
-    color: var(--secondary);
+    color: #ffffff;
 }
-
-
-.quick-card:nth-child(3) i {
-    background: #ecfdf5;
-
-    color: var(--success);
-}
-
-
-.quick-card:nth-child(4) i {
-    background: #fff7ed;
-
-    color: #ea580c;
-}
-
-
-.quick-card:nth-child(5) i {
-    background: #fef2f2;
-
-    color: var(--danger);
-}
-
-
-.quick-card:nth-child(6) i {
-    background: #fefce8;
-
-    color: #ca8a04;
-}
-
 
 .quick-card h3 {
-    margin: 0 0 7px;
+    font-size: 18px;
 
-    color: var(--text);
+    font-weight: 750;
 
-    font-size: 17px;
+    margin-bottom: 5px;
+
+    color: #111827;
 }
-
 
 .quick-card span {
-    color: var(--muted);
+    font-size: 14px;
 
-    font-size: 13px;
+    color: #6b7280;
 }
 
-
-/* =========================
+/* =========================================================
    PROGRESS CONTAINER
-   ========================= */
+   ========================================================= */
 
 .progress-container {
     display: grid;
@@ -490,82 +478,93 @@
     grid-template-columns:
         1.5fr 1fr;
 
-    gap: 20px;
+    gap: 22px;
 
-    margin-bottom: 25px;
+    margin-bottom: 30px;
 }
 
+/* =========================================================
+   COMMON CARD
+   ========================================================= */
 
 .progress-card,
 .goal-card {
-    background: var(--card);
+    background: #ffffff;
 
-    border: 1px solid var(--border);
+    border: 1px solid #e8ebf2;
 
-    border-radius: var(--radius);
+    border-radius: 20px;
 
     padding: 28px;
 
-    box-shadow: var(--shadow);
+    box-shadow:
+        0 5px 20px rgba(15, 23, 42, 0.05);
 }
-
 
 .progress-card h2,
 .goal-card h2 {
-    margin: 0 0 25px;
+    font-size: 21px;
 
-    color: var(--text);
+    color: #111827;
 
-    font-size: 20px;
+    margin-bottom: 25px;
+
+    font-weight: 800;
 }
 
+/* =========================================================
+   PROGRESS ITEM
+   ========================================================= */
 
 .progress-item {
     display: grid;
 
-    grid-template-columns:
-        100px 1fr 45px;
+    grid-template-columns: 90px 1fr 45px;
 
     align-items: center;
 
-    gap: 12px;
+    gap: 14px;
 
     margin-bottom: 20px;
 }
 
-
-.progress-item label {
-    color: var(--text);
-
-    font-size: 14px;
-
-    font-weight: 600;
+.progress-item:last-child {
+    margin-bottom: 0;
 }
 
-
-.progress-item span {
-    color: var(--muted);
-
-    font-size: 13px;
+.progress-item label {
+    font-size: 14px;
 
     font-weight: 700;
 
-    text-align: right;
+    color: #374151;
 }
 
+.progress-item > span {
+    text-align: right;
+
+    font-size: 13px;
+
+    font-weight: 800;
+
+    color: #4f46e5;
+}
+
+/* =========================================================
+   PROGRESS BAR
+   ========================================================= */
 
 .progress-bar {
     width: 100%;
 
     height: 9px;
 
-    overflow: hidden;
+    background: #eef0f5;
 
     border-radius: 20px;
 
-    background: #e8edf5;
+    overflow: hidden;
 }
-
 
 .progress-fill {
     height: 100%;
@@ -575,1219 +574,969 @@
     background:
         linear-gradient(
             90deg,
-            var(--primary),
-            var(--secondary)
+            #4f46e5,
+            #7c3aed
         );
 
-    transition: width 1s ease;
+    transition: width 0.8s ease;
 }
 
-
-/* =========================
-   GOALS
-   ========================= */
+/* =========================================================
+   GOAL CARD
+   ========================================================= */
 
 .goal-card ul {
     list-style: none;
 
-    padding: 0;
+    display: flex;
 
-    margin: 0;
+    flex-direction: column;
+
+    gap: 14px;
 }
-
 
 .goal-card li {
-    padding: 14px 0;
+    display: flex;
 
-    border-bottom: 1px solid var(--border);
+    align-items: center;
 
-    color: var(--text);
+    min-height: 42px;
 
-    font-size: 14px;
-}
+    padding: 10px 14px;
 
-
-.goal-card li:last-child {
-    border-bottom: none;
-}
-
-
-/* =========================
-   ACTIVITY
-   ========================= */
-
-.activity-card {
-    background: var(--card);
-
-    border: 1px solid var(--border);
-
-    border-radius: var(--radius);
-
-    padding: 28px;
-
-    margin-bottom: 25px;
-
-    box-shadow: var(--shadow);
-
-    overflow-x: auto;
-}
-
-
-.activity-card h2 {
-    margin: 0 0 20px;
-
-    color: var(--text);
-
-    font-size: 20px;
-}
-
-
-.activity-card table {
-    width: 100%;
-
-    border-collapse: collapse;
-
-    min-width: 600px;
-}
-
-
-.activity-card th {
-    padding: 14px;
-
-    text-align: left;
-
-    color: var(--muted);
+    border-radius: 10px;
 
     background: #f8fafc;
 
-    font-size: 13px;
-}
-
-
-.activity-card td {
-    padding: 16px 14px;
-
-    border-bottom: 1px solid var(--border);
-
-    color: var(--text);
+    color: #374151;
 
     font-size: 14px;
+
+    font-weight: 600;
+
+    border: 1px solid #edf0f5;
 }
 
-
-.activity-card tbody tr {
-    transition: 0.2s ease;
-}
-
-
-.activity-card tbody tr:hover {
-    background: #f8fbff;
-}
-
-
-/* =========================
-   PLACEMENT GRID
-   ========================= */
-
-.placement-grid {
-    display: grid;
-
-    grid-template-columns:
-        1fr 1.5fr;
-
-    gap: 20px;
-
-    margin-bottom: 25px;
-}
-
-
-.placement-card {
-    background: var(--card);
-
-    border: 1px solid var(--border);
-
-    border-radius: var(--radius);
-
-    padding: 28px;
-
-    box-shadow: var(--shadow);
-}
-
-
-.placement-card h2 {
-    margin: 0 0 20px;
-
-    color: var(--text);
-
-    font-size: 20px;
-}
-
-
-/* =========================
-   CIRCLE SCORE
-   ========================= */
-
-.circle-score {
-    display: flex;
-
-    justify-content: center;
-
-    align-items: center;
-
-    margin: 20px 0;
-}
-
-
-.circle {
-    width: 155px;
-    height: 155px;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 50%;
-
-    background:
-        conic-gradient(
-            var(--primary) 78%,
-            #e8edf5 0
-        );
-
-    position: relative;
-}
-
-
-.circle::before {
-    content: "";
-
-    position: absolute;
-
-    width: 115px;
-    height: 115px;
-
-    border-radius: 50%;
-
-    background: #ffffff;
-}
-
-
-.circle h1 {
-    position: relative;
-
-    z-index: 2;
-
-    margin: 0;
-
-    color: var(--primary);
-
-    font-size: 28px;
-}
-
-
-.placement-card > p {
-    color: var(--muted);
-
-    line-height: 1.6;
-
-    text-align: center;
-
-    font-size: 14px;
-}
-
-
-/* =========================
-   SUMMARY LIST
-   ========================= */
-
-.placement-card ul {
-    list-style: none;
-
-    padding: 0;
-
-    margin: 0;
-}
-
-
-.placement-card li {
-    display: flex;
-
-    align-items: center;
-
-    gap: 12px;
-
-    padding: 14px 0;
-
-    border-bottom: 1px solid var(--border);
-
-    color: var(--text);
-
-    font-size: 14px;
-}
-
-
-.placement-card li:last-child {
-    border-bottom: none;
-}
-
-
-.placement-card li i {
-    width: 25px;
-
-    color: var(--primary);
-}
-
-
-/* =========================
-   RECOMMENDATION
-   ========================= */
-
-.recommendation-card {
-    padding: 28px;
-
-    margin-bottom: 25px;
-
-    background: var(--card);
-
-    border: 1px solid var(--border);
-
-    border-radius: var(--radius);
-
-    box-shadow: var(--shadow);
-}
-
-
-.recommendation-card > h2 {
-    margin: 0 0 20px;
-
-    color: var(--text);
-
-    font-size: 20px;
-}
-
-
-.recommend-grid {
-    display: grid;
-
-    grid-template-columns:
-        repeat(3, 1fr);
-
-    gap: 18px;
-}
-
-
-.recommend-item {
-    padding: 22px;
-
-    text-decoration: none;
-
-    border-radius: 15px;
-
-    background: #f8fafc;
-
-    border: 1px solid transparent;
-
-    transition: 0.25s ease;
-}
-
-
-.recommend-item:hover {
-    background: #ffffff;
-
-    border-color: #dbeafe;
-
-    transform: translateY(-4px);
-
-    box-shadow:
-        0 10px 25px rgba(15, 23, 42, 0.08);
-}
-
-
-.recommend-item i {
-    color: var(--primary);
-
-    font-size: 22px;
-
-    margin-bottom: 12px;
-}
-
-
-.recommend-item h3 {
-    margin: 0 0 7px;
-
-    color: var(--text);
-
-    font-size: 16px;
-}
-
-
-.recommend-item p {
-    margin: 0;
-
-    color: var(--muted);
-
-    font-size: 13px;
-
-    line-height: 1.5;
-}
-
-
-/* =========================
-   CAMPUS DRIVE
-   ========================= */
-
-.campus-drive {
-    background: var(--card);
-
-    border: 1px solid var(--border);
-
-    border-radius: var(--radius);
-
-    padding: 28px;
-
-    margin-bottom: 25px;
-
-    box-shadow: var(--shadow);
-
-    overflow-x: auto;
-}
-
-
-.campus-drive h2 {
-    margin: 0 0 20px;
-
-    color: var(--text);
-
-    font-size: 20px;
-}
-
-
-.campus-drive table {
-    width: 100%;
-
-    min-width: 650px;
-
-    border-collapse: collapse;
-}
-
-
-.campus-drive th {
-    padding: 14px;
-
-    text-align: left;
-
-    color: var(--muted);
-
-    background: #f8fafc;
-
-    font-size: 13px;
-}
-
-
-.campus-drive td {
-    padding: 16px 14px;
-
-    border-bottom: 1px solid var(--border);
-
-    color: var(--text);
-
-    font-size: 14px;
-}
-
-
-.badge {
-    display: inline-block;
-
-    padding: 6px 12px;
-
-    border-radius: 30px;
-
-    font-size: 11px;
-
-    font-weight: 700;
-}
-
-
-.badge.green {
-    background: #dcfce7;
-
-    color: #15803d;
-}
-
-
-.badge.orange {
-    background: #ffedd5;
-
-    color: #c2410c;
-}
-
-
-.badge.blue {
-    background: #dbeafe;
-
-    color: #1d4ed8;
-}
-
-
-/* =========================
-   MOTIVATION
-   ========================= */
-
-.motivation-card {
-    text-align: center;
-
-    padding: 35px;
-
-    margin-bottom: 25px;
-
-    border-radius: var(--radius);
-
-    background:
-        linear-gradient(
-            135deg,
-            #eff6ff,
-            #f5f3ff
-        );
-
-    border: 1px solid #dbeafe;
-}
-
-
-.motivation-card i {
-    display: inline-flex;
-
-    align-items: center;
-    justify-content: center;
-
-    width: 55px;
-    height: 55px;
-
-    margin-bottom: 15px;
-
-    border-radius: 50%;
-
-    background: #ffffff;
-
-    color: var(--warning);
-
-    font-size: 23px;
-
-    box-shadow:
-        0 8px 20px rgba(15, 23, 42, 0.08);
-}
-
-
-.motivation-card h2 {
-    margin: 0 0 10px;
-
-    color: var(--text);
-
-    font-size: 21px;
-}
-
-
-.motivation-card p {
-    max-width: 700px;
-
-    margin: auto;
-
-    color: var(--muted);
-
-    font-size: 15px;
-
-    line-height: 1.7;
-}
-
-
-/* =========================
-   FOOTER
-   ========================= */
-
-.dashboard-footer {
-    display: flex;
-
-    justify-content: space-between;
-
-    align-items: center;
-
-    gap: 15px;
-
-    padding: 25px 5px;
-
-    color: var(--muted);
-
-    font-size: 13px;
-}
-
-
-.dashboard-footer p {
-    margin: 0;
-}
-
-
-/* =========================
-   TABLET
-   ========================= */
+/* =========================================================
+   RESPONSIVE - TABLET
+   ========================================================= */
 
 @media (max-width: 1200px) {
 
     .stats-grid {
         grid-template-columns:
-            repeat(3, 1fr);
-    }
-
-    .hero-section {
-        min-height: 230px;
+            repeat(3, minmax(0, 1fr));
     }
 
     .hero-image {
-        width: 240px;
+        width: 300px;
     }
 
+    .hero-content h1 {
+        font-size: 34px;
+    }
 }
 
-
-/* =========================
-   TABLET SMALL
-   ========================= */
+/* =========================================================
+   RESPONSIVE - SMALL TABLET
+   ========================================================= */
 
 @media (max-width: 900px) {
 
     .dashboard {
-        padding: 18px;
+        padding: 20px;
     }
 
     .hero-section {
-        padding: 30px;
+        padding: 35px;
 
-        flex-direction: column;
-
-        align-items: flex-start;
+        gap: 20px;
     }
 
     .hero-image {
-        position: absolute;
-
-        right: 20px;
-
-        bottom: 20px;
-
-        width: 180px;
-
-        opacity: 0.35;
-    }
-
-    .stats-grid {
-        grid-template-columns:
-            repeat(2, 1fr);
+        width: 260px;
     }
 
     .quick-grid {
         grid-template-columns:
-            repeat(2, 1fr);
+            repeat(2, minmax(0, 1fr));
     }
 
-    .progress-container,
-    .placement-grid {
+    .progress-container {
         grid-template-columns: 1fr;
     }
-
-    .recommend-grid {
-        grid-template-columns:
-            repeat(2, 1fr);
-    }
-
 }
 
+/* =========================================================
+   RESPONSIVE - MOBILE
+   ========================================================= */
 
-/* =========================
-   MOBILE
-   ========================= */
-
-@media (max-width: 600px) {
+@media (max-width: 650px) {
 
     .dashboard {
-        padding: 12px;
+        padding: 14px;
     }
 
     .hero-section {
-        min-height: auto;
+        flex-direction: column;
 
-        padding: 25px 20px;
+        align-items: flex-start;
+
+        padding: 28px 22px;
+
+        min-height: auto;
 
         border-radius: 18px;
     }
 
     .hero-content h1 {
-        font-size: 25px;
+        font-size: 28px;
     }
 
     .hero-content p {
         font-size: 14px;
     }
 
-    .hero-buttons {
-        flex-direction: column;
-
-        align-items: stretch;
+    .hero-image {
+        width: 100%;
     }
 
-    .btn-primary,
-    .btn-secondary {
+    .hero-image img {
+        max-width: 250px;
+    }
+
+    .hero-buttons {
         width: 100%;
 
-        box-sizing: border-box;
+        flex-direction: column;
     }
 
-    .hero-image {
-        display: none;
+    .hero-buttons a {
+        width: 100%;
     }
 
     .stats-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
 
         gap: 12px;
     }
 
     .stat-card {
-        padding: 18px;
+        min-height: 130px;
+
+        padding: 18px 15px;
+    }
+
+    .stat-card h2 {
+        font-size: 23px;
     }
 
     .quick-grid {
         grid-template-columns: 1fr;
 
-        gap: 12px;
+        gap: 14px;
+    }
+
+    .quick-card {
+        min-height: 145px;
     }
 
     .progress-card,
-    .goal-card,
-    .placement-card,
-    .recommendation-card,
-    .activity-card,
-    .campus-drive {
+    .goal-card {
         padding: 20px;
     }
 
     .progress-item {
         grid-template-columns:
-            75px 1fr 40px;
+            70px 1fr 40px;
 
-        gap: 8px;
+        gap: 9px;
     }
+}
 
-    .recommend-grid {
+/* =========================================================
+   VERY SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 400px) {
+
+    .stats-grid {
         grid-template-columns: 1fr;
     }
 
-    .circle {
-        width: 140px;
-        height: 140px;
-    }
-
-    .circle::before {
-        width: 105px;
-        height: 105px;
-    }
-
-    .dashboard-footer {
-        flex-direction: column;
-
-        text-align: center;
-    }
-
-}
-
-
-/* =========================
-   SMALL MOBILE
-   ========================= */
-
-@media (max-width: 380px) {
-
     .hero-content h1 {
-        font-size: 22px;
-    }
-
-    .stat-card h2 {
-        font-size: 22px;
-    }
-
-    .quick-card {
-        padding: 18px;
+        font-size: 25px;
     }
 
     .progress-item {
         grid-template-columns:
             65px 1fr 35px;
     }
-
 }
+
 /* =========================================================
-   DASHBOARD CSS - PART 2
-   EXTRA PREMIUM EFFECTS + ANIMATIONS
+   DASHBOARD CSS - PART 3
+   PROFESSIONAL POLISH + NAVBAR + DARK MODE + ANIMATIONS
    ========================================================= */
 
 
-/* =========================
-   DASHBOARD ENTRY ANIMATION
-   ========================= */
+/* =========================================================
+   PAGE ENTRANCE ANIMATION
+   ========================================================= */
 
 .dashboard {
-    animation: dashboardFadeIn 0.6s ease;
+    animation: dashboardFadeIn 0.45s ease;
 }
 
 @keyframes dashboardFadeIn {
-
     from {
         opacity: 0;
-        transform: translateY(12px);
+        transform: translateY(8px);
     }
 
     to {
         opacity: 1;
         transform: translateY(0);
     }
-
 }
 
 
-/* =========================
-   HERO ANIMATION
-   ========================= */
+/* =========================================================
+   COMMON HOVER EFFECT
+   ========================================================= */
 
-.hero-section {
-    animation: heroSlide 0.7s ease;
-}
-
-@keyframes heroSlide {
-
-    from {
-        opacity: 0;
-        transform: translateY(-15px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-
+.stat-card,
+.quick-card,
+.progress-card,
+.goal-card,
+.activity-card,
+.placement-card,
+.recommendation-card,
+.campus-drive {
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        border-color 0.25s ease;
 }
 
 
-/* =========================
-   STAT CARD ANIMATION
-   ========================= */
+/* =========================================================
+   CUSTOM SCROLLBAR
+   ========================================================= */
 
-.stat-card {
-    animation: cardAppear 0.5s ease both;
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
 }
 
-.stat-card:nth-child(1) {
-    animation-delay: 0.05s;
+::-webkit-scrollbar-track {
+    background: #f1f5f9;
 }
 
-.stat-card:nth-child(2) {
-    animation-delay: 0.10s;
+::-webkit-scrollbar-thumb {
+    background: #c7d2fe;
+    border-radius: 20px;
 }
 
-.stat-card:nth-child(3) {
-    animation-delay: 0.15s;
-}
-
-.stat-card:nth-child(4) {
-    animation-delay: 0.20s;
-}
-
-.stat-card:nth-child(5) {
-    animation-delay: 0.25s;
-}
-
-.stat-card:nth-child(6) {
-    animation-delay: 0.30s;
-}
-
-@keyframes cardAppear {
-
-    from {
-        opacity: 0;
-        transform: translateY(15px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-
+::-webkit-scrollbar-thumb:hover {
+    background: #818cf8;
 }
 
 
-/* =========================
-   STAT ICON HOVER
-   ========================= */
+/* =========================================================
+   SELECTION
+   ========================================================= */
 
-.stat-card:hover i {
-    transform: scale(1.08) rotate(-4deg);
-}
-
-.stat-card i {
-    transition: transform 0.25s ease;
+::selection {
+    background: #c7d2fe;
+    color: #312e81;
 }
 
 
-/* =========================
-   QUICK CARD ANIMATION
-   ========================= */
+/* =========================================================
+   NAVBAR SUPPORT
+   ========================================================= */
 
-.quick-card {
-    animation: quickAppear 0.55s ease both;
+.dashboard-navbar {
+    width: 100%;
+
+    min-height: 70px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 12px 22px;
+
+    margin-bottom: 25px;
+
+    background: #ffffff;
+
+    border: 1px solid #e8ebf2;
+
+    border-radius: 16px;
+
+    box-shadow:
+        0 5px 20px rgba(15, 23, 42, 0.05);
+
+    position: sticky;
+
+    top: 15px;
+
+    z-index: 100;
 }
 
-.quick-card:nth-child(1) {
-    animation-delay: 0.05s;
+.dashboard-navbar-left {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
 }
 
-.quick-card:nth-child(2) {
-    animation-delay: 0.10s;
+.dashboard-navbar-left i {
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 12px;
+
+    background: #eef2ff;
+
+    color: #4f46e5;
+
+    font-size: 19px;
 }
 
-.quick-card:nth-child(3) {
-    animation-delay: 0.15s;
+.dashboard-navbar-left h3 {
+    font-size: 17px;
+
+    font-weight: 800;
+
+    color: #111827;
 }
 
-.quick-card:nth-child(4) {
-    animation-delay: 0.20s;
+.dashboard-navbar-links {
+    display: flex;
+
+    align-items: center;
+
+    gap: 5px;
 }
 
-.quick-card:nth-child(5) {
-    animation-delay: 0.25s;
+.dashboard-navbar-links a {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    padding: 9px 12px;
+
+    border-radius: 9px;
+
+    text-decoration: none;
+
+    color: #4b5563;
+
+    font-size: 13px;
+
+    font-weight: 650;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease;
 }
 
-.quick-card:nth-child(6) {
-    animation-delay: 0.30s;
-}
+.dashboard-navbar-links a:hover,
+.dashboard-navbar-links a.active {
+    background: #eef2ff;
 
-@keyframes quickAppear {
-
-    from {
-        opacity: 0;
-        transform: translateY(18px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-
-}
-
-
-/* =========================
-   PROGRESS ANIMATION
-   ========================= */
-
-.progress-fill {
-    transform-origin: left center;
-
-    animation: progressGrow 1.2s ease;
-}
-
-@keyframes progressGrow {
-
-    from {
-        transform: scaleX(0);
-    }
-
-    to {
-        transform: scaleX(1);
-    }
-
-}
-
-
-/* =========================
-   PLACEMENT CARD
-   ========================= */
-
-.placement-card {
-    animation: placementAppear 0.7s ease both;
-}
-
-@keyframes placementAppear {
-
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-
-}
-
-
-/* =========================
-   CIRCLE SCORE
-   ========================= */
-
-.circle {
-    animation: circlePop 0.9s ease;
-}
-
-@keyframes circlePop {
-
-    0% {
-        transform: scale(0.75);
-        opacity: 0;
-    }
-
-    70% {
-        transform: scale(1.05);
-    }
-
-    100% {
-        transform: scale(1);
-        opacity: 1;
-    }
-
+    color: #4f46e5;
 }
 
 
-/* =========================
-   CIRCLE HOVER
-   ========================= */
+/* =========================================================
+   NAVBAR USER
+   ========================================================= */
 
-.circle:hover {
-    transform: scale(1.05);
+.dashboard-user {
+    display: flex;
 
-    transition: transform 0.25s ease;
+    align-items: center;
+
+    gap: 10px;
+
+    padding-left: 15px;
+
+    border-left: 1px solid #e5e7eb;
+}
+
+.dashboard-user-avatar {
+    width: 38px;
+    height: 38px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background:
+        linear-gradient(
+            135deg,
+            #4f46e5,
+            #7c3aed
+        );
+
+    color: #ffffff;
+
+    font-weight: 800;
+
+    font-size: 14px;
+}
+
+.dashboard-user-name {
+    font-size: 13px;
+
+    font-weight: 750;
+
+    color: #374151;
 }
 
 
-/* =========================
-   RECOMMENDATION ANIMATION
-   ========================= */
+/* =========================================================
+   NAVBAR MOBILE BUTTON
+   ========================================================= */
 
-.recommend-item {
-    animation: recommendationAppear 0.5s ease both;
-}
+.dashboard-menu-btn {
+    display: none;
 
-.recommend-item:nth-child(1) {
-    animation-delay: 0.1s;
-}
+    width: 42px;
+    height: 42px;
 
-.recommend-item:nth-child(2) {
-    animation-delay: 0.2s;
-}
+    border: none;
 
-.recommend-item:nth-child(3) {
-    animation-delay: 0.3s;
-}
+    border-radius: 10px;
 
-@keyframes recommendationAppear {
+    background: #eef2ff;
 
-    from {
-        opacity: 0;
-        transform: translateX(-10px);
-    }
+    color: #4f46e5;
 
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
+    cursor: pointer;
 
+    font-size: 18px;
 }
 
 
-/* =========================
-   TABLE ROW HOVER
-   ========================= */
+/* =========================================================
+   SECTION TITLE SUPPORT
+   ========================================================= */
 
-.activity-card tbody tr,
-.campus-drive tbody tr {
+.section-header {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    margin-bottom: 20px;
+}
+
+.section-header h2 {
+    font-size: 22px;
+
+    font-weight: 800;
+
+    color: #111827;
+}
+
+.section-header a {
+    text-decoration: none;
+
+    color: #4f46e5;
+
+    font-size: 13px;
+
+    font-weight: 750;
+}
+
+.section-header a:hover {
+    text-decoration: underline;
+}
+
+
+/* =========================================================
+   DASHBOARD LINK BUTTON
+   ========================================================= */
+
+.dashboard-link {
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    padding: 9px 14px;
+
+    border-radius: 10px;
+
+    background: #eef2ff;
+
+    color: #4f46e5;
+
+    text-decoration: none;
+
+    font-size: 13px;
+
+    font-weight: 750;
+
     transition:
         background 0.2s ease,
         transform 0.2s ease;
 }
 
-.activity-card tbody tr:hover,
-.campus-drive tbody tr:hover {
-    transform: translateX(3px);
-}
+.dashboard-link:hover {
+    background: #e0e7ff;
 
-
-/* =========================
-   BADGE EFFECT
-   ========================= */
-
-.badge {
-    transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease;
-}
-
-.badge:hover {
     transform: translateY(-2px);
-
-    box-shadow:
-        0 5px 12px rgba(15, 23, 42, 0.12);
 }
 
 
-/* =========================
-   MOTIVATION ANIMATION
-   ========================= */
+/* =========================================================
+   EMPTY STATE
+   ========================================================= */
 
-.motivation-card {
-    animation: motivationFade 0.8s ease;
+.dashboard-empty {
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-height: 180px;
+
+    padding: 30px;
+
+    text-align: center;
+
+    color: #6b7280;
 }
 
-@keyframes motivationFade {
+.dashboard-empty i {
+    font-size: 38px;
 
-    from {
-        opacity: 0;
-        transform: scale(0.98);
-    }
+    margin-bottom: 12px;
 
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
+    color: #a5b4fc;
+}
 
+.dashboard-empty h3 {
+    font-size: 17px;
+
+    color: #374151;
+
+    margin-bottom: 5px;
+}
+
+.dashboard-empty p {
+    font-size: 13px;
 }
 
 
-/* =========================
-   LIGHT BULB EFFECT
-   ========================= */
+/* =========================================================
+   LOADING SKELETON
+   ========================================================= */
 
-.motivation-card i {
-    animation: bulbPulse 2s infinite;
-}
-
-@keyframes bulbPulse {
-
-    0%,
-    100% {
-        transform: scale(1);
-    }
-
-    50% {
-        transform: scale(1.08);
-    }
-
-}
-
-
-/* =========================
-   BUTTON RIPPLE EFFECT
-   ========================= */
-
-.btn-primary,
-.btn-secondary {
+.dashboard-skeleton {
     position: relative;
 
     overflow: hidden;
+
+    background: #eef1f6;
+
+    border-radius: 10px;
 }
 
-.btn-primary::after,
-.btn-secondary::after {
+.dashboard-skeleton::after {
     content: "";
 
     position: absolute;
 
-    width: 0;
-    height: 0;
+    top: 0;
+    left: -150%;
+
+    width: 150%;
+    height: 100%;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.6),
+            transparent
+        );
+
+    animation: skeletonLoading 1.5s infinite;
+}
+
+@keyframes skeletonLoading {
+    100% {
+        left: 150%;
+    }
+}
+
+
+/* =========================================================
+   SUCCESS / STATUS TEXT
+   ========================================================= */
+
+.status-success {
+    color: #15803d;
+
+    font-weight: 750;
+}
+
+.status-warning {
+    color: #c2410c;
+
+    font-weight: 750;
+}
+
+.status-info {
+    color: #1d4ed8;
+
+    font-weight: 750;
+}
+
+.status-danger {
+    color: #dc2626;
+
+    font-weight: 750;
+}
+
+
+/* =========================================================
+   TOOLTIP
+   ========================================================= */
+
+[data-tooltip] {
+    position: relative;
+}
+
+[data-tooltip]::after {
+    content: attr(data-tooltip);
+
+    position: absolute;
 
     left: 50%;
-    top: 50%;
-
-    border-radius: 50%;
-
-    background: rgba(255, 255, 255, 0.25);
+    bottom: calc(100% + 8px);
 
     transform:
-        translate(-50%, -50%);
+        translateX(-50%)
+        translateY(4px);
+
+    padding: 6px 9px;
+
+    border-radius: 7px;
+
+    background: #111827;
+
+    color: #ffffff;
+
+    font-size: 11px;
+
+    white-space: nowrap;
+
+    opacity: 0;
+
+    pointer-events: none;
 
     transition:
-        width 0.5s ease,
-        height 0.5s ease;
+        opacity 0.2s ease,
+        transform 0.2s ease;
+
+    z-index: 500;
 }
 
-.btn-primary:active::after,
-.btn-secondary:active::after {
-    width: 300px;
-    height: 300px;
-}
+[data-tooltip]:hover::after {
+    opacity: 1;
 
-
-/* =========================
-   CARD BORDER EFFECT
-   ========================= */
-
-.stat-card:hover,
-.quick-card:hover,
-.progress-card:hover,
-.goal-card:hover,
-.placement-card:hover,
-.recommendation-card:hover,
-.activity-card:hover,
-.campus-drive:hover {
-
-    border-color:
-        rgba(37, 99, 235, 0.20);
+    transform:
+        translateX(-50%)
+        translateY(0);
 }
 
 
-/* =========================
-   SCROLLBAR
-   ========================= */
+/* =========================================================
+   DARK MODE
+   ========================================================= */
 
-.activity-card::-webkit-scrollbar,
-.campus-drive::-webkit-scrollbar {
-    height: 7px;
+body.dark-mode {
+    background: #0f172a;
+
+    color: #e5e7eb;
 }
 
-.activity-card::-webkit-scrollbar-track,
-.campus-drive::-webkit-scrollbar-track {
-    background: #f1f5f9;
+body.dark-mode .dashboard-navbar,
+body.dark-mode .stat-card,
+body.dark-mode .quick-card,
+body.dark-mode .progress-card,
+body.dark-mode .goal-card,
+body.dark-mode .activity-card,
+body.dark-mode .placement-card,
+body.dark-mode .recommendation-card,
+body.dark-mode .campus-drive {
+    background: #111827;
 
-    border-radius: 10px;
+    border-color: #1f2937;
+
+    box-shadow:
+        0 8px 25px rgba(0, 0, 0, 0.18);
 }
 
-.activity-card::-webkit-scrollbar-thumb,
-.campus-drive::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
-
-    border-radius: 10px;
+body.dark-mode .stat-card h2,
+body.dark-mode .quick-card h3,
+body.dark-mode .progress-card h2,
+body.dark-mode .goal-card h2,
+body.dark-mode .activity-card h2,
+body.dark-mode .placement-card h2,
+body.dark-mode .recommendation-card > h2,
+body.dark-mode .campus-drive h2,
+body.dark-mode .section-header h2,
+body.dark-mode .dashboard-navbar-left h3 {
+    color: #f9fafb;
 }
 
-.activity-card::-webkit-scrollbar-thumb:hover,
-.campus-drive::-webkit-scrollbar-thumb:hover {
-    background: #94a3b8;
+body.dark-mode .stat-card p,
+body.dark-mode .quick-card span,
+body.dark-mode .progress-item label,
+body.dark-mode .placement-card > p,
+body.dark-mode .recommend-item p,
+body.dark-mode .dashboard-user-name {
+    color: #9ca3af;
+}
+
+body.dark-mode .quick-card,
+body.dark-mode .recommend-item {
+    color: #e5e7eb;
+
+    background: #0f172a;
+}
+
+body.dark-mode .goal-card li,
+body.dark-mode .placement-card li {
+    background: #0f172a;
+
+    border-color: #1f2937;
+
+    color: #d1d5db;
+}
+
+body.dark-mode .activity-card thead,
+body.dark-mode .campus-drive thead {
+    background: #0f172a;
+}
+
+body.dark-mode .activity-card th,
+body.dark-mode .campus-drive th {
+    color: #9ca3af;
+
+    border-color: #1f2937;
+}
+
+body.dark-mode .activity-card td,
+body.dark-mode .campus-drive td {
+    color: #d1d5db;
+
+    border-color: #1f2937;
+}
+
+body.dark-mode .activity-card tbody tr:hover,
+body.dark-mode .campus-drive tbody tr:hover {
+    background: #172033;
+}
+
+body.dark-mode .dashboard-footer {
+    border-color: #1f2937;
+
+    color: #9ca3af;
+}
+
+body.dark-mode .motivation-card {
+    background:
+        linear-gradient(
+            135deg,
+            #1e1b4b,
+            #312e81
+        );
+
+    border-color: #4338ca;
+}
+
+body.dark-mode .motivation-card h2 {
+    color: #ffffff;
+}
+
+body.dark-mode .motivation-card p {
+    color: #d1d5db;
+}
+
+body.dark-mode .circle::before {
+    background: #111827;
 }
 
 
-/* =========================
-   FOCUS ACCESSIBILITY
-   ========================= */
+/* =========================================================
+   DARK MODE SCROLLBAR
+   ========================================================= */
 
-a:focus-visible {
-    outline: 3px solid rgba(37, 99, 235, 0.30);
+body.dark-mode::-webkit-scrollbar-track {
+    background: #0f172a;
+}
 
-    outline-offset: 3px;
+body.dark-mode::-webkit-scrollbar-thumb {
+    background: #374151;
+}
 
-    border-radius: 8px;
+body.dark-mode::-webkit-scrollbar-thumb:hover {
+    background: #4f46e5;
 }
 
 
-/* =========================
+/* =========================================================
+   MOBILE NAVBAR
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .dashboard-navbar {
+        position: relative;
+
+        top: 0;
+    }
+
+    .dashboard-navbar-links {
+        display: none;
+
+        position: absolute;
+
+        top: calc(100% + 8px);
+
+        left: 0;
+        right: 0;
+
+        flex-direction: column;
+
+        align-items: stretch;
+
+        padding: 10px;
+
+        background: #ffffff;
+
+        border: 1px solid #e8ebf2;
+
+        border-radius: 14px;
+
+        box-shadow:
+            0 15px 30px rgba(15, 23, 42, 0.10);
+    }
+
+    .dashboard-navbar-links.show {
+        display: flex;
+    }
+
+    .dashboard-navbar-links a {
+        width: 100%;
+    }
+
+    .dashboard-menu-btn {
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+    }
+
+    .dashboard-user {
+        display: none;
+    }
+
+    body.dark-mode .dashboard-navbar-links {
+        background: #111827;
+
+        border-color: #1f2937;
+    }
+}
+
+
+/* =========================================================
+   MOBILE POLISH
+   ========================================================= */
+
+@media (max-width: 650px) {
+
+    .dashboard-navbar {
+        min-height: 62px;
+
+        padding: 10px 14px;
+
+        border-radius: 13px;
+
+        margin-bottom: 18px;
+    }
+
+    .dashboard-navbar-left h3 {
+        font-size: 14px;
+    }
+
+    .dashboard-navbar-left i {
+        width: 37px;
+        height: 37px;
+
+        font-size: 16px;
+    }
+
+    .dashboard-menu-btn {
+        width: 38px;
+        height: 38px;
+    }
+
+    .section-header {
+        align-items: flex-start;
+
+        flex-direction: column;
+    }
+
+    [data-tooltip]::after {
+        display: none;
+    }
+}
+
+
+/* =========================================================
    REDUCED MOTION
-   ========================= */
+   ========================================================= */
 
 @media (prefers-reduced-motion: reduce) {
+
+    html {
+        scroll-behavior: auto;
+    }
 
     *,
     *::before,
@@ -1797,74 +1546,2011 @@ a:focus-visible {
         animation-iteration-count: 1 !important;
 
         transition-duration: 0.01ms !important;
+    }
+}
+/* =========================================================
+   DASHBOARD - PART 4
+   TABLES + PLACEMENT + RECOMMENDATIONS
+   ========================================================= */
 
-        scroll-behavior: auto !important;
+/* =========================
+   RECENT ACTIVITY
+   ========================= */
+
+.activity-card {
+    margin-top: 30px;
+    padding: 28px;
+    border-radius: 22px;
+    background: var(--card-bg, #ffffff);
+    border: 1px solid var(--border-color, #e5e7eb);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+    overflow-x: auto;
+}
+
+.activity-card h2 {
+    margin: 0 0 22px;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text-color, #111827);
+}
+
+.activity-card table {
+    width: 100%;
+    min-width: 650px;
+    border-collapse: collapse;
+}
+
+.activity-card thead {
+    background: #f8fafc;
+}
+
+.activity-card th {
+    padding: 15px 18px;
+    text-align: left;
+    font-size: 14px;
+    font-weight: 700;
+    color: #475569;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.activity-card td {
+    padding: 16px 18px;
+    font-size: 14px;
+    color: #475569;
+    border-bottom: 1px solid #eef2f7;
+}
+
+.activity-card tbody tr {
+    transition: 0.25s ease;
+}
+
+.activity-card tbody tr:hover {
+    background: #f8fafc;
+}
+
+
+/* =========================
+   PLACEMENT GRID
+   ========================= */
+
+.placement-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+    margin-top: 30px;
+}
+
+.placement-card {
+    padding: 30px;
+    border-radius: 22px;
+    background: var(--card-bg, #ffffff);
+    border: 1px solid var(--border-color, #e5e7eb);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+}
+
+.placement-card h2 {
+    margin: 0 0 25px;
+    font-size: 21px;
+    color: var(--text-color, #111827);
+}
+
+
+/* =========================
+   CIRCLE SCORE
+   ========================= */
+
+.circle-score {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 10px 0 25px;
+}
+
+.circle {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background:
+        conic-gradient(
+            #2563eb 0deg,
+            #2563eb calc(var(--score, 75) * 3.6deg),
+            #e5e7eb calc(var(--score, 75) * 3.6deg),
+            #e5e7eb 360deg
+        );
+
+    position: relative;
+}
+
+.circle::before {
+    content: "";
+    position: absolute;
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    background: var(--card-bg, #ffffff);
+}
+
+.circle h1 {
+    position: relative;
+    z-index: 2;
+    margin: 0;
+    font-size: 34px;
+    font-weight: 800;
+    color: #2563eb;
+}
+
+.placement-card > p {
+    line-height: 1.7;
+    color: #64748b;
+    font-size: 14px;
+    text-align: center;
+}
+
+
+/* =========================
+   QUICK SUMMARY
+   ========================= */
+
+.placement-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.placement-card li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    padding: 15px 0;
+
+    border-bottom: 1px solid #eef2f7;
+
+    font-size: 14px;
+    color: #475569;
+}
+
+.placement-card li:last-child {
+    border-bottom: none;
+}
+
+.placement-card li i {
+    width: 25px;
+    font-size: 16px;
+    color: #2563eb;
+}
+
+
+/* =========================
+   RECOMMENDATION
+   ========================= */
+
+.recommendation-card {
+    margin-top: 30px;
+    padding: 30px;
+
+    border-radius: 22px;
+
+    background: var(--card-bg, #ffffff);
+    border: 1px solid var(--border-color, #e5e7eb);
+
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+}
+
+.recommendation-card h2 {
+    margin: 0 0 25px;
+    font-size: 22px;
+    color: var(--text-color, #111827);
+}
+
+.recommend-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.recommend-item {
+    display: block;
+    padding: 25px;
+
+    text-decoration: none;
+
+    border-radius: 18px;
+
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+
+    transition: all 0.3s ease;
+}
+
+.recommend-item:hover {
+    transform: translateY(-5px);
+    border-color: #2563eb;
+    box-shadow: 0 12px 25px rgba(37, 99, 235, 0.12);
+}
+
+.recommend-item i {
+    display: inline-flex;
+
+    width: 48px;
+    height: 48px;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 14px;
+
+    background: #eff6ff;
+    color: #2563eb;
+
+    font-size: 20px;
+
+    margin-bottom: 15px;
+}
+
+.recommend-item h3 {
+    margin: 0 0 8px;
+
+    font-size: 17px;
+    font-weight: 700;
+
+    color: #111827;
+}
+
+.recommend-item p {
+    margin: 0;
+
+    font-size: 13px;
+    line-height: 1.6;
+
+    color: #64748b;
+}
+
+
+/* =========================
+   CAMPUS DRIVES
+   ========================= */
+
+.campus-drive {
+    margin-top: 30px;
+    padding: 30px;
+
+    border-radius: 22px;
+
+    background: var(--card-bg, #ffffff);
+    border: 1px solid var(--border-color, #e5e7eb);
+
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+
+    overflow-x: auto;
+}
+
+.campus-drive h2 {
+    margin: 0 0 22px;
+
+    font-size: 22px;
+    color: var(--text-color, #111827);
+}
+
+.campus-drive table {
+    width: 100%;
+    min-width: 700px;
+
+    border-collapse: collapse;
+}
+
+.campus-drive thead {
+    background: #f8fafc;
+}
+
+.campus-drive th {
+    padding: 15px 18px;
+
+    text-align: left;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    color: #475569;
+
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.campus-drive td {
+    padding: 16px 18px;
+
+    font-size: 14px;
+    color: #475569;
+
+    border-bottom: 1px solid #eef2f7;
+}
+
+.campus-drive tbody tr {
+    transition: 0.25s ease;
+}
+
+.campus-drive tbody tr:hover {
+    background: #f8fafc;
+}
+
+
+/* =========================
+   BADGES
+   ========================= */
+
+.badge {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 6px 13px;
+
+    border-radius: 30px;
+
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.badge.green {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.badge.orange {
+    background: #ffedd5;
+    color: #c2410c;
+}
+
+.badge.blue {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+
+/* =========================
+   MOTIVATION CARD
+   ========================= */
+
+.motivation-card {
+    margin-top: 30px;
+
+    padding: 40px 30px;
+
+    text-align: center;
+
+    border-radius: 22px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #eff6ff,
+            #f8fafc
+        );
+
+    border: 1px solid #dbeafe;
+}
+
+.motivation-card i {
+    display: inline-flex;
+
+    width: 60px;
+    height: 60px;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #ffffff;
+    color: #f59e0b;
+
+    font-size: 25px;
+
+    margin-bottom: 15px;
+
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+.motivation-card h2 {
+    margin: 0 0 12px;
+
+    font-size: 23px;
+    color: #111827;
+}
+
+.motivation-card p {
+    max-width: 700px;
+
+    margin: auto;
+
+    font-size: 15px;
+    line-height: 1.8;
+
+    color: #64748b;
+}
+
+
+/* =========================
+   DASHBOARD FOOTER
+   ========================= */
+
+.dashboard-footer {
+    margin-top: 35px;
+    padding: 25px 10px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 15px;
+
+    border-top: 1px solid var(--border-color, #e5e7eb);
+}
+
+.dashboard-footer p {
+    margin: 0;
+
+    font-size: 13px;
+    color: #64748b;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1100px) {
+
+    .placement-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .recommend-grid {
+        grid-template-columns: repeat(2, 1fr);
     }
 
 }
 
 
-/* =========================
-   MOBILE TOUCH EFFECT
-   ========================= */
+@media (max-width: 768px) {
+
+    .recommend-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .placement-card,
+    .recommendation-card,
+    .campus-drive,
+    .activity-card {
+        padding: 22px;
+    }
+
+    .dashboard-footer {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .circle {
+        width: 160px;
+        height: 160px;
+    }
+
+    .circle::before {
+        width: 125px;
+        height: 125px;
+    }
+
+}
+
+
+@media (max-width: 480px) {
+
+    .activity-card h2,
+    .placement-card h2,
+    .recommendation-card h2,
+    .campus-drive h2 {
+        font-size: 19px;
+    }
+
+    .circle {
+        width: 145px;
+        height: 145px;
+    }
+
+    .circle::before {
+        width: 112px;
+        height: 112px;
+    }
+
+    .circle h1 {
+        font-size: 28px;
+    }
+
+    .motivation-card {
+        padding: 30px 18px;
+    }
+
+}
+/* =========================================================
+   DASHBOARD CSS - PART 5
+   DARK MODE + ANIMATIONS + FINAL POLISH
+   ========================================================= */
+
+
+/* =========================================================
+   GLOBAL DASHBOARD TRANSITIONS
+   ========================================================= */
+
+.dashboard * {
+    box-sizing: border-box;
+}
+
+.dashboard a {
+    -webkit-tap-highlight-color: transparent;
+}
+
+.dashboard button,
+.dashboard a,
+.dashboard .stat-card,
+.dashboard .quick-card,
+.dashboard .recommend-item {
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        background 0.25s ease,
+        border-color 0.25s ease;
+}
+
+
+/* =========================================================
+   CARD HOVER EFFECT
+   ========================================================= */
+
+.dashboard .stat-card:hover,
+.dashboard .quick-card:hover {
+    transform: translateY(-5px);
+}
+
+
+/* =========================================================
+   PAGE FADE-IN
+   ========================================================= */
+
+.dashboard {
+    animation: dashboardFadeIn 0.45s ease;
+}
+
+@keyframes dashboardFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* =========================================================
+   HERO BUTTONS
+   ========================================================= */
+
+.hero-buttons {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.hero-buttons a {
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 46px;
+    padding: 0 22px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.btn-primary {
+    background: #2563eb;
+    color: #ffffff;
+    border: 1px solid #2563eb;
+}
+
+.btn-primary:hover {
+    background: #1d4ed8;
+    border-color: #1d4ed8;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 22px rgba(37, 99, 235, 0.25);
+}
+
+.btn-secondary {
+    background: #ffffff;
+    color: #2563eb;
+    border: 1px solid #dbeafe;
+}
+
+.btn-secondary:hover {
+    background: #eff6ff;
+    border-color: #2563eb;
+    transform: translateY(-2px);
+}
+
+
+/* =========================================================
+   QUICK ACCESS ICONS
+   ========================================================= */
+
+.quick-card i {
+    transition: transform 0.25s ease;
+}
+
+.quick-card:hover i {
+    transform: scale(1.12);
+}
+
+
+/* =========================================================
+   PROGRESS BAR ANIMATION
+   ========================================================= */
+
+.progress-fill {
+    animation: progressLoad 1s ease;
+    transform-origin: left;
+}
+
+@keyframes progressLoad {
+    from {
+        transform: scaleX(0);
+    }
+
+    to {
+        transform: scaleX(1);
+    }
+}
+
+
+/* =========================================================
+   TABLE MOBILE SCROLL
+   ========================================================= */
+
+.activity-card,
+.campus-drive {
+    scrollbar-width: thin;
+}
+
+.activity-card::-webkit-scrollbar,
+.campus-drive::-webkit-scrollbar {
+    height: 7px;
+}
+
+.activity-card::-webkit-scrollbar-track,
+.campus-drive::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 10px;
+}
+
+.activity-card::-webkit-scrollbar-thumb,
+.campus-drive::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+
+.activity-card::-webkit-scrollbar-thumb:hover,
+.campus-drive::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+
+/* =========================================================
+   FOCUS ACCESSIBILITY
+   ========================================================= */
+
+.dashboard a:focus-visible,
+.dashboard button:focus-visible {
+    outline: 3px solid rgba(37, 99, 235, 0.35);
+    outline-offset: 3px;
+}
+
+
+/* =========================================================
+   DARK MODE
+   Works with common layout dark-mode classes
+   ========================================================= */
+
+body.dark-mode .dashboard,
+.dark-mode .dashboard {
+    --card-bg: #111827;
+    --text-color: #f8fafc;
+    --border-color: #263244;
+    color: #e5e7eb;
+}
+
+body.dark-mode .stat-card,
+body.dark-mode .quick-card,
+body.dark-mode .progress-card,
+body.dark-mode .goal-card,
+body.dark-mode .activity-card,
+body.dark-mode .placement-card,
+body.dark-mode .recommendation-card,
+body.dark-mode .campus-drive,
+.dark-mode .stat-card,
+.dark-mode .quick-card,
+.dark-mode .progress-card,
+.dark-mode .goal-card,
+.dark-mode .activity-card,
+.dark-mode .placement-card,
+.dark-mode .recommendation-card,
+.dark-mode .campus-drive {
+    background: #111827;
+    border-color: #263244;
+    color: #e5e7eb;
+}
+
+
+/* =========================================================
+   DARK MODE TEXT
+   ========================================================= */
+
+body.dark-mode .dashboard h1,
+body.dark-mode .dashboard h2,
+body.dark-mode .dashboard h3,
+.dark-mode .dashboard h1,
+.dark-mode .dashboard h2,
+.dark-mode .dashboard h3 {
+    color: #f8fafc;
+}
+
+body.dark-mode .dashboard p,
+body.dark-mode .dashboard span,
+body.dark-mode .dashboard label,
+body.dark-mode .dashboard td,
+.dark-mode .dashboard p,
+.dark-mode .dashboard span,
+.dark-mode .dashboard label,
+.dark-mode .dashboard td {
+    color: #94a3b8;
+}
+
+
+/* =========================================================
+   DARK MODE TABLES
+   ========================================================= */
+
+body.dark-mode .activity-card thead,
+body.dark-mode .campus-drive thead,
+.dark-mode .activity-card thead,
+.dark-mode .campus-drive thead {
+    background: #0f172a;
+}
+
+body.dark-mode .activity-card th,
+body.dark-mode .campus-drive th,
+.dark-mode .activity-card th,
+.dark-mode .campus-drive th {
+    color: #cbd5e1;
+}
+
+body.dark-mode .activity-card td,
+body.dark-mode .campus-drive td,
+.dark-mode .activity-card td,
+.dark-mode .campus-drive td {
+    border-color: #263244;
+}
+
+body.dark-mode .activity-card tbody tr:hover,
+body.dark-mode .campus-drive tbody tr:hover,
+.dark-mode .activity-card tbody tr:hover,
+.dark-mode .campus-drive tbody tr:hover {
+    background: #172033;
+}
+
+
+/* =========================================================
+   DARK MODE RECOMMENDATIONS
+   ========================================================= */
+
+body.dark-mode .recommend-item,
+.dark-mode .recommend-item {
+    background: #172033;
+    border-color: #263244;
+}
+
+body.dark-mode .recommend-item:hover,
+.dark-mode .recommend-item:hover {
+    border-color: #3b82f6;
+    background: #1e293b;
+}
+
+body.dark-mode .recommend-item h3,
+.dark-mode .recommend-item h3 {
+    color: #f8fafc;
+}
+
+body.dark-mode .recommend-item i,
+.dark-mode .recommend-item i {
+    background: #1e3a8a;
+    color: #93c5fd;
+}
+
+
+/* =========================================================
+   DARK MODE GOAL LIST
+   ========================================================= */
+
+body.dark-mode .goal-card li,
+.dark-mode .goal-card li {
+    color: #cbd5e1;
+}
+
+
+/* =========================================================
+   DARK MODE MOTIVATION
+   ========================================================= */
+
+body.dark-mode .motivation-card,
+.dark-mode .motivation-card {
+    background: linear-gradient(
+        135deg,
+        #172554,
+        #111827
+    );
+
+    border-color: #263244;
+}
+
+body.dark-mode .motivation-card h2,
+.dark-mode .motivation-card h2 {
+    color: #f8fafc;
+}
+
+body.dark-mode .motivation-card p,
+.dark-mode .motivation-card p {
+    color: #94a3b8;
+}
+
+body.dark-mode .motivation-card i,
+.dark-mode .motivation-card i {
+    background: #1e293b;
+}
+
+
+/* =========================================================
+   DARK MODE FOOTER
+   ========================================================= */
+
+body.dark-mode .dashboard-footer,
+.dark-mode .dashboard-footer {
+    border-color: #263244;
+}
+
+
+/* =========================================================
+   DARK MODE SECONDARY BUTTON
+   ========================================================= */
+
+body.dark-mode .btn-secondary,
+.dark-mode .btn-secondary {
+    background: #111827;
+    color: #93c5fd;
+    border-color: #334155;
+}
+
+body.dark-mode .btn-secondary:hover,
+.dark-mode .btn-secondary:hover {
+    background: #1e293b;
+    border-color: #3b82f6;
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .hero-section {
+        gap: 25px;
+    }
+
+    .hero-content h1 {
+        font-size: 30px;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .quick-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
 
 @media (max-width: 600px) {
 
-    .stat-card:active,
+    .dashboard {
+        width: 100%;
+        padding: 0;
+    }
+
+    .hero-section {
+        grid-template-columns: 1fr;
+        text-align: center;
+        padding: 25px 18px;
+    }
+
+    .hero-content h1 {
+        font-size: 27px;
+        line-height: 1.3;
+    }
+
+    .hero-content p {
+        font-size: 14px;
+    }
+
+    .hero-image {
+        display: none;
+    }
+
+    .hero-buttons {
+        justify-content: center;
+    }
+
+    .hero-buttons a {
+        width: 100%;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+
+    .stat-card {
+        padding: 18px 12px;
+        text-align: center;
+    }
+
+    .stat-card h2 {
+        font-size: 23px;
+    }
+
+    .stat-card p {
+        font-size: 12px;
+    }
+
+    .quick-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+
+    .quick-card {
+        padding: 18px 10px;
+        text-align: center;
+    }
+
+    .quick-card h3 {
+        font-size: 14px;
+    }
+
+    .quick-card span {
+        font-size: 11px;
+    }
+
+    .progress-container {
+        grid-template-columns: 1fr;
+    }
+
+    .placement-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .recommend-grid {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 380px) {
+
+    .stats-grid,
+    .quick-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .hero-content h1 {
+        font-size: 24px;
+    }
+
+    .stat-card {
+        padding: 20px;
+    }
+
+    .quick-card {
+        padding: 22px;
+    }
+
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .dashboard,
+    .dashboard *,
+    .progress-fill {
+        animation: none !important;
+        transition: none !important;
+    }
+
+}
+/* =========================================================
+   RECENT ACTIVITY
+========================================================= */
+
+.activity-card {
+    background: var(--card-bg, #ffffff);
+    border: 1px solid var(--border-color, #e5e7eb);
+    border-radius: 20px;
+    padding: 28px;
+    margin-top: 25px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+    overflow-x: auto;
+}
+
+.activity-card h2 {
+    margin: 0 0 22px;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text-primary, #111827);
+}
+
+.activity-card table {
+    width: 100%;
+    min-width: 600px;
+    border-collapse: collapse;
+}
+
+.activity-card thead {
+    background: var(--table-head, #f8fafc);
+}
+
+.activity-card th {
+    padding: 15px 18px;
+    text-align: left;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-secondary, #64748b);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.activity-card td {
+    padding: 17px 18px;
+    border-bottom: 1px solid var(--border-color, #e5e7eb);
+    color: var(--text-primary, #1e293b);
+    font-size: 14px;
+}
+
+.activity-card tbody tr {
+    transition: 0.25s ease;
+}
+
+.activity-card tbody tr:hover {
+    background: var(--hover-bg, #f8fafc);
+}
+
+.activity-card tbody tr:last-child td {
+    border-bottom: none;
+}
+
+
+/* =========================================================
+   ACTIVITY STATUS
+========================================================= */
+
+.activity-card td:nth-child(2) {
+    font-weight: 700;
+}
+
+.activity-card td:nth-child(2)::before {
+    content: "";
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 8px;
+    background: #64748b;
+}
+
+
+/* =========================================================
+   PLACEMENT READINESS
+========================================================= */
+
+.placement-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+    margin-top: 25px;
+}
+
+.placement-card {
+    background: var(--card-bg, #ffffff);
+    border: 1px solid var(--border-color, #e5e7eb);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+}
+
+.placement-card h2 {
+    margin: 0 0 25px;
+    font-size: 21px;
+    font-weight: 700;
+    color: var(--text-primary, #111827);
+}
+
+
+/* =========================================================
+   CIRCLE SCORE
+========================================================= */
+
+.circle-score {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0 25px;
+}
+
+.circle {
+    width: 170px;
+    height: 170px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+
+    background:
+        conic-gradient(
+            #6366f1 0deg,
+            #6366f1 calc(var(--score, 75) * 3.6deg),
+            #e5e7eb calc(var(--score, 75) * 3.6deg),
+            #e5e7eb 360deg
+        );
+}
+
+.circle::before {
+    content: "";
+    position: absolute;
+    width: 125px;
+    height: 125px;
+    border-radius: 50%;
+    background: var(--card-bg, #ffffff);
+}
+
+.circle h1 {
+    position: relative;
+    z-index: 2;
+    margin: 0;
+    font-size: 30px;
+    font-weight: 800;
+    color: var(--text-primary, #111827);
+}
+
+.placement-card > p {
+    text-align: center;
+    color: var(--text-secondary, #64748b);
+    font-size: 14px;
+    line-height: 1.7;
+    margin: 0;
+}
+
+
+/* =========================================================
+   QUICK SUMMARY
+========================================================= */
+
+.placement-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.placement-card li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 15px 0;
+    border-bottom: 1px solid var(--border-color, #e5e7eb);
+    color: var(--text-primary, #334155);
+    font-size: 14px;
+}
+
+.placement-card li:last-child {
+    border-bottom: none;
+}
+
+.placement-card li i {
+    width: 22px;
+    text-align: center;
+    color: #6366f1;
+    font-size: 16px;
+}
+
+
+/* =========================================================
+   RECOMMENDATION CARD
+========================================================= */
+
+.recommendation-card {
+    margin-top: 25px;
+    padding: 30px;
+    background: var(--card-bg, #ffffff);
+    border: 1px solid var(--border-color, #e5e7eb);
+    border-radius: 20px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+}
+
+.recommendation-card h2 {
+    margin: 0 0 25px;
+    color: var(--text-primary, #111827);
+    font-size: 22px;
+}
+
+.recommend-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.recommend-item {
+    text-decoration: none;
+    padding: 25px;
+    border: 1px solid var(--border-color, #e5e7eb);
+    border-radius: 16px;
+    background: var(--inner-card, #f8fafc);
+    transition: all 0.3s ease;
+}
+
+.recommend-item:hover {
+    transform: translateY(-5px);
+    border-color: #6366f1;
+    box-shadow: 0 12px 25px rgba(99, 102, 241, 0.15);
+}
+
+.recommend-item i {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 14px;
+    background: rgba(99, 102, 241, 0.1);
+    color: #6366f1;
+    font-size: 20px;
+    margin-bottom: 16px;
+}
+
+.recommend-item h3 {
+    margin: 0 0 8px;
+    color: var(--text-primary, #111827);
+    font-size: 17px;
+}
+
+.recommend-item p {
+    margin: 0;
+    color: var(--text-secondary, #64748b);
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   UPCOMING CAMPUS DRIVES
+========================================================= */
+
+.campus-drive {
+    margin-top: 25px;
+    padding: 30px;
+    background: var(--card-bg, #ffffff);
+    border: 1px solid var(--border-color, #e5e7eb);
+    border-radius: 20px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+    overflow-x: auto;
+}
+
+.campus-drive h2 {
+    margin: 0 0 22px;
+    font-size: 22px;
+    color: var(--text-primary, #111827);
+}
+
+.campus-drive table {
+    width: 100%;
+    min-width: 650px;
+    border-collapse: collapse;
+}
+
+.campus-drive th {
+    padding: 15px;
+    text-align: left;
+    background: var(--table-head, #f8fafc);
+    color: var(--text-secondary, #64748b);
+    font-size: 13px;
+    text-transform: uppercase;
+}
+
+.campus-drive td {
+    padding: 17px 15px;
+    border-bottom: 1px solid var(--border-color, #e5e7eb);
+    color: var(--text-primary, #334155);
+    font-size: 14px;
+}
+
+.campus-drive tr:last-child td {
+    border-bottom: none;
+}
+
+
+/* =========================================================
+   BADGES
+========================================================= */
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 13px;
+    border-radius: 50px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.badge.green {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.badge.orange {
+    background: #ffedd5;
+    color: #c2410c;
+}
+
+.badge.blue {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+
+/* =========================================================
+   MOTIVATION CARD
+========================================================= */
+
+.motivation-card {
+    margin-top: 25px;
+    padding: 40px 30px;
+    border-radius: 22px;
+    text-align: center;
+    background: linear-gradient(
+        135deg,
+        #6366f1,
+        #8b5cf6
+    );
+    color: #ffffff;
+    box-shadow: 0 15px 35px rgba(99, 102, 241, 0.25);
+}
+
+.motivation-card > i {
+    font-size: 35px;
+    margin-bottom: 15px;
+}
+
+.motivation-card h2 {
+    margin: 0 0 12px;
+    font-size: 23px;
+}
+
+.motivation-card p {
+    max-width: 700px;
+    margin: auto;
+    font-size: 16px;
+    line-height: 1.7;
+    opacity: 0.95;
+}
+
+
+/* =========================================================
+   DASHBOARD FOOTER
+========================================================= */
+
+.dashboard-footer {
+    margin-top: 35px;
+    padding: 25px 10px;
+    border-top: 1px solid var(--border-color, #e5e7eb);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    color: var(--text-secondary, #64748b);
+    font-size: 13px;
+}
+
+.dashboard-footer p {
+    margin: 0;
+}
+
+
+/* =========================================================
+   MOBILE RESPONSIVE
+========================================================= */
+
+@media (max-width: 900px) {
+
+    .placement-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .recommend-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-footer {
+        flex-direction: column;
+        text-align: center;
+    }
+}
+
+
+@media (max-width: 600px) {
+
+    .activity-card,
+    .placement-card,
+    .recommendation-card,
+    .campus-drive {
+        padding: 20px;
+        border-radius: 16px;
+    }
+
+    .activity-card h2,
+    .placement-card h2,
+    .recommendation-card h2,
+    .campus-drive h2 {
+        font-size: 19px;
+    }
+
+    .circle {
+        width: 145px;
+        height: 145px;
+    }
+
+    .circle::before {
+        width: 105px;
+        height: 105px;
+    }
+
+    .circle h1 {
+        font-size: 26px;
+    }
+
+    .motivation-card {
+        padding: 30px 20px;
+    }
+
+    .motivation-card p {
+        font-size: 14px;
+    }
+
+    .dashboard-footer {
+        font-size: 12px;
+    }
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 400px) {
+
+    .activity-card,
+    .placement-card,
+    .recommendation-card,
+    .campus-drive {
+        padding: 16px;
+    }
+
+    .recommend-item {
+        padding: 20px;
+    }
+
+    .circle {
+        width: 125px;
+        height: 125px;
+    }
+
+    .circle::before {
+        width: 90px;
+        height: 90px;
+    }
+
+    .circle h1 {
+        font-size: 23px;
+    }
+}
+/* =========================================================
+   PART 7 — DARK MODE
+========================================================= */
+
+[data-theme="dark"] {
+
+    --card-bg: #111827;
+    --inner-card: #1f2937;
+    --table-head: #1f2937;
+    --hover-bg: #1e293b;
+
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+
+    --border-color: #334155;
+
+}
+
+
+/* =========================================================
+   DARK MODE — DASHBOARD
+========================================================= */
+
+[data-theme="dark"] .dashboard {
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .stat-card,
+[data-theme="dark"] .quick-card,
+[data-theme="dark"] .progress-card,
+[data-theme="dark"] .goal-card,
+[data-theme="dark"] .activity-card,
+[data-theme="dark"] .placement-card,
+[data-theme="dark"] .recommendation-card,
+[data-theme="dark"] .campus-drive {
+    background: #111827;
+    border-color: #334155;
+}
+
+[data-theme="dark"] .quick-card:hover,
+[data-theme="dark"] .recommend-item:hover {
+    background: #1e293b;
+}
+
+[data-theme="dark"] .activity-card thead,
+[data-theme="dark"] .campus-drive th {
+    background: #1f2937;
+}
+
+[data-theme="dark"] .activity-card td,
+[data-theme="dark"] .campus-drive td {
+    border-color: #334155;
+}
+
+[data-theme="dark"] .activity-card tbody tr:hover {
+    background: #1e293b;
+}
+
+[data-theme="dark"] .circle::before {
+    background: #111827;
+}
+
+[data-theme="dark"] .progress-bar {
+    background: #334155;
+}
+
+
+/* =========================================================
+   SMOOTH TRANSITIONS
+========================================================= */
+
+.dashboard *,
+.dashboard *::before,
+.dashboard *::after {
+    transition:
+        background-color 0.25s ease,
+        border-color 0.25s ease,
+        color 0.25s ease,
+        box-shadow 0.25s ease,
+        transform 0.25s ease;
+}
+
+
+/* =========================================================
+   CARD HOVER
+========================================================= */
+
+.stat-card,
+.quick-card,
+.progress-card,
+.goal-card,
+.activity-card,
+.placement-card,
+.recommendation-card,
+.campus-drive {
+    transition: transform 0.3s ease,
+                box-shadow 0.3s ease,
+                border-color 0.3s ease;
+}
+
+.stat-card:hover,
+.progress-card:hover,
+.goal-card:hover,
+.placement-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.10);
+}
+
+
+/* =========================================================
+   QUICK CARD HOVER
+========================================================= */
+
+.quick-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.quick-card::before {
+    content: "";
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: rgba(99, 102, 241, 0.08);
+    top: -60px;
+    right: -60px;
+    transition: 0.4s ease;
+}
+
+.quick-card:hover::before {
+    width: 220px;
+    height: 220px;
+}
+
+.quick-card:hover {
+    transform: translateY(-6px);
+    border-color: #6366f1;
+}
+
+
+/* =========================================================
+   ICON ANIMATION
+========================================================= */
+
+.quick-card i,
+.stat-card i,
+.recommend-item i {
+    transition: transform 0.3s ease;
+}
+
+.quick-card:hover i,
+.recommend-item:hover i {
+    transform: scale(1.15) rotate(-4deg);
+}
+
+.stat-card:hover > i {
+    transform: scale(1.12);
+}
+
+
+/* =========================================================
+   HERO IMAGE
+========================================================= */
+
+.hero-image img {
+    max-width: 100%;
+    height: auto;
+    animation: dashboardFloat 4s ease-in-out infinite;
+}
+
+@keyframes dashboardFloat {
+
+    0% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-8px);
+    }
+
+    100% {
+        transform: translateY(0);
+    }
+
+}
+
+
+/* =========================================================
+   PAGE LOAD ANIMATION
+========================================================= */
+
+.dashboard {
+    animation: dashboardFade 0.5s ease;
+}
+
+@keyframes dashboardFade {
+
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+}
+
+
+/* =========================================================
+   STAGGERED CARD ANIMATION
+========================================================= */
+
+.stats-grid .stat-card:nth-child(1) {
+    animation-delay: 0.05s;
+}
+
+.stats-grid .stat-card:nth-child(2) {
+    animation-delay: 0.10s;
+}
+
+.stats-grid .stat-card:nth-child(3) {
+    animation-delay: 0.15s;
+}
+
+.stats-grid .stat-card:nth-child(4) {
+    animation-delay: 0.20s;
+}
+
+.stats-grid .stat-card:nth-child(5) {
+    animation-delay: 0.25s;
+}
+
+.stats-grid .stat-card:nth-child(6) {
+    animation-delay: 0.30s;
+}
+
+
+/* =========================================================
+   PROGRESS BAR ANIMATION
+========================================================= */
+
+.progress-fill {
+    position: relative;
+    overflow: hidden;
+}
+
+.progress-fill::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+
+    background: rgba(255, 255, 255, 0.25);
+
+    animation: progressShine 2.5s infinite;
+}
+
+@keyframes progressShine {
+
+    0% {
+        left: -100%;
+    }
+
+    50% {
+        left: 100%;
+    }
+
+    100% {
+        left: 100%;
+    }
+
+}
+
+
+/* =========================================================
+   BUTTON EFFECT
+========================================================= */
+
+.btn-primary,
+.btn-secondary {
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.btn-primary::after,
+.btn-secondary::after {
+    content: "";
+    position: absolute;
+
+    width: 0;
+    height: 0;
+
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.20);
+
+    transform: translate(-50%, -50%);
+
+    transition: width 0.4s ease,
+                height 0.4s ease;
+}
+
+.btn-primary:hover::after,
+.btn-secondary:hover::after {
+    width: 350px;
+    height: 350px;
+}
+
+
+/* =========================================================
+   TABLE ROW EFFECT
+========================================================= */
+
+.activity-card tbody tr,
+.campus-drive tbody tr {
+    transition: background 0.2s ease,
+                transform 0.2s ease;
+}
+
+.activity-card tbody tr:hover,
+.campus-drive tbody tr:hover {
+    transform: translateX(3px);
+}
+
+
+/* =========================================================
+   BADGE HOVER
+========================================================= */
+
+.badge {
+    transition: transform 0.2s ease,
+                box-shadow 0.2s ease;
+}
+
+.badge:hover {
+    transform: translateY(-2px);
+}
+
+
+/* =========================================================
+   MOTIVATION CARD ANIMATION
+========================================================= */
+
+.motivation-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.motivation-card::before {
+    content: "";
+
+    position: absolute;
+
+    width: 220px;
+    height: 220px;
+
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.08);
+
+    top: -110px;
+    right: -80px;
+}
+
+.motivation-card::after {
+    content: "";
+
+    position: absolute;
+
+    width: 160px;
+    height: 160px;
+
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.06);
+
+    bottom: -80px;
+    left: -50px;
+}
+
+.motivation-card > * {
+    position: relative;
+    z-index: 2;
+}
+
+
+/* =========================================================
+   SCROLLBAR
+========================================================= */
+
+.dashboard::-webkit-scrollbar {
+    width: 8px;
+}
+
+.dashboard::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.dashboard::-webkit-scrollbar-thumb {
+    background: #6366f1;
+    border-radius: 20px;
+}
+
+.dashboard::-webkit-scrollbar-thumb:hover {
+    background: #4f46e5;
+}
+
+
+/* =========================================================
+   MOBILE TOUCH
+========================================================= */
+
+@media (max-width: 768px) {
+
+    .stat-card:hover,
+    .quick-card:hover,
+    .progress-card:hover,
+    .goal-card:hover,
+    .placement-card:hover {
+        transform: none;
+    }
+
     .quick-card:active,
     .recommend-item:active {
         transform: scale(0.98);
     }
 
-    .stat-card:hover,
-    .quick-card:hover,
-    .recommend-item:hover {
-        transform: none;
-    }
-
-    .activity-card tbody tr:hover,
-    .campus-drive tbody tr:hover {
-        transform: none;
-    }
-
 }
 
 
-/* =========================
-   VERY SMALL SCREEN
-   ========================= */
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
 
-@media (max-width: 360px) {
+@media (prefers-reduced-motion: reduce) {
 
-    .dashboard {
-        padding: 8px;
-    }
-
-    .hero-section {
-        padding: 20px 16px;
-    }
-
-    .hero-content h1 {
-        font-size: 21px;
-    }
-
-    .hero-content p {
-        font-size: 13px;
-    }
-
-    .stat-card {
-        padding: 16px;
-    }
-
-    .stat-card i {
-        width: 42px;
-        height: 42px;
-
-        font-size: 17px;
-    }
-
-    .quick-card {
-        padding: 16px;
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
     }
 
 }
