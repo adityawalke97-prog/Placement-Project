@@ -4,574 +4,2072 @@
 {{ course_name }} Learning
 {% endblock %}
 
-{% block css %}
-<style>
-* { box-sizing: border-box; }
-
-:root {
-  --primary: #2563eb;
-  --primary2: #06b6d4;
-  --success: #10b981;
-  --purple: #7c3aed;
-  --gray900: #111827;
-  --gray700: #374151;
-  --gray500: #6b7280;
-  --gray200: #e5e7eb;
-  --card: rgba(255,255,255,.92);
-  --shadow: 0 16px 50px rgba(0,0,0,.12);
-}
-
-body {
-  background:
-    radial-gradient(circle at top left, #dbeafe 0, transparent 30%),
-    radial-gradient(circle at top right, #cffafe 0, transparent 25%),
-    linear-gradient(180deg, #f8fafc, #eef2ff);
-  color: var(--gray900);
-}
-
-.course-wrapper {
-  max-width: 1200px;
-  margin: auto;
-  padding: 24px;
-  font-family: 'Segoe UI', system-ui, sans-serif;
-}
-
-.course-header {
-  display: grid;
-  grid-template-columns: 1.5fr 1fr;
-  gap: 18px;
-  align-items: center;
-  background: linear-gradient(135deg, var(--primary), var(--primary2));
-  color: white;
-  padding: 28px;
-  border-radius: 28px;
-  box-shadow: var(--shadow);
-  position: relative;
-  overflow: hidden;
-}
-
-.course-header::after {
-  content: "";
-  position: absolute;
-  inset: auto -80px -80px auto;
-  width: 220px;
-  height: 220px;
-  background: rgba(255,255,255,.12);
-  border-radius: 50%;
-}
-
-.course-header h1 {
-  font-size: clamp(30px, 4vw, 44px);
-  margin: 0 0 8px;
-}
-
-.course-header p {
-  margin: 0;
-  opacity: .92;
-  font-size: 18px;
-}
-
-.stats {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-}
-
-.stat {
-  background: rgba(255,255,255,.96);
-  color: var(--gray900);
-  padding: 16px 14px;
-  border-radius: 18px;
-  text-align: center;
-  box-shadow: 0 8px 25px rgba(0,0,0,.08);
-}
-
-.stat b {
-  display: block;
-  font-size: 28px;
-  color: var(--primary);
-  line-height: 1.1;
-}
-
-.stat span {
-  font-size: 13px;
-  color: var(--gray500);
-}
-
-.progress-card, .learning-box, .side-card {
-  margin-top: 24px;
-  background: var(--card);
-  backdrop-filter: blur(10px);
-  padding: 24px;
-  border-radius: 24px;
-  box-shadow: var(--shadow);
-}
-
-.progress-title {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.progress-container {
-  height: 14px;
-  background: #e5e7eb;
-  border-radius: 999px;
-  overflow: hidden;
-  margin-top: 14px;
-}
-
-.progress-fill {
-  height: 100%;
-  width: 0%;
-  background: linear-gradient(90deg, var(--primary), var(--success));
-  transition: width .45s ease;
-}
-
-.learning-grid {
-  display: grid;
-  grid-template-columns: 1.6fr .9fr;
-  gap: 24px;
-  align-items: start;
-}
-
-.day-title {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 18px;
-}
-
-.day-badge {
-  background: var(--primary);
-  color: white;
-  padding: 10px 16px;
-  border-radius: 999px;
-  font-weight: 700;
-  letter-spacing: .2px;
-}
-
-.bookmark-btn, .icon-btn {
-  border: none;
-  background: #fef3c7;
-  padding: 11px 16px;
-  border-radius: 14px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: transform .2s ease, box-shadow .2s ease;
-}
-
-.bookmark-btn:hover, .icon-btn:hover, .btn:hover {
-  transform: translateY(-2px);
-}
-
-.notes {
-  margin-top: 12px;
-  font-size: 17px;
-  line-height: 1.8;
-  color: var(--gray700);
-}
-
-.notes h3 { margin-top: 0; color: var(--gray900); }
-
-.task-box {
-  margin-top: 22px;
-  background: #f9fafb;
-  padding: 18px;
-  border-radius: 18px;
-  border: 1px solid #eef2f7;
-}
-
-.task-box h3 {
-  margin-top: 0;
-  margin-bottom: 12px;
-}
-
-.task-box label {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  padding: 10px 8px;
-  cursor: pointer;
-}
-
-.sidebar {
-  display: grid;
-  gap: 18px;
-}
-
-.side-card h3 {
-  margin-top: 0;
-  margin-bottom: 12px;
-}
-
-.muted {
-  color: var(--gray500);
-  font-size: 14px;
-  line-height: 1.7;
-}
-
-.pill-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 14px;
-  border-radius: 999px;
-  background: #eef2ff;
-  color: #1e3a8a;
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.buttons {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-  margin-top: 22px;
-}
-
-.btn {
-  padding: 14px 18px;
-  border: none;
-  border-radius: 14px;
-  cursor: pointer;
-  font-weight: 700;
-  transition: transform .2s ease, filter .2s ease;
-}
-
-.btn:active { transform: scale(.98); }
-
-.next { background: var(--primary); color: white; }
-.prev { background: #6b7280; color: white; }
-.quiz { background: var(--purple); color: white; }
-.download { background: #059669; color: white; }
-
-.certificate {
-  display: none;
-  margin-top: 26px;
-  text-align: center;
-  background: linear-gradient(180deg, #ffffff, #f8fafc);
-  border: 1px solid #e5e7eb;
-  border-radius: 24px;
-  padding: 26px;
-  box-shadow: var(--shadow);
-}
-
-.ai-button {
-  position: fixed;
-  right: 24px;
-  bottom: 24px;
-  border: none;
-  background: linear-gradient(135deg, var(--primary), var(--purple));
-  color: white;
-  padding: 14px 18px;
-  border-radius: 999px;
-  box-shadow: 0 12px 35px rgba(37,99,235,.35);
-  cursor: pointer;
-  font-weight: 700;
-  z-index: 50;
-}
-
-#aiBox {
-  display: none;
-  position: fixed;
-  right: 24px;
-  bottom: 84px;
-  background: white;
-  width: min(92vw, 360px);
-  padding: 18px;
-  border-radius: 20px;
-  box-shadow: 0 20px 60px rgba(0,0,0,.18);
-  z-index: 60;
-}
-
-#aiBox h3 {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin: 0 0 12px;
-}
-
-#aiReply {
-  background: #f9fafb;
-  border: 1px solid #e5e7eb;
-  padding: 12px;
-  border-radius: 14px;
-  min-height: 92px;
-  line-height: 1.6;
-  color: var(--gray700);
-}
-
-#aiQuestion {
-  width: 100%;
-  padding: 11px 12px;
-  margin-top: 10px;
-  border-radius: 12px;
-  border: 1px solid #d1d5db;
-  outline: none;
-}
-
-#aiQuestion:focus {
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(37,99,235,.12);
-}
-
-@media (max-width: 980px) {
-  .course-header,
-  .learning-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .buttons {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
-@media (max-width: 640px) {
-  .course-wrapper { padding: 14px; }
-  .course-header, .progress-card, .learning-box, .side-card { padding: 18px; }
-  .stats { grid-template-columns: 1fr; }
-  .buttons { grid-template-columns: 1fr; }
-}
-</style>
-{% endblock %}
 
 {% block content %}
-<div class="course-wrapper">
-  <div class="course-header">
-    <div>
-      <h1>{{ course_name }} 🚀</h1>
-      <p>Master {{ course_name }} with practical learning</p>
-    </div>
 
-    <div class="stats">
-      <div class="stat">
-        <b id="xp">250</b>
-        <span>XP Points</span>
-      </div>
-      <div class="stat">
-        <b id="level">1</b>
-        <span>Level</span>
-      </div>
-      <div class="stat">
-        <b id="streak">1</b>
-        <span>Day Streak</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="progress-card">
-    <div class="progress-title">
-      <span>Learning Progress</span>
-      <span id="progressText">0%</span>
-    </div>
-    <div class="progress-container">
-      <div id="progressBar" class="progress-fill"></div>
-    </div>
-    <p class="muted" style="margin-bottom:0;">Complete lessons and unlock next chapters 🔓</p>
-  </div>
-
-  <div class="learning-grid">
-    <div class="learning-box">
-      <div class="day-title">
-        <span class="day-badge" id="dayNumber">Day 1</span>
-        <button class="bookmark-btn" onclick="bookmarkLesson()">⭐ Bookmark</button>
-      </div>
-
-      <h2 id="topicTitle">Loading Topic...</h2>
-      <div id="lessonContent" class="notes">Loading lesson...</div>
-
-      <div class="task-box">
-        <h3>Today's Tasks ✅</h3>
-        <label><input type="checkbox" class="task"> Understand Concept</label>
-        <label><input type="checkbox" class="task"> Write Practice Code</label>
-        <label><input type="checkbox" class="task"> Solve Interview Question</label>
-      </div>
-
-      <div class="buttons">
-        <button class="btn prev" onclick="previousDay()">⬅ Previous</button>
-        <button class="btn download" onclick="downloadNotes()">📄 Notes</button>
-        <button class="btn quiz" onclick="startQuiz()">📝 Quiz</button>
-        <button class="btn next" onclick="nextDay()">Next ➡</button>
-      </div>
-
-      <div id="certificate" class="certificate">
-        <h2>🏆 Congratulations</h2>
-        <p>You completed {{ course_name }}</p>
-        <button class="btn download" onclick="generateCertificate()">Download Certificate</button>
-      </div>
-    </div>
-
-    <div class="sidebar">
-      <div class="side-card">
-        <h3>Today’s Focus</h3>
-        <div class="pill-list">
-          <span class="pill">Practice</span>
-          <span class="pill">Revision</span>
-          <span class="pill">Quiz</span>
-          <span class="pill">Project</span>
-        </div>
-      </div>
-
-      <div class="side-card">
-        <h3>Learning Tips</h3>
-        <p class="muted">
-          Spend 20 to 30 minutes on theory, then switch to code practice.
-          After that, solve one small interview question to strengthen recall.
-        </p>
-      </div>
-    </div>
-  </div>
-</div>
-
-<button class="ai-button" onclick="openAI()">🤖 Ask AI</button>
-
-<div id="aiBox">
-  <h3>🤖 AI Assistant <span onclick="closeAI()" style="cursor:pointer;">✖</span></h3>
-  <div id="aiReply">Hello 👋 Ask your doubt.</div>
-  <input id="aiQuestion" placeholder="Ask question...">
-  <button onclick="askAI()" class="btn next" style="margin-top:10px;width:100%;">Send</button>
-</div>
-{% endblock %}
-
-{% block scripts %}
-<script>
-const courseName = {{ course_name|tojson }};
-const totalDays = Number({{ day_count|tojson }}) || 30;
-
-let currentDay = Number(localStorage.getItem(courseName + "_day")) || 1;
-let xp = Number(localStorage.getItem(courseName + "_xp")) || 250;
-let streak = Number(localStorage.getItem(courseName + "_streak")) || 1;
-let bookmarks = JSON.parse(localStorage.getItem(courseName + "_bookmarks") || "[]");
-
-const lessons = {
-  1: { title: "Introduction & Setup", content: `<h3>Welcome to ${courseName}</h3><p>Today you will understand the course roadmap.</p><ul><li>Install required tools</li><li>Understand basics</li><li>Create first practice program</li></ul>` },
-  2: { title: "Variables and Data Types", content: `<h3>Variables</h3><p>Learn how data is stored inside programs.</p><ul><li>Variables</li><li>Data Types</li><li>Memory Concept</li></ul>` },
-  3: { title: "Operators and Conditions", content: `<h3>Decision Making</h3><p>Control program flow using operators.</p><ul><li>Arithmetic Operators</li><li>Logical Operators</li><li>If Else Statement</li></ul>` },
-  4: { title: "Loops", content: `<h3>Iteration Concept</h3><p>Repeat tasks using loops.</p><ul><li>For Loop</li><li>While Loop</li><li>Nested Loop</li></ul>` },
-  5: { title: "Functions", content: `<h3>Reusable Code</h3><p>Create modular and clean programs.</p><ul><li>Function Creation</li><li>Parameters</li><li>Return Values</li></ul>` }
-};
-
-function syncStats() {
-  document.getElementById("xp").innerText = xp;
-  document.getElementById("streak").innerText = streak;
-  document.getElementById("level").innerText = Math.floor(xp / 500) + 1;
-  localStorage.setItem(courseName + "_xp", xp);
-  localStorage.setItem(courseName + "_streak", streak);
+<style>
+* {
+    box-sizing: border-box;
 }
 
-function loadLesson() {
-  localStorage.setItem(courseName + "_day", currentDay);
-  const percentage = Math.min(100, Math.floor((currentDay / totalDays) * 100));
-  document.getElementById("progressBar").style.width = percentage + "%";
-  document.getElementById("progressText").innerText = percentage + "%";
-  document.getElementById("dayNumber").innerText = "Day " + currentDay;
+:root {
+    --primary: #2563eb;
+    --primary-dark: #1d4ed8;
+    --cyan: #06b6d4;
+    --success: #10b981;
+    --purple: #7c3aed;
 
-  const lesson = lessons[currentDay];
-  document.getElementById("topicTitle").innerText = lesson ? lesson.title : `Advanced Practice Day ${currentDay}`;
-  document.getElementById("lessonContent").innerHTML = lesson ? lesson.content : `<h3>Real World Practice</h3><p>Solve projects and interview problems.</p>`;
+    --gray900: #111827;
+    --gray700: #374151;
+    --gray500: #6b7280;
+    --gray300: #d1d5db;
+    --gray200: #e5e7eb;
+    --gray100: #f3f4f6;
 
-  if (currentDay >= totalDays) document.getElementById("certificate").style.display = "block";
-  syncStats();
+    --card: #ffffff;
+
+    --shadow:
+        0 16px 50px rgba(0, 0, 0, 0.10);
 }
 
-function increaseXP() {
-  xp += 50;
-  streak += 1;
-  syncStats();
+
+/* =========================================================
+   PAGE
+   ========================================================= */
+
+.course-wrapper {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px;
+
+    font-family:
+        "Segoe UI",
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        sans-serif;
 }
 
-function nextDay() {
-  if (currentDay < totalDays) {
-    currentDay += 1;
-    increaseXP();
-    loadLesson();
-  } else {
-    document.getElementById("certificate").style.display = "block";
-    alert("🎉 Course Completed");
-  }
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.course-header {
+    position: relative;
+    overflow: hidden;
+
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+
+    gap: 20px;
+    align-items: center;
+
+    padding: 30px;
+
+    border-radius: 28px;
+
+    color: white;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--primary),
+            var(--cyan)
+        );
+
+    box-shadow: var(--shadow);
 }
 
-function previousDay() {
-  if (currentDay > 1) {
-    currentDay -= 1;
-    loadLesson();
-  }
+
+.course-header::before {
+    content: "";
+
+    position: absolute;
+
+    width: 260px;
+    height: 260px;
+
+    right: -90px;
+    top: -120px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(255,255,255,0.10);
 }
 
-document.querySelectorAll(".task").forEach(task => {
-  task.addEventListener("change", function () {
-    if (this.checked) {
-      xp += 10;
-      syncStats();
+
+.course-header::after {
+    content: "";
+
+    position: absolute;
+
+    width: 160px;
+    height: 160px;
+
+    left: 40%;
+    bottom: -110px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(255,255,255,0.08);
+}
+
+
+.course-header > div {
+    position: relative;
+    z-index: 2;
+}
+
+
+.course-header h1 {
+    margin: 0 0 10px;
+
+    font-size:
+        clamp(30px, 4vw, 44px);
+
+    font-weight: 800;
+}
+
+
+.course-header p {
+    margin: 0;
+
+    opacity: 0.92;
+
+    font-size: 17px;
+
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   STATS
+   ========================================================= */
+
+.stats {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 12px;
+}
+
+
+.stat {
+    padding: 18px 12px;
+
+    text-align: center;
+
+    border-radius: 18px;
+
+    color: var(--gray900);
+
+    background:
+        rgba(255,255,255,0.96);
+
+    box-shadow:
+        0 8px 25px rgba(0,0,0,0.08);
+}
+
+
+.stat b {
+    display: block;
+
+    margin-bottom: 5px;
+
+    font-size: 28px;
+
+    color: var(--primary);
+}
+
+
+.stat span {
+    color: var(--gray500);
+
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   COMMON CARDS
+   ========================================================= */
+
+.progress-card,
+.learning-box,
+.side-card {
+
+    margin-top: 24px;
+
+    padding: 24px;
+
+    border-radius: 24px;
+
+    background:
+        rgba(255,255,255,0.95);
+
+    border:
+        1px solid rgba(229,231,235,0.8);
+
+    box-shadow:
+        var(--shadow);
+}
+
+
+/* =========================================================
+   PROGRESS
+   ========================================================= */
+
+.progress-title {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    gap: 12px;
+
+    font-size: 16px;
+
+    font-weight: 700;
+}
+
+
+.progress-container {
+
+    width: 100%;
+
+    height: 14px;
+
+    margin-top: 14px;
+
+    overflow: hidden;
+
+    border-radius: 999px;
+
+    background:
+        var(--gray200);
+}
+
+
+.progress-fill {
+
+    width: 0%;
+
+    height: 100%;
+
+    border-radius: inherit;
+
+    background:
+        linear-gradient(
+            90deg,
+            var(--primary),
+            var(--success)
+        );
+
+    transition:
+        width 0.45s ease;
+}
+
+
+.muted {
+
+    color: var(--gray500);
+
+    font-size: 14px;
+
+    line-height: 1.7;
+}
+
+
+/* =========================================================
+   LEARNING GRID
+   ========================================================= */
+
+.learning-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        1.6fr 0.9fr;
+
+    gap: 24px;
+
+    align-items: start;
+}
+
+
+.learning-box {
+    margin-top: 24px;
+}
+
+
+/* =========================================================
+   DAY HEADER
+   ========================================================= */
+
+.day-title {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    gap: 12px;
+
+    margin-bottom: 20px;
+}
+
+
+.day-badge {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    padding: 10px 16px;
+
+    border-radius: 999px;
+
+    color: white;
+
+    background:
+        var(--primary);
+
+    font-weight: 700;
+}
+
+
+.bookmark-btn {
+
+    border: none;
+
+    padding: 11px 16px;
+
+    border-radius: 14px;
+
+    cursor: pointer;
+
+    color: #92400e;
+
+    background: #fef3c7;
+
+    font-weight: 700;
+
+    transition:
+        transform 0.2s,
+        box-shadow 0.2s;
+}
+
+
+.bookmark-btn:hover {
+
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+        0 7px 20px
+        rgba(0,0,0,0.08);
+}
+
+
+/* =========================================================
+   LESSON
+   ========================================================= */
+
+#topicTitle {
+
+    margin:
+        0 0 15px;
+
+    color:
+        var(--gray900);
+
+    font-size:
+        clamp(22px, 3vw, 30px);
+}
+
+
+.notes {
+
+    margin-top: 10px;
+
+    color:
+        var(--gray700);
+
+    font-size: 16px;
+
+    line-height: 1.8;
+}
+
+
+.notes h3 {
+
+    margin-top: 0;
+
+    color:
+        var(--gray900);
+}
+
+
+.notes ul {
+
+    padding-left: 22px;
+}
+
+
+.notes li {
+
+    margin-bottom: 7px;
+}
+
+
+/* =========================================================
+   TASKS
+   ========================================================= */
+
+.task-box {
+
+    margin-top: 24px;
+
+    padding: 18px;
+
+    border:
+        1px solid #eef2f7;
+
+    border-radius: 18px;
+
+    background:
+        #f9fafb;
+}
+
+
+.task-box h3 {
+
+    margin:
+        0 0 12px;
+}
+
+
+.task-box label {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 10px 8px;
+
+    cursor: pointer;
+
+    color:
+        var(--gray700);
+}
+
+
+.task-box input {
+
+    width: 17px;
+    height: 17px;
+
+    accent-color:
+        var(--primary);
+}
+
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+
+.buttons {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 12px;
+
+    margin-top: 22px;
+}
+
+
+.btn {
+
+    border: none;
+
+    padding: 14px 18px;
+
+    border-radius: 14px;
+
+    cursor: pointer;
+
+    font-weight: 700;
+
+    transition:
+        transform 0.2s,
+        filter 0.2s;
+}
+
+
+.btn:hover {
+
+    transform:
+        translateY(-2px);
+
+    filter:
+        brightness(0.96);
+}
+
+
+.btn:active {
+
+    transform:
+        scale(0.98);
+}
+
+
+.prev {
+
+    color: white;
+
+    background:
+        #6b7280;
+}
+
+
+.next {
+
+    color: white;
+
+    background:
+        var(--primary);
+}
+
+
+.quiz {
+
+    color: white;
+
+    background:
+        var(--purple);
+}
+
+
+.download {
+
+    color: white;
+
+    background:
+        #059669;
+}
+
+
+/* =========================================================
+   SIDEBAR
+   ========================================================= */
+
+.sidebar {
+
+    display: grid;
+
+    gap: 0;
+}
+
+
+.side-card {
+
+    margin-top: 24px;
+}
+
+
+.side-card h3 {
+
+    margin:
+        0 0 14px;
+
+    color:
+        var(--gray900);
+}
+
+
+.pill-list {
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 10px;
+}
+
+
+.pill {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    padding: 9px 13px;
+
+    border-radius: 999px;
+
+    color: #1e3a8a;
+
+    background:
+        #eef2ff;
+
+    font-size: 13px;
+
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   CERTIFICATE
+   ========================================================= */
+
+.certificate {
+
+    display: none;
+
+    margin-top: 26px;
+
+    padding: 28px;
+
+    text-align: center;
+
+    border:
+        1px solid var(--gray200);
+
+    border-radius: 24px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #ffffff,
+            #f8fafc
+        );
+
+    box-shadow:
+        var(--shadow);
+}
+
+
+.certificate h2 {
+
+    margin-top: 0;
+
+    color:
+        var(--primary);
+}
+
+
+/* =========================================================
+   AI
+   ========================================================= */
+
+.ai-button {
+
+    position: fixed;
+
+    right: 24px;
+    bottom: 24px;
+
+    z-index: 100;
+
+    border: none;
+
+    padding: 14px 18px;
+
+    border-radius: 999px;
+
+    cursor: pointer;
+
+    color: white;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--primary),
+            var(--purple)
+        );
+
+    box-shadow:
+        0 12px 35px
+        rgba(37,99,235,0.35);
+
+    font-weight: 700;
+}
+
+
+#aiBox {
+
+    display: none;
+
+    position: fixed;
+
+    right: 24px;
+    bottom: 84px;
+
+    z-index: 110;
+
+    width:
+        min(92vw, 360px);
+
+    padding: 18px;
+
+    border-radius: 20px;
+
+    background: white;
+
+    box-shadow:
+        0 20px 60px
+        rgba(0,0,0,0.18);
+}
+
+
+#aiBox h3 {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin:
+        0 0 12px;
+}
+
+
+.ai-close {
+
+    cursor: pointer;
+
+    padding: 4px 7px;
+
+    border-radius: 8px;
+}
+
+
+.ai-close:hover {
+
+    background:
+        #f3f4f6;
+}
+
+
+#aiReply {
+
+    min-height: 92px;
+
+    padding: 12px;
+
+    border:
+        1px solid var(--gray200);
+
+    border-radius: 14px;
+
+    color:
+        var(--gray700);
+
+    background:
+        #f9fafb;
+
+    line-height: 1.6;
+}
+
+
+#aiQuestion {
+
+    width: 100%;
+
+    margin-top: 10px;
+
+    padding: 11px 12px;
+
+    border:
+        1px solid #d1d5db;
+
+    border-radius: 12px;
+
+    outline: none;
+}
+
+
+#aiQuestion:focus {
+
+    border-color:
+        var(--primary);
+
+    box-shadow:
+        0 0 0 3px
+        rgba(37,99,235,0.12);
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 980px) {
+
+    .course-header,
+    .learning-grid {
+
+        grid-template-columns:
+            1fr;
     }
-  });
-});
 
-function bookmarkLesson() {
-  const title = lessons[currentDay]?.title || "Day " + currentDay;
-  if (!bookmarks.includes(title)) {
-    bookmarks.push(title);
-    localStorage.setItem(courseName + "_bookmarks", JSON.stringify(bookmarks));
-    alert("⭐ Added to Bookmark");
-  } else {
-    alert("Already Bookmarked");
-  }
+
+    .buttons {
+
+        grid-template-columns:
+            1fr 1fr;
+    }
 }
 
-function downloadNotes() {
-  const title = document.getElementById("topicTitle").innerText;
-  const notes = document.getElementById("lessonContent").innerText;
-  const text = `${courseName}\n\n${title}\n\n${notes}\n\nGenerated by Placement Training Portal\n`;
-  const file = new Blob([text], { type: "text/plain" });
-  const link = document.createElement("a");
-  link.href = URL.createObjectURL(file);
-  link.download = title + ".txt";
-  link.click();
+
+@media (max-width: 640px) {
+
+    .course-wrapper {
+
+        padding: 14px;
+    }
+
+
+    .course-header {
+
+        padding: 22px;
+
+        border-radius: 20px;
+    }
+
+
+    .progress-card,
+    .learning-box,
+    .side-card {
+
+        padding: 18px;
+
+        border-radius: 18px;
+    }
+
+
+    .stats {
+
+        grid-template-columns:
+            1fr;
+    }
+
+
+    .buttons {
+
+        grid-template-columns:
+            1fr;
+    }
+
+
+    .day-title {
+
+        align-items:
+            flex-start;
+
+        flex-direction:
+            column;
+    }
+
+
+    .bookmark-btn {
+
+        width: 100%;
+    }
+
+
+    .ai-button {
+
+        right: 15px;
+        bottom: 15px;
+    }
+
+
+    #aiBox {
+
+        right: 15px;
+        bottom: 78px;
+    }
 }
+</style>
 
-function startQuiz() {
-  window.location.href = "/quiz/" + encodeURIComponent(courseName) + "/" + currentDay;
-}
 
-function openAI() {
-  document.getElementById("aiBox").style.display = "block";
-}
+<div class="course-wrapper">
 
-function closeAI() {
-  document.getElementById("aiBox").style.display = "none";
-}
+    <!-- =====================================================
+         COURSE HEADER
+         ===================================================== -->
 
-function askAI() {
-  const input = document.getElementById("aiQuestion");
-  const question = input.value.trim();
-  if (!question) {
-    alert("Please enter your question");
-    return;
-  }
+    <section class="course-header">
 
-  document.getElementById("aiReply").innerHTML = `
-    <b>You:</b> ${escapeHtml(question)}
-    <br><br>
-    <b>AI:</b> Keep practicing this topic daily. Understand the concept, write code examples, and solve interview questions.
-  `;
-  input.value = "";
-}
+        <div>
 
-function generateCertificate() {
-  const certificateText =
-`================================
-CERTIFICATE OF COMPLETION
-================================
+            <h1>
+                {{ course_name }} 🚀
+            </h1>
+
+            <p>
+                Master {{ course_name }}
+                with practical learning.
+            </p>
+
+        </div>
+
+
+        <div class="stats">
+
+            <div class="stat">
+
+                <b id="xp">250</b>
+
+                <span>
+                    XP Points
+                </span>
+
+            </div>
+
+
+            <div class="stat">
+
+                <b id="level">1</b>
+
+                <span>
+                    Level
+                </span>
+
+            </div>
+
+
+            <div class="stat">
+
+                <b id="streak">1</b>
+
+                <span>
+                    Day Streak
+                </span>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         PROGRESS
+         ===================================================== -->
+
+    <section class="progress-card">
+
+        <div class="progress-title">
+
+            <span>
+                Learning Progress
+            </span>
+
+            <span id="progressText">
+                0%
+            </span>
+
+        </div>
+
+
+        <div class="progress-container">
+
+            <div
+                id="progressBar"
+                class="progress-fill">
+            </div>
+
+        </div>
+
+
+        <p
+            class="muted"
+            style="margin-bottom:0;">
+
+            Complete lessons and unlock
+            next chapters 🔓
+
+        </p>
+
+    </section>
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+         ===================================================== -->
+
+    <div class="learning-grid">
+
+
+        <!-- =================================================
+             LESSON
+             ================================================= -->
+
+        <main class="learning-box">
+
+            <div class="day-title">
+
+                <span
+                    class="day-badge"
+                    id="dayNumber">
+
+                    Day 1
+
+                </span>
+
+
+                <button
+                    type="button"
+                    class="bookmark-btn"
+                    id="bookmarkBtn">
+
+                    ⭐ Bookmark
+
+                </button>
+
+            </div>
+
+
+            <h2 id="topicTitle">
+                Loading Topic...
+            </h2>
+
+
+            <div
+                id="lessonContent"
+                class="notes">
+
+                Loading lesson...
+
+            </div>
+
+
+            <!-- TASKS -->
+
+            <div class="task-box">
+
+                <h3>
+                    Today's Tasks ✅
+                </h3>
+
+
+                <label>
+
+                    <input
+                        type="checkbox"
+                        class="task">
+
+                    Understand Concept
+
+                </label>
+
+
+                <label>
+
+                    <input
+                        type="checkbox"
+                        class="task">
+
+                    Write Practice Code
+
+                </label>
+
+
+                <label>
+
+                    <input
+                        type="checkbox"
+                        class="task">
+
+                    Solve Interview Question
+
+                </label>
+
+            </div>
+
+
+            <!-- BUTTONS -->
+
+            <div class="buttons">
+
+                <button
+                    type="button"
+                    class="btn prev"
+                    id="previousBtn">
+
+                    ⬅ Previous
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="btn download"
+                    id="downloadBtn">
+
+                    📄 Notes
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="btn quiz"
+                    id="quizBtn">
+
+                    📝 Quiz
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="btn next"
+                    id="nextBtn">
+
+                    Next ➡
+
+                </button>
+
+            </div>
+
+
+            <!-- CERTIFICATE -->
+
+            <div
+                id="certificate"
+                class="certificate">
+
+                <h2>
+                    🏆 Congratulations!
+                </h2>
+
+                <p>
+                    You completed
+                    {{ course_name }}
+                </p>
+
+
+                <button
+                    type="button"
+                    class="btn download"
+                    id="certificateBtn">
+
+                    Download Certificate
+
+                </button>
+
+            </div>
+
+        </main>
+
+
+        <!-- =================================================
+             SIDEBAR
+             ================================================= -->
+
+        <aside class="sidebar">
+
+
+            <div class="side-card">
+
+                <h3>
+                    Today's Focus
+                </h3>
+
+
+                <div class="pill-list">
+
+                    <span class="pill">
+                        🎯 Practice
+                    </span>
+
+                    <span class="pill">
+                        🔄 Revision
+                    </span>
+
+                    <span class="pill">
+                        📝 Quiz
+                    </span>
+
+                    <span class="pill">
+                        🚀 Project
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="side-card">
+
+                <h3>
+                    Learning Tips
+                </h3>
+
+                <p class="muted">
+
+                    Spend 20–30 minutes on theory,
+                    then switch to code practice.
+
+                    After that, solve one small
+                    interview question to strengthen
+                    your recall.
+
+                </p>
+
+            </div>
+
+
+            <div class="side-card">
+
+                <h3>
+                    Current Course
+                </h3>
+
+                <p class="muted">
+
+                    Course:
+                    <strong>
+                        {{ course_name }}
+                    </strong>
+
+                    <br>
+
+                    Total Days:
+                    <strong>
+                        {{ day_count }}
+                    </strong>
+
+                </p>
+
+            </div>
+
+        </aside>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     AI BUTTON
+     ========================================================= -->
+
+<button
+    type="button"
+    class="ai-button"
+    id="aiOpenBtn">
+
+    🤖 Ask AI
+
+</button>
+
+
+<!-- =========================================================
+     AI BOX
+     ========================================================= -->
+
+<div
+    id="aiBox"
+    aria-hidden="true">
+
+    <h3>
+
+        🤖 AI Assistant
+
+        <span
+            class="ai-close"
+            id="aiCloseBtn">
+
+            ✖
+
+        </span>
+
+    </h3>
+
+
+    <div id="aiReply">
+
+        Hello 👋
+        Ask your course-related doubt.
+
+    </div>
+
+
+    <input
+        type="text"
+        id="aiQuestion"
+        placeholder="Ask question..."
+        autocomplete="off">
+
+
+    <button
+        type="button"
+        id="aiSendBtn"
+        class="btn next"
+        style="margin-top:10px;width:100%;">
+
+        Send
+
+    </button>
+
+</div>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    "use strict";
+
+
+    /* =====================================================
+       COURSE DATA FROM FLASK
+       ===================================================== */
+
+    const courseName =
+        {{ course_name|tojson }};
+
+    const totalDays =
+        Number({{ day_count|tojson }}) || 30;
+
+
+    /* =====================================================
+       STORAGE KEYS
+       ===================================================== */
+
+    const DAY_KEY =
+        courseName + "_day";
+
+    const XP_KEY =
+        courseName + "_xp";
+
+    const STREAK_KEY =
+        courseName + "_streak";
+
+    const BOOKMARK_KEY =
+        courseName + "_bookmarks";
+
+
+    /* =====================================================
+       STATE
+       ===================================================== */
+
+    let currentDay =
+        Number(localStorage.getItem(DAY_KEY)) || 1;
+
+
+    let xp =
+        Number(localStorage.getItem(XP_KEY)) || 250;
+
+
+    let streak =
+        Number(localStorage.getItem(STREAK_KEY)) || 1;
+
+
+    let bookmarks = [];
+
+
+    try {
+
+        bookmarks =
+            JSON.parse(
+                localStorage.getItem(BOOKMARK_KEY)
+                || "[]"
+            );
+
+        if (!Array.isArray(bookmarks)) {
+
+            bookmarks = [];
+
+        }
+
+    } catch (error) {
+
+        bookmarks = [];
+
+    }
+
+
+    /* =====================================================
+       ELEMENTS
+       ===================================================== */
+
+    const xpElement =
+        document.getElementById("xp");
+
+    const levelElement =
+        document.getElementById("level");
+
+    const streakElement =
+        document.getElementById("streak");
+
+    const progressBar =
+        document.getElementById("progressBar");
+
+    const progressText =
+        document.getElementById("progressText");
+
+    const dayNumber =
+        document.getElementById("dayNumber");
+
+    const topicTitle =
+        document.getElementById("topicTitle");
+
+    const lessonContent =
+        document.getElementById("lessonContent");
+
+    const certificate =
+        document.getElementById("certificate");
+
+    const previousBtn =
+        document.getElementById("previousBtn");
+
+    const nextBtn =
+        document.getElementById("nextBtn");
+
+    const bookmarkBtn =
+        document.getElementById("bookmarkBtn");
+
+    const downloadBtn =
+        document.getElementById("downloadBtn");
+
+    const quizBtn =
+        document.getElementById("quizBtn");
+
+    const certificateBtn =
+        document.getElementById("certificateBtn");
+
+    const aiOpenBtn =
+        document.getElementById("aiOpenBtn");
+
+    const aiCloseBtn =
+        document.getElementById("aiCloseBtn");
+
+    const aiBox =
+        document.getElementById("aiBox");
+
+    const aiQuestion =
+        document.getElementById("aiQuestion");
+
+    const aiSendBtn =
+        document.getElementById("aiSendBtn");
+
+    const aiReply =
+        document.getElementById("aiReply");
+
+
+    /* =====================================================
+       LESSON DATA
+       ===================================================== */
+
+    const lessons = {
+
+        1: {
+            title: "Introduction & Setup",
+
+            content: `
+                <h3>
+                    Welcome to ${escapeHtml(courseName)} 👋
+                </h3>
+
+                <p>
+                    Today you will understand the
+                    course roadmap and prepare your
+                    development environment.
+                </p>
+
+                <ul>
+                    <li>Understand the course roadmap</li>
+                    <li>Install required tools</li>
+                    <li>Understand basic concepts</li>
+                    <li>Create your first practice program</li>
+                </ul>
+            `
+        },
+
+
+        2: {
+            title: "Variables and Data Types",
+
+            content: `
+                <h3>
+                    Variables & Data Types
+                </h3>
+
+                <p>
+                    Variables are used to store
+                    information that a program needs.
+                </p>
+
+                <ul>
+                    <li>Variables</li>
+                    <li>Primitive data types</li>
+                    <li>Reference data types</li>
+                    <li>Memory concepts</li>
+                </ul>
+            `
+        },
+
+
+        3: {
+            title: "Operators and Conditions",
+
+            content: `
+                <h3>
+                    Decision Making
+                </h3>
+
+                <p>
+                    Conditions help programs make
+                    decisions based on different
+                    situations.
+                </p>
+
+                <ul>
+                    <li>Arithmetic operators</li>
+                    <li>Relational operators</li>
+                    <li>Logical operators</li>
+                    <li>if / else</li>
+                    <li>switch / match concepts</li>
+                </ul>
+            `
+        },
+
+
+        4: {
+            title: "Loops",
+
+            content: `
+                <h3>
+                    Iteration Concept
+                </h3>
+
+                <p>
+                    Loops are used when a task needs
+                    to be repeated.
+                </p>
+
+                <ul>
+                    <li>For loop</li>
+                    <li>While loop</li>
+                    <li>Do while concept</li>
+                    <li>Nested loops</li>
+                    <li>Break and continue</li>
+                </ul>
+            `
+        },
+
+
+        5: {
+            title: "Functions",
+
+            content: `
+                <h3>
+                    Reusable Code
+                </h3>
+
+                <p>
+                    Functions help us create reusable,
+                    modular and maintainable programs.
+                </p>
+
+                <ul>
+                    <li>Function declaration</li>
+                    <li>Parameters</li>
+                    <li>Arguments</li>
+                    <li>Return values</li>
+                    <li>Scope</li>
+                </ul>
+            `
+        }
+
+    };
+
+
+    /* =====================================================
+       SAFE HTML ESCAPE
+       ===================================================== */
+
+    function escapeHtml(value) {
+
+        return String(value).replace(
+            /[&<>"']/g,
+
+            function (character) {
+
+                return {
+                    "&": "&amp;",
+                    "<": "&lt;",
+                    ">": "&gt;",
+                    '"': "&quot;",
+                    "'": "&#39;"
+                }[character];
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       KEEP DAY IN RANGE
+       ===================================================== */
+
+    function normalizeDay() {
+
+        if (currentDay < 1) {
+
+            currentDay = 1;
+
+        }
+
+        if (currentDay > totalDays) {
+
+            currentDay = totalDays;
+
+        }
+
+    }
+
+
+    /* =====================================================
+       SAVE LOCAL DATA
+       ===================================================== */
+
+    function saveLocalData() {
+
+        localStorage.setItem(
+            DAY_KEY,
+            currentDay
+        );
+
+        localStorage.setItem(
+            XP_KEY,
+            xp
+        );
+
+        localStorage.setItem(
+            STREAK_KEY,
+            streak
+        );
+
+        localStorage.setItem(
+            BOOKMARK_KEY,
+            JSON.stringify(bookmarks)
+        );
+
+    }
+
+
+    /* =====================================================
+       UPDATE STATS
+       ===================================================== */
+
+    function syncStats() {
+
+        xpElement.textContent =
+            xp;
+
+        streakElement.textContent =
+            streak;
+
+        levelElement.textContent =
+            Math.floor(xp / 500) + 1;
+
+        saveLocalData();
+
+    }
+
+
+    /* =====================================================
+       LOAD LESSON
+       ===================================================== */
+
+    function loadLesson() {
+
+        normalizeDay();
+
+        saveLocalData();
+
+
+        const percentage =
+            totalDays > 0
+            ? Math.min(
+                100,
+                Math.floor(
+                    ((currentDay - 1) /
+                    totalDays) * 100
+                )
+            )
+            : 0;
+
+
+        progressBar.style.width =
+            percentage + "%";
+
+
+        progressText.textContent =
+            percentage + "%";
+
+
+        dayNumber.textContent =
+            "Day " + currentDay;
+
+
+        const lesson =
+            lessons[currentDay];
+
+
+        if (lesson) {
+
+            topicTitle.textContent =
+                lesson.title;
+
+            lessonContent.innerHTML =
+                lesson.content;
+
+        } else {
+
+            topicTitle.textContent =
+                "Advanced Practice Day " +
+                currentDay;
+
+            lessonContent.innerHTML = `
+                <h3>
+                    Real World Practice 🚀
+                </h3>
+
+                <p>
+                    Continue your practical
+                    learning for
+                    <strong>
+                        ${escapeHtml(courseName)}
+                    </strong>.
+                </p>
+
+                <ul>
+                    <li>Practice coding problems</li>
+                    <li>Build a small project</li>
+                    <li>Revise important concepts</li>
+                    <li>Solve interview questions</li>
+                </ul>
+            `;
+
+        }
+
+
+        certificate.style.display =
+            currentDay >= totalDays
+            ? "block"
+            : "none";
+
+
+        previousBtn.disabled =
+            currentDay <= 1;
+
+
+        previousBtn.style.opacity =
+            currentDay <= 1
+            ? "0.6"
+            : "1";
+
+
+        syncStats();
+
+        updateBookmarkButton();
+
+    }
+
+
+    /* =====================================================
+       INCREASE XP
+       ===================================================== */
+
+    function increaseXP(amount) {
+
+        xp += Number(amount) || 0;
+
+        syncStats();
+
+    }
+
+
+    /* =====================================================
+       NEXT DAY
+       ===================================================== */
+
+    function nextDay() {
+
+        if (currentDay < totalDays) {
+
+            currentDay++;
+
+            increaseXP(50);
+
+            loadLesson();
+
+            saveProgress();
+
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+
+        } else {
+
+            certificate.style.display =
+                "block";
+
+            alert(
+                "🎉 Congratulations! Course completed."
+            );
+
+        }
+
+    }
+
+
+    /* =====================================================
+       PREVIOUS DAY
+       ===================================================== */
+
+    function previousDay() {
+
+        if (currentDay > 1) {
+
+            currentDay--;
+
+            loadLesson();
+
+            saveProgress();
+
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+
+        }
+
+    }
+
+
+    /* =====================================================
+       TASK XP
+       ===================================================== */
+
+    document
+        .querySelectorAll(".task")
+        .forEach(function (task) {
+
+            task.addEventListener(
+                "change",
+                function () {
+
+                    if (this.checked) {
+
+                        increaseXP(10);
+
+                    }
+
+                }
+            );
+
+        });
+
+
+    /* =====================================================
+       BOOKMARK
+       ===================================================== */
+
+    function bookmarkLesson() {
+
+        const lesson =
+            lessons[currentDay];
+
+        const title =
+            lesson
+            ? lesson.title
+            : "Day " + currentDay;
+
+
+        if (!bookmarks.includes(title)) {
+
+            bookmarks.push(title);
+
+            saveLocalData();
+
+            updateBookmarkButton();
+
+            alert(
+                "⭐ Lesson bookmarked!"
+            );
+
+        } else {
+
+            bookmarks =
+                bookmarks.filter(
+                    item => item !== title
+                );
+
+            saveLocalData();
+
+            updateBookmarkButton();
+
+            alert(
+                "Bookmark removed."
+            );
+
+        }
+
+    }
+
+
+    function updateBookmarkButton() {
+
+        const lesson =
+            lessons[currentDay];
+
+        const title =
+            lesson
+            ? lesson.title
+            : "Day " + currentDay;
+
+
+        if (bookmarks.includes(title)) {
+
+            bookmarkBtn.textContent =
+                "⭐ Bookmarked";
+
+        } else {
+
+            bookmarkBtn.textContent =
+                "⭐ Bookmark";
+
+        }
+
+    }
+
+
+    /* =====================================================
+       DOWNLOAD NOTES
+       ===================================================== */
+
+    function downloadNotes() {
+
+        const title =
+            topicTitle.textContent;
+
+        const notes =
+            lessonContent.innerText;
+
+
+        const text =
+`${courseName}
+
+${title}
+
+${notes}
+
+--------------------------------
+Placement Training Portal
+--------------------------------
+`;
+
+
+        const blob =
+            new Blob(
+                [text],
+                {
+                    type:
+                        "text/plain;charset=utf-8"
+                }
+            );
+
+
+        const url =
+            URL.createObjectURL(blob);
+
+
+        const link =
+            document.createElement("a");
+
+
+        link.href = url;
+
+        link.download =
+            `${courseName}_Day_${currentDay}.txt`;
+
+
+        document.body.appendChild(link);
+
+        link.click();
+
+        link.remove();
+
+
+        setTimeout(function () {
+
+            URL.revokeObjectURL(url);
+
+        }, 1000);
+
+    }
+
+
+    /* =====================================================
+       QUIZ
+       ===================================================== */
+
+    function startQuiz() {
+
+        /*
+         * IMPORTANT:
+         * Agar tumhare app.py mein quiz route
+         * available hai to ye URL use hoga.
+         *
+         * Agar route nahi hai to user ko error
+         * page par bhejne ke bajay message show hoga.
+         */
+
+        const quizUrl =
+            `/quiz/${encodeURIComponent(courseName)}/${currentDay}`;
+
+
+        window.location.href =
+            quizUrl;
+
+    }
+
+
+    /* =====================================================
+       CERTIFICATE
+       ===================================================== */
+
+    function generateCertificate() {
+
+        const certificateText =
+`========================================
+       CERTIFICATE OF COMPLETION
+========================================
 
 Congratulations!
 
@@ -588,35 +2086,289 @@ Placement Training Portal
 Date:
 ${new Date().toLocaleDateString()}
 
-================================
+========================================
 `;
-  const blob = new Blob([certificateText], { type: "text/plain" });
-  const link = document.createElement("a");
-  link.href = URL.createObjectURL(blob);
-  link.download = courseName + "_Certificate.txt";
-  link.click();
-}
 
-function saveProgress() {
-  fetch("/save-progress", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      course: courseName,
-      day: currentDay,
-      xp: xp,
-      streak: streak
-    })
-  }).catch(() => {});
-}
 
-function escapeHtml(str) {
-  return str.replace(/[&<>"']/g, m => ({
-    "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;"
-  }[m]));
-}
+        const blob =
+            new Blob(
+                [certificateText],
+                {
+                    type:
+                        "text/plain;charset=utf-8"
+                }
+            );
 
-setInterval(saveProgress, 30000);
-loadLesson();
+
+        const url =
+            URL.createObjectURL(blob);
+
+
+        const link =
+            document.createElement("a");
+
+
+        link.href = url;
+
+        link.download =
+            `${courseName}_Certificate.txt`;
+
+
+        document.body.appendChild(link);
+
+        link.click();
+
+        link.remove();
+
+
+        setTimeout(function () {
+
+            URL.revokeObjectURL(url);
+
+        }, 1000);
+
+    }
+
+
+    /* =====================================================
+       AI OPEN
+       ===================================================== */
+
+    function openAI() {
+
+        aiBox.style.display =
+            "block";
+
+        aiBox.setAttribute(
+            "aria-hidden",
+            "false"
+        );
+
+        aiQuestion.focus();
+
+    }
+
+
+    /* =====================================================
+       AI CLOSE
+       ===================================================== */
+
+    function closeAI() {
+
+        aiBox.style.display =
+            "none";
+
+        aiBox.setAttribute(
+            "aria-hidden",
+            "true"
+        );
+
+    }
+
+
+    /* =====================================================
+       AI QUESTION
+       ===================================================== */
+
+    function askAI() {
+
+        const question =
+            aiQuestion.value.trim();
+
+
+        if (!question) {
+
+            alert(
+                "Please enter your question."
+            );
+
+            aiQuestion.focus();
+
+            return;
+
+        }
+
+
+        aiReply.innerHTML = `
+
+            <b>You:</b>
+            ${escapeHtml(question)}
+
+            <br><br>
+
+            <b>AI:</b>
+
+            Keep practicing this topic daily.
+            First understand the concept,
+            then write a small program and
+            finally solve an interview question.
+
+        `;
+
+
+        aiQuestion.value = "";
+
+    }
+
+
+    /* =====================================================
+       SAVE PROGRESS TO FLASK
+       ===================================================== */
+
+    function saveProgress() {
+
+        fetch(
+            "/save-progress",
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
+
+                body: JSON.stringify({
+
+                    course:
+                        courseName,
+
+                    day:
+                        currentDay,
+
+                    xp:
+                        xp,
+
+                    streak:
+                        streak
+
+                })
+
+            }
+        )
+        .catch(function () {
+
+            /*
+             * LocalStorage progress continues
+             * even if backend endpoint is unavailable.
+             */
+
+        });
+
+    }
+
+
+    /* =====================================================
+       EVENT LISTENERS
+       ===================================================== */
+
+    bookmarkBtn.addEventListener(
+        "click",
+        bookmarkLesson
+    );
+
+
+    previousBtn.addEventListener(
+        "click",
+        previousDay
+    );
+
+
+    nextBtn.addEventListener(
+        "click",
+        nextDay
+    );
+
+
+    downloadBtn.addEventListener(
+        "click",
+        downloadNotes
+    );
+
+
+    quizBtn.addEventListener(
+        "click",
+        startQuiz
+    );
+
+
+    certificateBtn.addEventListener(
+        "click",
+        generateCertificate
+    );
+
+
+    aiOpenBtn.addEventListener(
+        "click",
+        openAI
+    );
+
+
+    aiCloseBtn.addEventListener(
+        "click",
+        closeAI
+    );
+
+
+    aiSendBtn.addEventListener(
+        "click",
+        askAI
+    );
+
+
+    aiQuestion.addEventListener(
+        "keydown",
+        function (event) {
+
+            if (event.key === "Enter") {
+
+                event.preventDefault();
+
+                askAI();
+
+            }
+
+        }
+    );
+
+
+    /* =====================================================
+       ESCAPE CLOSE AI
+       ===================================================== */
+
+    document.addEventListener(
+        "keydown",
+        function (event) {
+
+            if (
+                event.key === "Escape" &&
+                aiBox.style.display === "block"
+            ) {
+
+                closeAI();
+
+            }
+
+        }
+    );
+
+
+    /* =====================================================
+       AUTO SAVE
+       ===================================================== */
+
+    setInterval(
+        saveProgress,
+        30000
+    );
+
+
+    /* =====================================================
+       INITIAL LOAD
+       ===================================================== */
+
+    loadLesson();
+
+});
 </script>
+
 {% endblock %}
