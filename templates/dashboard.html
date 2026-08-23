@@ -31,7 +31,10 @@
         </div>
 
 
-        <!-- NAVIGATION LINKS -->
+        <!-- =====================================================
+             DESKTOP NAVIGATION
+             ===================================================== -->
+
         <div class="dashboard-nav-links">
 
             <!-- Dashboard -->
@@ -74,8 +77,7 @@
             </a>
 
 
-            
-            <!-- IMPORTANT: use results, NOT mock_result -->
+            <!-- Results -->
             <a href="{{ url_for('results') }}"
                class="dashboard-nav-link">
 
@@ -107,77 +109,59 @@
         </div>
 
 
-        <!-- NAV RIGHT -->
+        <!-- =====================================================
+             RIGHT NAVIGATION
+             ===================================================== -->
+
         <div class="dashboard-nav-right">
 
             <!-- Notification -->
-            <button class="notification-button"
-                    type="button"
-                    title="Notifications">
+            <button
+                class="notification-button"
+                type="button"
+                title="Notifications">
 
                 <i class="fas fa-bell"></i>
+
                 <span class="notification-dot"></span>
 
             </button>
 
-<!-- user_progress / User Progress -->
-<a href="{{ url_for('user_progress') }}"
-   class="dashboard-user"
-   title="My Progress">
 
-    <div class="user-avatar">
+            <!-- =================================================
+                 USER PROFILE
+                 IMPORTANT:
+                 profile endpoint does not exist.
+                 user_progress DOES exist.
+                 ================================================= -->
 
-        {% if session.get('profile_pic') %}
+            <a href="{{ url_for('user_progress') }}"
+               class="dashboard-user"
+               title="My Progress">
 
-            <img
-                src="{{ session.get('profile_pic') }}"
-                alt="Profile">
+                <div class="user-avatar">
 
-        {% else %}
+                    {% if session.get('profile_pic') %}
 
-            <i class="fas fa-user"></i>
+                        <img
+                            src="{{ session.get('profile_pic') }}"
+                            alt="Profile">
 
-        {% endif %}
+                    {% else %}
 
-    </div>
+                        <i class="fas fa-user"></i>
 
-    <div class="user-details">
+                    {% endif %}
 
-        <strong>
-            {{ session.get('name') or session.get('username') or "Student" }}
-        </strong>
-
-        <span>
-            Student
-        </span>
-
-    </div>
-
-    <i class="fas fa-chevron-down user-arrow"></i>
-
-</a>
-
-    <div class="user-details">
-
-        <strong>
-            {{ session.name or session.username or "Student" }}
-        </strong>
-
-        <span>
-            Student
-        </span>
-
-    </div>
-
-    <i class="fas fa-chevron-down user-arrow"></i>
-
-</a>
+                </div>
 
 
                 <div class="user-details">
 
                     <strong>
-                        {{ session.name or session.username or "Student" }}
+                        {{ session.get('name')
+                           or session.get('username')
+                           or "Student" }}
                     </strong>
 
                     <span>
@@ -185,6 +169,7 @@
                     </span>
 
                 </div>
+
 
                 <i class="fas fa-chevron-down user-arrow"></i>
 
@@ -212,6 +197,7 @@
 
     <div class="mobile-dashboard-nav">
 
+        <!-- Home -->
         <a href="{{ url_for('dashboard') }}"
            class="mobile-nav-item active">
 
@@ -221,6 +207,7 @@
         </a>
 
 
+        <!-- Courses -->
         <a href="{{ url_for('courses') }}"
            class="mobile-nav-item">
 
@@ -230,6 +217,7 @@
         </a>
 
 
+        <!-- Notes -->
         <a href="{{ url_for('notes') }}"
            class="mobile-nav-item">
 
@@ -239,6 +227,7 @@
         </a>
 
 
+        <!-- Mock Test -->
         <a href="{{ url_for('mock_test') }}"
            class="mobile-nav-item">
 
@@ -248,7 +237,7 @@
         </a>
 
 
-        <!-- RESULTS -->
+        <!-- Results -->
         <a href="{{ url_for('results') }}"
            class="mobile-nav-item">
 
@@ -258,11 +247,12 @@
         </a>
 
 
+        <!-- Progress -->
         <a href="{{ url_for('user_progress') }}"
            class="mobile-nav-item">
 
             <i class="fas fa-user"></i>
-            <span>user_progress</span>
+            <span>Progress</span>
 
         </a>
 
@@ -294,13 +284,15 @@
                 </h1>
 
                 <p>
-                    Track your learning, practice and placement preparation.
+                    Track your learning, practice and placement
+                    preparation.
                 </p>
 
             </div>
 
 
             <!-- SEARCH -->
+
             <div class="dashboard-search">
 
                 <i class="fas fa-search"></i>
@@ -344,7 +336,9 @@
                     Welcome Back,
 
                     <span>
-                        {{ session.name or session.username or "Student" }}
+                        {{ session.get('name')
+                           or session.get('username')
+                           or "Student" }}
                     </span>
 
                     👋
@@ -354,8 +348,8 @@
 
                 <p>
                     Continue your placement preparation,
-                    improve your skills and move one step closer
-                    to your dream job.
+                    improve your skills and move one step
+                    closer to your dream job.
                 </p>
 
 
@@ -365,6 +359,7 @@
                        class="hero-primary-button">
 
                         <i class="fas fa-play"></i>
+
                         Continue Learning
 
                     </a>
@@ -374,6 +369,7 @@
                        class="hero-secondary-button">
 
                         <i class="fas fa-laptop-code"></i>
+
                         Start Mock Test
 
                     </a>
@@ -455,7 +451,10 @@
                 <div class="hero-image-wrapper">
 
                     <img
-                        src="{{ url_for('static', filename='images/dashboard.svg') }}"
+                        src="{{ url_for(
+                            'static',
+                            filename='images/dashboard.svg'
+                        ) }}"
                         alt="Placement Dashboard"
                         class="hero-dashboard-image">
 
@@ -528,6 +527,7 @@
                    class="section-link">
 
                     View Results
+
                     <i class="fas fa-arrow-right"></i>
 
                 </a>
@@ -549,8 +549,11 @@
                         </div>
 
                         <span class="stat-change positive">
+
                             <i class="fas fa-arrow-up"></i>
+
                             Active
+
                         </span>
 
                     </div>
@@ -575,8 +578,11 @@
                             Learning modules
                         </span>
 
-                        <a href="{{ url_for('courses') }}">
+                        <a href="{{ url_for('courses') }}"
+                           aria-label="Open Courses">
+
                             <i class="fas fa-arrow-right"></i>
+
                         </a>
 
                     </div>
@@ -596,8 +602,11 @@
                         </div>
 
                         <span class="stat-change positive">
+
                             <i class="fas fa-check"></i>
+
                             Practice
+
                         </span>
 
                     </div>
@@ -622,8 +631,11 @@
                             Interview preparation
                         </span>
 
-                        <a href="{{ url_for('interview_questions') }}">
+                        <a href="{{ url_for('interview_questions') }}"
+                           aria-label="Open Interview Questions">
+
                             <i class="fas fa-arrow-right"></i>
+
                         </a>
 
                     </div>
@@ -643,8 +655,11 @@
                         </div>
 
                         <span class="stat-change positive">
+
                             <i class="fas fa-chart-line"></i>
+
                             Tests
+
                         </span>
 
                     </div>
@@ -669,8 +684,11 @@
                             Tests attempted
                         </span>
 
-                        <a href="{{ url_for('mock_test') }}">
+                        <a href="{{ url_for('mock_test') }}"
+                           aria-label="Open Mock Test">
+
                             <i class="fas fa-arrow-right"></i>
+
                         </a>
 
                     </div>
@@ -715,8 +733,11 @@
                             Resume optimization
                         </span>
 
-                        <a href="{{ url_for('resume_builder') }}">
+                        <a href="{{ url_for('resume_builder') }}"
+                           aria-label="Open Resume Builder">
+
                             <i class="fas fa-arrow-right"></i>
+
                         </a>
 
                     </div>
@@ -736,8 +757,11 @@
                         </div>
 
                         <span class="stat-change positive">
+
                             <i class="fas fa-bolt"></i>
+
                             Active
+
                         </span>
 
                     </div>
@@ -762,8 +786,11 @@
                             Keep practicing daily
                         </span>
 
-                        <a href="{{ url_for('courses') }}">
+                        <a href="{{ url_for('courses') }}"
+                           aria-label="Open Courses">
+
                             <i class="fas fa-arrow-right"></i>
+
                         </a>
 
                     </div>
@@ -783,8 +810,11 @@
                         </div>
 
                         <span class="stat-change positive">
+
                             <i class="fas fa-arrow-up"></i>
+
                             Ready
+
                         </span>
 
                     </div>
@@ -809,8 +839,11 @@
                             Overall preparation
                         </span>
 
-                        <a href="{{ url_for('results') }}">
+                        <a href="{{ url_for('results') }}"
+                           aria-label="View Results">
+
                             <i class="fas fa-arrow-right"></i>
+
                         </a>
 
                     </div>
@@ -855,7 +888,9 @@
                    class="quick-access-card">
 
                     <div class="quick-access-icon blue">
+
                         <i class="fas fa-book-open"></i>
+
                     </div>
 
                     <div class="quick-access-content">
@@ -870,8 +905,11 @@
                         </p>
 
                         <span>
+
                             Explore Courses
+
                             <i class="fas fa-arrow-right"></i>
+
                         </span>
 
                     </div>
@@ -886,7 +924,9 @@
                    class="quick-access-card">
 
                     <div class="quick-access-icon purple">
+
                         <i class="fas fa-sticky-note"></i>
+
                     </div>
 
                     <div class="quick-access-content">
@@ -901,8 +941,11 @@
                         </p>
 
                         <span>
+
                             View Notes
+
                             <i class="fas fa-arrow-right"></i>
+
                         </span>
 
                     </div>
@@ -917,7 +960,9 @@
                    class="quick-access-card">
 
                     <div class="quick-access-icon green">
+
                         <i class="fas fa-laptop-code"></i>
+
                     </div>
 
                     <div class="quick-access-content">
@@ -932,8 +977,11 @@
                         </p>
 
                         <span>
+
                             Start Test
+
                             <i class="fas fa-arrow-right"></i>
+
                         </span>
 
                     </div>
@@ -948,7 +996,9 @@
                    class="quick-access-card">
 
                     <div class="quick-access-icon orange">
+
                         <i class="fas fa-chart-bar"></i>
+
                     </div>
 
                     <div class="quick-access-content">
@@ -963,8 +1013,11 @@
                         </p>
 
                         <span>
+
                             View Results
+
                             <i class="fas fa-arrow-right"></i>
+
                         </span>
 
                     </div>
@@ -979,7 +1032,9 @@
                    class="quick-access-card">
 
                     <div class="quick-access-icon yellow">
+
                         <i class="fas fa-trophy"></i>
+
                     </div>
 
                     <div class="quick-access-content">
@@ -994,8 +1049,11 @@
                         </p>
 
                         <span>
+
                             View Ranking
+
                             <i class="fas fa-arrow-right"></i>
+
                         </span>
 
                     </div>
@@ -1010,7 +1068,9 @@
                    class="quick-access-card">
 
                     <div class="quick-access-icon red">
+
                         <i class="fas fa-file-alt"></i>
+
                     </div>
 
                     <div class="quick-access-content">
@@ -1025,8 +1085,11 @@
                         </p>
 
                         <span>
+
                             Build Resume
+
                             <i class="fas fa-arrow-right"></i>
+
                         </span>
 
                     </div>
@@ -1058,7 +1121,8 @@
                     </h2>
 
                     <p>
-                        Your latest learning and placement activities.
+                        Your latest learning and placement
+                        activities.
                     </p>
 
                 </div>
@@ -1068,6 +1132,7 @@
                    class="view-all-btn">
 
                     View Results
+
                     <i class="fas fa-arrow-right"></i>
 
                 </a>
@@ -1104,7 +1169,9 @@
                                     <div class="activity-name">
 
                                         <span class="activity-icon">
+
                                             <i class="fas fa-laptop-code"></i>
+
                                         </span>
 
                                         <div>
@@ -1130,8 +1197,11 @@
                                 <td>
 
                                     <span class="status-badge completed">
+
                                         <i class="fas fa-check-circle"></i>
+
                                         Completed
+
                                     </span>
 
                                 </td>
@@ -1150,7 +1220,9 @@
                                     <div class="activity-name">
 
                                         <span class="activity-icon">
+
                                             <i class="fas fa-file-alt"></i>
+
                                         </span>
 
                                         <div>
@@ -1176,8 +1248,11 @@
                                 <td>
 
                                     <span class="status-badge completed">
+
                                         <i class="fas fa-check-circle"></i>
+
                                         Completed
+
                                     </span>
 
                                 </td>
@@ -1196,7 +1271,9 @@
                                     <div class="activity-name">
 
                                         <span class="activity-icon">
+
                                             <i class="fas fa-book"></i>
+
                                         </span>
 
                                         <div>
@@ -1222,8 +1299,11 @@
                                 <td>
 
                                     <span class="status-badge running">
+
                                         <i class="fas fa-spinner"></i>
+
                                         Running
+
                                     </span>
 
                                 </td>
@@ -1242,7 +1322,9 @@
                                     <div class="activity-name">
 
                                         <span class="activity-icon">
+
                                             <i class="fas fa-comments"></i>
+
                                         </span>
 
                                         <div>
@@ -1268,8 +1350,11 @@
                                 <td>
 
                                     <span class="status-badge pending">
+
                                         <i class="fas fa-clock"></i>
+
                                         Pending
+
                                     </span>
 
                                 </td>
@@ -1361,6 +1446,7 @@
                            class="small-action-btn">
 
                             Check Performance
+
                             <i class="fas fa-arrow-right"></i>
 
                         </a>
@@ -1402,7 +1488,9 @@
                     <li>
 
                         <span class="summary-icon">
+
                             <i class="fas fa-check-circle"></i>
+
                         </span>
 
                         <span class="summary-text">
@@ -1421,7 +1509,9 @@
                     <li>
 
                         <span class="summary-icon">
+
                             <i class="fas fa-laptop-code"></i>
+
                         </span>
 
                         <span class="summary-text">
@@ -1440,7 +1530,9 @@
                     <li>
 
                         <span class="summary-icon">
+
                             <i class="fas fa-question-circle"></i>
+
                         </span>
 
                         <span class="summary-text">
@@ -1459,7 +1551,9 @@
                     <li>
 
                         <span class="summary-icon">
+
                             <i class="fas fa-file-alt"></i>
+
                         </span>
 
                         <span class="summary-text">
@@ -1478,7 +1572,9 @@
                     <li>
 
                         <span class="summary-icon">
+
                             <i class="fas fa-fire"></i>
+
                         </span>
 
                         <span class="summary-text">
@@ -1537,7 +1633,9 @@
                    class="recommend-item">
 
                     <div class="recommend-icon">
+
                         <i class="fas fa-book-open"></i>
+
                     </div>
 
                     <div>
@@ -1552,8 +1650,11 @@
                         </p>
 
                         <span>
+
                             Continue
+
                             <i class="fas fa-arrow-right"></i>
+
                         </span>
 
                     </div>
@@ -1568,7 +1669,9 @@
                    class="recommend-item">
 
                     <div class="recommend-icon">
+
                         <i class="fas fa-clipboard-check"></i>
+
                     </div>
 
                     <div>
@@ -1583,8 +1686,11 @@
                         </p>
 
                         <span>
+
                             Start Test
+
                             <i class="fas fa-arrow-right"></i>
+
                         </span>
 
                     </div>
@@ -1599,7 +1705,9 @@
                    class="recommend-item">
 
                     <div class="recommend-icon">
+
                         <i class="fas fa-user-tie"></i>
+
                     </div>
 
                     <div>
@@ -1614,8 +1722,11 @@
                         </p>
 
                         <span>
+
                             Practice Now
+
                             <i class="fas fa-arrow-right"></i>
+
                         </span>
 
                     </div>
@@ -1806,7 +1917,9 @@
         <section class="motivation-card">
 
             <div class="motivation-icon">
+
                 <i class="fas fa-lightbulb"></i>
+
             </div>
 
 
@@ -1892,7 +2005,6 @@
                         Resume
                     </a>
 
-                    <!-- CORRECT RESULTS ROUTE -->
                     <a href="{{ url_for('results') }}">
                         Results
                     </a>
