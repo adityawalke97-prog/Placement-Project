@@ -5966,9 +5966,7 @@ def courses():
         courses=courses
     )
 
-@app.route("/mock-categories")
-def mock_categories():
-    return render_template("mock_categories.html")
+
 @app.route("/ai-communication")
 def ai_communication():
     return render_template("ai_communication.html")
