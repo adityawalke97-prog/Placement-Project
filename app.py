@@ -6186,12 +6186,12 @@ def dbms():
     return render_template("dbms.html")
 
 
-@app.route("/os")
-def os():
-    if "user_id" not in session:
-        return redirect(url_for("login"))
+# @app.route("/os")
+# def os():
+#     if "user_id" not in session:
+#         return redirect(url_for("login"))
 
-    return render_template("os.html")
+#     return render_template("os.html")
 
 
 @app.route("/cn")
