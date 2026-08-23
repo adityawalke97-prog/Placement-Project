@@ -6086,7 +6086,128 @@ def results():
         if conn:
             conn.close()
 
+# ============================================================
+# COURSE / NOTES ROUTES
+# ============================================================
 
+@app.route("/java")
+def java():
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    return render_template("java.html")
+
+
+@app.route("/python")
+def python():
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    return render_template("python.html")
+
+
+@app.route("/dsa")
+def dsa():
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    return render_template("dsa.html")
+
+
+@app.route("/c")
+def c():
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    return render_template("c.html")
+
+
+@app.route("/html")
+def html():
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    return render_template("html.html")
+
+
+@app.route("/css")
+def css():
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    return render_template("css.html")
+
+
+@app.route("/javascript")
+def javascript():
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    return render_template("javascript.html")
+
+
+@app.route("/frontend")
+def frontend():
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    return render_template("frontend.html")
+
+
+@app.route("/backend")
+def backend():
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    return render_template("backend.html")
+
+
+@app.route("/full-stack-java")
+def full_stack_java():
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    return render_template("full_stack_java.html")
+
+
+@app.route("/full-stack-python")
+def full_stack_python():
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    return render_template("full_stack_python.html")
+
+
+@app.route("/dbms")
+def dbms():
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    return render_template("dbms.html")
+
+
+@app.route("/os")
+def os():
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    return render_template("os.html")
+
+
+@app.route("/cn")
+def cn():
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    return render_template("cn.html")
+
+
+@app.route("/software-engineering")
+def software_engineering():
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    return render_template("software_engineering.html")
 # =========================================================
 # APPLICATION STARTUP
 # =========================================================
