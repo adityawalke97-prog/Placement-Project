@@ -1,677 +1,1160 @@
-{% extends 'layout.html' %}
-{% block title %}Java Course{% endblock %}
+{% extends "layout.html" %}
+
+{% block title %}Java Course | Placement Training Portal{% endblock %}
 
 {% block content %}
+
 <div class="course-dashboard">
-    <!-- Sidebar Navigation for Days -->
+
+    <!-- =====================================================
+         SIDEBAR
+         ===================================================== -->
+
     <aside class="sidebar">
+
         <div class="sidebar-header">
             <h3>Course Roadmap</h3>
-            <p>Select a day to jump</p>
+            <p>Select a day to continue learning</p>
         </div>
-        <div class="days-list" id="sidebar-days-list">
-            <!-- Sidebar links will be dynamically populated here -->
-        </div>
+
+        <div class="days-list" id="sidebar-days-list"></div>
+
     </aside>
 
-    <!-- Main Course Viewer Area -->
+
+    <!-- =====================================================
+         MAIN COURSE AREA
+         ===================================================== -->
+
     <main class="course-viewer">
+
+        <!-- COURSE HEADER -->
+
         <div class="course-header">
+
             <div class="title-meta">
-                <span class="badge">Active Challenge</span>
-                <h2>Java - {{ day_count if day_count else '30' }} Day Challenge</h2>
+
+                <span class="badge">
+                    🚀 Active Challenge
+                </span>
+
+                <h2>
+                    Java -
+                    {{ day_count|default(30) }}
+                    Day Challenge
+                </h2>
+
             </div>
-            <!-- Progress Tracker Circle/Percentage -->
+
+
+            <!-- PROGRESS -->
+
             <div class="progress-container">
+
                 <div class="progress-meta">
+
                     <span>Course Progress</span>
-                    <strong id="progress-text">0%</strong>
+
+                    <strong id="progress-text">
+                        0%
+                    </strong>
+
                 </div>
+
                 <div class="progress-bar">
-                    <div class="progress" id="progress"></div>
+
+                    <div
+                        class="progress"
+                        id="progress">
+                    </div>
+
                 </div>
+
             </div>
+
         </div>
 
-        <!-- Main Card Workspace -->
+
+        <!-- =================================================
+             COURSE CARD
+             ================================================= -->
+
         <div class="course-card">
-            <!-- Active Normal Day State -->
+
+            <!-- =================================================
+                 WORKSPACE
+                 ================================================= -->
+
             <div id="day-workspace">
+
                 <div class="workspace-header">
-                    <div class="day-indicator" id="day-tag">Day 1</div>
-                    <h3 id="day-title" class="section-title">Loading...</h3>
-                </div>
 
-                <!-- Tabs: Switch between Notes, Code & Task -->
-                <div class="tab-navigation">
-                    <button id="btn-tab-notes" class="tab-btn active" onclick="switchTab(event, 'tab-notes')">📖 Theory Notes</button>
-                    <button id="btn-tab-code" class="tab-btn" onclick="switchTab(event, 'tab-code')">💻 Code Snippet</button>
-                    <button id="btn-tab-task" class="tab-btn" onclick="switchTab(event, 'tab-task')">🎯 Practice Task</button>
-                </div>
-
-                <!-- Tabs Content Container -->
-                <div class="tab-content-container">
-                    <div id="tab-notes" class="tab-pane active">
-                        <div id="day-notes" class="content-body">
-                            <!-- Dynamic Notes -->
-                        </div>
+                    <div
+                        class="day-indicator"
+                        id="day-tag">
+                        Day 1
                     </div>
-                    <div id="tab-code" class="tab-pane">
+
+                    <h3
+                        id="day-title"
+                        class="section-title">
+                        Loading...
+                    </h3>
+
+                </div>
+
+
+                <!-- =================================================
+                     TABS
+                     ================================================= -->
+
+                <div class="tab-navigation">
+
+                    <button
+                        type="button"
+                        id="btn-tab-notes"
+                        class="tab-btn active"
+                        onclick="switchTab(event, 'tab-notes')">
+
+                        📖 Theory Notes
+
+                    </button>
+
+
+                    <button
+                        type="button"
+                        id="btn-tab-code"
+                        class="tab-btn"
+                        onclick="switchTab(event, 'tab-code')">
+
+                        💻 Code
+
+                    </button>
+
+
+                    <button
+                        type="button"
+                        id="btn-tab-task"
+                        class="tab-btn"
+                        onclick="switchTab(event, 'tab-task')">
+
+                        🎯 Practice Task
+
+                    </button>
+
+                </div>
+
+
+                <!-- =================================================
+                     TAB CONTENT
+                     ================================================= -->
+
+                <div class="tab-content-container">
+
+                    <!-- NOTES -->
+
+                    <div
+                        id="tab-notes"
+                        class="tab-pane active">
+
+                        <div
+                            id="day-notes"
+                            class="content-body">
+
+                            Loading notes...
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- CODE -->
+
+                    <div
+                        id="tab-code"
+                        class="tab-pane">
+
                         <div class="terminal-mock">
+
                             <div class="terminal-header">
+
                                 <span class="dot red"></span>
                                 <span class="dot yellow"></span>
                                 <span class="dot green"></span>
-                                <span class="file-name">Main.java</span>
+
+                                <span class="file-name">
+                                    Main.java
+                                </span>
+
                             </div>
-                            <pre><code id="day-code-snippet">// Code will load here</code></pre>
+
+
+                            <pre><code
+                                id="day-code-snippet">// Code loading...</code></pre>
+
                         </div>
+
                     </div>
-                    <div id="tab-task" class="tab-pane">
+
+
+                    <!-- TASK -->
+
+                    <div
+                        id="tab-task"
+                        class="tab-pane">
+
                         <div class="challenge-box">
-                            <h4>🚀 Today's Practice Challenge</h4>
-                            <p id="day-task-desc">Task description loads here...</p>
+
+                            <h4>
+                                🚀 Today's Practice Challenge
+                            </h4>
+
+                            <p id="day-task-desc">
+                                Loading task...
+                            </p>
+
                         </div>
+
                     </div>
+
                 </div>
+
             </div>
 
-            <!-- Congratulatory Finished Screen (Hidden) -->
-            <div id="completion-screen" class="completion-screen hidden">
-                <div class="trophy-animation">🏆</div>
-                <h3>Incredible Effort!</h3>
-                <p>You have successfully finished the absolute Java Masterclass Challenge.</p>
+
+            <!-- =================================================
+                 COMPLETION SCREEN
+                 ================================================= -->
+
+            <div
+                id="completion-screen"
+                class="completion-screen hidden">
+
+                <div class="trophy-animation">
+                    🏆
+                </div>
+
+                <h3>
+                    Congratulations! 🎉
+                </h3>
+
+                <p>
+                    You have successfully completed
+                    the Java Masterclass Challenge.
+                </p>
+
                 <div class="completion-actions">
-                    <button class="btn-primary" onclick="resetProgress()">Restart Challenge</button>
+
+                    <button
+                        type="button"
+                        class="btn-primary"
+                        onclick="resetProgress()">
+
+                        🔄 Restart Challenge
+
+                    </button>
+
                 </div>
+
             </div>
+
         </div>
 
-        <!-- Nav Buttons Footer -->
+
+        <!-- =================================================
+             PREVIOUS / NEXT
+             ================================================= -->
+
         <div class="nav-buttons">
-            <button id="btn-prev" onclick="prevDay()">⬅ Previous Day</button>
-            <button id="btn-next" onclick="nextDay()">Next Day ➡</button>
+
+            <button
+                type="button"
+                id="btn-prev"
+                onclick="prevDay()">
+
+                ⬅ Previous Day
+
+            </button>
+
+
+            <button
+                type="button"
+                id="btn-next"
+                onclick="nextDay()">
+
+                Next Day ➡
+
+            </button>
+
         </div>
+
     </main>
+
 </div>
+
 {% endblock %}
 
-{% block css %}
-<style>
-:root {
-    --primary-color: #2563eb;
-    --primary-hover: #1d4ed8;
-    --background-gray: #f8fafc;
-    --card-bg: #ffffff;
-    --text-primary: #0f172a;
-    --text-muted: #475569;
-    --border-light: #e2e8f0;
-    --emerald-green: #10b981;
-}
-
-body {
-    background-color: var(--background-gray);
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-}
-
-.course-dashboard {
-    display: grid;
-    grid-template-columns: 280px 1fr;
-    gap: 30px;
-    max-width: 1200px;
-    margin: 40px auto;
-    padding: 0 20px;
-}
-
-.sidebar {
-    background: var(--card-bg);
-    border-radius: 16px;
-    border: 1px solid var(--border-light);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-    padding: 20px;
-    height: calc(100vh - 120px);
-    position: sticky;
-    top: 30px;
-    display: flex;
-    flex-direction: column;
-}
-
-.sidebar-header {
-    margin-bottom: 20px;
-    padding-bottom: 15px;
-    border-bottom: 1px solid var(--border-light);
-}
-
-.sidebar-header h3 {
-    font-size: 1.15rem;
-    color: var(--text-primary);
-    font-weight: 700;
-}
-
-.sidebar-header p {
-    font-size: 0.85rem;
-    color: var(--text-muted);
-}
-
-.days-list {
-    overflow-y: auto;
-    flex-grow: 1;
-    padding-right: 5px;
-}
-
-.days-list::-webkit-scrollbar {
-    width: 6px;
-}
-.days-list::-webkit-scrollbar-thumb {
-    background-color: #cbd5e1;
-    border-radius: 4px;
-}
-
-.day-link-btn {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    padding: 12px 16px;
-    margin-bottom: 8px;
-    border: 1px solid transparent;
-    border-radius: 10px;
-    background: transparent;
-    color: var(--text-muted);
-    font-weight: 500;
-    text-align: left;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.day-link-btn:hover {
-    background: #f1f5f9;
-    color: var(--text-primary);
-}
-
-.day-link-btn.active {
-    background: #eff6ff;
-    color: var(--primary-color);
-    border-color: #bfdbfe;
-    font-weight: 600;
-}
-
-.day-status-indicator {
-    font-size: 0.85rem;
-}
-
-.course-viewer {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-.course-header {
-    background: var(--card-bg);
-    padding: 24px;
-    border-radius: 16px;
-    border: 1px solid var(--border-light);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
-}
-
-.title-meta h2 {
-    font-size: 1.5rem;
-    color: var(--text-primary);
-    font-weight: 800;
-    margin-top: 4px;
-}
-
-.badge {
-    background: #eff6ff;
-    color: var(--primary-color);
-    padding: 4px 10px;
-    border-radius: 60px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    border: 1px solid #bfdbfe;
-    text-transform: uppercase;
-}
-
-.progress-container {
-    width: 250px;
-}
-
-.progress-meta {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.85rem;
-    color: var(--text-muted);
-    margin-bottom: 6px;
-}
-
-.progress-bar {
-    width: 100%;
-    height: 8px;
-    background: #e2e8f0;
-    border-radius: 10px;
-    overflow: hidden;
-}
-
-.progress {
-    height: 100%;
-    background: linear-gradient(90deg, var(--primary-color) 0%, #3b82f6 100%);
-    width: 0%;
-    border-radius: 10px;
-    transition: width 0.4s ease-out;
-}
-
-.course-card {
-    background: var(--card-bg);
-    padding: 35px;
-    border-radius: 20px;
-    border: 1px solid var(--border-light);
-    box-shadow: 0 10px 30px -5px rgba(0,0,0,0.04);
-    min-height: 400px;
-    display: flex;
-    flex-direction: column;
-}
-
-.day-indicator {
-    background: #f1f5f9;
-    color: var(--text-muted);
-    padding: 4px 12px;
-    border-radius: 6px;
-    font-size: 0.8rem;
-    font-weight: 700;
-    display: inline-block;
-    margin-bottom: 12px;
-}
-
-.section-title {
-    font-size: 1.75rem;
-    color: var(--text-primary);
-    font-weight: 700;
-}
-
-.tab-navigation {
-    display: flex;
-    gap: 10px;
-    margin: 25px 0 20px 0;
-    border-bottom: 1px solid var(--border-light);
-    padding-bottom: 10px;
-}
-
-.tab-btn {
-    background: transparent;
-    border: none;
-    padding: 10px 18px;
-    color: var(--text-muted);
-    font-weight: 600;
-    font-size: 0.95rem;
-    cursor: pointer;
-    border-radius: 8px;
-    transition: all 0.2s ease;
-}
-
-.tab-btn:hover {
-    background: #f8fafc;
-    color: var(--text-primary);
-}
-
-.tab-btn.active {
-    background: var(--primary-color);
-    color: white;
-}
-
-.tab-pane {
-    display: none;
-}
-
-.tab-pane.active {
-    display: block;
-    animation: fadeIn 0.3s ease;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(4px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-.content-body {
-    font-size: 1.05rem;
-    line-height: 1.7;
-    color: #334155;
-}
-
-.terminal-mock {
-    background: #0f172a;
-    border-radius: 12px;
-    padding: 20px;
-    font-family: 'Fira Code', 'Courier New', Courier, monospace;
-    color: #cbd5e1;
-    overflow-x: auto;
-    border: 1px solid #1e293b;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-}
-
-.terminal-header {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 15px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #1e293b;
-}
-
-.dot {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    display: inline-block;
-}
-
-.dot.red { background: #ef4444; }
-.dot.yellow { background: #f59e0b; }
-.dot.green { background: #10b981; }
-
-.file-name {
-    color: #64748b;
-    font-size: 0.85rem;
-    margin-left: 10px;
-}
-
-.terminal-mock pre {
-    margin: 0;
-}
-
-.challenge-box {
-    background: #f0fdf4;
-    border-left: 4px solid var(--emerald-green);
-    padding: 20px;
-    border-radius: 8px;
-}
-
-.challenge-box h4 {
-    color: #065f46;
-    font-weight: 700;
-    margin-bottom: 8px;
-}
-
-.challenge-box p {
-    color: #047857;
-    line-height: 1.6;
-}
-
-.nav-buttons {
-    display: flex;
-    justify-content: space-between;
-    gap: 15px;
-}
-
-.nav-buttons button {
-    flex: 1;
-    background: var(--primary-color);
-    color: white;
-    padding: 14px 28px;
-    border: none;
-    border-radius: 12px;
-    font-size: 0.95rem;
-    font-weight: 600;
-    cursor: pointer;
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
-    transition: all 0.2s ease;
-}
-
-.nav-buttons button:hover {
-    background: var(--primary-hover);
-    transform: translateY(-1px);
-}
-
-.nav-buttons button:disabled {
-    background: #cbd5e1;
-    color: #94a3b8;
-    cursor: not-allowed;
-    transform: none;
-    box-shadow: none;
-}
-
-.completion-screen {
-    text-align: center;
-    padding: 40px 0;
-}
-
-.trophy-animation {
-    font-size: 4.5rem;
-    animation: floating 3s ease-in-out infinite;
-}
-
-@keyframes floating {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
-}
-
-.completion-screen h3 {
-    font-size: 1.8rem;
-    color: var(--text-primary);
-    margin-bottom: 10px;
-}
-
-.completion-screen p {
-    color: var(--text-muted);
-    margin-bottom: 25px;
-}
-
-.btn-primary {
-    background: var(--emerald-green);
-    color: white;
-    border: none;
-    padding: 12px 28px;
-    border-radius: 10px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-
-.btn-primary:hover {
-    background: #059669;
-}
-
-.hidden {
-    display: none !important;
-}
-
-@media(max-width: 900px) {
-    .course-dashboard {
-        grid-template-columns: 1fr;
-    }
-    .sidebar {
-        height: auto;
-        max-height: 200px;
-        position: static;
-    }
-}
-</style>
-{% endblock %}
 
 {% block scripts %}
+
 <script>
-// 1. Dynamic check for Jinja2 engine
-let totalDays = 5; // Default for static view
-let courseData = {};
 
-const templateDays = "{{ day_count }}";
-const templateJson = '{{ course_data_json | safe }}';
+/* =========================================================
+   JAVA COURSE DATA
+   ========================================================= */
 
-// Fallback Mock Data so the design runs without errors in direct browser double-click
+/*
+   Flask sends:
+   day_count
+   course_data_json
+
+   Example JSON:
+
+   {
+       "1": {
+           "title": "...",
+           "notes": "...",
+           "code_snippet": "...",
+           "practice_task": "..."
+       }
+   }
+*/
+
+
+const SERVER_TOTAL_DAYS = {{ day_count|default(30)|int }};
+
+const SERVER_COURSE_DATA =
+    {{ course_data_json|default('{}')|safe }};
+
+
+/* =========================================================
+   FALLBACK DATA
+   ========================================================= */
+
 const fallbackData = {
+
     1: {
+
         title: "Introduction to Java",
-        notes: "<p>Welcome to Day 1! Java is a class-based, object-oriented programming language designed to have as few implementation dependencies as possible. It runs on the WORA principle (Write Once, Run Anywhere).</p>",
-        code_snippet: "public class Main {\n    public static void main(String[] args) {\n        System.out.println(\"Hello, Java Developers!\");\n    }\n}",
-        practice_task: "Write a program that prints your name and your coding goal for this month."
-    },
-    2: {
-        title: "Variables and Primitive Data Types",
-        notes: "<p>Variables are containers for storing data values. In Java, there are different types of variables, such as: String, int, float, char, and boolean.</p>",
-        code_snippet: "int myNum = 15;\nfloat myFloat = 5.99f;\nchar myLetter = 'J';\nboolean myBool = true;\nString myText = \"Hello World\";",
-        practice_task: "Create different variables storing your age, initial of your surname, and whether you love code. Print all values."
-    },
-    3: {
-        title: "Control Statements - If/Else",
-        notes: "<p>Use conditional statements to perform different decisions based on different conditions. Java supports standard logical math conditions.</p>",
-        code_snippet: "int time = 20;\nif (time < 18) {\n    System.out.println(\"Good day.\");\n} else {\n    System.out.println(\"Good evening.\");\n}",
-        practice_task: "Write an if-else check that checks if a number is even or odd."
-    },
-    4: {
-        title: "Understanding Loops (For & While)",
-        notes: "<p>Loops can execute a block of code as long as a specified condition is reached. Loops are handy because they save time, reduce errors, and make code more readable.</p>",
-        code_snippet: "for (int i = 1; i <= 5; i++) {\n    System.out.println(\"Loop Step: \" + i);\n}",
-        practice_task: "Write a loop that prints numbers from 10 down to 1."
-    },
-    5: {
-        title: "Introduction to Arrays",
-        notes: "<p>Arrays are used to store multiple values in a single variable, instead of declaring separate variables for each value.</p>",
-        code_snippet: "String[] cars = {\"Volvo\", \"BMW\", \"Ford\", \"Mazda\"};\nSystem.out.println(cars[0]); // Outputs Volvo",
-        practice_task: "Create an array of your top 3 favorite dishes and print the second item."
+
+        notes: `
+            <h3>What is Java?</h3>
+
+            <p>
+                Java is a high-level, object-oriented programming
+                language developed by Sun Microsystems.
+            </p>
+
+            <p>
+                Java follows the principle:
+                <strong>Write Once, Run Anywhere.</strong>
+            </p>
+
+            <h4>Features of Java</h4>
+
+            <ul>
+                <li>Object-Oriented</li>
+                <li>Platform Independent</li>
+                <li>Secure</li>
+                <li>Robust</li>
+                <li>Multithreaded</li>
+                <li>Portable</li>
+            </ul>
+        `,
+
+        code_snippet: `public class Main {
+
+    public static void main(String[] args) {
+
+        System.out.println("Hello, Java!");
+
     }
+
+}`,
+
+        practice_task:
+            "Write a Java program that prints your name, age and career goal."
+
+    },
+
+
+    2: {
+
+        title: "Variables and Data Types",
+
+        notes: `
+            <h3>Variables</h3>
+
+            <p>
+                A variable is a named memory location used
+                to store data.
+            </p>
+
+            <h4>Primitive Data Types</h4>
+
+            <ul>
+                <li>byte</li>
+                <li>short</li>
+                <li>int</li>
+                <li>long</li>
+                <li>float</li>
+                <li>double</li>
+                <li>char</li>
+                <li>boolean</li>
+            </ul>
+        `,
+
+        code_snippet: `public class Main {
+
+    public static void main(String[] args) {
+
+        int age = 20;
+
+        double salary = 25000.50;
+
+        char grade = 'A';
+
+        boolean student = true;
+
+        System.out.println(age);
+        System.out.println(salary);
+        System.out.println(grade);
+        System.out.println(student);
+
+    }
+
+}`,
+
+        practice_task:
+            "Create variables for your name, age, percentage and student status and print them."
+
+    },
+
+
+    3: {
+
+        title: "Operators in Java",
+
+        notes: `
+            <h3>Java Operators</h3>
+
+            <p>
+                Operators are symbols used to perform operations
+                on variables and values.
+            </p>
+
+            <h4>Types</h4>
+
+            <ul>
+                <li>Arithmetic Operators</li>
+                <li>Relational Operators</li>
+                <li>Logical Operators</li>
+                <li>Assignment Operators</li>
+                <li>Unary Operators</li>
+            </ul>
+        `,
+
+        code_snippet: `public class Main {
+
+    public static void main(String[] args) {
+
+        int a = 10;
+        int b = 5;
+
+        System.out.println(a + b);
+        System.out.println(a - b);
+        System.out.println(a * b);
+        System.out.println(a / b);
+
+    }
+
+}`,
+
+        practice_task:
+            "Create a Java program that performs addition, subtraction, multiplication and division."
+
+    },
+
+
+    4: {
+
+        title: "Conditional Statements",
+
+        notes: `
+            <h3>If-Else Statement</h3>
+
+            <p>
+                Conditional statements are used to execute
+                different blocks of code based on conditions.
+            </p>
+
+            <h4>Types</h4>
+
+            <ul>
+                <li>if</li>
+                <li>if-else</li>
+                <li>else-if</li>
+                <li>nested-if</li>
+                <li>switch</li>
+            </ul>
+        `,
+
+        code_snippet: `public class Main {
+
+    public static void main(String[] args) {
+
+        int number = 10;
+
+        if (number % 2 == 0) {
+
+            System.out.println("Even");
+
+        } else {
+
+            System.out.println("Odd");
+
+        }
+
+    }
+
+}`,
+
+        practice_task:
+            "Write a Java program to check whether a number is positive, negative or zero."
+
+    },
+
+
+    5: {
+
+        title: "Loops in Java",
+
+        notes: `
+            <h3>Loops</h3>
+
+            <p>
+                Loops are used to execute a block of code
+                repeatedly.
+            </p>
+
+            <h4>Types of Loops</h4>
+
+            <ul>
+                <li>for loop</li>
+                <li>while loop</li>
+                <li>do-while loop</li>
+                <li>enhanced for loop</li>
+            </ul>
+        `,
+
+        code_snippet: `public class Main {
+
+    public static void main(String[] args) {
+
+        for(int i = 1; i <= 10; i++) {
+
+            System.out.println(i);
+
+        }
+
+    }
+
+}`,
+
+        practice_task:
+            "Write a Java program to print numbers from 1 to 100 using a for loop."
+
+    }
+
 };
 
-// Determine source of data: Backend Server or Static Local
-if (templateDays.startsWith("{{") || templateDays === "") {
-    console.log("Running in LOCAL static fallback mode.");
-    totalDays = 5;
-    courseData = fallbackData;
+
+/* =========================================================
+   COURSE STATE
+   ========================================================= */
+
+let totalDays =
+    SERVER_TOTAL_DAYS > 0
+        ? SERVER_TOTAL_DAYS
+        : Object.keys(fallbackData).length;
+
+
+let courseData = {};
+
+
+/* =========================================================
+   LOAD SERVER DATA
+   ========================================================= */
+
+if (
+    SERVER_COURSE_DATA &&
+    typeof SERVER_COURSE_DATA === "object" &&
+    Object.keys(SERVER_COURSE_DATA).length > 0
+) {
+
+    courseData = SERVER_COURSE_DATA;
+
 } else {
-    console.log("Running in SERVER-side Jinja2 mode.");
-    totalDays = parseInt(templateDays) || 30;
-    try {
-        courseData = JSON.parse(templateJson);
-    } catch (e) {
-        console.error("Error parsing backend JSON, using fallback data", e);
-        courseData = fallbackData;
-    }
+
+    courseData = fallbackData;
+
 }
+
+
+/* =========================================================
+   CURRENT DAY
+   ========================================================= */
 
 let currentDay = 1;
 
-// Progress recovery logic
-if(localStorage.getItem("JavaDay")){
-    let savedDay = parseInt(localStorage.getItem("JavaDay"));
-    if (savedDay <= totalDays) {
-        currentDay = savedDay;
-    }
+
+/* =========================================================
+   RESTORE SAVED DAY
+   ========================================================= */
+
+const savedDay =
+    parseInt(
+        localStorage.getItem("java_current_day"),
+        10
+    );
+
+
+if (
+    !isNaN(savedDay) &&
+    savedDay >= 1 &&
+    savedDay <= totalDays
+) {
+
+    currentDay = savedDay;
+
 }
 
-// Generate Dynamic Sidebar Days List
-function buildSidebar() {
-    const listContainer = document.getElementById("sidebar-days-list");
-    listContainer.innerHTML = "";
-    
-    for (let i = 1; i <= totalDays; i++) {
-        const btn = document.createElement("button");
-        btn.classList.add("day-link-btn");
-        if (i === currentDay) btn.classList.add("active");
-        
-        btn.onclick = () => jumpToDay(i);
-        btn.innerHTML = `
-            <span>Day ${i}</span>
-            <span class="day-status-indicator">${i < currentDay ? '✅' : '⏳'}</span>
-        `;
-        listContainer.appendChild(btn);
-    }
+
+/* =========================================================
+   COMPLETED DAYS
+   ========================================================= */
+
+let completedDays =
+    JSON.parse(
+        localStorage.getItem("java_completed_days") || "[]"
+    );
+
+
+if (!Array.isArray(completedDays)) {
+
+    completedDays = [];
+
 }
+
+
+/* =========================================================
+   BUILD SIDEBAR
+   ========================================================= */
+
+function buildSidebar() {
+
+    const container =
+        document.getElementById(
+            "sidebar-days-list"
+        );
+
+
+    if (!container) return;
+
+
+    container.innerHTML = "";
+
+
+    for (
+        let i = 1;
+        i <= totalDays;
+        i++
+    ) {
+
+        const button =
+            document.createElement("button");
+
+
+        button.type = "button";
+
+        button.className =
+            "day-link-btn";
+
+
+        if (i === currentDay) {
+
+            button.classList.add("active");
+
+        }
+
+
+        const completed =
+            completedDays.includes(i);
+
+
+        button.innerHTML = `
+
+            <span>
+                Day ${i}
+            </span>
+
+            <span class="day-status-indicator">
+                ${completed ? "✅" : i === currentDay ? "📖" : "🔒"}
+            </span>
+
+        `;
+
+
+        button.addEventListener(
+            "click",
+            () => jumpToDay(i)
+        );
+
+
+        container.appendChild(button);
+
+    }
+
+}
+
+
+/* =========================================================
+   GET DAY DATA
+   ========================================================= */
+
+function getDayData(day) {
+
+    return (
+        courseData[day] ||
+        courseData[String(day)] ||
+        fallbackData[day] ||
+        null
+    );
+
+}
+
+
+/* =========================================================
+   LOAD DAY
+   ========================================================= */
 
 function loadDay() {
-    const workspace = document.getElementById("day-workspace");
-    const completionScreen = document.getElementById("completion-screen");
-    const btnPrev = document.getElementById("btn-prev");
-    const btnNext = document.getElementById("btn-next");
 
-    // Save local progress state
-    localStorage.setItem("JavaDay", currentDay);
+    const workspace =
+        document.getElementById(
+            "day-workspace"
+        );
 
-    // Sync sidebar
+
+    const completionScreen =
+        document.getElementById(
+            "completion-screen"
+        );
+
+
+    const previousButton =
+        document.getElementById(
+            "btn-prev"
+        );
+
+
+    const nextButton =
+        document.getElementById(
+            "btn-next"
+        );
+
+
+    if (!workspace) return;
+
+
+    /* Save current day */
+
+    localStorage.setItem(
+        "java_current_day",
+        currentDay
+    );
+
+
+    /* Sidebar */
+
     buildSidebar();
 
-    // Progress bar calculations
-    let progressPercent = Math.round((currentDay / totalDays) * 100);
-    document.getElementById("progress").style.width = progressPercent + "%";
-    document.getElementById("progress-text").innerText = progressPercent + "%";
 
-    workspace.classList.remove("hidden");
-    completionScreen.classList.add("hidden");
-    btnPrev.disabled = currentDay === 1;
+    /* Progress */
 
-    document.getElementById("day-tag").innerText = "Day " + currentDay;
-    
-    // Load active day's content safely
-    if(courseData[currentDay]) {
-        document.getElementById("day-title").innerText = courseData[currentDay].title;
-        document.getElementById("day-notes").innerHTML = courseData[currentDay].notes;
-        document.getElementById("day-code-snippet").innerText = courseData[currentDay].code_snippet;
-        document.getElementById("day-task-desc").innerText = courseData[currentDay].practice_task;
-    } else {
-        document.getElementById("day-title").innerText = "Coming Soon - Day " + currentDay;
-        document.getElementById("day-notes").innerHTML = `<p>Notes for Day ${currentDay} are currently being drafted. Stay tuned!</p>`;
-        document.getElementById("day-code-snippet").innerText = `// Code challenge for Day ${currentDay} will be live soon...`;
-        document.getElementById("day-task-desc").innerText = "No exercises registered for this module yet.";
+    const progress =
+        Math.round(
+            (currentDay / totalDays) * 100
+        );
+
+
+    const progressBar =
+        document.getElementById(
+            "progress"
+        );
+
+
+    const progressText =
+        document.getElementById(
+            "progress-text"
+        );
+
+
+    if (progressBar) {
+
+        progressBar.style.width =
+            progress + "%";
+
     }
 
-    if (currentDay === totalDays) {
-        btnNext.innerText = "Complete Challenge! 🏆";
-    } else {
-        btnNext.innerText = "Next Day ➡";
+
+    if (progressText) {
+
+        progressText.textContent =
+            progress + "%";
+
     }
+
+
+    /* Workspace */
+
+    workspace.classList.remove(
+        "hidden"
+    );
+
+
+    completionScreen.classList.add(
+        "hidden"
+    );
+
+
+    /* Previous */
+
+    previousButton.disabled =
+        currentDay <= 1;
+
+
+    /* Day */
+
+    document.getElementById(
+        "day-tag"
+    ).textContent =
+        "Day " + currentDay;
+
+
+    /* Get data */
+
+    const data =
+        getDayData(currentDay);
+
+
+    if (data) {
+
+        document.getElementById(
+            "day-title"
+        ).textContent =
+            data.title ||
+            "Day " + currentDay;
+
+
+        document.getElementById(
+            "day-notes"
+        ).innerHTML =
+            data.notes ||
+            "<p>Notes are not available.</p>";
+
+
+        document.getElementById(
+            "day-code-snippet"
+        ).textContent =
+            data.code_snippet ||
+            "// Code not available";
+
+
+        document.getElementById(
+            "day-task-desc"
+        ).textContent =
+            data.practice_task ||
+            "Practice task is not available.";
+
+    } else {
+
+        document.getElementById(
+            "day-title"
+        ).textContent =
+            "Day " + currentDay;
+
+
+        document.getElementById(
+            "day-notes"
+        ).innerHTML = `
+
+            <h3>Coming Soon 🚀</h3>
+
+            <p>
+                Notes for Day ${currentDay}
+                will be available soon.
+            </p>
+
+        `;
+
+
+        document.getElementById(
+            "day-code-snippet"
+        ).textContent =
+            "// Code will be available soon";
+
+
+        document.getElementById(
+            "day-task-desc"
+        ).textContent =
+            "Practice task will be available soon.";
+
+    }
+
+
+    /* Next Button */
+
+    if (currentDay >= totalDays) {
+
+        nextButton.textContent =
+            "Complete Challenge 🏆";
+
+    } else {
+
+        nextButton.textContent =
+            "Next Day ➡";
+
+    }
+
 }
+
+
+/* =========================================================
+   NEXT DAY
+   ========================================================= */
 
 function nextDay() {
-    if (currentDay < totalDays) {
-        currentDay++;
-        loadDay();
-    } else if (currentDay === totalDays) {
-        // Complete state
-        document.getElementById("day-workspace").classList.add("hidden");
-        document.getElementById("completion-screen").classList.remove("hidden");
-        document.getElementById("btn-next").disabled = true;
-        document.getElementById("progress").style.width = "100%";
-        document.getElementById("progress-text").innerText = "100%";
+
+    /* Mark current day completed */
+
+    if (
+        !completedDays.includes(currentDay)
+    ) {
+
+        completedDays.push(currentDay);
+
+        localStorage.setItem(
+            "java_completed_days",
+            JSON.stringify(completedDays)
+        );
+
     }
+
+
+    /* Move */
+
+    if (currentDay < totalDays) {
+
+        currentDay++;
+
+        loadDay();
+
+        return;
+
+    }
+
+
+    /* Complete course */
+
+    showCompletion();
+
 }
+
+
+/* =========================================================
+   PREVIOUS DAY
+   ========================================================= */
 
 function prevDay() {
-    if (currentDay > 1) {
-        currentDay--;
-        document.getElementById("btn-next").disabled = false;
-        loadDay();
+
+    if (currentDay <= 1) {
+
+        return;
+
     }
+
+
+    currentDay--;
+
+    loadDay();
+
 }
+
+
+/* =========================================================
+   JUMP TO DAY
+   ========================================================= */
 
 function jumpToDay(dayNumber) {
-    currentDay = dayNumber;
-    document.getElementById("btn-next").disabled = false;
+
+    if (
+        dayNumber < 1 ||
+        dayNumber > totalDays
+    ) {
+
+        return;
+
+    }
+
+
+    currentDay =
+        Number(dayNumber);
+
+
     loadDay();
+
 }
+
+
+/* =========================================================
+   SHOW COMPLETION
+   ========================================================= */
+
+function showCompletion() {
+
+    document
+        .getElementById("day-workspace")
+        .classList.add("hidden");
+
+
+    document
+        .getElementById("completion-screen")
+        .classList.remove("hidden");
+
+
+    document
+        .getElementById("progress")
+        .style.width = "100%";
+
+
+    document
+        .getElementById("progress-text")
+        .textContent = "100%";
+
+
+    document
+        .getElementById("btn-next")
+        .disabled = true;
+
+
+    document
+        .getElementById("btn-prev")
+        .disabled = false;
+
+}
+
+
+/* =========================================================
+   RESET COURSE
+   ========================================================= */
 
 function resetProgress() {
-    if(confirm("Do you want to reset your progress and restart?")) {
-        currentDay = 1;
-        document.getElementById("btn-next").disabled = false;
-        loadDay();
+
+    const confirmReset =
+        confirm(
+            "Do you want to restart the Java course?"
+        );
+
+
+    if (!confirmReset) {
+
+        return;
+
     }
+
+
+    currentDay = 1;
+
+    completedDays = [];
+
+
+    localStorage.removeItem(
+        "java_current_day"
+    );
+
+
+    localStorage.removeItem(
+        "java_completed_days"
+    );
+
+
+    document
+        .getElementById("btn-next")
+        .disabled = false;
+
+
+    loadDay();
+
 }
 
-// Interactive Tab Switching
-function switchTab(evt, tabId) {
-    const panes = document.querySelectorAll(".tab-pane");
-    panes.forEach(pane => pane.classList.remove("active"));
 
-    const buttons = document.querySelectorAll(".tab-btn");
-    buttons.forEach(btn => btn.classList.remove("active"));
+/* =========================================================
+   TAB SWITCHING
+   ========================================================= */
 
-    document.getElementById(tabId).classList.add("active");
-    evt.currentTarget.classList.add("active");
+function switchTab(event, tabId) {
+
+    document
+        .querySelectorAll(".tab-pane")
+        .forEach(
+            pane => pane.classList.remove("active")
+        );
+
+
+    document
+        .querySelectorAll(".tab-btn")
+        .forEach(
+            button => button.classList.remove("active")
+        );
+
+
+    const target =
+        document.getElementById(tabId);
+
+
+    if (!target) return;
+
+
+    target.classList.add("active");
+
+
+    if (event && event.currentTarget) {
+
+        event.currentTarget.classList.add(
+            "active"
+        );
+
+    }
+
 }
 
-// Trigger Application Engine
-buildSidebar();
-loadDay();
+
+/* =========================================================
+   INITIALIZE
+   ========================================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        buildSidebar();
+
+        loadDay();
+
+    }
+);
+
 </script>
+
 {% endblock %}
