@@ -1,2374 +1,510 @@
 {% extends "layout.html" %}
 
-{% block title %}
-{{ course_name }} Learning
+{% block title %}Courses{% endblock %}
+
+{% block css %}
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    .courses-page {
+        max-width: 1250px;
+        margin: 0 auto;
+        padding: 30px 20px 50px;
+        font-family: "Segoe UI", system-ui, sans-serif;
+    }
+
+    /* =========================
+       HERO
+    ========================= */
+
+    .courses-hero {
+        position: relative;
+        overflow: hidden;
+
+        background:
+            radial-gradient(
+                circle at top right,
+                rgba(255,255,255,.20),
+                transparent 30%
+            ),
+            linear-gradient(
+                135deg,
+                #2563eb,
+                #06b6d4
+            );
+
+        color: white;
+        padding: 38px;
+        border-radius: 30px;
+        margin-bottom: 30px;
+
+        box-shadow:
+            0 20px 50px rgba(37, 99, 235, .22);
+    }
+
+    .courses-hero::after {
+        content: "";
+        position: absolute;
+        width: 220px;
+        height: 220px;
+        right: -70px;
+        bottom: -100px;
+        border-radius: 50%;
+        background: rgba(255,255,255,.10);
+    }
+
+    .courses-hero h1 {
+        position: relative;
+        z-index: 2;
+
+        margin: 0 0 10px;
+
+        font-size: clamp(30px, 5vw, 48px);
+        font-weight: 800;
+    }
+
+    .courses-hero p {
+        position: relative;
+        z-index: 2;
+
+        margin: 0;
+
+        font-size: 17px;
+        line-height: 1.6;
+
+        opacity: .94;
+    }
+
+
+    /* =========================
+       COURSE GRID
+    ========================= */
+
+    .courses-grid {
+        display: grid;
+
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+
+        gap: 22px;
+    }
+
+
+    /* =========================
+       COURSE CARD
+    ========================= */
+
+    .course-card {
+        position: relative;
+
+        background: rgba(255,255,255,.95);
+
+        border:
+            1px solid rgba(229,231,235,.9);
+
+        border-radius: 24px;
+
+        padding: 25px;
+
+        box-shadow:
+            0 12px 35px rgba(0,0,0,.08);
+
+        transition:
+            transform .25s ease,
+            box-shadow .25s ease;
+    }
+
+    .course-card:hover {
+        transform: translateY(-7px);
+
+        box-shadow:
+            0 20px 50px rgba(0,0,0,.13);
+    }
+
+
+    /* =========================
+       ICON
+    ========================= */
+
+    .course-icon {
+        width: 64px;
+        height: 64px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 18px;
+
+        background:
+            linear-gradient(
+                135deg,
+                #eff6ff,
+                #ecfeff
+            );
+
+        font-size: 32px;
+
+        margin-bottom: 18px;
+    }
+
+
+    /* =========================
+       COURSE CONTENT
+    ========================= */
+
+    .course-card h2 {
+        margin: 0 0 10px;
+
+        font-size: 23px;
+
+        color: #111827;
+    }
+
+    .course-card p {
+        margin: 0;
+
+        color: #6b7280;
+
+        line-height: 1.65;
+
+        min-height: 54px;
+    }
+
+
+    /* =========================
+       META
+    ========================= */
+
+    .course-meta {
+        display: flex;
+
+        align-items: center;
+        justify-content: space-between;
+
+        gap: 10px;
+
+        margin:
+            20px 0 18px;
+
+        padding-top: 15px;
+
+        border-top:
+            1px solid #e5e7eb;
+    }
+
+    .meta-item {
+        font-size: 13px;
+
+        color: #6b7280;
+
+        font-weight: 600;
+    }
+
+
+    /* =========================
+       BUTTON
+    ========================= */
+
+    .course-btn {
+        display: block;
+
+        width: 100%;
+
+        padding: 14px 18px;
+
+        border-radius: 14px;
+
+        background:
+            linear-gradient(
+                135deg,
+                #2563eb,
+                #06b6d4
+            );
+
+        color: white;
+
+        text-align: center;
+
+        text-decoration: none;
+
+        font-weight: 700;
+
+        transition:
+            transform .2s ease,
+            filter .2s ease;
+    }
+
+    .course-btn:hover {
+        filter: brightness(.96);
+
+        transform: translateY(-2px);
+
+        color: white;
+    }
+
+    .course-btn:active {
+        transform: scale(.98);
+    }
+
+
+    /* =========================
+       EMPTY STATE
+    ========================= */
+
+    .empty-state {
+        background: white;
+
+        padding: 60px 30px;
+
+        text-align: center;
+
+        border-radius: 24px;
+
+        box-shadow:
+            0 12px 35px rgba(0,0,0,.08);
+    }
+
+    .empty-icon {
+        font-size: 55px;
+
+        margin-bottom: 15px;
+    }
+
+    .empty-state h2 {
+        margin:
+            0 0 10px;
+
+        color: #111827;
+    }
+
+    .empty-state p {
+        margin: 0;
+
+        color: #6b7280;
+    }
+
+
+    /* =========================
+       RESPONSIVE
+    ========================= */
+
+    @media (max-width: 1000px) {
+
+        .courses-grid {
+            grid-template-columns:
+                repeat(2, minmax(0, 1fr));
+        }
+    }
+
+
+    @media (max-width: 650px) {
+
+        .courses-page {
+            padding:
+                18px 14px 35px;
+        }
+
+        .courses-hero {
+            padding: 28px 22px;
+
+            border-radius: 24px;
+        }
+
+        .courses-hero h1 {
+            font-size: 32px;
+        }
+
+        .courses-hero p {
+            font-size: 15px;
+        }
+
+        .courses-grid {
+            grid-template-columns: 1fr;
+
+            gap: 16px;
+        }
+
+        .course-card {
+            padding: 21px;
+        }
+    }
+</style>
+
 {% endblock %}
 
 
 {% block content %}
 
-<style>
-* {
-    box-sizing: border-box;
-}
+<div class="courses-page">
 
-:root {
-    --primary: #2563eb;
-    --primary-dark: #1d4ed8;
-    --cyan: #06b6d4;
-    --success: #10b981;
-    --purple: #7c3aed;
+    <!-- =========================
+         HERO
+    ========================= -->
 
-    --gray900: #111827;
-    --gray700: #374151;
-    --gray500: #6b7280;
-    --gray300: #d1d5db;
-    --gray200: #e5e7eb;
-    --gray100: #f3f4f6;
+    <section class="courses-hero">
 
-    --card: #ffffff;
+        <h1>
+            🚀 Learning Courses
+        </h1>
 
-    --shadow:
-        0 16px 50px rgba(0, 0, 0, 0.10);
-}
-
-
-/* =========================================================
-   PAGE
-   ========================================================= */
-
-.course-wrapper {
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 24px;
-
-    font-family:
-        "Segoe UI",
-        system-ui,
-        -apple-system,
-        BlinkMacSystemFont,
-        sans-serif;
-}
-
-
-/* =========================================================
-   HEADER
-   ========================================================= */
-
-.course-header {
-    position: relative;
-    overflow: hidden;
-
-    display: grid;
-    grid-template-columns: 1.5fr 1fr;
-
-    gap: 20px;
-    align-items: center;
-
-    padding: 30px;
-
-    border-radius: 28px;
-
-    color: white;
-
-    background:
-        linear-gradient(
-            135deg,
-            var(--primary),
-            var(--cyan)
-        );
-
-    box-shadow: var(--shadow);
-}
-
-
-.course-header::before {
-    content: "";
-
-    position: absolute;
-
-    width: 260px;
-    height: 260px;
-
-    right: -90px;
-    top: -120px;
-
-    border-radius: 50%;
-
-    background:
-        rgba(255,255,255,0.10);
-}
-
-
-.course-header::after {
-    content: "";
-
-    position: absolute;
-
-    width: 160px;
-    height: 160px;
-
-    left: 40%;
-    bottom: -110px;
-
-    border-radius: 50%;
-
-    background:
-        rgba(255,255,255,0.08);
-}
-
-
-.course-header > div {
-    position: relative;
-    z-index: 2;
-}
-
-
-.course-header h1 {
-    margin: 0 0 10px;
-
-    font-size:
-        clamp(30px, 4vw, 44px);
-
-    font-weight: 800;
-}
-
-
-.course-header p {
-    margin: 0;
-
-    opacity: 0.92;
-
-    font-size: 17px;
-
-    line-height: 1.6;
-}
-
-
-/* =========================================================
-   STATS
-   ========================================================= */
-
-.stats {
-    display: grid;
-
-    grid-template-columns:
-        repeat(3, 1fr);
-
-    gap: 12px;
-}
-
-
-.stat {
-    padding: 18px 12px;
-
-    text-align: center;
-
-    border-radius: 18px;
-
-    color: var(--gray900);
-
-    background:
-        rgba(255,255,255,0.96);
-
-    box-shadow:
-        0 8px 25px rgba(0,0,0,0.08);
-}
-
-
-.stat b {
-    display: block;
-
-    margin-bottom: 5px;
-
-    font-size: 28px;
-
-    color: var(--primary);
-}
-
-
-.stat span {
-    color: var(--gray500);
-
-    font-size: 12px;
-}
-
-
-/* =========================================================
-   COMMON CARDS
-   ========================================================= */
-
-.progress-card,
-.learning-box,
-.side-card {
-
-    margin-top: 24px;
-
-    padding: 24px;
-
-    border-radius: 24px;
-
-    background:
-        rgba(255,255,255,0.95);
-
-    border:
-        1px solid rgba(229,231,235,0.8);
-
-    box-shadow:
-        var(--shadow);
-}
-
-
-/* =========================================================
-   PROGRESS
-   ========================================================= */
-
-.progress-title {
-
-    display: flex;
-
-    justify-content: space-between;
-
-    align-items: center;
-
-    gap: 12px;
-
-    font-size: 16px;
-
-    font-weight: 700;
-}
-
-
-.progress-container {
-
-    width: 100%;
-
-    height: 14px;
-
-    margin-top: 14px;
-
-    overflow: hidden;
-
-    border-radius: 999px;
-
-    background:
-        var(--gray200);
-}
-
-
-.progress-fill {
-
-    width: 0%;
-
-    height: 100%;
-
-    border-radius: inherit;
-
-    background:
-        linear-gradient(
-            90deg,
-            var(--primary),
-            var(--success)
-        );
-
-    transition:
-        width 0.45s ease;
-}
-
-
-.muted {
-
-    color: var(--gray500);
-
-    font-size: 14px;
-
-    line-height: 1.7;
-}
-
-
-/* =========================================================
-   LEARNING GRID
-   ========================================================= */
-
-.learning-grid {
-
-    display: grid;
-
-    grid-template-columns:
-        1.6fr 0.9fr;
-
-    gap: 24px;
-
-    align-items: start;
-}
-
-
-.learning-box {
-    margin-top: 24px;
-}
-
-
-/* =========================================================
-   DAY HEADER
-   ========================================================= */
-
-.day-title {
-
-    display: flex;
-
-    justify-content: space-between;
-
-    align-items: center;
-
-    gap: 12px;
-
-    margin-bottom: 20px;
-}
-
-
-.day-badge {
-
-    display: inline-flex;
-
-    align-items: center;
-
-    padding: 10px 16px;
-
-    border-radius: 999px;
-
-    color: white;
-
-    background:
-        var(--primary);
-
-    font-weight: 700;
-}
-
-
-.bookmark-btn {
-
-    border: none;
-
-    padding: 11px 16px;
-
-    border-radius: 14px;
-
-    cursor: pointer;
-
-    color: #92400e;
-
-    background: #fef3c7;
-
-    font-weight: 700;
-
-    transition:
-        transform 0.2s,
-        box-shadow 0.2s;
-}
-
-
-.bookmark-btn:hover {
-
-    transform:
-        translateY(-2px);
-
-    box-shadow:
-        0 7px 20px
-        rgba(0,0,0,0.08);
-}
-
-
-/* =========================================================
-   LESSON
-   ========================================================= */
-
-#topicTitle {
-
-    margin:
-        0 0 15px;
-
-    color:
-        var(--gray900);
-
-    font-size:
-        clamp(22px, 3vw, 30px);
-}
-
-
-.notes {
-
-    margin-top: 10px;
-
-    color:
-        var(--gray700);
-
-    font-size: 16px;
-
-    line-height: 1.8;
-}
-
-
-.notes h3 {
-
-    margin-top: 0;
-
-    color:
-        var(--gray900);
-}
-
-
-.notes ul {
-
-    padding-left: 22px;
-}
-
-
-.notes li {
-
-    margin-bottom: 7px;
-}
-
-
-/* =========================================================
-   TASKS
-   ========================================================= */
-
-.task-box {
-
-    margin-top: 24px;
-
-    padding: 18px;
-
-    border:
-        1px solid #eef2f7;
-
-    border-radius: 18px;
-
-    background:
-        #f9fafb;
-}
-
-
-.task-box h3 {
-
-    margin:
-        0 0 12px;
-}
-
-
-.task-box label {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 10px;
-
-    padding: 10px 8px;
-
-    cursor: pointer;
-
-    color:
-        var(--gray700);
-}
-
-
-.task-box input {
-
-    width: 17px;
-    height: 17px;
-
-    accent-color:
-        var(--primary);
-}
-
-
-/* =========================================================
-   BUTTONS
-   ========================================================= */
-
-.buttons {
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(4, 1fr);
-
-    gap: 12px;
-
-    margin-top: 22px;
-}
-
-
-.btn {
-
-    border: none;
-
-    padding: 14px 18px;
-
-    border-radius: 14px;
-
-    cursor: pointer;
-
-    font-weight: 700;
-
-    transition:
-        transform 0.2s,
-        filter 0.2s;
-}
-
-
-.btn:hover {
-
-    transform:
-        translateY(-2px);
-
-    filter:
-        brightness(0.96);
-}
-
-
-.btn:active {
-
-    transform:
-        scale(0.98);
-}
-
-
-.prev {
-
-    color: white;
-
-    background:
-        #6b7280;
-}
-
-
-.next {
-
-    color: white;
-
-    background:
-        var(--primary);
-}
-
-
-.quiz {
-
-    color: white;
-
-    background:
-        var(--purple);
-}
-
-
-.download {
-
-    color: white;
-
-    background:
-        #059669;
-}
-
-
-/* =========================================================
-   SIDEBAR
-   ========================================================= */
-
-.sidebar {
-
-    display: grid;
-
-    gap: 0;
-}
-
-
-.side-card {
-
-    margin-top: 24px;
-}
-
-
-.side-card h3 {
-
-    margin:
-        0 0 14px;
-
-    color:
-        var(--gray900);
-}
-
-
-.pill-list {
-
-    display: flex;
-
-    flex-wrap: wrap;
-
-    gap: 10px;
-}
-
-
-.pill {
-
-    display: inline-flex;
-
-    align-items: center;
-
-    gap: 7px;
-
-    padding: 9px 13px;
-
-    border-radius: 999px;
-
-    color: #1e3a8a;
-
-    background:
-        #eef2ff;
-
-    font-size: 13px;
-
-    font-weight: 600;
-}
-
-
-/* =========================================================
-   CERTIFICATE
-   ========================================================= */
-
-.certificate {
-
-    display: none;
-
-    margin-top: 26px;
-
-    padding: 28px;
-
-    text-align: center;
-
-    border:
-        1px solid var(--gray200);
-
-    border-radius: 24px;
-
-    background:
-        linear-gradient(
-            180deg,
-            #ffffff,
-            #f8fafc
-        );
-
-    box-shadow:
-        var(--shadow);
-}
-
-
-.certificate h2 {
-
-    margin-top: 0;
-
-    color:
-        var(--primary);
-}
-
-
-/* =========================================================
-   AI
-   ========================================================= */
-
-.ai-button {
-
-    position: fixed;
-
-    right: 24px;
-    bottom: 24px;
-
-    z-index: 100;
-
-    border: none;
-
-    padding: 14px 18px;
-
-    border-radius: 999px;
-
-    cursor: pointer;
-
-    color: white;
-
-    background:
-        linear-gradient(
-            135deg,
-            var(--primary),
-            var(--purple)
-        );
-
-    box-shadow:
-        0 12px 35px
-        rgba(37,99,235,0.35);
-
-    font-weight: 700;
-}
-
-
-#aiBox {
-
-    display: none;
-
-    position: fixed;
-
-    right: 24px;
-    bottom: 84px;
-
-    z-index: 110;
-
-    width:
-        min(92vw, 360px);
-
-    padding: 18px;
-
-    border-radius: 20px;
-
-    background: white;
-
-    box-shadow:
-        0 20px 60px
-        rgba(0,0,0,0.18);
-}
-
-
-#aiBox h3 {
-
-    display: flex;
-
-    justify-content: space-between;
-
-    align-items: center;
-
-    margin:
-        0 0 12px;
-}
-
-
-.ai-close {
-
-    cursor: pointer;
-
-    padding: 4px 7px;
-
-    border-radius: 8px;
-}
-
-
-.ai-close:hover {
-
-    background:
-        #f3f4f6;
-}
-
-
-#aiReply {
-
-    min-height: 92px;
-
-    padding: 12px;
-
-    border:
-        1px solid var(--gray200);
-
-    border-radius: 14px;
-
-    color:
-        var(--gray700);
-
-    background:
-        #f9fafb;
-
-    line-height: 1.6;
-}
-
-
-#aiQuestion {
-
-    width: 100%;
-
-    margin-top: 10px;
-
-    padding: 11px 12px;
-
-    border:
-        1px solid #d1d5db;
-
-    border-radius: 12px;
-
-    outline: none;
-}
-
-
-#aiQuestion:focus {
-
-    border-color:
-        var(--primary);
-
-    box-shadow:
-        0 0 0 3px
-        rgba(37,99,235,0.12);
-}
-
-
-/* =========================================================
-   RESPONSIVE
-   ========================================================= */
-
-@media (max-width: 980px) {
-
-    .course-header,
-    .learning-grid {
-
-        grid-template-columns:
-            1fr;
-    }
-
-
-    .buttons {
-
-        grid-template-columns:
-            1fr 1fr;
-    }
-}
-
-
-@media (max-width: 640px) {
-
-    .course-wrapper {
-
-        padding: 14px;
-    }
-
-
-    .course-header {
-
-        padding: 22px;
-
-        border-radius: 20px;
-    }
-
-
-    .progress-card,
-    .learning-box,
-    .side-card {
-
-        padding: 18px;
-
-        border-radius: 18px;
-    }
-
-
-    .stats {
-
-        grid-template-columns:
-            1fr;
-    }
-
-
-    .buttons {
-
-        grid-template-columns:
-            1fr;
-    }
-
-
-    .day-title {
-
-        align-items:
-            flex-start;
-
-        flex-direction:
-            column;
-    }
-
-
-    .bookmark-btn {
-
-        width: 100%;
-    }
-
-
-    .ai-button {
-
-        right: 15px;
-        bottom: 15px;
-    }
-
-
-    #aiBox {
-
-        right: 15px;
-        bottom: 78px;
-    }
-}
-</style>
-
-
-<div class="course-wrapper">
-
-    <!-- =====================================================
-         COURSE HEADER
-         ===================================================== -->
-
-    <section class="course-header">
-
-        <div>
-
-            <h1>
-                {{ course_name }} 🚀
-            </h1>
-
-            <p>
-                Master {{ course_name }}
-                with practical learning.
-            </p>
-
-        </div>
-
-
-        <div class="stats">
-
-            <div class="stat">
-
-                <b id="xp">250</b>
-
-                <span>
-                    XP Points
-                </span>
-
-            </div>
-
-
-            <div class="stat">
-
-                <b id="level">1</b>
-
-                <span>
-                    Level
-                </span>
-
-            </div>
-
-
-            <div class="stat">
-
-                <b id="streak">1</b>
-
-                <span>
-                    Day Streak
-                </span>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- =====================================================
-         PROGRESS
-         ===================================================== -->
-
-    <section class="progress-card">
-
-        <div class="progress-title">
-
-            <span>
-                Learning Progress
-            </span>
-
-            <span id="progressText">
-                0%
-            </span>
-
-        </div>
-
-
-        <div class="progress-container">
-
-            <div
-                id="progressBar"
-                class="progress-fill">
-            </div>
-
-        </div>
-
-
-        <p
-            class="muted"
-            style="margin-bottom:0;">
-
-            Complete lessons and unlock
-            next chapters 🔓
-
+        <p>
+            Choose your course and start your
+            placement preparation journey.
         </p>
 
     </section>
 
 
-    <!-- =====================================================
-         MAIN CONTENT
-         ===================================================== -->
+    <!-- =========================
+         COURSES
+    ========================= -->
 
-    <div class="learning-grid">
+    {% if courses %}
+
+        <div class="courses-grid">
+
+            {% for course in courses %}
+
+                <article class="course-card">
+
+                    <!-- Course Icon -->
+
+                    <div class="course-icon">
+
+                        {% set course_name =
+                            course.name|string|lower
+                        %}
+
+                        {% if "java" in course_name %}
+                            ☕
+                        {% elif "python" in course_name %}
+                            🐍
+                        {% elif "javascript" in course_name %}
+                            ⚡
+                        {% elif "html" in course_name %}
+                            🌐
+                        {% elif "css" in course_name %}
+                            🎨
+                        {% elif "sql" in course_name %}
+                            🗄️
+                        {% elif "dbms" in course_name %}
+                            💾
+                        {% elif "os" in course_name %}
+                            💻
+                        {% elif "frontend" in course_name %}
+                            🎨
+                        {% elif "backend" in course_name %}
+                            ⚙️
+                        {% else %}
+                            📚
+                        {% endif %}
+
+                    </div>
 
 
-        <!-- =================================================
-             LESSON
-             ================================================= -->
+                    <!-- Course Name -->
 
-        <main class="learning-box">
-
-            <div class="day-title">
-
-                <span
-                    class="day-badge"
-                    id="dayNumber">
-
-                    Day 1
-
-                </span>
+                    <h2>
+                        {{ course.name }}
+                    </h2>
 
 
-                <button
-                    type="button"
-                    class="bookmark-btn"
-                    id="bookmarkBtn">
+                    <!-- Description -->
 
-                    ⭐ Bookmark
+                    <p>
 
-                </button>
+                        {% if course.description %}
 
+                            {{ course.description }}
+
+                        {% else %}
+
+                            Learn {{ course.name }}
+                            concepts, practice problems,
+                            coding questions and interview
+                            preparation.
+
+                        {% endif %}
+
+                    </p>
+
+
+                    <!-- Course Meta -->
+
+                    <div class="course-meta">
+
+                        <span class="meta-item">
+
+                            📅
+
+                            {% if course.day_count %}
+                                {{ course.day_count }}
+                            {% else %}
+                                30
+                            {% endif %}
+
+                            Days
+
+                        </span>
+
+
+                        <span class="meta-item">
+
+                            🎯 Placement
+
+                        </span>
+
+                    </div>
+
+
+                    <!-- Start Button -->
+
+                    <a
+                        href="{{ url_for(
+                            'course_learning',
+                            course_name=course.name
+                        ) }}"
+                        class="course-btn"
+                    >
+                        Start Learning →
+                    </a>
+
+                </article>
+
+            {% endfor %}
+
+        </div>
+
+
+    {% else %}
+
+        <!-- =========================
+             EMPTY STATE
+        ========================= -->
+
+        <div class="empty-state">
+
+            <div class="empty-icon">
+                📚
             </div>
 
-
-            <h2 id="topicTitle">
-                Loading Topic...
+            <h2>
+                No Courses Available
             </h2>
 
+            <p>
+                Courses will appear here
+                once they are added.
+            </p>
 
-            <div
-                id="lessonContent"
-                class="notes">
+        </div>
 
-                Loading lesson...
-
-            </div>
-
-
-            <!-- TASKS -->
-
-            <div class="task-box">
-
-                <h3>
-                    Today's Tasks ✅
-                </h3>
-
-
-                <label>
-
-                    <input
-                        type="checkbox"
-                        class="task">
-
-                    Understand Concept
-
-                </label>
-
-
-                <label>
-
-                    <input
-                        type="checkbox"
-                        class="task">
-
-                    Write Practice Code
-
-                </label>
-
-
-                <label>
-
-                    <input
-                        type="checkbox"
-                        class="task">
-
-                    Solve Interview Question
-
-                </label>
-
-            </div>
-
-
-            <!-- BUTTONS -->
-
-            <div class="buttons">
-
-                <button
-                    type="button"
-                    class="btn prev"
-                    id="previousBtn">
-
-                    ⬅ Previous
-
-                </button>
-
-
-                <button
-                    type="button"
-                    class="btn download"
-                    id="downloadBtn">
-
-                    📄 Notes
-
-                </button>
-
-
-                <button
-                    type="button"
-                    class="btn quiz"
-                    id="quizBtn">
-
-                    📝 Quiz
-
-                </button>
-
-
-                <button
-                    type="button"
-                    class="btn next"
-                    id="nextBtn">
-
-                    Next ➡
-
-                </button>
-
-            </div>
-
-
-            <!-- CERTIFICATE -->
-
-            <div
-                id="certificate"
-                class="certificate">
-
-                <h2>
-                    🏆 Congratulations!
-                </h2>
-
-                <p>
-                    You completed
-                    {{ course_name }}
-                </p>
-
-
-                <button
-                    type="button"
-                    class="btn download"
-                    id="certificateBtn">
-
-                    Download Certificate
-
-                </button>
-
-            </div>
-
-        </main>
-
-
-        <!-- =================================================
-             SIDEBAR
-             ================================================= -->
-
-        <aside class="sidebar">
-
-
-            <div class="side-card">
-
-                <h3>
-                    Today's Focus
-                </h3>
-
-
-                <div class="pill-list">
-
-                    <span class="pill">
-                        🎯 Practice
-                    </span>
-
-                    <span class="pill">
-                        🔄 Revision
-                    </span>
-
-                    <span class="pill">
-                        📝 Quiz
-                    </span>
-
-                    <span class="pill">
-                        🚀 Project
-                    </span>
-
-                </div>
-
-            </div>
-
-
-            <div class="side-card">
-
-                <h3>
-                    Learning Tips
-                </h3>
-
-                <p class="muted">
-
-                    Spend 20–30 minutes on theory,
-                    then switch to code practice.
-
-                    After that, solve one small
-                    interview question to strengthen
-                    your recall.
-
-                </p>
-
-            </div>
-
-
-            <div class="side-card">
-
-                <h3>
-                    Current Course
-                </h3>
-
-                <p class="muted">
-
-                    Course:
-                    <strong>
-                        {{ course_name }}
-                    </strong>
-
-                    <br>
-
-                    Total Days:
-                    <strong>
-                        {{ day_count }}
-                    </strong>
-
-                </p>
-
-            </div>
-
-        </aside>
-
-    </div>
+    {% endif %}
 
 </div>
-
-
-<!-- =========================================================
-     AI BUTTON
-     ========================================================= -->
-
-<button
-    type="button"
-    class="ai-button"
-    id="aiOpenBtn">
-
-    🤖 Ask AI
-
-</button>
-
-
-<!-- =========================================================
-     AI BOX
-     ========================================================= -->
-
-<div
-    id="aiBox"
-    aria-hidden="true">
-
-    <h3>
-
-        🤖 AI Assistant
-
-        <span
-            class="ai-close"
-            id="aiCloseBtn">
-
-            ✖
-
-        </span>
-
-    </h3>
-
-
-    <div id="aiReply">
-
-        Hello 👋
-        Ask your course-related doubt.
-
-    </div>
-
-
-    <input
-        type="text"
-        id="aiQuestion"
-        placeholder="Ask question..."
-        autocomplete="off">
-
-
-    <button
-        type="button"
-        id="aiSendBtn"
-        class="btn next"
-        style="margin-top:10px;width:100%;">
-
-        Send
-
-    </button>
-
-</div>
-
-
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-
-    "use strict";
-
-
-    /* =====================================================
-       COURSE DATA FROM FLASK
-       ===================================================== */
-
-    const courseName =
-        {{ course_name|tojson }};
-
-    const totalDays =
-        Number({{ day_count|tojson }}) || 30;
-
-
-    /* =====================================================
-       STORAGE KEYS
-       ===================================================== */
-
-    const DAY_KEY =
-        courseName + "_day";
-
-    const XP_KEY =
-        courseName + "_xp";
-
-    const STREAK_KEY =
-        courseName + "_streak";
-
-    const BOOKMARK_KEY =
-        courseName + "_bookmarks";
-
-
-    /* =====================================================
-       STATE
-       ===================================================== */
-
-    let currentDay =
-        Number(localStorage.getItem(DAY_KEY)) || 1;
-
-
-    let xp =
-        Number(localStorage.getItem(XP_KEY)) || 250;
-
-
-    let streak =
-        Number(localStorage.getItem(STREAK_KEY)) || 1;
-
-
-    let bookmarks = [];
-
-
-    try {
-
-        bookmarks =
-            JSON.parse(
-                localStorage.getItem(BOOKMARK_KEY)
-                || "[]"
-            );
-
-        if (!Array.isArray(bookmarks)) {
-
-            bookmarks = [];
-
-        }
-
-    } catch (error) {
-
-        bookmarks = [];
-
-    }
-
-
-    /* =====================================================
-       ELEMENTS
-       ===================================================== */
-
-    const xpElement =
-        document.getElementById("xp");
-
-    const levelElement =
-        document.getElementById("level");
-
-    const streakElement =
-        document.getElementById("streak");
-
-    const progressBar =
-        document.getElementById("progressBar");
-
-    const progressText =
-        document.getElementById("progressText");
-
-    const dayNumber =
-        document.getElementById("dayNumber");
-
-    const topicTitle =
-        document.getElementById("topicTitle");
-
-    const lessonContent =
-        document.getElementById("lessonContent");
-
-    const certificate =
-        document.getElementById("certificate");
-
-    const previousBtn =
-        document.getElementById("previousBtn");
-
-    const nextBtn =
-        document.getElementById("nextBtn");
-
-    const bookmarkBtn =
-        document.getElementById("bookmarkBtn");
-
-    const downloadBtn =
-        document.getElementById("downloadBtn");
-
-    const quizBtn =
-        document.getElementById("quizBtn");
-
-    const certificateBtn =
-        document.getElementById("certificateBtn");
-
-    const aiOpenBtn =
-        document.getElementById("aiOpenBtn");
-
-    const aiCloseBtn =
-        document.getElementById("aiCloseBtn");
-
-    const aiBox =
-        document.getElementById("aiBox");
-
-    const aiQuestion =
-        document.getElementById("aiQuestion");
-
-    const aiSendBtn =
-        document.getElementById("aiSendBtn");
-
-    const aiReply =
-        document.getElementById("aiReply");
-
-
-    /* =====================================================
-       LESSON DATA
-       ===================================================== */
-
-    const lessons = {
-
-        1: {
-            title: "Introduction & Setup",
-
-            content: `
-                <h3>
-                    Welcome to ${escapeHtml(courseName)} 👋
-                </h3>
-
-                <p>
-                    Today you will understand the
-                    course roadmap and prepare your
-                    development environment.
-                </p>
-
-                <ul>
-                    <li>Understand the course roadmap</li>
-                    <li>Install required tools</li>
-                    <li>Understand basic concepts</li>
-                    <li>Create your first practice program</li>
-                </ul>
-            `
-        },
-
-
-        2: {
-            title: "Variables and Data Types",
-
-            content: `
-                <h3>
-                    Variables & Data Types
-                </h3>
-
-                <p>
-                    Variables are used to store
-                    information that a program needs.
-                </p>
-
-                <ul>
-                    <li>Variables</li>
-                    <li>Primitive data types</li>
-                    <li>Reference data types</li>
-                    <li>Memory concepts</li>
-                </ul>
-            `
-        },
-
-
-        3: {
-            title: "Operators and Conditions",
-
-            content: `
-                <h3>
-                    Decision Making
-                </h3>
-
-                <p>
-                    Conditions help programs make
-                    decisions based on different
-                    situations.
-                </p>
-
-                <ul>
-                    <li>Arithmetic operators</li>
-                    <li>Relational operators</li>
-                    <li>Logical operators</li>
-                    <li>if / else</li>
-                    <li>switch / match concepts</li>
-                </ul>
-            `
-        },
-
-
-        4: {
-            title: "Loops",
-
-            content: `
-                <h3>
-                    Iteration Concept
-                </h3>
-
-                <p>
-                    Loops are used when a task needs
-                    to be repeated.
-                </p>
-
-                <ul>
-                    <li>For loop</li>
-                    <li>While loop</li>
-                    <li>Do while concept</li>
-                    <li>Nested loops</li>
-                    <li>Break and continue</li>
-                </ul>
-            `
-        },
-
-
-        5: {
-            title: "Functions",
-
-            content: `
-                <h3>
-                    Reusable Code
-                </h3>
-
-                <p>
-                    Functions help us create reusable,
-                    modular and maintainable programs.
-                </p>
-
-                <ul>
-                    <li>Function declaration</li>
-                    <li>Parameters</li>
-                    <li>Arguments</li>
-                    <li>Return values</li>
-                    <li>Scope</li>
-                </ul>
-            `
-        }
-
-    };
-
-
-    /* =====================================================
-       SAFE HTML ESCAPE
-       ===================================================== */
-
-    function escapeHtml(value) {
-
-        return String(value).replace(
-            /[&<>"']/g,
-
-            function (character) {
-
-                return {
-                    "&": "&amp;",
-                    "<": "&lt;",
-                    ">": "&gt;",
-                    '"': "&quot;",
-                    "'": "&#39;"
-                }[character];
-
-            }
-        );
-
-    }
-
-
-    /* =====================================================
-       KEEP DAY IN RANGE
-       ===================================================== */
-
-    function normalizeDay() {
-
-        if (currentDay < 1) {
-
-            currentDay = 1;
-
-        }
-
-        if (currentDay > totalDays) {
-
-            currentDay = totalDays;
-
-        }
-
-    }
-
-
-    /* =====================================================
-       SAVE LOCAL DATA
-       ===================================================== */
-
-    function saveLocalData() {
-
-        localStorage.setItem(
-            DAY_KEY,
-            currentDay
-        );
-
-        localStorage.setItem(
-            XP_KEY,
-            xp
-        );
-
-        localStorage.setItem(
-            STREAK_KEY,
-            streak
-        );
-
-        localStorage.setItem(
-            BOOKMARK_KEY,
-            JSON.stringify(bookmarks)
-        );
-
-    }
-
-
-    /* =====================================================
-       UPDATE STATS
-       ===================================================== */
-
-    function syncStats() {
-
-        xpElement.textContent =
-            xp;
-
-        streakElement.textContent =
-            streak;
-
-        levelElement.textContent =
-            Math.floor(xp / 500) + 1;
-
-        saveLocalData();
-
-    }
-
-
-    /* =====================================================
-       LOAD LESSON
-       ===================================================== */
-
-    function loadLesson() {
-
-        normalizeDay();
-
-        saveLocalData();
-
-
-        const percentage =
-            totalDays > 0
-            ? Math.min(
-                100,
-                Math.floor(
-                    ((currentDay - 1) /
-                    totalDays) * 100
-                )
-            )
-            : 0;
-
-
-        progressBar.style.width =
-            percentage + "%";
-
-
-        progressText.textContent =
-            percentage + "%";
-
-
-        dayNumber.textContent =
-            "Day " + currentDay;
-
-
-        const lesson =
-            lessons[currentDay];
-
-
-        if (lesson) {
-
-            topicTitle.textContent =
-                lesson.title;
-
-            lessonContent.innerHTML =
-                lesson.content;
-
-        } else {
-
-            topicTitle.textContent =
-                "Advanced Practice Day " +
-                currentDay;
-
-            lessonContent.innerHTML = `
-                <h3>
-                    Real World Practice 🚀
-                </h3>
-
-                <p>
-                    Continue your practical
-                    learning for
-                    <strong>
-                        ${escapeHtml(courseName)}
-                    </strong>.
-                </p>
-
-                <ul>
-                    <li>Practice coding problems</li>
-                    <li>Build a small project</li>
-                    <li>Revise important concepts</li>
-                    <li>Solve interview questions</li>
-                </ul>
-            `;
-
-        }
-
-
-        certificate.style.display =
-            currentDay >= totalDays
-            ? "block"
-            : "none";
-
-
-        previousBtn.disabled =
-            currentDay <= 1;
-
-
-        previousBtn.style.opacity =
-            currentDay <= 1
-            ? "0.6"
-            : "1";
-
-
-        syncStats();
-
-        updateBookmarkButton();
-
-    }
-
-
-    /* =====================================================
-       INCREASE XP
-       ===================================================== */
-
-    function increaseXP(amount) {
-
-        xp += Number(amount) || 0;
-
-        syncStats();
-
-    }
-
-
-    /* =====================================================
-       NEXT DAY
-       ===================================================== */
-
-    function nextDay() {
-
-        if (currentDay < totalDays) {
-
-            currentDay++;
-
-            increaseXP(50);
-
-            loadLesson();
-
-            saveProgress();
-
-            window.scrollTo({
-                top: 0,
-                behavior: "smooth"
-            });
-
-        } else {
-
-            certificate.style.display =
-                "block";
-
-            alert(
-                "🎉 Congratulations! Course completed."
-            );
-
-        }
-
-    }
-
-
-    /* =====================================================
-       PREVIOUS DAY
-       ===================================================== */
-
-    function previousDay() {
-
-        if (currentDay > 1) {
-
-            currentDay--;
-
-            loadLesson();
-
-            saveProgress();
-
-            window.scrollTo({
-                top: 0,
-                behavior: "smooth"
-            });
-
-        }
-
-    }
-
-
-    /* =====================================================
-       TASK XP
-       ===================================================== */
-
-    document
-        .querySelectorAll(".task")
-        .forEach(function (task) {
-
-            task.addEventListener(
-                "change",
-                function () {
-
-                    if (this.checked) {
-
-                        increaseXP(10);
-
-                    }
-
-                }
-            );
-
-        });
-
-
-    /* =====================================================
-       BOOKMARK
-       ===================================================== */
-
-    function bookmarkLesson() {
-
-        const lesson =
-            lessons[currentDay];
-
-        const title =
-            lesson
-            ? lesson.title
-            : "Day " + currentDay;
-
-
-        if (!bookmarks.includes(title)) {
-
-            bookmarks.push(title);
-
-            saveLocalData();
-
-            updateBookmarkButton();
-
-            alert(
-                "⭐ Lesson bookmarked!"
-            );
-
-        } else {
-
-            bookmarks =
-                bookmarks.filter(
-                    item => item !== title
-                );
-
-            saveLocalData();
-
-            updateBookmarkButton();
-
-            alert(
-                "Bookmark removed."
-            );
-
-        }
-
-    }
-
-
-    function updateBookmarkButton() {
-
-        const lesson =
-            lessons[currentDay];
-
-        const title =
-            lesson
-            ? lesson.title
-            : "Day " + currentDay;
-
-
-        if (bookmarks.includes(title)) {
-
-            bookmarkBtn.textContent =
-                "⭐ Bookmarked";
-
-        } else {
-
-            bookmarkBtn.textContent =
-                "⭐ Bookmark";
-
-        }
-
-    }
-
-
-    /* =====================================================
-       DOWNLOAD NOTES
-       ===================================================== */
-
-    function downloadNotes() {
-
-        const title =
-            topicTitle.textContent;
-
-        const notes =
-            lessonContent.innerText;
-
-
-        const text =
-`${courseName}
-
-${title}
-
-${notes}
-
---------------------------------
-Placement Training Portal
---------------------------------
-`;
-
-
-        const blob =
-            new Blob(
-                [text],
-                {
-                    type:
-                        "text/plain;charset=utf-8"
-                }
-            );
-
-
-        const url =
-            URL.createObjectURL(blob);
-
-
-        const link =
-            document.createElement("a");
-
-
-        link.href = url;
-
-        link.download =
-            `${courseName}_Day_${currentDay}.txt`;
-
-
-        document.body.appendChild(link);
-
-        link.click();
-
-        link.remove();
-
-
-        setTimeout(function () {
-
-            URL.revokeObjectURL(url);
-
-        }, 1000);
-
-    }
-
-
-    /* =====================================================
-       QUIZ
-       ===================================================== */
-
-    function startQuiz() {
-
-        /*
-         * IMPORTANT:
-         * Agar tumhare app.py mein quiz route
-         * available hai to ye URL use hoga.
-         *
-         * Agar route nahi hai to user ko error
-         * page par bhejne ke bajay message show hoga.
-         */
-
-        const quizUrl =
-            `/quiz/${encodeURIComponent(courseName)}/${currentDay}`;
-
-
-        window.location.href =
-            quizUrl;
-
-    }
-
-
-    /* =====================================================
-       CERTIFICATE
-       ===================================================== */
-
-    function generateCertificate() {
-
-        const certificateText =
-`========================================
-       CERTIFICATE OF COMPLETION
-========================================
-
-Congratulations!
-
-This certificate is awarded to
-
-Student
-
-For successfully completing
-
-${courseName}
-
-Placement Training Portal
-
-Date:
-${new Date().toLocaleDateString()}
-
-========================================
-`;
-
-
-        const blob =
-            new Blob(
-                [certificateText],
-                {
-                    type:
-                        "text/plain;charset=utf-8"
-                }
-            );
-
-
-        const url =
-            URL.createObjectURL(blob);
-
-
-        const link =
-            document.createElement("a");
-
-
-        link.href = url;
-
-        link.download =
-            `${courseName}_Certificate.txt`;
-
-
-        document.body.appendChild(link);
-
-        link.click();
-
-        link.remove();
-
-
-        setTimeout(function () {
-
-            URL.revokeObjectURL(url);
-
-        }, 1000);
-
-    }
-
-
-    /* =====================================================
-       AI OPEN
-       ===================================================== */
-
-    function openAI() {
-
-        aiBox.style.display =
-            "block";
-
-        aiBox.setAttribute(
-            "aria-hidden",
-            "false"
-        );
-
-        aiQuestion.focus();
-
-    }
-
-
-    /* =====================================================
-       AI CLOSE
-       ===================================================== */
-
-    function closeAI() {
-
-        aiBox.style.display =
-            "none";
-
-        aiBox.setAttribute(
-            "aria-hidden",
-            "true"
-        );
-
-    }
-
-
-    /* =====================================================
-       AI QUESTION
-       ===================================================== */
-
-    function askAI() {
-
-        const question =
-            aiQuestion.value.trim();
-
-
-        if (!question) {
-
-            alert(
-                "Please enter your question."
-            );
-
-            aiQuestion.focus();
-
-            return;
-
-        }
-
-
-        aiReply.innerHTML = `
-
-            <b>You:</b>
-            ${escapeHtml(question)}
-
-            <br><br>
-
-            <b>AI:</b>
-
-            Keep practicing this topic daily.
-            First understand the concept,
-            then write a small program and
-            finally solve an interview question.
-
-        `;
-
-
-        aiQuestion.value = "";
-
-    }
-
-
-    /* =====================================================
-       SAVE PROGRESS TO FLASK
-       ===================================================== */
-
-    function saveProgress() {
-
-        fetch(
-            "/save-progress",
-            {
-                method: "POST",
-
-                headers: {
-                    "Content-Type":
-                        "application/json"
-                },
-
-                body: JSON.stringify({
-
-                    course:
-                        courseName,
-
-                    day:
-                        currentDay,
-
-                    xp:
-                        xp,
-
-                    streak:
-                        streak
-
-                })
-
-            }
-        )
-        .catch(function () {
-
-            /*
-             * LocalStorage progress continues
-             * even if backend endpoint is unavailable.
-             */
-
-        });
-
-    }
-
-
-    /* =====================================================
-       EVENT LISTENERS
-       ===================================================== */
-
-    bookmarkBtn.addEventListener(
-        "click",
-        bookmarkLesson
-    );
-
-
-    previousBtn.addEventListener(
-        "click",
-        previousDay
-    );
-
-
-    nextBtn.addEventListener(
-        "click",
-        nextDay
-    );
-
-
-    downloadBtn.addEventListener(
-        "click",
-        downloadNotes
-    );
-
-
-    quizBtn.addEventListener(
-        "click",
-        startQuiz
-    );
-
-
-    certificateBtn.addEventListener(
-        "click",
-        generateCertificate
-    );
-
-
-    aiOpenBtn.addEventListener(
-        "click",
-        openAI
-    );
-
-
-    aiCloseBtn.addEventListener(
-        "click",
-        closeAI
-    );
-
-
-    aiSendBtn.addEventListener(
-        "click",
-        askAI
-    );
-
-
-    aiQuestion.addEventListener(
-        "keydown",
-        function (event) {
-
-            if (event.key === "Enter") {
-
-                event.preventDefault();
-
-                askAI();
-
-            }
-
-        }
-    );
-
-
-    /* =====================================================
-       ESCAPE CLOSE AI
-       ===================================================== */
-
-    document.addEventListener(
-        "keydown",
-        function (event) {
-
-            if (
-                event.key === "Escape" &&
-                aiBox.style.display === "block"
-            ) {
-
-                closeAI();
-
-            }
-
-        }
-    );
-
-
-    /* =====================================================
-       AUTO SAVE
-       ===================================================== */
-
-    setInterval(
-        saveProgress,
-        30000
-    );
-
-
-    /* =====================================================
-       INITIAL LOAD
-       ===================================================== */
-
-    loadLesson();
-
-});
-</script>
 
 {% endblock %}
