@@ -5963,7 +5963,32 @@ def courses():
         courses=courses
     )
 
+@app.route("/course/<course_name>")
+def course_learning(course_name):
 
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    course_name = course_name.strip()
+
+    course_days = {
+        "Java": 30,
+        "Python": 30,
+        "HTML": 15,
+        "CSS": 20,
+        "JavaScript": 30,
+        "SQL": 25,
+        "DBMS": 25,
+        "Operating System": 25
+    }
+
+    day_count = course_days.get(course_name, 30)
+
+    return render_template(
+        "course_learning.html",
+        course_name=course_name,
+        day_count=day_count
+    )
 
 @app.route("/notes")
 def notes():
