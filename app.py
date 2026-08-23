@@ -5967,9 +5967,6 @@ def courses():
     )
 
 
-@app.route("/ai-communication")
-def ai_communication():
-    return render_template("ai_communication.html")
 
 @app.route("/profile")
 def profile():
