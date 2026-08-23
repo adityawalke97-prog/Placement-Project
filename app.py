@@ -5975,6 +5975,51 @@ def notes():
 @app.route("/leaderboard")
 def leaderboard():
     return render_template("leaderboard.html")
+
+@app.route("/results")
+def results():
+    if "user_id" not in session:
+        flash("Please login first.", "warning")
+        return redirect(url_for("login"))
+
+    user_id = session["user_id"]
+
+    conn = None
+    cursor = None
+
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(pymysql.cursors.DictCursor)
+
+        cursor.execute("""
+            SELECT
+                id,
+                score,
+                total_questions,
+                percentage,
+                test_date
+            FROM results
+            WHERE user_id = %s
+            ORDER BY test_date DESC
+        """, (user_id,))
+
+        results_data = cursor.fetchall()
+
+        return render_template(
+            "results.html",
+            results=results_data
+        )
+
+    except Exception as e:
+        print("Results error:", e)
+        flash("Unable to load results.", "danger")
+        return redirect(url_for("dashboard"))
+
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
 # =========================================================
 # APPLICATION STARTUP
 # =========================================================
