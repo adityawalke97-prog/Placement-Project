@@ -39,7 +39,6 @@
                class="dashboard-nav-link active">
 
                 <i class="fas fa-home"></i>
-
                 <span>Dashboard</span>
 
             </a>
@@ -50,7 +49,6 @@
                class="dashboard-nav-link">
 
                 <i class="fas fa-book-open"></i>
-
                 <span>Courses</span>
 
             </a>
@@ -61,7 +59,6 @@
                class="dashboard-nav-link">
 
                 <i class="fas fa-sticky-note"></i>
-
                 <span>Notes</span>
 
             </a>
@@ -72,38 +69,37 @@
                class="dashboard-nav-link">
 
                 <i class="fas fa-laptop-code"></i>
-
                 <span>Mock Test</span>
 
             </a>
 
 
-            <!-- Results -->
-<a href="{{ url_for('results') }}"
-   class="dashboard-nav-link">
+            <!-- RESULTS -->
+            <!-- IMPORTANT: use results, NOT mock_result -->
+            <a href="{{ url_for('results') }}"
+               class="dashboard-nav-link">
 
-    <i class="fas fa-chart-bar"></i>
-    <span>Results</span>
+                <i class="fas fa-chart-bar"></i>
+                <span>Results</span>
 
-</a>
+            </a>
+
 
             <!-- Leaderboard -->
             <a href="{{ url_for('leaderboard') }}"
                class="dashboard-nav-link">
 
                 <i class="fas fa-trophy"></i>
-
                 <span>Leaderboard</span>
 
             </a>
 
 
-            <!-- Resume Builder -->
+            <!-- Resume -->
             <a href="{{ url_for('resume_builder') }}"
                class="dashboard-nav-link">
 
                 <i class="fas fa-file-alt"></i>
-
                 <span>Resume</span>
 
             </a>
@@ -120,7 +116,6 @@
                     title="Notifications">
 
                 <i class="fas fa-bell"></i>
-
                 <span class="notification-dot"></span>
 
             </button>
@@ -134,9 +129,8 @@
 
                     {% if session.profile_pic %}
 
-                        <img
-                            src="{{ session.profile_pic }}"
-                            alt="Profile">
+                        <img src="{{ session.profile_pic }}"
+                             alt="Profile">
 
                     {% else %}
 
@@ -178,6 +172,7 @@
     </nav>
 
 
+
     <!-- =========================================================
          MOBILE NAVIGATION
          ========================================================= -->
@@ -188,7 +183,6 @@
            class="mobile-nav-item active">
 
             <i class="fas fa-home"></i>
-
             <span>Home</span>
 
         </a>
@@ -198,7 +192,6 @@
            class="mobile-nav-item">
 
             <i class="fas fa-book"></i>
-
             <span>Courses</span>
 
         </a>
@@ -208,7 +201,6 @@
            class="mobile-nav-item">
 
             <i class="fas fa-sticky-note"></i>
-
             <span>Notes</span>
 
         </a>
@@ -218,17 +210,16 @@
            class="mobile-nav-item">
 
             <i class="fas fa-laptop-code"></i>
-
             <span>Test</span>
 
         </a>
 
 
+        <!-- RESULTS -->
         <a href="{{ url_for('results') }}"
            class="mobile-nav-item">
 
             <i class="fas fa-chart-bar"></i>
-
             <span>Results</span>
 
         </a>
@@ -238,7 +229,6 @@
            class="mobile-nav-item">
 
             <i class="fas fa-user"></i>
-
             <span>Profile</span>
 
         </a>
@@ -246,8 +236,9 @@
     </div>
 
 
+
     <!-- =========================================================
-         MAIN DASHBOARD CONTAINER
+         MAIN DASHBOARD
          ========================================================= -->
 
     <main class="dashboard-container">
@@ -295,6 +286,7 @@
         </div>
 
 
+
         <!-- =====================================================
              HERO SECTION
              ===================================================== -->
@@ -328,11 +320,9 @@
 
 
                 <p>
-
                     Continue your placement preparation,
                     improve your skills and move one step closer
                     to your dream job.
-
                 </p>
 
 
@@ -342,7 +332,6 @@
                        class="hero-primary-button">
 
                         <i class="fas fa-play"></i>
-
                         Continue Learning
 
                     </a>
@@ -352,7 +341,6 @@
                        class="hero-secondary-button">
 
                         <i class="fas fa-laptop-code"></i>
-
                         Start Mock Test
 
                     </a>
@@ -425,7 +413,7 @@
             </div>
 
 
-            <!-- HERO IMAGE -->
+            <!-- HERO VISUAL -->
 
             <div class="hero-visual">
 
@@ -434,17 +422,14 @@
                 <div class="hero-image-wrapper">
 
                     <img
-                        src="{{ url_for(
-                            'static',
-                            filename='images/dashboard.svg'
-                        ) }}"
+                        src="{{ url_for('static', filename='images/dashboard.svg') }}"
                         alt="Placement Dashboard"
                         class="hero-dashboard-image">
 
                 </div>
 
 
-                <!-- FLOATING CARD -->
+                <!-- FLOATING PROGRESS -->
 
                 <div class="floating-progress-card">
 
@@ -484,8 +469,9 @@
         </section>
 
 
+
         <!-- =====================================================
-             STATISTICS SECTION
+             PERFORMANCE
              ===================================================== -->
 
         <section class="dashboard-section">
@@ -504,11 +490,11 @@
 
                 </div>
 
+
                 <a href="{{ url_for('results') }}"
                    class="section-link">
 
                     View Results
-
                     <i class="fas fa-arrow-right"></i>
 
                 </a>
@@ -526,17 +512,12 @@
                     <div class="stat-card-top">
 
                         <div class="stat-icon">
-
                             <i class="fas fa-book-open"></i>
-
                         </div>
 
                         <span class="stat-change positive">
-
                             <i class="fas fa-arrow-up"></i>
-
                             Active
-
                         </span>
 
                     </div>
@@ -562,14 +543,13 @@
                         </span>
 
                         <a href="{{ url_for('courses') }}">
-
                             <i class="fas fa-arrow-right"></i>
-
                         </a>
 
                     </div>
 
                 </div>
+
 
 
                 <!-- INTERVIEW QUESTIONS -->
@@ -579,17 +559,12 @@
                     <div class="stat-card-top">
 
                         <div class="stat-icon">
-
                             <i class="fas fa-question-circle"></i>
-
                         </div>
 
                         <span class="stat-change positive">
-
                             <i class="fas fa-check"></i>
-
                             Practice
-
                         </span>
 
                     </div>
@@ -615,14 +590,13 @@
                         </span>
 
                         <a href="{{ url_for('interview_questions') }}">
-
                             <i class="fas fa-arrow-right"></i>
-
                         </a>
 
                     </div>
 
                 </div>
+
 
 
                 <!-- MOCK TEST -->
@@ -632,17 +606,12 @@
                     <div class="stat-card-top">
 
                         <div class="stat-icon">
-
                             <i class="fas fa-laptop-code"></i>
-
                         </div>
 
                         <span class="stat-change positive">
-
                             <i class="fas fa-chart-line"></i>
-
                             Tests
-
                         </span>
 
                     </div>
@@ -668,14 +637,13 @@
                         </span>
 
                         <a href="{{ url_for('mock_test') }}">
-
                             <i class="fas fa-arrow-right"></i>
-
                         </a>
 
                     </div>
 
                 </div>
+
 
 
                 <!-- RESUME ATS -->
@@ -685,15 +653,11 @@
                     <div class="stat-card-top">
 
                         <div class="stat-icon">
-
                             <i class="fas fa-file-alt"></i>
-
                         </div>
 
                         <span class="stat-change">
-
                             ATS
-
                         </span>
 
                     </div>
@@ -719,14 +683,13 @@
                         </span>
 
                         <a href="{{ url_for('resume_builder') }}">
-
                             <i class="fas fa-arrow-right"></i>
-
                         </a>
 
                     </div>
 
                 </div>
+
 
 
                 <!-- STREAK -->
@@ -736,17 +699,12 @@
                     <div class="stat-card-top">
 
                         <div class="stat-icon">
-
                             <i class="fas fa-fire"></i>
-
                         </div>
 
                         <span class="stat-change positive">
-
                             <i class="fas fa-bolt"></i>
-
                             Active
-
                         </span>
 
                     </div>
@@ -772,14 +730,13 @@
                         </span>
 
                         <a href="{{ url_for('courses') }}">
-
                             <i class="fas fa-arrow-right"></i>
-
                         </a>
 
                     </div>
 
                 </div>
+
 
 
                 <!-- PLACEMENT SCORE -->
@@ -789,17 +746,12 @@
                     <div class="stat-card-top">
 
                         <div class="stat-icon">
-
                             <i class="fas fa-bullseye"></i>
-
                         </div>
 
                         <span class="stat-change positive">
-
                             <i class="fas fa-arrow-up"></i>
-
                             Ready
-
                         </span>
 
                     </div>
@@ -825,9 +777,7 @@
                         </span>
 
                         <a href="{{ url_for('results') }}">
-
                             <i class="fas fa-arrow-right"></i>
-
                         </a>
 
                     </div>
@@ -837,6 +787,7 @@
             </div>
 
         </section>
+
 
 
         <!-- =====================================================
@@ -871,9 +822,7 @@
                    class="quick-access-card">
 
                     <div class="quick-access-icon blue">
-
                         <i class="fas fa-book-open"></i>
-
                     </div>
 
                     <div class="quick-access-content">
@@ -888,16 +837,14 @@
                         </p>
 
                         <span>
-
                             Explore Courses
-
                             <i class="fas fa-arrow-right"></i>
-
                         </span>
 
                     </div>
 
                 </a>
+
 
 
                 <!-- NOTES -->
@@ -906,9 +853,7 @@
                    class="quick-access-card">
 
                     <div class="quick-access-icon purple">
-
                         <i class="fas fa-sticky-note"></i>
-
                     </div>
 
                     <div class="quick-access-content">
@@ -923,16 +868,14 @@
                         </p>
 
                         <span>
-
                             View Notes
-
                             <i class="fas fa-arrow-right"></i>
-
                         </span>
 
                     </div>
 
                 </a>
+
 
 
                 <!-- MOCK TEST -->
@@ -941,9 +884,7 @@
                    class="quick-access-card">
 
                     <div class="quick-access-icon green">
-
                         <i class="fas fa-laptop-code"></i>
-
                     </div>
 
                     <div class="quick-access-content">
@@ -958,16 +899,14 @@
                         </p>
 
                         <span>
-
                             Start Test
-
                             <i class="fas fa-arrow-right"></i>
-
                         </span>
 
                     </div>
 
                 </a>
+
 
 
                 <!-- RESULTS -->
@@ -976,9 +915,7 @@
                    class="quick-access-card">
 
                     <div class="quick-access-icon orange">
-
                         <i class="fas fa-chart-bar"></i>
-
                     </div>
 
                     <div class="quick-access-content">
@@ -993,16 +930,14 @@
                         </p>
 
                         <span>
-
                             View Results
-
                             <i class="fas fa-arrow-right"></i>
-
                         </span>
 
                     </div>
 
                 </a>
+
 
 
                 <!-- LEADERBOARD -->
@@ -1011,9 +946,7 @@
                    class="quick-access-card">
 
                     <div class="quick-access-icon yellow">
-
                         <i class="fas fa-trophy"></i>
-
                     </div>
 
                     <div class="quick-access-content">
@@ -1028,16 +961,14 @@
                         </p>
 
                         <span>
-
                             View Ranking
-
                             <i class="fas fa-arrow-right"></i>
-
                         </span>
 
                     </div>
 
                 </a>
+
 
 
                 <!-- RESUME -->
@@ -1046,9 +977,7 @@
                    class="quick-access-card">
 
                     <div class="quick-access-icon red">
-
                         <i class="fas fa-file-alt"></i>
-
                     </div>
 
                     <div class="quick-access-content">
@@ -1063,11 +992,8 @@
                         </p>
 
                         <span>
-
                             Build Resume
-
                             <i class="fas fa-arrow-right"></i>
-
                         </span>
 
                     </div>
@@ -1079,897 +1005,886 @@
         </section>
 
 
+
         <!-- =====================================================
-             PART 1 END
+             RECENT ACTIVITY
              ===================================================== -->
 
-    <!-- =====================================================
-         RECENT ACTIVITY
-    ====================================================== -->
+        <section class="dashboard-section activity-section">
 
-    <section class="dashboard-section activity-section">
-
-        <div class="section-heading">
-
-            <div>
-
-                <span class="section-label">
-                    ACTIVITY
-                </span>
-
-                <h2>
-                    Recent Activity
-                </h2>
-
-                <p>
-                    Your latest learning and placement activities.
-                </p>
-
-            </div>
-
-            <a href="{{ url_for('results') }}"
-               class="view-all-btn">
-
-                View Results
-                <i class="fas fa-arrow-right"></i>
-
-            </a>
-
-        </div>
-
-
-        <div class="activity-card">
-
-            <div class="table-wrapper">
-
-                <table class="activity-table">
-
-                    <thead>
-
-                        <tr>
-
-                            <th>
-                                Activity
-                            </th>
-
-                            <th>
-                                Category
-                            </th>
-
-                            <th>
-                                Status
-                            </th>
-
-                            <th>
-                                Date
-                            </th>
-
-                        </tr>
-
-                    </thead>
-
-                    <tbody>
-
-                        <tr>
-
-                            <td>
-
-                                <div class="activity-name">
-
-                                    <span class="activity-icon">
-                                        <i class="fas fa-laptop-code"></i>
-                                    </span>
-
-                                    <div>
-
-                                        <strong>
-                                            Java Mock Test
-                                        </strong>
-
-                                        <small>
-                                            Placement Practice
-                                        </small>
-
-                                    </div>
-
-                                </div>
-
-                            </td>
-
-                            <td>
-                                Java
-                            </td>
-
-                            <td>
-
-                                <span class="status-badge completed">
-                                    <i class="fas fa-check-circle"></i>
-                                    Completed
-                                </span>
-
-                            </td>
-
-                            <td>
-                                Today
-                            </td>
-
-                        </tr>
-
-
-                        <tr>
-
-                            <td>
-
-                                <div class="activity-name">
-
-                                    <span class="activity-icon">
-                                        <i class="fas fa-file-alt"></i>
-                                    </span>
-
-                                    <div>
-
-                                        <strong>
-                                            Resume Updated
-                                        </strong>
-
-                                        <small>
-                                            Resume Builder
-                                        </small>
-
-                                    </div>
-
-                                </div>
-
-                            </td>
-
-                            <td>
-                                Resume
-                            </td>
-
-                            <td>
-
-                                <span class="status-badge completed">
-                                    <i class="fas fa-check-circle"></i>
-                                    Completed
-                                </span>
-
-                            </td>
-
-                            <td>
-                                Yesterday
-                            </td>
-
-                        </tr>
-
-
-                        <tr>
-
-                            <td>
-
-                                <div class="activity-name">
-
-                                    <span class="activity-icon">
-                                        <i class="fas fa-book"></i>
-                                    </span>
-
-                                    <div>
-
-                                        <strong>
-                                            Python Course
-                                        </strong>
-
-                                        <small>
-                                            Learning Module
-                                        </small>
-
-                                    </div>
-
-                                </div>
-
-                            </td>
-
-                            <td>
-                                Python
-                            </td>
-
-                            <td>
-
-                                <span class="status-badge running">
-                                    <i class="fas fa-spinner"></i>
-                                    Running
-                                </span>
-
-                            </td>
-
-                            <td>
-                                Yesterday
-                            </td>
-
-                        </tr>
-
-
-                        <tr>
-
-                            <td>
-
-                                <div class="activity-name">
-
-                                    <span class="activity-icon">
-                                        <i class="fas fa-comments"></i>
-                                    </span>
-
-                                    <div>
-
-                                        <strong>
-                                            Communication Practice
-                                        </strong>
-
-                                        <small>
-                                            English Speaking
-                                        </small>
-
-                                    </div>
-
-                                </div>
-
-                            </td>
-
-                            <td>
-                                Communication
-                            </td>
-
-                            <td>
-
-                                <span class="status-badge pending">
-                                    <i class="fas fa-clock"></i>
-                                    Pending
-                                </span>
-
-                            </td>
-
-                            <td>
-                                Today
-                            </td>
-
-                        </tr>
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- =====================================================
-         PLACEMENT READINESS
-    ====================================================== -->
-
-    <section class="placement-grid">
-
-
-        <!-- Readiness Score -->
-
-        <div class="placement-card readiness-card">
-
-            <div class="card-header">
+            <div class="section-heading">
 
                 <div>
 
                     <span class="section-label">
-                        PLACEMENT
+                        ACTIVITY
                     </span>
 
                     <h2>
-                        Placement Readiness
+                        Recent Activity
                     </h2>
+
+                    <p>
+                        Your latest learning and placement activities.
+                    </p>
 
                 </div>
 
-                <i class="fas fa-rocket"></i>
+
+                <a href="{{ url_for('results') }}"
+                   class="view-all-btn">
+
+                    View Results
+                    <i class="fas fa-arrow-right"></i>
+
+                </a>
 
             </div>
 
 
-            <div class="readiness-content">
+            <div class="activity-card">
 
-                <div class="circle-score">
+                <div class="table-wrapper">
 
-                    <div class="circle">
+                    <table class="activity-table">
 
-                        <div class="circle-inner">
+                        <thead>
 
-                            <strong>
-                                {{ placement_score or 0 }}%
-                            </strong>
+                            <tr>
 
-                            <span>
-                                Ready
-                            </span>
+                                <th>Activity</th>
+                                <th>Category</th>
+                                <th>Status</th>
+                                <th>Date</th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            <tr>
+
+                                <td>
+
+                                    <div class="activity-name">
+
+                                        <span class="activity-icon">
+                                            <i class="fas fa-laptop-code"></i>
+                                        </span>
+
+                                        <div>
+
+                                            <strong>
+                                                Java Mock Test
+                                            </strong>
+
+                                            <small>
+                                                Placement Practice
+                                            </small>
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+                                <td>
+                                    Java
+                                </td>
+
+                                <td>
+
+                                    <span class="status-badge completed">
+                                        <i class="fas fa-check-circle"></i>
+                                        Completed
+                                    </span>
+
+                                </td>
+
+                                <td>
+                                    Today
+                                </td>
+
+                            </tr>
+
+
+                            <tr>
+
+                                <td>
+
+                                    <div class="activity-name">
+
+                                        <span class="activity-icon">
+                                            <i class="fas fa-file-alt"></i>
+                                        </span>
+
+                                        <div>
+
+                                            <strong>
+                                                Resume Updated
+                                            </strong>
+
+                                            <small>
+                                                Resume Builder
+                                            </small>
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+                                <td>
+                                    Resume
+                                </td>
+
+                                <td>
+
+                                    <span class="status-badge completed">
+                                        <i class="fas fa-check-circle"></i>
+                                        Completed
+                                    </span>
+
+                                </td>
+
+                                <td>
+                                    Yesterday
+                                </td>
+
+                            </tr>
+
+
+                            <tr>
+
+                                <td>
+
+                                    <div class="activity-name">
+
+                                        <span class="activity-icon">
+                                            <i class="fas fa-book"></i>
+                                        </span>
+
+                                        <div>
+
+                                            <strong>
+                                                Python Course
+                                            </strong>
+
+                                            <small>
+                                                Learning Module
+                                            </small>
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+                                <td>
+                                    Python
+                                </td>
+
+                                <td>
+
+                                    <span class="status-badge running">
+                                        <i class="fas fa-spinner"></i>
+                                        Running
+                                    </span>
+
+                                </td>
+
+                                <td>
+                                    Yesterday
+                                </td>
+
+                            </tr>
+
+
+                            <tr>
+
+                                <td>
+
+                                    <div class="activity-name">
+
+                                        <span class="activity-icon">
+                                            <i class="fas fa-comments"></i>
+                                        </span>
+
+                                        <div>
+
+                                            <strong>
+                                                Communication Practice
+                                            </strong>
+
+                                            <small>
+                                                English Speaking
+                                            </small>
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+                                <td>
+                                    Communication
+                                </td>
+
+                                <td>
+
+                                    <span class="status-badge pending">
+                                        <i class="fas fa-clock"></i>
+                                        Pending
+                                    </span>
+
+                                </td>
+
+                                <td>
+                                    Today
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =====================================================
+             PLACEMENT READINESS
+             ===================================================== -->
+
+        <section class="placement-grid">
+
+
+            <!-- READINESS -->
+
+            <div class="placement-card readiness-card">
+
+                <div class="card-header">
+
+                    <div>
+
+                        <span class="section-label">
+                            PLACEMENT
+                        </span>
+
+                        <h2>
+                            Placement Readiness
+                        </h2>
+
+                    </div>
+
+                    <i class="fas fa-rocket"></i>
+
+                </div>
+
+
+                <div class="readiness-content">
+
+                    <div class="circle-score">
+
+                        <div class="circle">
+
+                            <div class="circle-inner">
+
+                                <strong>
+                                    {{ placement_score|default(0) }}%
+                                </strong>
+
+                                <span>
+                                    Ready
+                                </span>
+
+                            </div>
 
                         </div>
+
+                    </div>
+
+
+                    <div class="readiness-text">
+
+                        <h3>
+                            Keep Going! 🚀
+                        </h3>
+
+                        <p>
+                            Your placement readiness is based on
+                            courses, mock tests, interview practice
+                            and resume preparation.
+                        </p>
+
+                        <a href="{{ url_for('results') }}"
+                           class="small-action-btn">
+
+                            Check Performance
+                            <i class="fas fa-arrow-right"></i>
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- QUICK SUMMARY -->
+
+            <div class="placement-card summary-card">
+
+                <div class="card-header">
+
+                    <div>
+
+                        <span class="section-label">
+                            SUMMARY
+                        </span>
+
+                        <h2>
+                            Quick Summary
+                        </h2>
+
+                    </div>
+
+                    <i class="fas fa-chart-pie"></i>
+
+                </div>
+
+
+                <ul class="summary-list">
+
+
+                    <li>
+
+                        <span class="summary-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </span>
+
+                        <span class="summary-text">
+
+                            <strong>
+                                {{ completed_courses|default(0) }}
+                            </strong>
+
+                            Courses Completed
+
+                        </span>
+
+                    </li>
+
+
+                    <li>
+
+                        <span class="summary-icon">
+                            <i class="fas fa-laptop-code"></i>
+                        </span>
+
+                        <span class="summary-text">
+
+                            <strong>
+                                {{ mock_attempted|default(0) }}
+                            </strong>
+
+                            Mock Tests Attempted
+
+                        </span>
+
+                    </li>
+
+
+                    <li>
+
+                        <span class="summary-icon">
+                            <i class="fas fa-question-circle"></i>
+                        </span>
+
+                        <span class="summary-text">
+
+                            <strong>
+                                {{ interview_completed|default(0) }}
+                            </strong>
+
+                            Interview Questions Solved
+
+                        </span>
+
+                    </li>
+
+
+                    <li>
+
+                        <span class="summary-icon">
+                            <i class="fas fa-file-alt"></i>
+                        </span>
+
+                        <span class="summary-text">
+
+                            <strong>
+                                {{ ats_score|default(0) }}%
+                            </strong>
+
+                            ATS Resume Score
+
+                        </span>
+
+                    </li>
+
+
+                    <li>
+
+                        <span class="summary-icon">
+                            <i class="fas fa-fire"></i>
+                        </span>
+
+                        <span class="summary-text">
+
+                            <strong>
+                                {{ streak|default(0) }}
+                            </strong>
+
+                            Day Learning Streak
+
+                        </span>
+
+                    </li>
+
+                </ul>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =====================================================
+             RECOMMENDED NEXT STEP
+             ===================================================== -->
+
+        <section class="dashboard-section recommendation-section">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span class="section-label">
+                        RECOMMENDED
+                    </span>
+
+                    <h2>
+                        Recommended Next Step
+                    </h2>
+
+                    <p>
+                        Choose what you want to work on next.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="recommend-grid">
+
+
+                <!-- COURSE -->
+
+                <a href="{{ url_for('courses') }}"
+                   class="recommend-item">
+
+                    <div class="recommend-icon">
+                        <i class="fas fa-book-open"></i>
+                    </div>
+
+                    <div>
+
+                        <h3>
+                            Continue Course
+                        </h3>
+
+                        <p>
+                            Complete your pending learning modules
+                            and improve your technical skills.
+                        </p>
+
+                        <span>
+                            Continue
+                            <i class="fas fa-arrow-right"></i>
+                        </span>
+
+                    </div>
+
+                </a>
+
+
+
+                <!-- MOCK TEST -->
+
+                <a href="{{ url_for('mock_test') }}"
+                   class="recommend-item">
+
+                    <div class="recommend-icon">
+                        <i class="fas fa-clipboard-check"></i>
+                    </div>
+
+                    <div>
+
+                        <h3>
+                            Take Mock Test
+                        </h3>
+
+                        <p>
+                            Practice placement-style questions and
+                            improve your test performance.
+                        </p>
+
+                        <span>
+                            Start Test
+                            <i class="fas fa-arrow-right"></i>
+                        </span>
+
+                    </div>
+
+                </a>
+
+
+
+                <!-- INTERVIEW -->
+
+                <a href="{{ url_for('interview_questions') }}"
+                   class="recommend-item">
+
+                    <div class="recommend-icon">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+
+                    <div>
+
+                        <h3>
+                            Interview Practice
+                        </h3>
+
+                        <p>
+                            Prepare frequently asked technical and
+                            HR interview questions.
+                        </p>
+
+                        <span>
+                            Practice Now
+                            <i class="fas fa-arrow-right"></i>
+                        </span>
+
+                    </div>
+
+                </a>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =====================================================
+             UPCOMING CAMPUS DRIVES
+             ===================================================== -->
+
+        <section class="dashboard-section campus-section">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span class="section-label">
+                        OPPORTUNITIES
+                    </span>
+
+                    <h2>
+                        Upcoming Campus Drives
+                    </h2>
+
+                    <p>
+                        Keep track of upcoming placement opportunities.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="campus-drive">
+
+                <div class="table-wrapper">
+
+                    <table class="campus-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>Company</th>
+                                <th>Role</th>
+                                <th>Date</th>
+                                <th>Status</th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            <tr>
+
+                                <td>
+
+                                    <div class="company-name">
+
+                                        <span class="company-logo">
+                                            T
+                                        </span>
+
+                                        <strong>
+                                            TCS
+                                        </strong>
+
+                                    </div>
+
+                                </td>
+
+                                <td>
+                                    Software Engineer
+                                </td>
+
+                                <td>
+                                    25 Aug 2026
+                                </td>
+
+                                <td>
+
+                                    <span class="badge green">
+                                        Open
+                                    </span>
+
+                                </td>
+
+                            </tr>
+
+
+                            <tr>
+
+                                <td>
+
+                                    <div class="company-name">
+
+                                        <span class="company-logo">
+                                            I
+                                        </span>
+
+                                        <strong>
+                                            Infosys
+                                        </strong>
+
+                                    </div>
+
+                                </td>
+
+                                <td>
+                                    System Engineer
+                                </td>
+
+                                <td>
+                                    27 Aug 2026
+                                </td>
+
+                                <td>
+
+                                    <span class="badge orange">
+                                        Apply
+                                    </span>
+
+                                </td>
+
+                            </tr>
+
+
+                            <tr>
+
+                                <td>
+
+                                    <div class="company-name">
+
+                                        <span class="company-logo">
+                                            C
+                                        </span>
+
+                                        <strong>
+                                            Capgemini
+                                        </strong>
+
+                                    </div>
+
+                                </td>
+
+                                <td>
+                                    Analyst
+                                </td>
+
+                                <td>
+                                    30 Aug 2026
+                                </td>
+
+                                <td>
+
+                                    <span class="badge blue">
+                                        Registered
+                                    </span>
+
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =====================================================
+             MOTIVATION
+             ===================================================== -->
+
+        <section class="motivation-card">
+
+            <div class="motivation-icon">
+                <i class="fas fa-lightbulb"></i>
+            </div>
+
+
+            <div class="motivation-content">
+
+                <span>
+                    DAILY MOTIVATION
+                </span>
+
+                <h2>
+                    Keep Learning. Keep Growing. 🚀
+                </h2>
+
+                <p>
+                    Success is built through consistency,
+                    practice and continuous improvement.
+                </p>
+
+            </div>
+
+
+            <div class="motivation-action">
+
+                <i class="fas fa-quote-right"></i>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =====================================================
+             FOOTER
+             ===================================================== -->
+
+        <footer class="dashboard-footer">
+
+            <div class="footer-main">
+
+                <div class="footer-brand">
+
+                    <div class="footer-logo">
+
+                        <i class="fas fa-graduation-cap"></i>
+
+                    </div>
+
+                    <div>
+
+                        <h3>
+                            Placement Training Portal
+                        </h3>
+
+                        <p>
+                            Your complete placement preparation
+                            companion.
+                        </p>
 
                     </div>
 
                 </div>
 
 
-                <div class="readiness-text">
+                <div class="footer-links">
 
-                    <h3>
-                        Keep Going! 🚀
-                    </h3>
+                    <a href="{{ url_for('courses') }}">
+                        Courses
+                    </a>
 
-                    <p>
-                        Your placement readiness is based on
-                        courses, mock tests, interview practice
-                        and resume preparation.
-                    </p>
+                    <a href="{{ url_for('leaderboard') }}">
+                        Leaderboard
+                    </a>
 
-                    <a href="{{ url_for('results') }}"
-                       class="small-action-btn">
+                    <a href="{{ url_for('mock_test') }}">
+                        Mock Test
+                    </a>
 
-                        Check Performance
-                        <i class="fas fa-arrow-right"></i>
+                    <a href="{{ url_for('notes') }}">
+                        Notes
+                    </a>
 
+                    <a href="{{ url_for('resume_builder') }}">
+                        Resume
+                    </a>
+
+                    <!-- CORRECT RESULTS ROUTE -->
+                    <a href="{{ url_for('results') }}">
+                        Results
                     </a>
 
                 </div>
 
             </div>
 
-        </div>
 
-
-        <!-- Quick Summary -->
-
-        <div class="placement-card summary-card">
-
-            <div class="card-header">
-
-                <div>
-
-                    <span class="section-label">
-                        SUMMARY
-                    </span>
-
-                    <h2>
-                        Quick Summary
-                    </h2>
-
-                </div>
-
-                <i class="fas fa-chart-pie"></i>
-
-            </div>
-
-
-            <ul class="summary-list">
-
-
-                <li>
-
-                    <span class="summary-icon">
-                        <i class="fas fa-check-circle"></i>
-                    </span>
-
-                    <span class="summary-text">
-                        <strong>
-                            {{ completed_courses or 0 }}
-                        </strong>
-
-                        Courses Completed
-                    </span>
-
-                </li>
-
-
-                <li>
-
-                    <span class="summary-icon">
-                        <i class="fas fa-laptop-code"></i>
-                    </span>
-
-                    <span class="summary-text">
-
-                        <strong>
-                            {{ mock_attempted or 0 }}
-                        </strong>
-
-                        Mock Tests Attempted
-
-                    </span>
-
-                </li>
-
-
-                <li>
-
-                    <span class="summary-icon">
-                        <i class="fas fa-question-circle"></i>
-                    </span>
-
-                    <span class="summary-text">
-
-                        <strong>
-                            {{ interview_completed or 0 }}
-                        </strong>
-
-                        Interview Questions Solved
-
-                    </span>
-
-                </li>
-
-
-                <li>
-
-                    <span class="summary-icon">
-                        <i class="fas fa-file-alt"></i>
-                    </span>
-
-                    <span class="summary-text">
-
-                        <strong>
-                            {{ ats_score or 0 }}%
-                        </strong>
-
-                        ATS Resume Score
-
-                    </span>
-
-                </li>
-
-
-                <li>
-
-                    <span class="summary-icon">
-                        <i class="fas fa-fire"></i>
-                    </span>
-
-                    <span class="summary-text">
-
-                        <strong>
-                            {{ streak or 0 }}
-                        </strong>
-
-                        Day Learning Streak
-
-                    </span>
-
-                </li>
-
-            </ul>
-
-        </div>
-
-    </section>
-
-
-    <!-- =====================================================
-         RECOMMENDED NEXT STEP
-    ====================================================== -->
-
-    <section class="dashboard-section recommendation-section">
-
-        <div class="section-heading">
-
-            <div>
-
-                <span class="section-label">
-                    RECOMMENDED
-                </span>
-
-                <h2>
-                    Recommended Next Step
-                </h2>
+            <div class="footer-bottom">
 
                 <p>
-                    Choose what you want to work on next.
+                    © 2026 Placement Training Portal.
+                    All Rights Reserved.
+                </p>
+
+                <p>
+                    Built with Flask • HTML • CSS • JavaScript • MySQL
                 </p>
 
             </div>
 
-        </div>
+        </footer>
 
-
-        <div class="recommend-grid">
-
-
-            <!-- Course -->
-
-            <a href="{{ url_for('courses') }}"
-               class="recommend-item">
-
-                <div class="recommend-icon">
-                    <i class="fas fa-book-open"></i>
-                </div>
-
-                <div>
-
-                    <h3>
-                        Continue Course
-                    </h3>
-
-                    <p>
-                        Complete your pending learning modules
-                        and improve your technical skills.
-                    </p>
-
-                    <span>
-                        Continue
-                        <i class="fas fa-arrow-right"></i>
-                    </span>
-
-                </div>
-
-            </a>
-
-
-            <!-- Mock Test -->
-
-            <a href="{{ url_for('mock_test') }}"
-               class="recommend-item">
-
-                <div class="recommend-icon">
-                    <i class="fas fa-clipboard-check"></i>
-                </div>
-
-                <div>
-
-                    <h3>
-                        Take Mock Test
-                    </h3>
-
-                    <p>
-                        Practice placement-style questions and
-                        improve your test performance.
-                    </p>
-
-                    <span>
-                        Start Test
-                        <i class="fas fa-arrow-right"></i>
-                    </span>
-
-                </div>
-
-            </a>
-
-
-            <!-- Interview -->
-
-            <a href="{{ url_for('interview_questions') }}"
-               class="recommend-item">
-
-                <div class="recommend-icon">
-                    <i class="fas fa-user-tie"></i>
-                </div>
-
-                <div>
-
-                    <h3>
-                        Interview Practice
-                    </h3>
-
-                    <p>
-                        Prepare frequently asked technical and
-                        HR interview questions.
-                    </p>
-
-                    <span>
-                        Practice Now
-                        <i class="fas fa-arrow-right"></i>
-                    </span>
-
-                </div>
-
-            </a>
-
-        </div>
-
-    </section>
-
-
-    <!-- =====================================================
-         UPCOMING CAMPUS DRIVES
-    ====================================================== -->
-
-    <section class="dashboard-section campus-section">
-
-        <div class="section-heading">
-
-            <div>
-
-                <span class="section-label">
-                    OPPORTUNITIES
-                </span>
-
-                <h2>
-                    Upcoming Campus Drives
-                </h2>
-
-                <p>
-                    Keep track of upcoming placement opportunities.
-                </p>
-
-            </div>
-
-        </div>
-
-
-        <div class="campus-drive">
-
-            <div class="table-wrapper">
-
-                <table class="campus-table">
-
-                    <thead>
-
-                        <tr>
-
-                            <th>
-                                Company
-                            </th>
-
-                            <th>
-                                Role
-                            </th>
-
-                            <th>
-                                Date
-                            </th>
-
-                            <th>
-                                Status
-                            </th>
-
-                        </tr>
-
-                    </thead>
-
-                    <tbody>
-
-
-                        <tr>
-
-                            <td>
-
-                                <div class="company-name">
-
-                                    <span class="company-logo">
-                                        T
-                                    </span>
-
-                                    <strong>
-                                        TCS
-                                    </strong>
-
-                                </div>
-
-                            </td>
-
-                            <td>
-                                Software Engineer
-                            </td>
-
-                            <td>
-                                25 Aug 2026
-                            </td>
-
-                            <td>
-
-                                <span class="badge green">
-                                    Open
-                                </span>
-
-                            </td>
-
-                        </tr>
-
-
-                        <tr>
-
-                            <td>
-
-                                <div class="company-name">
-
-                                    <span class="company-logo">
-                                        I
-                                    </span>
-
-                                    <strong>
-                                        Infosys
-                                    </strong>
-
-                                </div>
-
-                            </td>
-
-                            <td>
-                                System Engineer
-                            </td>
-
-                            <td>
-                                27 Aug 2026
-                            </td>
-
-                            <td>
-
-                                <span class="badge orange">
-                                    Apply
-                                </span>
-
-                            </td>
-
-                        </tr>
-
-
-                        <tr>
-
-                            <td>
-
-                                <div class="company-name">
-
-                                    <span class="company-logo">
-                                        C
-                                    </span>
-
-                                    <strong>
-                                        Capgemini
-                                    </strong>
-
-                                </div>
-
-                            </td>
-
-                            <td>
-                                Analyst
-                            </td>
-
-                            <td>
-                                30 Aug 2026
-                            </td>
-
-                            <td>
-
-                                <span class="badge blue">
-                                    Registered
-                                </span>
-
-                            </td>
-
-                        </tr>
-
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- =====================================================
-         MOTIVATION
-    ====================================================== -->
-
-    <section class="motivation-card">
-
-        <div class="motivation-icon">
-
-            <i class="fas fa-lightbulb"></i>
-
-        </div>
-
-        <div class="motivation-content">
-
-            <span>
-                DAILY MOTIVATION
-            </span>
-
-            <h2>
-                Keep Learning. Keep Growing. 🚀
-            </h2>
-
-            <p>
-                Success is built through consistency,
-                practice and continuous improvement.
-            </p>
-
-        </div>
-
-        <div class="motivation-action">
-
-            <i class="fas fa-quote-right"></i>
-
-        </div>
-
-    </section>
-
-
-    <!-- =====================================================
-         DASHBOARD FOOTER
-    ====================================================== -->
-
-    <footer class="dashboard-footer">
-
-        <div class="footer-main">
-
-            <div class="footer-brand">
-
-                <div class="footer-logo">
-
-                    <i class="fas fa-graduation-cap"></i>
-
-                </div>
-
-                <div>
-
-                    <h3>
-                        Placement Training Portal
-                    </h3>
-
-                    <p>
-                        Your complete placement preparation
-                        companion.
-                    </p>
-
-                </div>
-
-            </div>
-
-
-            <div class="footer-links">
-
-                <a href="{{ url_for('courses') }}">
-                    Courses
-                </a>
-
-                <a href="{{ url_for('leaderboard') }}">
-                    Leaderboard
-                </a>
-
-                <a href="{{ url_for('mock_test') }}">
-                    Mock Test
-                </a>
-
-                <a href="{{ url_for('notes') }}">
-                    Notes
-                </a>
-
-                <a href="{{ url_for('resume_builder') }}">
-                    Resume
-                </a>
-
-                <a href="{{ url_for('results') }}">
-                    Results
-                </a>
-
-            </div>
-
-        </div>
-
-
-        <div class="footer-bottom">
-
-            <p>
-                © 2026 Placement Training Portal.
-                All Rights Reserved.
-            </p>
-
-            <p>
-                Built with Flask • HTML • CSS • JavaScript • MySQL
-            </p>
-
-        </div>
-
-    </footer>
+    </main>
 
 </div>
 
