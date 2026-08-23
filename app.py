@@ -5964,32 +5964,58 @@ def courses():
     )
 
 @app.route("/course/<course_name>")
-def course_learning(course_name):
+def course(course_name):
 
-    if "user_id" not in session:
-        return redirect(url_for("login"))
+    try:
 
-    course_name = course_name.strip()
+        conn = get_db_connection()
+        cursor = conn.cursor()
 
-    course_days = {
-        "Java": 30,
-        "Python": 30,
-        "HTML": 15,
-        "CSS": 20,
-        "JavaScript": 30,
-        "SQL": 25,
-        "DBMS": 25,
-        "Operating System": 25
-    }
+        cursor.execute("""
+            SELECT
+                day_number,
+                title,
+                notes,
+                code_snippet,
+                practice_task
+            FROM course_content
+            WHERE LOWER(course_name) = LOWER(%s)
+            ORDER BY day_number ASC
+        """, (course_name,))
 
-    day_count = course_days.get(course_name, 30)
+        rows = cursor.fetchall()
 
-    return render_template(
-        "course_learning.html",
-        course_name=course_name,
-        day_count=day_count
-    )
+        cursor.close()
+        conn.close()
 
+        course_data = {}
+
+        for row in rows:
+
+            course_data[str(row["day_number"])] = {
+                "title": row["title"],
+                "notes": row["notes"] or "",
+                "code_snippet": row["code_snippet"] or "",
+                "practice_task": row["practice_task"] or ""
+            }
+
+        return render_template(
+            "java.html",
+            course_name=course_name,
+            day_count=len(rows),
+            course_data=course_data
+        )
+
+    except Exception as e:
+
+        print("COURSE ERROR:", repr(e))
+
+        return render_template(
+            "java.html",
+            course_name=course_name,
+            day_count=0,
+            course_data={}
+        )
 @app.route("/notes")
 def notes():
 
