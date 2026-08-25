@@ -6299,12 +6299,11 @@ def results():
 # ============================================================
 # COURSE / NOTES ROUTES
 # ============================================================
-
 @app.route("/java")
 @login_required
 def java():
 
-    cursor = mysql.connection.cursor(dictionary=True)
+    cursor = mysql.connection.cursor()
 
     cursor.execute("""
         SELECT
@@ -6314,37 +6313,46 @@ def java():
             notes,
             code_snippet,
             practice_task
-        FROM java_lessons
+        FROM advanced_java_lessons
         ORDER BY day_number ASC
     """)
 
-    lessons = cursor.fetchall()
-
+    rows = cursor.fetchall()
     cursor.close()
+
+    lessons = []
+
+    for row in rows:
+        lessons.append({
+            "id": row[0],
+            "day_number": row[1],
+            "title": row[2],
+            "notes": row[3],
+            "code_snippet": row[4],
+            "practice_task": row[5]
+        })
 
     total_days = len(lessons)
 
-    # Abhi completed system connect nahi hai
     completed_days = []
 
     progress = len(completed_days)
 
     percentage = (
-        int((progress / total_days) * 100)
+        round((progress / total_days) * 100)
         if total_days > 0
         else 0
     )
 
     return render_template(
-        "java.html",
-        course_name="Core Java",
+        "java.html",              # ✅ तुमची file
+        course_name="Advanced Java",
         lessons=lessons,
         completed_days=completed_days,
         progress=progress,
         total_days=total_days,
         percentage=percentage
     )
-
 @app.route("/python")
 def python():
     if "user_id" not in session:
