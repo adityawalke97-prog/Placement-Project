@@ -1,181 +1,3013 @@
 {% extends "layout.html" %}
 
 {% block title %}
-{{ course_name }} Course
+Advanced Java | Placement Training Portal
 {% endblock %}
 
 {% block content %}
 
-<div class="course-page">
+<div class="advanced-java-page">
 
-    <!-- ==========================
-            SIDEBAR
-    =========================== -->
+    <!-- =====================================================
+         TOP COURSE HEADER
+         ===================================================== -->
 
-    <aside class="sidebar">
+    <section class="advanced-hero">
 
-        <div class="course-header">
+        <div class="hero-overlay"></div>
 
-            <h2>{{ course_name }}</h2>
+        <div class="hero-inner">
+
+            <div class="hero-left">
+
+                <div class="course-badge">
+                    🚀 ADVANCED JAVA
+                </div>
+
+                <h1>
+                    Master Advanced Java
+                </h1>
+
+                <p>
+                    Learn JDBC, Servlets, JSP, Hibernate,
+                    Spring Boot, REST API and enterprise
+                    Java development through practical lessons.
+                </p>
+
+                <div class="hero-actions">
+
+                    <a
+                        href="#day1"
+                        class="start-learning-btn"
+                    >
+                        ▶ Continue Learning
+                    </a>
+
+                    <button
+                        type="button"
+                        class="outline-btn"
+                        onclick="toggleCourseInfo()"
+                    >
+                        ℹ Course Info
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- HERO STATS -->
+
+            <div class="hero-stats">
+
+                <div class="hero-stat">
+
+                    <span class="stat-icon">
+                        📚
+                    </span>
+
+                    <strong>
+                        {{ total_days }}
+                    </strong>
+
+                    <small>
+                        Lessons
+                    </small>
+
+                </div>
+
+
+                <div class="hero-stat">
+
+                    <span class="stat-icon">
+                        ✅
+                    </span>
+
+                    <strong>
+                        {{ progress }}
+                    </strong>
+
+                    <small>
+                        Completed
+                    </small>
+
+                </div>
+
+
+                <div class="hero-stat">
+
+                    <span class="stat-icon">
+                        📈
+                    </span>
+
+                    <strong>
+                        {{ percentage }}%
+                    </strong>
+
+                    <small>
+                        Progress
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         COURSE INFO PANEL
+         ===================================================== -->
+
+    <section
+        id="courseInfo"
+        class="course-info-panel"
+        style="display:none;"
+    >
+
+        <div class="info-grid">
+
+            <div class="info-item">
+                <span>🎯</span>
+                <div>
+                    <strong>Level</strong>
+                    <p>Advanced</p>
+                </div>
+            </div>
+
+
+            <div class="info-item">
+                <span>⏱️</span>
+                <div>
+                    <strong>Duration</strong>
+                    <p>30 Days</p>
+                </div>
+            </div>
+
+
+            <div class="info-item">
+                <span>💻</span>
+                <div>
+                    <strong>Projects</strong>
+                    <p>Practical Projects</p>
+                </div>
+            </div>
+
+
+            <div class="info-item">
+                <span>🏆</span>
+                <div>
+                    <strong>Certificate</strong>
+                    <p>After Completion</p>
+                </div>
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         MAIN COURSE AREA
+         ===================================================== -->
+
+    <div class="advanced-course-layout">
+
+
+        <!-- =================================================
+             SIDEBAR
+             ================================================= -->
+
+        <aside class="advanced-sidebar">
+
+            <div class="sidebar-heading">
+
+                <div>
+
+                    <span>
+                        COURSE ROADMAP
+                    </span>
+
+                    <h2>
+                        Advanced Java
+                    </h2>
+
+                </div>
+
+                <button
+                    class="sidebar-toggle"
+                    onclick="toggleSidebar()"
+                >
+                    ☰
+                </button>
+
+            </div>
+
+
+            <!-- Progress -->
+
+            <div class="sidebar-progress">
+
+                <div class="progress-top">
+
+                    <span>
+                        Your Progress
+                    </span>
+
+                    <strong>
+                        {{ percentage }}%
+                    </strong>
+
+                </div>
+
+                <div class="advanced-progress-bar">
+
+                    <div
+                        class="advanced-progress-fill"
+                        style="width: {{ percentage }}%;"
+                    ></div>
+
+                </div>
+
+                <p>
+                    {{ progress }} of
+                    {{ total_days }}
+                    lessons completed
+                </p>
+
+            </div>
+
+
+            <!-- Search -->
+
+            <div class="lesson-search">
+
+                <span>
+                    🔍
+                </span>
+
+                <input
+                    type="text"
+                    id="lessonSearch"
+                    placeholder="Search lessons..."
+                    autocomplete="off"
+                >
+
+            </div>
+
+
+            <!-- Day Navigation -->
+
+            <div class="day-navigation">
+
+                {% for lesson in lessons %}
+
+                <a
+                    href="#day{{ lesson.day_number }}"
+                    class="day-item
+                    {% if lesson.day_number in completed_days %}
+                    completed
+                    {% endif %}"
+                    data-title="{{ lesson.title|lower }}"
+                    data-day="{{ lesson.day_number }}"
+                >
+
+                    <span class="day-number">
+
+                        {% if lesson.day_number in completed_days %}
+
+                            ✓
+
+                        {% else %}
+
+                            {{ lesson.day_number }}
+
+                        {% endif %}
+
+                    </span>
+
+                    <span class="day-details">
+
+                        <strong>
+                            Day {{ lesson.day_number }}
+                        </strong>
+
+                        <small>
+                            {{ lesson.title }}
+                        </small>
+
+                    </span>
+
+                    {% if lesson.day_number in completed_days %}
+
+                        <span class="day-check">
+                            ✓
+                        </span>
+
+                    {% endif %}
+
+                </a>
+
+                {% endfor %}
+
+            </div>
+
+        </aside>
+
+
+
+        <!-- =================================================
+             MAIN LESSON CONTENT
+             ================================================= -->
+
+        <main class="advanced-content">
+
+
+            <!-- Course Welcome -->
+
+            <div class="welcome-card">
+
+                <div class="welcome-icon">
+                    ☕
+                </div>
+
+                <div>
+
+                    <span>
+                        WELCOME TO THE COURSE
+                    </span>
+
+                    <h2>
+                        Become an Advanced Java Developer
+                    </h2>
+
+                    <p>
+                        Follow each lesson, practice the examples
+                        and mark your progress as you learn.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 LESSON LOOP
+                 ================================================= -->
+
+            {% for lesson in lessons %}
+
+            <article
+                class="advanced-lesson"
+                id="day{{ lesson.day_number }}"
+                data-day="{{ lesson.day_number }}"
+            >
+
+
+                <!-- Lesson Header -->
+
+                <header class="lesson-header">
+
+                    <div class="lesson-number">
+
+                        <span>
+                            DAY
+                        </span>
+
+                        <strong>
+                            {{ lesson.day_number }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="lesson-title">
+
+                        <span class="lesson-label">
+                            ADVANCED JAVA
+                        </span>
+
+                        <h2>
+                            {{ lesson.title }}
+                        </h2>
+
+                        <p>
+                            Learn the concepts,
+                            understand the code and
+                            complete the practice task.
+                        </p>
+
+                    </div>
+
+
+                    {% if lesson.day_number in completed_days %}
+
+                    <div class="lesson-status completed-status">
+                        ✓ Completed
+                    </div>
+
+                    {% else %}
+
+                    <div class="lesson-status">
+                        📖 Learning
+                    </div>
+
+                    {% endif %}
+
+                </header>
+
+
+
+                <!-- =================================================
+                     TABS
+                     ================================================= -->
+
+                <div class="advanced-tabs">
+
+                    <button
+                        class="advanced-tab active"
+                        data-tab="notes"
+                        onclick="showAdvancedTab(
+                            {{ lesson.day_number }},
+                            'notes',
+                            this
+                        )"
+                    >
+                        📚
+                        <span>Notes</span>
+                    </button>
+
+
+                    <button
+                        class="advanced-tab"
+                        data-tab="code"
+                        onclick="showAdvancedTab(
+                            {{ lesson.day_number }},
+                            'code',
+                            this
+                        )"
+                    >
+                        💻
+                        <span>Code</span>
+                    </button>
+
+
+                    <button
+                        class="advanced-tab"
+                        data-tab="practice"
+                        onclick="showAdvancedTab(
+                            {{ lesson.day_number }},
+                            'practice',
+                            this
+                        )"
+                    >
+                        🧠
+                        <span>Practice</span>
+                    </button>
+
+                </div>
+
+
+
+                <!-- =================================================
+                     NOTES
+                     ================================================= -->
+
+                <div
+                    class="advanced-tab-content notes-content"
+                    id="advanced-notes{{ lesson.day_number }}"
+                >
+
+                    {{ lesson.notes|safe }}
+
+                </div>
+
+
+
+                <!-- =================================================
+                     CODE
+                     ================================================= -->
+
+                <div
+                    class="advanced-tab-content code-content"
+                    id="advanced-code{{ lesson.day_number }}"
+                    style="display:none;"
+                >
+
+                    <div class="code-header">
+
+                        <div class="code-dots">
+
+                            <span></span>
+                            <span></span>
+                            <span></span>
+
+                        </div>
+
+                        <span>
+                            Java
+                        </span>
+
+                        <button
+                            type="button"
+                            onclick="copyAdvancedCode(
+                                {{ lesson.day_number }}
+                            )"
+                        >
+                            📋 Copy
+                        </button>
+
+                    </div>
+
+
+                    <pre
+                        id="codeBlock{{ lesson.day_number }}"
+                    ><code>{{ lesson.code_snippet }}</code></pre>
+
+                </div>
+
+
+
+                <!-- =================================================
+                     PRACTICE
+                     ================================================= -->
+
+                <div
+                    class="advanced-tab-content practice-content"
+                    id="advanced-practice{{ lesson.day_number }}"
+                    style="display:none;"
+                >
+
+                    <div class="practice-icon">
+                        🧠
+                    </div>
+
+                    <div>
+
+                        <span class="practice-label">
+                            PRACTICE CHALLENGE
+                        </span>
+
+                        <h3>
+                            Test Your Knowledge
+                        </h3>
+
+                        <p>
+                            {{ lesson.practice_task }}
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- =================================================
+                     LESSON FOOTER
+                     ================================================= -->
+
+                <footer class="lesson-footer">
+
+
+                    <!-- Previous -->
+
+                    {% if not loop.first %}
+
+                    <a
+                        href="#day{{ lessons[loop.index0 - 1].day_number }}"
+                        class="lesson-nav-btn previous"
+                    >
+                        ←
+                        <span>
+                            Previous
+                        </span>
+                    </a>
+
+                    {% else %}
+
+                    <div></div>
+
+                    {% endif %}
+
+
+
+                    <!-- Complete -->
+
+                    <button
+                        type="button"
+                        class="advanced-complete-btn
+                        {% if lesson.day_number in completed_days %}
+                        is-completed
+                        {% endif %}"
+                        data-course="Advanced Java"
+                        data-day="{{ lesson.day_number }}"
+                    >
+
+                        {% if lesson.day_number in completed_days %}
+
+                            ✓ Completed
+
+                        {% else %}
+
+                            ✓ Mark Complete
+
+                        {% endif %}
+
+                    </button>
+
+
+
+                    <!-- Next -->
+
+                    {% if not loop.last %}
+
+                    <a
+                        href="#day{{ lessons[loop.index0 + 1].day_number }}"
+                        class="lesson-nav-btn next"
+                    >
+                        <span>
+                            Next Lesson
+                        </span>
+                        →
+                    </a>
+
+                    {% else %}
+
+                    <button
+                        type="button"
+                        class="lesson-nav-btn certificate-btn"
+                        onclick="openCertificateModal()"
+                    >
+                        🏆
+                        Certificate
+                    </button>
+
+                    {% endif %}
+
+                </footer>
+
+            </article>
+
+            {% endfor %}
+
+
+
+            <!-- =================================================
+                 COURSE COMPLETION
+                 ================================================= -->
+
+            <section class="completion-card">
+
+                <div class="completion-icon">
+                    🏆
+                </div>
+
+                <div class="completion-content">
+
+                    <span>
+                        COURSE COMPLETION
+                    </span>
+
+                    <h2>
+                        Finish Advanced Java
+                    </h2>
+
+                    <p>
+                        Complete all lessons to unlock
+                        your Advanced Java certificate.
+                    </p>
+
+                </div>
+
+                <div class="completion-progress">
+
+                    <strong>
+                        {{ percentage }}%
+                    </strong>
+
+                    <div>
+                        {{ progress }}/{{ total_days }}
+                    </div>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         FLOATING PROGRESS
+         ===================================================== -->
+
+    <div
+        class="advanced-floating-progress"
+        id="floatingProgress"
+    >
+
+        <div class="floating-circle">
 
             <span>
-                {{ progress }}/{{ total_days }} Completed
+                {{ percentage }}%
             </span>
 
         </div>
 
-        <div class="course-progress">
+    </div>
 
-            <div class="progress-bar">
 
-                <div
-                    class="progress-fill"
-                    style="width:{{ percentage }}%;"
-                ></div>
 
+    <!-- =====================================================
+         CERTIFICATE MODAL
+         ===================================================== -->
+
+    <div
+        class="advanced-certificate-modal"
+        id="certificateModal"
+        style="display:none;"
+    >
+
+        <div class="certificate-modal-box">
+
+            <button
+                type="button"
+                class="modal-close"
+                onclick="closeCertificateModal()"
+            >
+                ×
+            </button>
+
+            <div class="certificate-trophy">
+                🏆
             </div>
 
-            <h3>{{ percentage }}%</h3>
+            <span>
+                CONGRATULATIONS
+            </span>
+
+            <h2>
+                Advanced Java Completed!
+            </h2>
+
+            <p>
+                You have successfully completed
+                the Advanced Java learning path.
+            </p>
+
+            <button
+                type="button"
+                class="certificate-download-btn"
+                onclick="downloadCertificate()"
+            >
+                📜 Get Certificate
+            </button>
 
         </div>
 
-        <ul class="day-list">
-
-            {% for lesson in lessons %}
-
-            <li
-                class="
-                {% if lesson.day_number in completed_days %}
-                completed
-                {% endif %}
-                "
-            >
-
-                <a
-                    href="#day{{ lesson.day_number }}"
-                >
-
-                    Day {{ lesson.day_number }}
-
-                </a>
-
-            </li>
-
-            {% endfor %}
-
-        </ul>
-
-    </aside>
-
-
-
-    <!-- ==========================
-            MAIN CONTENT
-    =========================== -->
-
-    <main class="course-content">
-
-        {% for lesson in lessons %}
-
-        <section
-            class="lesson-card"
-            id="day{{ lesson.day_number }}"
-        >
-
-            <div class="lesson-top">
-
-                <h2>
-
-                    Day {{ lesson.day_number }}
-
-                </h2>
-
-                <span>
-
-                    {{ lesson.title }}
-
-                </span>
-
-            </div>
-
-            <!-- Tabs -->
-
-            <div class="tabs">
-
-                <button
-                    class="tab active"
-                    onclick="showTab({{ lesson.day_number }},'notes')"
-                >
-                    Notes
-                </button>
-
-                <button
-                    class="tab"
-                    onclick="showTab({{ lesson.day_number }},'code')"
-                >
-                    Code
-                </button>
-
-                <button
-                    class="tab"
-                    onclick="showTab({{ lesson.day_number }},'task')"
-                >
-                    Practice
-                </button>
-
-            </div>
-
-            <!-- Notes -->
-
-            <div
-                class="tab-content notes"
-                id="notes{{ lesson.day_number }}"
-            >
-
-                {{ lesson.notes|safe }}
-
-            </div>
-
-            <!-- Code -->
-
-            <pre
-                class="tab-content code"
-                id="code{{ lesson.day_number }}"
-                style="display:none;"
-            ><code>{{ lesson.code_snippet }}</code></pre>
-
-            <!-- Task -->
-
-            <div
-                class="tab-content task"
-                id="task{{ lesson.day_number }}"
-                style="display:none;"
-            >
-
-                {{ lesson.practice_task }}
-
-            </div>
-
-            <button
-
-                class="complete-btn"
-
-                data-course="{{ course_name }}"
-
-                data-day="{{ lesson.day_number }}"
-
-            >
-
-                ✅ Mark Complete
-
-            </button>
-
-        </section>
-
-        {% endfor %}
-
-    </main>
+    </div>
 
 </div>
+
+
+
+<!-- =========================================================
+     ADVANCED JAVA CSS
+     ========================================================= -->
+
+<style>
+
+/* =========================================================
+   PAGE
+   ========================================================= */
+
+.advanced-java-page {
+    min-height: 100vh;
+    background: #f6f8fc;
+    color: #172033;
+}
+
+
+/* =========================================================
+   HERO
+   ========================================================= */
+
+.advanced-hero {
+    position: relative;
+    overflow: hidden;
+
+    padding: 65px 7%;
+
+    background:
+        linear-gradient(
+            135deg,
+            #111827,
+            #312e81,
+            #4c1d95
+        );
+
+    color: white;
+}
+
+.hero-overlay {
+    position: absolute;
+    inset: 0;
+
+    background:
+        radial-gradient(
+            circle at 85% 20%,
+            rgba(139,92,246,.35),
+            transparent 35%
+        );
+}
+
+.hero-inner {
+    position: relative;
+    z-index: 2;
+
+    max-width: 1400px;
+    margin: auto;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 50px;
+}
+
+.hero-left {
+    max-width: 750px;
+}
+
+.course-badge {
+    display: inline-block;
+
+    padding: 8px 14px;
+
+    border-radius: 30px;
+
+    background:
+        rgba(255,255,255,.12);
+
+    border:
+        1px solid rgba(255,255,255,.2);
+
+    font-size: 12px;
+    font-weight: 800;
+
+    letter-spacing: 1px;
+}
+
+.hero-left h1 {
+    margin: 18px 0 12px;
+
+    font-size: clamp(38px,5vw,65px);
+
+    line-height: 1.05;
+
+    font-weight: 900;
+}
+
+.hero-left p {
+    max-width: 650px;
+
+    margin-bottom: 25px;
+
+    color: #dbeafe;
+
+    font-size: 17px;
+    line-height: 1.7;
+}
+
+.hero-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.start-learning-btn,
+.outline-btn {
+    border: none;
+    cursor: pointer;
+
+    padding: 13px 20px;
+
+    border-radius: 12px;
+
+    text-decoration: none;
+
+    font-weight: 800;
+
+    transition: .25s;
+}
+
+.start-learning-btn {
+    color: white;
+
+    background:
+        linear-gradient(
+            135deg,
+            #6366f1,
+            #8b5cf6
+        );
+
+    box-shadow:
+        0 12px 30px rgba(0,0,0,.2);
+}
+
+.outline-btn {
+    color: white;
+
+    background:
+        rgba(255,255,255,.08);
+
+    border:
+        1px solid rgba(255,255,255,.2);
+}
+
+.start-learning-btn:hover,
+.outline-btn:hover {
+    transform: translateY(-3px);
+}
+
+
+/* =========================================================
+   HERO STATS
+   ========================================================= */
+
+.hero-stats {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 120px);
+
+    gap: 12px;
+}
+
+.hero-stat {
+    padding: 18px 12px;
+
+    text-align: center;
+
+    background:
+        rgba(255,255,255,.08);
+
+    border:
+        1px solid rgba(255,255,255,.12);
+
+    border-radius: 16px;
+
+    backdrop-filter: blur(10px);
+}
+
+.stat-icon {
+    display: block;
+
+    margin-bottom: 7px;
+
+    font-size: 20px;
+}
+
+.hero-stat strong {
+    display: block;
+
+    font-size: 23px;
+}
+
+.hero-stat small {
+    color: #cbd5e1;
+}
+
+
+/* =========================================================
+   INFO
+   ========================================================= */
+
+.course-info-panel {
+    max-width: 1400px;
+
+    margin: 20px auto;
+
+    padding: 20px;
+
+    border-radius: 18px;
+
+    background: white;
+
+    box-shadow:
+        0 10px 30px rgba(15,23,42,.08);
+}
+
+.info-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4,1fr);
+
+    gap: 15px;
+}
+
+.info-item {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 15px;
+
+    border-radius: 13px;
+
+    background: #f8fafc;
+}
+
+.info-item > span {
+    font-size: 25px;
+}
+
+.info-item strong {
+    display: block;
+}
+
+.info-item p {
+    margin: 3px 0 0;
+
+    color: #64748b;
+
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   LAYOUT
+   ========================================================= */
+
+.advanced-course-layout {
+    max-width: 1450px;
+
+    margin: auto;
+
+    display: grid;
+
+    grid-template-columns:
+        310px 1fr;
+
+    gap: 25px;
+
+    padding: 30px 25px 100px;
+}
+
+
+/* =========================================================
+   SIDEBAR
+   ========================================================= */
+
+.advanced-sidebar {
+    position: sticky;
+
+    top: 85px;
+
+    height:
+        calc(100vh - 105px);
+
+    overflow-y: auto;
+
+    padding: 20px;
+
+    background: white;
+
+    border:
+        1px solid #e5e7eb;
+
+    border-radius: 20px;
+
+    box-shadow:
+        0 10px 30px rgba(15,23,42,.06);
+}
+
+.sidebar-heading {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 20px;
+}
+
+.sidebar-heading span {
+    color: #6366f1;
+
+    font-size: 10px;
+
+    font-weight: 900;
+
+    letter-spacing: 1px;
+}
+
+.sidebar-heading h2 {
+    margin: 4px 0 0;
+
+    font-size: 20px;
+}
+
+.sidebar-toggle {
+    display: none;
+}
+
+
+/* =========================================================
+   SIDEBAR PROGRESS
+   ========================================================= */
+
+.sidebar-progress {
+    margin-bottom: 20px;
+}
+
+.progress-top {
+    display: flex;
+
+    justify-content: space-between;
+
+    margin-bottom: 8px;
+
+    font-size: 12px;
+
+    color: #64748b;
+}
+
+.progress-top strong {
+    color: #6366f1;
+}
+
+.advanced-progress-bar {
+    height: 8px;
+
+    overflow: hidden;
+
+    border-radius: 20px;
+
+    background: #e5e7eb;
+}
+
+.advanced-progress-fill {
+    height: 100%;
+
+    border-radius: inherit;
+
+    background:
+        linear-gradient(
+            90deg,
+            #6366f1,
+            #8b5cf6
+        );
+
+    transition: width .5s ease;
+}
+
+.sidebar-progress p {
+    margin: 8px 0 0;
+
+    color: #94a3b8;
+
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   SEARCH
+   ========================================================= */
+
+.lesson-search {
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 10px 12px;
+
+    margin-bottom: 15px;
+
+    background: #f8fafc;
+
+    border:
+        1px solid #e2e8f0;
+
+    border-radius: 11px;
+}
+
+.lesson-search input {
+    width: 100%;
+
+    border: none;
+    outline: none;
+
+    background: transparent;
+
+    color: #172033;
+
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   DAYS
+   ========================================================= */
+
+.day-navigation {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 5px;
+}
+
+.day-item {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 10px;
+
+    color: #475569;
+
+    text-decoration: none;
+
+    border-radius: 11px;
+
+    transition: .2s;
+}
+
+.day-item:hover {
+    background: #f1f5f9;
+
+    transform: translateX(3px);
+}
+
+.day-item.completed {
+    color: #059669;
+}
+
+.day-number {
+    width: 29px;
+    height: 29px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 9px;
+
+    background: #eef2ff;
+
+    color: #6366f1;
+
+    font-size: 11px;
+
+    font-weight: 900;
+}
+
+.day-item.completed .day-number {
+    background: #dcfce7;
+
+    color: #059669;
+}
+
+.day-details {
+    min-width: 0;
+}
+
+.day-details strong {
+    display: block;
+
+    font-size: 12px;
+}
+
+.day-details small {
+    display: block;
+
+    overflow: hidden;
+
+    margin-top: 2px;
+
+    color: #94a3b8;
+
+    font-size: 10px;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+}
+
+.day-check {
+    margin-left: auto;
+
+    font-weight: 900;
+}
+
+
+/* =========================================================
+   CONTENT
+   ========================================================= */
+
+.advanced-content {
+    min-width: 0;
+}
+
+
+/* =========================================================
+   WELCOME
+   ========================================================= */
+
+.welcome-card {
+    display: flex;
+
+    align-items: center;
+
+    gap: 18px;
+
+    margin-bottom: 22px;
+
+    padding: 22px;
+
+    border-radius: 18px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #eef2ff,
+            #f5f3ff
+        );
+
+    border:
+        1px solid #e0e7ff;
+}
+
+.welcome-icon {
+    width: 55px;
+    height: 55px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 15px;
+
+    background: white;
+
+    font-size: 27px;
+
+    box-shadow:
+        0 5px 15px rgba(99,102,241,.1);
+}
+
+.welcome-card span {
+    color: #6366f1;
+
+    font-size: 10px;
+
+    font-weight: 900;
+
+    letter-spacing: 1px;
+}
+
+.welcome-card h2 {
+    margin: 5px 0;
+
+    font-size: 20px;
+}
+
+.welcome-card p {
+    margin: 0;
+
+    color: #64748b;
+
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   LESSON
+   ========================================================= */
+
+.advanced-lesson {
+    margin-bottom: 25px;
+
+    overflow: hidden;
+
+    background: white;
+
+    border:
+        1px solid #e5e7eb;
+
+    border-radius: 20px;
+
+    box-shadow:
+        0 10px 30px rgba(15,23,42,.06);
+
+    scroll-margin-top: 95px;
+}
+
+
+/* =========================================================
+   LESSON HEADER
+   ========================================================= */
+
+.lesson-header {
+    display: flex;
+
+    align-items: center;
+
+    gap: 18px;
+
+    padding: 25px;
+
+    border-bottom:
+        1px solid #eef2f7;
+}
+
+.lesson-number {
+    width: 62px;
+    height: 62px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 16px;
+
+    color: white;
+
+    background:
+        linear-gradient(
+            135deg,
+            #6366f1,
+            #8b5cf6
+        );
+}
+
+.lesson-number span {
+    font-size: 8px;
+
+    font-weight: 800;
+}
+
+.lesson-number strong {
+    font-size: 24px;
+}
+
+.lesson-title {
+    flex: 1;
+}
+
+.lesson-label {
+    color: #6366f1;
+
+    font-size: 9px;
+
+    font-weight: 900;
+
+    letter-spacing: 1px;
+}
+
+.lesson-title h2 {
+    margin: 4px 0;
+
+    font-size: 23px;
+}
+
+.lesson-title p {
+    margin: 0;
+
+    color: #64748b;
+
+    font-size: 12px;
+}
+
+.lesson-status {
+    padding: 7px 10px;
+
+    border-radius: 20px;
+
+    background: #fff7ed;
+
+    color: #ea580c;
+
+    font-size: 10px;
+
+    font-weight: 800;
+}
+
+.completed-status {
+    background: #dcfce7;
+
+    color: #059669;
+}
+
+
+/* =========================================================
+   TABS
+   ========================================================= */
+
+.advanced-tabs {
+    display: flex;
+
+    gap: 5px;
+
+    padding: 8px 20px 0;
+
+    background: #fafbff;
+}
+
+.advanced-tab {
+    border: none;
+
+    cursor: pointer;
+
+    padding: 12px 17px;
+
+    border-radius: 10px 10px 0 0;
+
+    background: transparent;
+
+    color: #64748b;
+
+    font-weight: 700;
+
+    transition: .2s;
+}
+
+.advanced-tab:hover {
+    color: #6366f1;
+}
+
+.advanced-tab.active {
+    background: white;
+
+    color: #6366f1;
+}
+
+
+/* =========================================================
+   CONTENT
+   ========================================================= */
+
+.advanced-tab-content {
+    padding: 27px;
+
+    animation:
+        contentFade .25s ease;
+}
+
+@keyframes contentFade {
+
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+}
+
+
+/* =========================================================
+   NOTES
+   ========================================================= */
+
+.notes-content {
+    color: #334155;
+
+    font-size: 15px;
+
+    line-height: 1.8;
+}
+
+.notes-content h1,
+.notes-content h2,
+.notes-content h3,
+.notes-content h4 {
+    margin-top: 22px;
+
+    margin-bottom: 10px;
+
+    color: #172033;
+}
+
+.notes-content h3:first-child {
+    margin-top: 0;
+}
+
+.notes-content p {
+    margin-bottom: 13px;
+}
+
+.notes-content li {
+    margin-bottom: 7px;
+}
+
+.notes-content code {
+    padding: 3px 7px;
+
+    border-radius: 6px;
+
+    background: #eef2ff;
+
+    color: #4f46e5;
+}
+
+
+/* =========================================================
+   CODE
+   ========================================================= */
+
+.code-content {
+    padding: 0 27px 27px;
+}
+
+.code-header {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 10px 15px;
+
+    color: #94a3b8;
+
+    background: #161b22;
+
+    font-size: 12px;
+
+    border-radius: 12px 12px 0 0;
+}
+
+.code-dots {
+    display: flex;
+
+    gap: 5px;
+}
+
+.code-dots span {
+    width: 8px;
+    height: 8px;
+
+    border-radius: 50%;
+
+    background: #64748b;
+}
+
+.code-header button {
+    border: none;
+
+    cursor: pointer;
+
+    padding: 5px 9px;
+
+    border-radius: 6px;
+
+    background: #21262d;
+
+    color: #c9d1d9;
+
+    font-size: 11px;
+}
+
+.code-content pre {
+    margin: 0;
+
+    padding: 22px;
+
+    overflow-x: auto;
+
+    background: #0d1117;
+
+    color: #e6edf3;
+
+    border-radius: 0 0 12px 12px;
+
+    font-family:
+        "Fira Code",
+        "JetBrains Mono",
+        Consolas,
+        monospace;
+
+    font-size: 13px;
+
+    line-height: 1.7;
+}
+
+
+/* =========================================================
+   PRACTICE
+   ========================================================= */
+
+.practice-content {
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 18px;
+
+    margin: 25px 27px;
+
+    padding: 22px;
+
+    border-radius: 15px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #fff7ed,
+            #fffbeb
+        );
+
+    border:
+        1px solid #fed7aa;
+}
+
+.practice-icon {
+    font-size: 32px;
+}
+
+.practice-label {
+    color: #ea580c;
+
+    font-size: 9px;
+
+    font-weight: 900;
+
+    letter-spacing: 1px;
+}
+
+.practice-content h3 {
+    margin: 5px 0;
+
+    font-size: 19px;
+}
+
+.practice-content p {
+    margin: 0;
+
+    color: #64748b;
+
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   LESSON FOOTER
+   ========================================================= */
+
+.lesson-footer {
+    display: grid;
+
+    grid-template-columns: 1fr auto 1fr;
+
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 18px 25px;
+
+    border-top:
+        1px solid #eef2f7;
+
+    background: #fafbfc;
+}
+
+.lesson-nav-btn,
+.advanced-complete-btn {
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 6px;
+
+    min-height: 40px;
+
+    padding: 9px 14px;
+
+    border: none;
+
+    border-radius: 10px;
+
+    text-decoration: none;
+
+    cursor: pointer;
+
+    font-size: 12px;
+
+    font-weight: 800;
+
+    transition: .2s;
+}
+
+.lesson-nav-btn {
+    width: fit-content;
+
+    background: #f1f5f9;
+
+    color: #475569;
+}
+
+.lesson-nav-btn.next {
+    justify-self: end;
+}
+
+.lesson-nav-btn:hover {
+    transform: translateY(-2px);
+
+    background: #e2e8f0;
+}
+
+.advanced-complete-btn {
+    color: white;
+
+    background:
+        linear-gradient(
+            135deg,
+            #6366f1,
+            #8b5cf6
+        );
+
+    box-shadow:
+        0 7px 18px rgba(99,102,241,.2);
+}
+
+.advanced-complete-btn:hover {
+    transform: translateY(-2px);
+}
+
+.advanced-complete-btn.is-completed {
+    background:
+        linear-gradient(
+            135deg,
+            #059669,
+            #10b981
+        );
+}
+
+
+/* =========================================================
+   COMPLETION
+   ========================================================= */
+
+.completion-card {
+    display: flex;
+
+    align-items: center;
+
+    gap: 20px;
+
+    padding: 25px;
+
+    border-radius: 20px;
+
+    color: white;
+
+    background:
+        linear-gradient(
+            135deg,
+            #111827,
+            #312e81
+        );
+
+    box-shadow:
+        0 20px 45px rgba(49,46,129,.2);
+}
+
+.completion-icon {
+    font-size: 45px;
+}
+
+.completion-content {
+    flex: 1;
+}
+
+.completion-content span {
+    font-size: 9px;
+
+    font-weight: 900;
+
+    letter-spacing: 1px;
+
+    color: #c4b5fd;
+}
+
+.completion-content h2 {
+    margin: 4px 0;
+
+    font-size: 22px;
+}
+
+.completion-content p {
+    margin: 0;
+
+    color: #cbd5e1;
+
+    font-size: 12px;
+}
+
+.completion-progress {
+    text-align: center;
+}
+
+.completion-progress strong {
+    display: block;
+
+    font-size: 30px;
+}
+
+.completion-progress div {
+    color: #cbd5e1;
+
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   FLOATING PROGRESS
+   ========================================================= */
+
+.advanced-floating-progress {
+    position: fixed;
+
+    right: 22px;
+    bottom: 22px;
+
+    z-index: 100;
+
+    width: 64px;
+    height: 64px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background:
+        conic-gradient(
+            #6366f1
+            {{ percentage * 3.6 }}deg,
+            #e2e8f0
+            0deg
+        );
+
+    box-shadow:
+        0 12px 35px rgba(15,23,42,.2);
+}
+
+.floating-circle {
+    width: 50px;
+    height: 50px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: white;
+}
+
+.floating-circle span {
+    color: #6366f1;
+
+    font-size: 11px;
+
+    font-weight: 900;
+}
+
+
+/* =========================================================
+   CERTIFICATE MODAL
+   ========================================================= */
+
+.advanced-certificate-modal {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 9999;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+
+    background:
+        rgba(15,23,42,.7);
+
+    backdrop-filter: blur(8px);
+}
+
+.certificate-modal-box {
+    position: relative;
+
+    width: min(480px,100%);
+
+    padding: 40px;
+
+    text-align: center;
+
+    background: white;
+
+    border-radius: 25px;
+
+    box-shadow:
+        0 30px 80px rgba(0,0,0,.3);
+
+    animation:
+        certificatePop .35s ease;
+}
+
+.modal-close {
+    position: absolute;
+
+    top: 12px;
+    right: 15px;
+
+    border: none;
+
+    background: transparent;
+
+    cursor: pointer;
+
+    color: #64748b;
+
+    font-size: 27px;
+}
+
+.certificate-trophy {
+    font-size: 60px;
+
+    margin-bottom: 10px;
+}
+
+.certificate-modal-box > span {
+    color: #6366f1;
+
+    font-size: 10px;
+
+    font-weight: 900;
+
+    letter-spacing: 2px;
+}
+
+.certificate-modal-box h2 {
+    margin: 8px 0;
+
+    font-size: 27px;
+}
+
+.certificate-modal-box p {
+    color: #64748b;
+
+    line-height: 1.6;
+}
+
+.certificate-download-btn {
+    margin-top: 15px;
+
+    padding: 12px 20px;
+
+    border: none;
+
+    border-radius: 11px;
+
+    cursor: pointer;
+
+    color: white;
+
+    background:
+        linear-gradient(
+            135deg,
+            #6366f1,
+            #8b5cf6
+        );
+
+    font-weight: 800;
+}
+
+@keyframes certificatePop {
+
+    from {
+        opacity: 0;
+        transform: scale(.8);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media(max-width:1000px) {
+
+    .hero-inner {
+        flex-direction: column;
+
+        align-items: flex-start;
+    }
+
+    .hero-stats {
+        width: 100%;
+
+        grid-template-columns:
+            repeat(3,1fr);
+    }
+
+    .advanced-course-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .advanced-sidebar {
+        position: relative;
+
+        top: 0;
+
+        height: auto;
+    }
+
+}
+
+
+@media(max-width:650px) {
+
+    .advanced-hero {
+        padding: 40px 18px;
+    }
+
+    .hero-left h1 {
+        font-size: 38px;
+    }
+
+    .hero-left p {
+        font-size: 14px;
+    }
+
+    .hero-stats {
+        gap: 7px;
+    }
+
+    .hero-stat {
+        padding: 12px 5px;
+    }
+
+    .advanced-course-layout {
+        padding:
+            18px 10px 80px;
+    }
+
+    .lesson-header {
+        align-items: flex-start;
+
+        flex-wrap: wrap;
+
+        padding: 18px;
+    }
+
+    .lesson-title {
+        min-width:
+            calc(100% - 80px);
+    }
+
+    .lesson-status {
+        width: 100%;
+
+        text-align: center;
+    }
+
+    .advanced-tabs {
+        overflow-x: auto;
+
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .advanced-tab {
+        flex: 1;
+
+        white-space: nowrap;
+    }
+
+    .advanced-tab-content {
+        padding: 18px;
+    }
+
+    .code-content {
+        padding:
+            0 12px 18px;
+    }
+
+    .practice-content {
+        margin:
+            18px 12px;
+
+        flex-direction: column;
+    }
+
+    .lesson-footer {
+        grid-template-columns: 1fr;
+
+        padding: 15px;
+    }
+
+    .lesson-nav-btn,
+    .advanced-complete-btn {
+        width: 100%;
+    }
+
+    .lesson-nav-btn.next {
+        justify-self: stretch;
+    }
+
+    .completion-card {
+        flex-direction: column;
+
+        text-align: center;
+    }
+
+    .info-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .advanced-floating-progress {
+        right: 12px;
+        bottom: 12px;
+
+        width: 55px;
+        height: 55px;
+    }
+
+    .floating-circle {
+        width: 43px;
+        height: 43px;
+    }
+
+}
+
+</style>
+
+
+
+<!-- =========================================================
+     JAVASCRIPT
+     ========================================================= -->
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        /* ================================================
+           LESSON SEARCH
+           ================================================ */
+
+        const search =
+            document.getElementById(
+                "lessonSearch"
+            );
+
+        const dayItems =
+            document.querySelectorAll(
+                ".day-item"
+            );
+
+
+        if (search) {
+
+            search.addEventListener(
+                "input",
+                function () {
+
+                    const value =
+                        this.value
+                        .toLowerCase()
+                        .trim();
+
+
+                    dayItems.forEach(
+                        item => {
+
+                            const title =
+                                item.dataset.title
+                                || "";
+
+                            const day =
+                                item.dataset.day
+                                || "";
+
+
+                            if (
+                                title.includes(value)
+                                ||
+                                day.includes(value)
+                            ) {
+
+                                item.style.display =
+                                    "flex";
+
+                            } else {
+
+                                item.style.display =
+                                    "none";
+
+                            }
+
+                        }
+                    );
+
+                }
+            );
+
+        }
+
+
+        /* ================================================
+           COMPLETE BUTTONS
+           ================================================ */
+
+        const buttons =
+            document.querySelectorAll(
+                ".advanced-complete-btn"
+            );
+
+
+        buttons.forEach(
+            button => {
+
+                button.addEventListener(
+                    "click",
+                    function () {
+
+                        const course =
+                            this.dataset.course;
+
+                        const day =
+                            this.dataset.day;
+
+
+                        completeAdvancedLesson(
+                            this,
+                            course,
+                            day
+                        );
+
+                    }
+                );
+
+            }
+        );
+
+
+        /* ================================================
+           ACTIVE DAY
+           ================================================ */
+
+        const observer =
+            new IntersectionObserver(
+                entries => {
+
+                    entries.forEach(
+                        entry => {
+
+                            if (
+                                entry.isIntersecting
+                            ) {
+
+                                dayItems.forEach(
+                                    item =>
+                                        item.classList
+                                            .remove(
+                                                "active-day"
+                                            )
+                                );
+
+
+                                const active =
+                                    document.querySelector(
+                                        `.day-item[href="#${entry.target.id}"]`
+                                    );
+
+
+                                if (active) {
+
+                                    active.classList.add(
+                                        "active-day"
+                                    );
+
+                                }
+
+                            }
+
+                        }
+                    );
+
+                },
+                {
+                    threshold: 0.25
+                }
+            );
+
+
+        document
+            .querySelectorAll(
+                ".advanced-lesson"
+            )
+            .forEach(
+                lesson =>
+                    observer.observe(
+                        lesson
+                    )
+            );
+
+    }
+);
+
+
+/* =========================================================
+   TAB SWITCHING
+   ========================================================= */
+
+function showAdvancedTab(
+    day,
+    tab,
+    button
+) {
+
+    const notes =
+        document.getElementById(
+            `advanced-notes${day}`
+        );
+
+    const code =
+        document.getElementById(
+            `advanced-code${day}`
+        );
+
+    const practice =
+        document.getElementById(
+            `advanced-practice${day}`
+        );
+
+
+    notes.style.display = "none";
+    code.style.display = "none";
+    practice.style.display = "none";
+
+
+    if (tab === "notes") {
+
+        notes.style.display =
+            "block";
+
+    }
+
+    if (tab === "code") {
+
+        code.style.display =
+            "block";
+
+    }
+
+    if (tab === "practice") {
+
+        practice.style.display =
+            "flex";
+
+    }
+
+
+    const parent =
+        button.closest(
+            ".advanced-tabs"
+        );
+
+
+    parent
+        .querySelectorAll(
+            ".advanced-tab"
+        )
+        .forEach(
+            tabButton =>
+                tabButton.classList
+                    .remove(
+                        "active"
+                    )
+        );
+
+
+    button.classList.add(
+        "active"
+    );
+
+}
+
+
+/* =========================================================
+   COPY CODE
+   ========================================================= */
+
+function copyAdvancedCode(day) {
+
+    const code =
+        document.getElementById(
+            `codeBlock${day}`
+        );
+
+
+    if (!code) return;
+
+
+    navigator.clipboard
+        .writeText(
+            code.innerText
+        )
+        .then(
+            () => {
+
+                showAdvancedToast(
+                    "Code copied successfully! 📋"
+                );
+
+            }
+        )
+        .catch(
+            () => {
+
+                showAdvancedToast(
+                    "Unable to copy code."
+                );
+
+            }
+        );
+
+}
+
+
+/* =========================================================
+   COURSE INFO
+   ========================================================= */
+
+function toggleCourseInfo() {
+
+    const info =
+        document.getElementById(
+            "courseInfo"
+        );
+
+
+    if (
+        info.style.display ===
+        "none"
+    ) {
+
+        info.style.display =
+            "block";
+
+    } else {
+
+        info.style.display =
+            "none";
+
+    }
+
+}
+
+
+/* =========================================================
+   SIDEBAR
+   ========================================================= */
+
+function toggleSidebar() {
+
+    const sidebar =
+        document.querySelector(
+            ".advanced-sidebar"
+        );
+
+
+    sidebar.classList.toggle(
+        "mobile-open"
+    );
+
+}
+
+
+/* =========================================================
+   COMPLETE LESSON
+   ========================================================= */
+
+async function completeAdvancedLesson(
+    button,
+    course,
+    day
+) {
+
+    if (
+        button.classList.contains(
+            "is-completed"
+        )
+    ) {
+
+        showAdvancedToast(
+            "Lesson already completed ✅"
+        );
+
+        return;
+
+    }
+
+
+    const original =
+        button.innerHTML;
+
+
+    button.disabled = true;
+
+    button.innerHTML =
+        "⏳ Saving...";
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/mark_complete",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify({
+                            course: course,
+                            day: parseInt(day)
+                        })
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            !response.ok
+            ||
+            !data.success
+        ) {
+
+            throw new Error(
+                data.message
+                ||
+                "Unable to save progress"
+            );
+
+        }
+
+
+        button.classList.add(
+            "is-completed"
+        );
+
+        button.innerHTML =
+            "✓ Completed";
+
+
+        /* Sidebar */
+
+        const sidebarItem =
+            document.querySelector(
+                `.day-item[data-day="${day}"]`
+            );
+
+
+        if (sidebarItem) {
+
+            sidebarItem.classList.add(
+                "completed"
+            );
+
+            const number =
+                sidebarItem.querySelector(
+                    ".day-number"
+                );
+
+            if (number) {
+
+                number.innerHTML =
+                    "✓";
+
+            }
+
+        }
+
+
+        /* Progress */
+
+        if (
+            data.percentage !== undefined
+        ) {
+
+            updateAdvancedProgress(
+                data.percentage,
+                data.progress,
+                data.total_days
+            );
+
+        }
+
+
+        showAdvancedToast(
+            "Lesson completed successfully 🎉"
+        );
+
+
+        if (
+            data.certificate_unlocked
+        ) {
+
+            setTimeout(
+                openCertificateModal,
+                700
+            );
+
+        }
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        button.innerHTML =
+            original;
+
+        showAdvancedToast(
+            error.message
+            ||
+            "Something went wrong ❌"
+        );
+
+    } finally {
+
+        button.disabled = false;
+
+    }
+
+}
+
+
+/* =========================================================
+   UPDATE PROGRESS
+   ========================================================= */
+
+function updateAdvancedProgress(
+    percentage,
+    progress,
+    total
+) {
+
+    const fill =
+        document.querySelector(
+            ".advanced-progress-fill"
+        );
+
+
+    if (fill) {
+
+        fill.style.width =
+            percentage + "%";
+
+    }
+
+
+    const percentageText =
+        document.querySelector(
+            ".progress-top strong"
+        );
+
+
+    if (percentageText) {
+
+        percentageText.textContent =
+            percentage + "%";
+
+    }
+
+
+    const progressText =
+        document.querySelector(
+            ".sidebar-progress p"
+        );
+
+
+    if (progressText) {
+
+        progressText.textContent =
+            `${progress} of ${total} lessons completed`;
+
+    }
+
+
+    const floating =
+        document.getElementById(
+            "floatingProgress"
+        );
+
+
+    if (floating) {
+
+        floating.style.background =
+            `conic-gradient(
+                #6366f1 ${percentage * 3.6}deg,
+                #e2e8f0 0deg
+            )`;
+
+        const text =
+            floating.querySelector(
+                "span"
+            );
+
+        if (text) {
+
+            text.textContent =
+                percentage + "%";
+
+        }
+
+    }
+
+}
+
+
+/* =========================================================
+   TOAST
+   ========================================================= */
+
+function showAdvancedToast(
+    message
+) {
+
+    let toast =
+        document.getElementById(
+            "advancedToast"
+        );
+
+
+    if (!toast) {
+
+        toast =
+            document.createElement(
+                "div"
+            );
+
+        toast.id =
+            "advancedToast";
+
+
+        toast.style.cssText = `
+            position:fixed;
+            top:90px;
+            right:20px;
+            z-index:99999;
+            padding:14px 18px;
+            border-radius:13px;
+            background:#111827;
+            color:white;
+            box-shadow:0 15px 40px rgba(0,0,0,.2);
+            font-size:13px;
+            font-weight:700;
+            animation:toastIn .3s ease;
+        `;
+
+
+        document.body.appendChild(
+            toast
+        );
+
+    }
+
+
+    toast.textContent =
+        message;
+
+
+    toast.style.display =
+        "block";
+
+
+    clearTimeout(
+        window.advancedToastTimer
+    );
+
+
+    window.advancedToastTimer =
+        setTimeout(
+            () => {
+
+                toast.style.display =
+                    "none";
+
+            },
+            3000
+        );
+
+}
+
+
+/* =========================================================
+   CERTIFICATE
+   ========================================================= */
+
+function openCertificateModal() {
+
+    const modal =
+        document.getElementById(
+            "certificateModal"
+        );
+
+
+    if (modal) {
+
+        modal.style.display =
+            "flex";
+
+    }
+
+}
+
+
+function closeCertificateModal() {
+
+    const modal =
+        document.getElementById(
+            "certificateModal"
+        );
+
+
+    if (modal) {
+
+        modal.style.display =
+            "none";
+
+    }
+
+}
+
+
+function downloadCertificate() {
+
+    showAdvancedToast(
+        "Certificate generation will be connected to the backend 📜"
+    );
+
+}
+
+</script>
 
 {% endblock %}
