@@ -464,11 +464,7 @@
                     <!-- Start Button -->
 
                     <a
-                        href="{{ url_for(
-                            'course_learning',
-                            course_name=course.name
-                        ) }}"
-                        class="course-btn"
+                        href="{{ url_for('course', course_name=course.name) }}"
                     >
                         Start Learning →
                     </a>
