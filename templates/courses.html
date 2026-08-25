@@ -2,502 +2,315 @@
 
 {% block title %}Courses{% endblock %}
 
-{% block css %}
-
-<style>
-    * {
-        box-sizing: border-box;
-    }
-
-    .courses-page {
-        max-width: 1250px;
-        margin: 0 auto;
-        padding: 30px 20px 50px;
-        font-family: "Segoe UI", system-ui, sans-serif;
-    }
-
-    /* =========================
-       HERO
-    ========================= */
-
-    .courses-hero {
-        position: relative;
-        overflow: hidden;
-
-        background:
-            radial-gradient(
-                circle at top right,
-                rgba(255,255,255,.20),
-                transparent 30%
-            ),
-            linear-gradient(
-                135deg,
-                #2563eb,
-                #06b6d4
-            );
-
-        color: white;
-        padding: 38px;
-        border-radius: 30px;
-        margin-bottom: 30px;
-
-        box-shadow:
-            0 20px 50px rgba(37, 99, 235, .22);
-    }
-
-    .courses-hero::after {
-        content: "";
-        position: absolute;
-        width: 220px;
-        height: 220px;
-        right: -70px;
-        bottom: -100px;
-        border-radius: 50%;
-        background: rgba(255,255,255,.10);
-    }
-
-    .courses-hero h1 {
-        position: relative;
-        z-index: 2;
-
-        margin: 0 0 10px;
-
-        font-size: clamp(30px, 5vw, 48px);
-        font-weight: 800;
-    }
-
-    .courses-hero p {
-        position: relative;
-        z-index: 2;
-
-        margin: 0;
-
-        font-size: 17px;
-        line-height: 1.6;
-
-        opacity: .94;
-    }
-
-
-    /* =========================
-       COURSE GRID
-    ========================= */
-
-    .courses-grid {
-        display: grid;
-
-        grid-template-columns:
-            repeat(3, minmax(0, 1fr));
-
-        gap: 22px;
-    }
-
-
-    /* =========================
-       COURSE CARD
-    ========================= */
-
-    .course-card {
-        position: relative;
-
-        background: rgba(255,255,255,.95);
-
-        border:
-            1px solid rgba(229,231,235,.9);
-
-        border-radius: 24px;
-
-        padding: 25px;
-
-        box-shadow:
-            0 12px 35px rgba(0,0,0,.08);
-
-        transition:
-            transform .25s ease,
-            box-shadow .25s ease;
-    }
-
-    .course-card:hover {
-        transform: translateY(-7px);
-
-        box-shadow:
-            0 20px 50px rgba(0,0,0,.13);
-    }
-
-
-    /* =========================
-       ICON
-    ========================= */
-
-    .course-icon {
-        width: 64px;
-        height: 64px;
-
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        border-radius: 18px;
-
-        background:
-            linear-gradient(
-                135deg,
-                #eff6ff,
-                #ecfeff
-            );
-
-        font-size: 32px;
-
-        margin-bottom: 18px;
-    }
-
-
-    /* =========================
-       COURSE CONTENT
-    ========================= */
-
-    .course-card h2 {
-        margin: 0 0 10px;
-
-        font-size: 23px;
-
-        color: #111827;
-    }
-
-    .course-card p {
-        margin: 0;
-
-        color: #6b7280;
-
-        line-height: 1.65;
-
-        min-height: 54px;
-    }
-
-
-    /* =========================
-       META
-    ========================= */
-
-    .course-meta {
-        display: flex;
-
-        align-items: center;
-        justify-content: space-between;
-
-        gap: 10px;
-
-        margin:
-            20px 0 18px;
-
-        padding-top: 15px;
-
-        border-top:
-            1px solid #e5e7eb;
-    }
-
-    .meta-item {
-        font-size: 13px;
-
-        color: #6b7280;
-
-        font-weight: 600;
-    }
-
-
-    /* =========================
-       BUTTON
-    ========================= */
-
-    .course-btn {
-        display: block;
-
-        width: 100%;
-
-        padding: 14px 18px;
-
-        border-radius: 14px;
-
-        background:
-            linear-gradient(
-                135deg,
-                #2563eb,
-                #06b6d4
-            );
-
-        color: white;
-
-        text-align: center;
-
-        text-decoration: none;
-
-        font-weight: 700;
-
-        transition:
-            transform .2s ease,
-            filter .2s ease;
-    }
-
-    .course-btn:hover {
-        filter: brightness(.96);
-
-        transform: translateY(-2px);
-
-        color: white;
-    }
-
-    .course-btn:active {
-        transform: scale(.98);
-    }
-
-
-    /* =========================
-       EMPTY STATE
-    ========================= */
-
-    .empty-state {
-        background: white;
-
-        padding: 60px 30px;
-
-        text-align: center;
-
-        border-radius: 24px;
-
-        box-shadow:
-            0 12px 35px rgba(0,0,0,.08);
-    }
-
-    .empty-icon {
-        font-size: 55px;
-
-        margin-bottom: 15px;
-    }
-
-    .empty-state h2 {
-        margin:
-            0 0 10px;
-
-        color: #111827;
-    }
-
-    .empty-state p {
-        margin: 0;
-
-        color: #6b7280;
-    }
-
-
-    /* =========================
-       RESPONSIVE
-    ========================= */
-
-    @media (max-width: 1000px) {
-
-        .courses-grid {
-            grid-template-columns:
-                repeat(2, minmax(0, 1fr));
-        }
-    }
-
-
-    @media (max-width: 650px) {
-
-        .courses-page {
-            padding:
-                18px 14px 35px;
-        }
-
-        .courses-hero {
-            padding: 28px 22px;
-
-            border-radius: 24px;
-        }
-
-        .courses-hero h1 {
-            font-size: 32px;
-        }
-
-        .courses-hero p {
-            font-size: 15px;
-        }
-
-        .courses-grid {
-            grid-template-columns: 1fr;
-
-            gap: 16px;
-        }
-
-        .course-card {
-            padding: 21px;
-        }
-    }
-</style>
-
-{% endblock %}
-
-
 {% block content %}
 
 <div class="courses-page">
 
-    <!-- =========================
-         HERO
-    ========================= -->
+    <!-- =========================================
+                    HERO SECTION
+    ========================================== -->
 
-    <section class="courses-hero">
+    <section class="hero-section">
 
-        <h1>
-            🚀 Learning Courses
-        </h1>
+        <div class="hero-left">
 
-        <p>
-            Choose your course and start your
-            placement preparation journey.
-        </p>
+            <span class="hero-badge">
+                🚀 Placement Training Portal
+            </span>
+
+            <h1>
+                Master Skills &
+                Crack Your Dream Job
+            </h1>
+
+            <p>
+
+                Learn Java, Python, Web Development,
+                DBMS, SQL, DSA and Interview Preparation
+                with structured roadmaps.
+
+            </p>
+
+            <div class="hero-buttons">
+
+                <a href="#coursesGrid" class="btn-primary">
+                    Explore Courses
+                </a>
+
+                <a href="#" class="btn-secondary">
+                    📜 My Certificates
+                </a>
+
+            </div>
+
+        </div>
+
+        <div class="hero-right">
+
+            <div class="hero-card">
+
+                <h3>🔥 Daily Streak</h3>
+
+                <h1>12 Days</h1>
+
+                <p>Keep Learning Everyday</p>
+
+            </div>
+
+        </div>
 
     </section>
 
 
-    <!-- =========================
-         COURSES
-    ========================= -->
 
-    {% if courses %}
+    <!-- =========================================
+                  SEARCH BAR
+    ========================================== -->
 
-        <div class="courses-grid">
+    <section class="search-section">
 
-            {% for course in courses %}
+        <input
+            type="text"
+            id="searchCourse"
+            placeholder="Search Course..."
+        >
 
-                <article class="course-card">
+        <select id="levelFilter">
 
-                    <!-- Course Icon -->
+            <option value="all">
+                All Levels
+            </option>
 
-                    <div class="course-icon">
+            <option value="Beginner">
+                Beginner
+            </option>
 
-                        {% set course_name =
-                            course.name|string|lower
-                        %}
+            <option value="Intermediate">
+                Intermediate
+            </option>
 
-                        {% if "java" in course_name %}
-                            ☕
-                        {% elif "python" in course_name %}
-                            🐍
-                        {% elif "javascript" in course_name %}
-                            ⚡
-                        {% elif "html" in course_name %}
-                            🌐
-                        {% elif "css" in course_name %}
-                            🎨
-                        {% elif "sql" in course_name %}
-                            🗄️
-                        {% elif "dbms" in course_name %}
-                            💾
-                        {% elif "os" in course_name %}
-                            💻
-                        {% elif "frontend" in course_name %}
-                            🎨
-                        {% elif "backend" in course_name %}
-                            ⚙️
-                        {% else %}
-                            📚
-                        {% endif %}
+            <option value="Advanced">
+                Advanced
+            </option>
 
-                    </div>
+        </select>
+
+    </section>
 
 
-                    <!-- Course Name -->
 
-                    <h2>
-                        {{ course.name }}
-                    </h2>
+    <!-- =========================================
+                    STATS
+    ========================================== -->
 
+    <section class="stats-grid">
 
-                    <!-- Description -->
+        <div class="stat-card">
 
-                    <p>
+            <h2>{{ courses|length }}</h2>
 
-                        {% if course.description %}
-
-                            {{ course.description }}
-
-                        {% else %}
-
-                            Learn {{ course.name }}
-                            concepts, practice problems,
-                            coding questions and interview
-                            preparation.
-
-                        {% endif %}
-
-                    </p>
-
-
-                    <!-- Course Meta -->
-
-                    <div class="course-meta">
-
-                        <span class="meta-item">
-
-                            📅
-
-                            {% if course.day_count %}
-                                {{ course.day_count }}
-                            {% else %}
-                                30
-                            {% endif %}
-
-                            Days
-
-                        </span>
-
-
-                        <span class="meta-item">
-
-                            🎯 Placement
-
-                        </span>
-
-                    </div>
-
-
-                    <!-- Start Button -->
-
-                    <a
-                        href="{{ url_for('course', course_name=course.name) }}"
-                    >
-                        Start Learning →
-                    </a>
-
-                </article>
-
-            {% endfor %}
+            <span>Total Courses</span>
 
         </div>
 
+        <div class="stat-card">
 
-    {% else %}
+            <h2>25K+</h2>
 
-        <!-- =========================
-             EMPTY STATE
-        ========================= -->
+            <span>Students</span>
 
-        <div class="empty-state">
+        </div>
 
-            <div class="empty-icon">
-                📚
+        <div class="stat-card">
+
+            <h2>1500+</h2>
+
+            <span>Lessons</span>
+
+        </div>
+
+        <div class="stat-card">
+
+            <h2>100%</h2>
+
+            <span>Placement Focus</span>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =========================================
+                COURSE GRID
+    ========================================== -->
+
+    <section
+        class="courses-grid"
+        id="coursesGrid"
+    >
+
+        {% for course in courses %}
+
+        <div
+            class="course-card"
+            data-level="{{ course.level }}"
+        >
+
+            <!-- ICON -->
+
+            <div class="course-icon">
+
+                {{ course.icon }}
+
             </div>
 
+
+            <!-- NAME -->
+
             <h2>
-                No Courses Available
+
+                {{ course.name }}
+
             </h2>
 
+
+            <!-- DESCRIPTION -->
+
             <p>
-                Courses will appear here
-                once they are added.
+
+                {{ course.description }}
+
             </p>
 
+
+            <!-- BADGES -->
+
+            <div class="badge-container">
+
+                <span class="badge">
+
+                    📅 {{ course.days }} Days
+
+                </span>
+
+                <span class="badge">
+
+                    ⭐ {{ course.rating }}
+
+                </span>
+
+            </div>
+
+
+            <!-- STUDENTS -->
+
+            <div class="students">
+
+                👨‍🎓 {{ course.students }} Students
+
+            </div>
+
+
+            <!-- LEVEL -->
+
+            <div class="level">
+
+                {{ course.level }}
+
+            </div>
+
+
+            <!-- PROGRESS -->
+
+            <div class="progress-area">
+
+                <div class="progress-top">
+
+                    <span>
+
+                        Progress
+
+                    </span>
+
+                    <span>
+
+                        {{ course.percentage }}%
+
+                    </span>
+
+                </div>
+
+                <div class="progress">
+
+                    <div
+                        class="progress-fill"
+                        style="width:{{ course.percentage }}%;"
+                    ></div>
+
+                </div>
+
+            </div>
+
+
+            <!-- BUTTON -->
+
+            <a
+
+                href="{{ url_for('course',course_name=course.name) }}"
+
+                class="start-btn"
+
+            >
+
+                {% if course.percentage == 0 %}
+
+                    🚀 Start Learning
+
+                {% else %}
+
+                    ▶ Continue Learning
+
+                {% endif %}
+
+            </a>
+
         </div>
+
+        {% endfor %}
+
+    </section>
+
+
+
+    <!-- =========================================
+                EMPTY STATE
+    ========================================== -->
+
+    {% if not courses %}
+
+    <div class="empty">
+
+        <h1>
+
+            📚
+
+        </h1>
+
+        <h2>
+
+            No Courses Available
+
+        </h2>
+
+        <p>
+
+            Please add course data into
+            <b>course_content</b> table.
+
+        </p>
+
+    </div>
 
     {% endif %}
 
