@@ -6025,126 +6025,115 @@ def courses():
 # ==========================================================
 
 @app.route("/course/<course_name>")
-def course(course_name):
+@login_required
+def course_page(course_name):
 
-    if "user_id" not in session:
-        return redirect(url_for("login"))
-
-    conn = get_db_connection()
-    cursor = conn.cursor()
+    conn = None
+    cursor = None
 
     try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        # -------------------------------------------------
+        # LESSONS
+        # -------------------------------------------------
 
         cursor.execute("""
-
             SELECT
-
                 id,
-
+                course_name,
                 day_number,
-
                 title,
-
                 notes,
-
                 code_snippet,
-
                 practice_task
-
-            FROM course_content
-
-            WHERE LOWER(course_name)=LOWER(%s)
-
-            ORDER BY day_number
-
-        """,(course_name,))
+            FROM course_lessons
+            WHERE LOWER(course_name) = LOWER(%s)
+            ORDER BY day_number ASC
+        """, (course_name,))
 
         lessons = cursor.fetchall()
 
-        cursor.execute("""
+        # -------------------------------------------------
+        # COMPLETED LESSONS
+        # -------------------------------------------------
 
-            SELECT
+        completed_days = set()
 
-                completed_day
+        if current_user.is_authenticated:
 
-            FROM user_course_progress
+            cursor.execute("""
+                SELECT day_number
+                FROM course_progress
+                WHERE user_id = %s
+                  AND LOWER(course_name) = LOWER(%s)
+                  AND completed = 1
+            """, (
+                current_user.id,
+                course_name
+            ))
 
-            WHERE user_id=%s
+            rows = cursor.fetchall()
 
-            AND LOWER(course_name)=LOWER(%s)
+            completed_days = {
+                int(row["day_number"])
+                for row in rows
+            }
 
-            ORDER BY completed_day
-
-        """,(session["user_id"],course_name))
-
-        completed = cursor.fetchall()
-
-        completed_days = [
-            x["completed_day"]
-            for x in completed
-        ]
+        # -------------------------------------------------
+        # PROGRESS
+        # -------------------------------------------------
 
         total_days = len(lessons)
 
         progress = len(completed_days)
 
-        percentage = 0
+        percentage = (
+            round((progress / total_days) * 100)
+            if total_days > 0
+            else 0
+        )
 
-        if total_days>0:
-            percentage = int(
-                (progress/total_days)*100
-            )
+        # -------------------------------------------------
+        # COURSE DISPLAY NAME
+        # -------------------------------------------------
+
+        course_title = course_name.replace("-", " ").title()
 
         return render_template(
-
-            "java.html",
-
+            "course.html",
             course_name=course_name,
-
+            course_title=course_title,
             lessons=lessons,
-
             completed_days=completed_days,
-
             total_days=total_days,
-
             progress=progress,
-
             percentage=percentage
-
         )
 
     except Exception as e:
 
-        print("COURSE ERROR :",e)
+        print("COURSE ERROR :", e)
 
         return render_template(
-
-            "java.html",
-
+            "course.html",
             course_name=course_name,
-
+            course_title=course_name.replace("-", " ").title(),
             lessons=[],
-
-            completed_days=[],
-
+            completed_days=set(),
             total_days=0,
-
             progress=0,
-
             percentage=0
-
         )
 
     finally:
 
-        cursor.close()
-        conn.close()
+        if cursor:
+            cursor.close()
 
-
-# ==========================================================
-# MARK DAY COMPLETE
-# ==========================================================
-
+        if conn:
+            conn.close()
 @app.route("/complete_day/<course_name>/<int:day>",methods=["POST"])
 def complete_day(course_name,day):
 
