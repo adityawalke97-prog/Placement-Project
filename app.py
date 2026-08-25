@@ -5899,123 +5899,307 @@ def inject_global_data():
     }
 
 
+# ==========================================================
+# COURSES
+# ==========================================================
+
 @app.route("/courses")
 def courses():
 
     if "user_id" not in session:
         return redirect(url_for("login"))
 
-    courses = [
-        {
-            "name": "Java",
-            "icon": "☕",
-            "days": 30
-        },
-        {
-            "name": "Python",
-            "icon": "🐍",
-            "days": 30
-        },
-        {
-            "name": "HTML",
-            "icon": "🌐",
-            "days": 15
-        },
-        {
-            "name": "CSS",
-            "icon": "🎨",
-            "days": 20
-        },
-        {
-            "name": "JavaScript",
-            "icon": "⚡",
-            "days": 30
-        },
-        {
-            "name": "DBMS",
-            "icon": "🗄️",
-            "days": 20
-        },
-        {
-            "name": "SQL",
-            "icon": "📊",
-            "days": 20
-        },
-        {
-            "name": "Operating System",
-            "icon": "💻",
-            "days": 25
-        },
-        {
-            "name": "Computer Networks",
-            "icon": "🌍",
-            "days": 20
-        },
-        {
-            "name": "DSA",
-            "icon": "📚",
-            "days": 45
-        }
-    ]
-
-    return render_template(
-        "courses.html",
-        courses=courses
-    )
-
-@app.route("/course/<course_name>")
-def course(course_name):
+    conn = get_db_connection()
+    cursor = conn.cursor()
 
     try:
 
-        conn = get_db_connection()
-        cursor = conn.cursor()
-
         cursor.execute("""
             SELECT
-                day_number,
-                title,
-                notes,
-                code_snippet,
-                practice_task
+                course_name,
+                COUNT(*) AS total_days
             FROM course_content
-            WHERE LOWER(course_name) = LOWER(%s)
-            ORDER BY day_number ASC
-        """, (course_name,))
+            GROUP BY course_name
+            ORDER BY course_name
+        """)
 
-        rows = cursor.fetchall()
+        db_courses = cursor.fetchall()
 
-        cursor.close()
-        conn.close()
+        icons = {
+            "Java":"☕",
+            "Python":"🐍",
+            "HTML":"🌐",
+            "CSS":"🎨",
+            "JavaScript":"⚡",
+            "DBMS":"🗄️",
+            "SQL":"📊",
+            "Operating System":"💻",
+            "Computer Networks":"🌍",
+            "DSA":"📚",
+            "Aptitude":"🧠",
+            "HR":"👨‍💼"
+        }
 
-        course_data = {}
+        descriptions = {
+            "Java":"Complete Java from Beginner to Advanced with Interview Preparation.",
+            "Python":"Master Python with Projects and Placement Questions.",
+            "HTML":"Learn HTML5 from scratch with practical examples.",
+            "CSS":"Modern CSS including Flexbox, Grid and Responsive Design.",
+            "JavaScript":"JavaScript ES6+, DOM, APIs and Projects.",
+            "DBMS":"Complete Database Management System Notes.",
+            "SQL":"Learn SQL Queries from Basic to Advanced.",
+            "Operating System":"Scheduling, Memory, Deadlock and Interview Questions.",
+            "Computer Networks":"OSI Model, TCP/IP, Routing and Networking.",
+            "DSA":"Arrays, Linked List, Trees, Graphs and Dynamic Programming.",
+            "Aptitude":"Quantitative Aptitude for Placements.",
+            "HR":"HR Interview Questions and Communication Skills."
+        }
 
-        for row in rows:
+        courses = []
 
-            course_data[str(row["day_number"])] = {
-                "title": row["title"],
-                "notes": row["notes"] or "",
-                "code_snippet": row["code_snippet"] or "",
-                "practice_task": row["practice_task"] or ""
-            }
+        for row in db_courses:
+
+            cursor.execute("""
+                SELECT COUNT(*) progress
+                FROM user_course_progress
+                WHERE user_id=%s
+                AND LOWER(course_name)=LOWER(%s)
+            """,(session["user_id"],row["course_name"]))
+
+            progress = cursor.fetchone()["progress"]
+
+            total = row["total_days"]
+
+            percent = 0
+
+            if total>0:
+                percent = int((progress/total)*100)
+
+            courses.append({
+
+                "name":row["course_name"],
+
+                "icon":icons.get(row["course_name"],"📘"),
+
+                "description":descriptions.get(
+                    row["course_name"],
+                    "Complete Placement Preparation Course."
+                ),
+
+                "days":total,
+
+                "progress":progress,
+
+                "percentage":percent,
+
+                "rating":4.9,
+
+                "students":"25K+",
+
+                "level":"Beginner to Advanced"
+
+            })
 
         return render_template(
-            "java.html",
-            course_name=course_name,
-            day_count=len(rows),
-            course_data=course_data
+            "courses.html",
+            courses=courses
         )
 
     except Exception as e:
 
-        print("COURSE ERROR:", repr(e))
+        print(e)
 
         return render_template(
-            "java.html",
-            course_name=course_name,
-            day_count=0,
-            course_data={}
+            "courses.html",
+            courses=[]
         )
+
+    finally:
+
+        cursor.close()
+        conn.close()
+
+
+# ==========================================================
+# COURSE LEARNING
+# ==========================================================
+
+@app.route("/course/<course_name>")
+def course(course_name):
+
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+
+        cursor.execute("""
+
+            SELECT
+
+                id,
+
+                day_number,
+
+                title,
+
+                notes,
+
+                code_snippet,
+
+                practice_task
+
+            FROM course_content
+
+            WHERE LOWER(course_name)=LOWER(%s)
+
+            ORDER BY day_number
+
+        """,(course_name,))
+
+        lessons = cursor.fetchall()
+
+        cursor.execute("""
+
+            SELECT
+
+                completed_day
+
+            FROM user_course_progress
+
+            WHERE user_id=%s
+
+            AND LOWER(course_name)=LOWER(%s)
+
+            ORDER BY completed_day
+
+        """,(session["user_id"],course_name))
+
+        completed = cursor.fetchall()
+
+        completed_days = [
+            x["completed_day"]
+            for x in completed
+        ]
+
+        total_days = len(lessons)
+
+        progress = len(completed_days)
+
+        percentage = 0
+
+        if total_days>0:
+            percentage = int(
+                (progress/total_days)*100
+            )
+
+        return render_template(
+
+            "java.html",
+
+            course_name=course_name,
+
+            lessons=lessons,
+
+            completed_days=completed_days,
+
+            total_days=total_days,
+
+            progress=progress,
+
+            percentage=percentage
+
+        )
+
+    except Exception as e:
+
+        print("COURSE ERROR :",e)
+
+        return render_template(
+
+            "java.html",
+
+            course_name=course_name,
+
+            lessons=[],
+
+            completed_days=[],
+
+            total_days=0,
+
+            progress=0,
+
+            percentage=0
+
+        )
+
+    finally:
+
+        cursor.close()
+        conn.close()
+
+
+# ==========================================================
+# MARK DAY COMPLETE
+# ==========================================================
+
+@app.route("/complete_day/<course_name>/<int:day>",methods=["POST"])
+def complete_day(course_name,day):
+
+    if "user_id" not in session:
+        return jsonify({"success":False})
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+
+        cursor.execute("""
+
+        INSERT IGNORE INTO
+        user_course_progress
+        (
+            user_id,
+            course_name,
+            completed_day
+        )
+
+        VALUES(%s,%s,%s)
+
+        """,(
+
+            session["user_id"],
+            course_name,
+            day
+
+        ))
+
+        conn.commit()
+
+        return jsonify({
+
+            "success":True
+
+        })
+
+    except Exception as e:
+
+        conn.rollback()
+
+        print(e)
+
+        return jsonify({
+
+            "success":False
+
+        })
+
+    finally:
+
+        cursor.close()
+        conn.close()
 @app.route("/notes")
 def notes():
 
