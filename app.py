@@ -6301,12 +6301,49 @@ def results():
 # ============================================================
 
 @app.route("/java")
+@login_required
 def java():
-    if "user_id" not in session:
-        return redirect(url_for("login"))
 
-    return render_template("java.html")
+    cursor = mysql.connection.cursor(dictionary=True)
 
+    cursor.execute("""
+        SELECT
+            id,
+            day_number,
+            title,
+            notes,
+            code_snippet,
+            practice_task
+        FROM java_lessons
+        ORDER BY day_number ASC
+    """)
+
+    lessons = cursor.fetchall()
+
+    cursor.close()
+
+    total_days = len(lessons)
+
+    # Abhi completed system connect nahi hai
+    completed_days = []
+
+    progress = len(completed_days)
+
+    percentage = (
+        int((progress / total_days) * 100)
+        if total_days > 0
+        else 0
+    )
+
+    return render_template(
+        "java.html",
+        course_name="Core Java",
+        lessons=lessons,
+        completed_days=completed_days,
+        progress=progress,
+        total_days=total_days,
+        percentage=percentage
+    )
 
 @app.route("/python")
 def python():
