@@ -1,6 +1,976 @@
 {% extends "layout.html" %}
 
 {% block title %}Courses{% endblock %}
+{% extends "layout.html" %}
+
+{% block title %}Courses{% endblock %}
+
+{% block content %}
+
+<div class="courses-page">
+
+    <!-- =========================================
+                    HERO SECTION
+    ========================================== -->
+
+    <section class="hero-section">
+
+        <div class="hero-left">
+
+            <span class="hero-badge">
+                🚀 Placement Training Portal
+            </span>
+
+            <h1>
+                Master Skills &
+                Crack Your Dream Job
+            </h1>
+
+            <p>
+
+                Learn Java, Python, Web Development,
+                DBMS, SQL, DSA and Interview Preparation
+                with structured roadmaps.
+
+            </p>
+
+            <div class="hero-buttons">
+
+                <a href="#coursesGrid" class="btn-primary">
+                    Explore Courses
+                </a>
+
+                <a href="#" class="btn-secondary">
+                    📜 My Certificates
+                </a>
+
+            </div>
+
+        </div>
+
+        <div class="hero-right">
+
+            <div class="hero-card">
+
+                <h3>🔥 Daily Streak</h3>
+
+                <h1>12 Days</h1>
+
+                <p>Keep Learning Everyday</p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =========================================
+                  SEARCH BAR
+    ========================================== -->
+
+    <section class="search-section">
+
+        <input
+            type="text"
+            id="searchCourse"
+            placeholder="Search Course..."
+        >
+
+        <select id="levelFilter">
+
+            <option value="all">
+                All Levels
+            </option>
+
+            <option value="Beginner">
+                Beginner
+            </option>
+
+            <option value="Intermediate">
+                Intermediate
+            </option>
+
+            <option value="Advanced">
+                Advanced
+            </option>
+
+        </select>
+
+    </section>
+
+
+
+    <!-- =========================================
+                    STATS
+    ========================================== -->
+
+    <section class="stats-grid">
+
+        <div class="stat-card">
+
+            <h2>{{ courses|length }}</h2>
+
+            <span>Total Courses</span>
+
+        </div>
+
+        <div class="stat-card">
+
+            <h2>25K+</h2>
+
+            <span>Students</span>
+
+        </div>
+
+        <div class="stat-card">
+
+            <h2>1500+</h2>
+
+            <span>Lessons</span>
+
+        </div>
+
+        <div class="stat-card">
+
+            <h2>100%</h2>
+
+            <span>Placement Focus</span>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =========================================
+                COURSE GRID
+    ========================================== -->
+
+    <section
+        class="courses-grid"
+        id="coursesGrid"
+    >
+
+        {% for course in courses %}
+
+        <div
+            class="course-card"
+            data-level="{{ course.level }}"
+        >
+
+            <!-- ICON -->
+
+            <div class="course-icon">
+
+                {{ course.icon }}
+
+            </div>
+
+
+            <!-- NAME -->
+
+            <h2>
+
+                {{ course.name }}
+
+            </h2>
+
+
+            <!-- DESCRIPTION -->
+
+            <p>
+
+                {{ course.description }}
+
+            </p>
+
+
+            <!-- BADGES -->
+
+            <div class="badge-container">
+
+                <span class="badge">
+
+                    📅 {{ course.days }} Days
+
+                </span>
+
+                <span class="badge">
+
+                    ⭐ {{ course.rating }}
+
+                </span>
+
+            </div>
+
+
+            <!-- STUDENTS -->
+
+            <div class="students">
+
+                👨‍🎓 {{ course.students }} Students
+
+            </div>
+
+
+            <!-- LEVEL -->
+
+            <div class="level">
+
+                {{ course.level }}
+
+            </div>
+
+
+            <!-- PROGRESS -->
+
+            <div class="progress-area">
+
+                <div class="progress-top">
+
+                    <span>
+
+                        Progress
+
+                    </span>
+
+                    <span>
+
+                        {{ course.percentage }}%
+
+                    </span>
+
+                </div>
+
+                <div class="progress">
+
+                    <div
+                        class="progress-fill"
+                        style="width:{{ course.percentage }}%;"
+                    ></div>
+
+                </div>
+
+            </div>
+
+
+            <!-- BUTTON -->
+
+            <a
+
+                href="{{ url_for('course',course_name=course.name) }}"
+
+                class="start-btn"
+
+            >
+
+                {% if course.percentage == 0 %}
+
+                    🚀 Start Learning
+
+                {% else %}
+
+                    ▶ Continue Learning
+
+                {% endif %}
+
+            </a>
+
+        </div>
+
+        {% endfor %}
+
+    </section>
+
+
+
+    <!-- =========================================
+                EMPTY STATE
+    ========================================== -->
+
+    {% if not courses %}
+
+    <div class="empty">
+
+        <h1>
+
+            📚
+
+        </h1>
+
+        <h2>
+
+            No Courses Available
+
+        </h2>
+
+        <p>
+
+            Please add course data into
+            <b>course_content</b> table.
+
+        </p>
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}
+{% extends "layout.html" %}
+
+{% block title %}Courses{% endblock %}
+
+{% block content %}
+{% block css %}
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+
+    background:#f5f7fb;
+    font-family:
+    "Segoe UI",
+    sans-serif;
+
+}
+
+.courses-page{
+
+    width:95%;
+    max-width:1400px;
+
+    margin:auto;
+
+    padding:35px 0 60px;
+
+}
+
+/*=========================
+HERO
+=========================*/
+
+.hero-section{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:40px;
+
+    background:
+    linear-gradient(
+    135deg,
+    #2563eb,
+    #0ea5e9,
+    #06b6d4);
+
+    border-radius:28px;
+
+    padding:50px;
+
+    color:white;
+
+    overflow:hidden;
+
+    position:relative;
+
+    box-shadow:
+    0 15px 45px
+    rgba(37,99,235,.25);
+
+}
+
+.hero-section::before{
+
+    content:"";
+
+    position:absolute;
+
+    width:350px;
+
+    height:350px;
+
+    background:
+    rgba(255,255,255,.08);
+
+    border-radius:50%;
+
+    right:-80px;
+
+    top:-120px;
+
+}
+
+.hero-left{
+
+    width:60%;
+
+    z-index:2;
+
+}
+
+.hero-right{
+
+    width:40%;
+
+    display:flex;
+
+    justify-content:center;
+
+}
+
+.hero-badge{
+
+    display:inline-block;
+
+    padding:8px 18px;
+
+    background:
+    rgba(255,255,255,.18);
+
+    border-radius:30px;
+
+    margin-bottom:18px;
+
+    font-size:14px;
+
+    font-weight:600;
+
+}
+
+.hero-left h1{
+
+    font-size:48px;
+
+    line-height:60px;
+
+    margin-bottom:18px;
+
+}
+
+.hero-left p{
+
+    font-size:18px;
+
+    line-height:30px;
+
+    opacity:.95;
+
+}
+
+.hero-buttons{
+
+    display:flex;
+
+    gap:18px;
+
+    margin-top:30px;
+
+}
+
+.btn-primary{
+
+    background:white;
+
+    color:#2563eb;
+
+    padding:14px 28px;
+
+    border-radius:12px;
+
+    text-decoration:none;
+
+    font-weight:bold;
+
+    transition:.3s;
+
+}
+
+.btn-primary:hover{
+
+    transform:translateY(-3px);
+
+}
+
+.btn-secondary{
+
+    background:
+    rgba(255,255,255,.18);
+
+    color:white;
+
+    padding:14px 28px;
+
+    border-radius:12px;
+
+    text-decoration:none;
+
+    backdrop-filter:blur(15px);
+
+}
+
+.hero-card{
+
+    width:250px;
+
+    background:
+    rgba(255,255,255,.16);
+
+    backdrop-filter:blur(25px);
+
+    border-radius:25px;
+
+    text-align:center;
+
+    padding:35px;
+
+}
+
+.hero-card h1{
+
+    font-size:52px;
+
+    margin:12px 0;
+
+}
+
+/*=========================
+SEARCH
+=========================*/
+
+.search-section{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    gap:20px;
+
+    margin:40px 0;
+
+}
+
+.search-section input{
+
+    flex:1;
+
+    padding:18px;
+
+    border:none;
+
+    border-radius:15px;
+
+    background:white;
+
+    box-shadow:
+    0 8px 20px rgba(0,0,0,.08);
+
+    font-size:16px;
+
+}
+
+.search-section select{
+
+    width:220px;
+
+    border:none;
+
+    border-radius:15px;
+
+    padding:18px;
+
+    background:white;
+
+    box-shadow:
+    0 8px 20px rgba(0,0,0,.08);
+
+}
+
+/*=========================
+STATS
+=========================*/
+
+.stats-grid{
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(4,1fr);
+
+    gap:25px;
+
+    margin-bottom:40px;
+
+}
+
+.stat-card{
+
+    background:white;
+
+    border-radius:22px;
+
+    padding:30px;
+
+    text-align:center;
+
+    box-shadow:
+    0 10px 25px
+    rgba(0,0,0,.08);
+
+    transition:.3s;
+
+}
+
+.stat-card:hover{
+
+    transform:translateY(-8px);
+
+}
+
+.stat-card h2{
+
+    color:#2563eb;
+
+    font-size:38px;
+
+    margin-bottom:8px;
+
+}
+
+.stat-card span{
+
+    color:#666;
+
+}
+
+</style>
+
+{% endblock %}
+<div class="courses-page">
+
+    <!-- =========================================
+                    HERO SECTION
+    ========================================== -->
+
+    <section class="hero-section">
+
+        <div class="hero-left">
+
+            <span class="hero-badge">
+                🚀 Placement Training Portal
+            </span>
+
+            <h1>
+                Master Skills &
+                Crack Your Dream Job
+            </h1>
+
+            <p>
+
+                Learn Java, Python, Web Development,
+                DBMS, SQL, DSA and Interview Preparation
+                with structured roadmaps.
+
+            </p>
+
+            <div class="hero-buttons">
+
+                <a href="#coursesGrid" class="btn-primary">
+                    Explore Courses
+                </a>
+
+                <a href="#" class="btn-secondary">
+                    📜 My Certificates
+                </a>
+
+            </div>
+
+        </div>
+
+        <div class="hero-right">
+
+            <div class="hero-card">
+
+                <h3>🔥 Daily Streak</h3>
+
+                <h1>12 Days</h1>
+
+                <p>Keep Learning Everyday</p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =========================================
+                  SEARCH BAR
+    ========================================== -->
+
+    <section class="search-section">
+
+        <input
+            type="text"
+            id="searchCourse"
+            placeholder="Search Course..."
+        >
+
+        <select id="levelFilter">
+
+            <option value="all">
+                All Levels
+            </option>
+
+            <option value="Beginner">
+                Beginner
+            </option>
+
+            <option value="Intermediate">
+                Intermediate
+            </option>
+
+            <option value="Advanced">
+                Advanced
+            </option>
+
+        </select>
+
+    </section>
+
+
+
+    <!-- =========================================
+                    STATS
+    ========================================== -->
+
+    <section class="stats-grid">
+
+        <div class="stat-card">
+
+            <h2>{{ courses|length }}</h2>
+
+            <span>Total Courses</span>
+
+        </div>
+
+        <div class="stat-card">
+
+            <h2>25K+</h2>
+
+            <span>Students</span>
+
+        </div>
+
+        <div class="stat-card">
+
+            <h2>1500+</h2>
+
+            <span>Lessons</span>
+
+        </div>
+
+        <div class="stat-card">
+
+            <h2>100%</h2>
+
+            <span>Placement Focus</span>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =========================================
+                COURSE GRID
+    ========================================== -->
+
+    <section
+        class="courses-grid"
+        id="coursesGrid"
+    >
+
+        {% for course in courses %}
+
+        <div
+            class="course-card"
+            data-level="{{ course.level }}"
+        >
+
+            <!-- ICON -->
+
+            <div class="course-icon">
+
+                {{ course.icon }}
+
+            </div>
+
+
+            <!-- NAME -->
+
+            <h2>
+
+                {{ course.name }}
+
+            </h2>
+
+
+            <!-- DESCRIPTION -->
+
+            <p>
+
+                {{ course.description }}
+
+            </p>
+
+
+            <!-- BADGES -->
+
+            <div class="badge-container">
+
+                <span class="badge">
+
+                    📅 {{ course.days }} Days
+
+                </span>
+
+                <span class="badge">
+
+                    ⭐ {{ course.rating }}
+
+                </span>
+
+            </div>
+
+
+            <!-- STUDENTS -->
+
+            <div class="students">
+
+                👨‍🎓 {{ course.students }} Students
+
+            </div>
+
+
+            <!-- LEVEL -->
+
+            <div class="level">
+
+                {{ course.level }}
+
+            </div>
+
+
+            <!-- PROGRESS -->
+
+            <div class="progress-area">
+
+                <div class="progress-top">
+
+                    <span>
+
+                        Progress
+
+                    </span>
+
+                    <span>
+
+                        {{ course.percentage }}%
+
+                    </span>
+
+                </div>
+
+                <div class="progress">
+
+                    <div
+                        class="progress-fill"
+                        style="width:{{ course.percentage }}%;"
+                    ></div>
+
+                </div>
+
+            </div>
+
+
+            <!-- BUTTON -->
+
+            <a
+
+                href="{{ url_for('course',course_name=course.name) }}"
+
+                class="start-btn"
+
+            >
+
+                {% if course.percentage == 0 %}
+
+                    🚀 Start Learning
+
+                {% else %}
+
+                    ▶ Continue Learning
+
+                {% endif %}
+
+            </a>
+
+        </div>
+
+        {% endfor %}
+
+    </section>
+
+
+
+    <!-- =========================================
+                EMPTY STATE
+    ========================================== -->
+
+    {% if not courses %}
+
+    <div class="empty">
+
+        <h1>
+
+            📚
+
+        </h1>
+
+        <h2>
+
+            No Courses Available
+
+        </h2>
+
+        <p>
+
+            Please add course data into
+            <b>course_content</b> table.
+
+        </p>
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}
 
 {% block content %}
 
