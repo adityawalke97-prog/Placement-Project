@@ -1,1242 +1,1132 @@
-/* =====================================
-   ADVANCED LMS COURSE DESIGN
-===================================== */
+/* =========================================================
+   PREMIUM COURSE PLATFORM
+   Part 3B - Premium CSS
+   ========================================================= */
 
+:root {
+    --primary: #6366f1;
+    --primary-dark: #4f46e5;
+    --secondary: #8b5cf6;
+    --success: #10b981;
+    --warning: #f59e0b;
 
-:root{
+    --bg: #f5f7fb;
+    --card: #ffffff;
+    --text: #172033;
+    --muted: #64748b;
+    --border: #e2e8f0;
 
-    --primary:#2563eb;
-    --secondary:#06b6d4;
-    --success:#10b981;
-    --warning:#f59e0b;
+    --sidebar-width: 290px;
 
-    --bg:#f8fafc;
-    --card:#ffffff;
-
-    --text:#111827;
-    --muted:#6b7280;
+    --shadow-sm:
+        0 2px 8px rgba(15, 23, 42, 0.06);
 
     --shadow:
-    0 15px 40px rgba(0,0,0,.08);
+        0 10px 30px rgba(15, 23, 42, 0.08);
 
+    --shadow-lg:
+        0 20px 50px rgba(15, 23, 42, 0.12);
+
+    --radius: 18px;
 }
 
 
+/* =========================================================
+   GLOBAL
+   ========================================================= */
 
-*{
-
-    box-sizing:border-box;
+.course-page,
+.course-page * {
+    box-sizing: border-box;
 }
 
-
-
-body{
-
-    background:var(--bg);
-    font-family:
-    "Inter",
-    system-ui,
-    sans-serif;
-
-    color:var(--text);
-
-}
-
-
-
-
-
-
-/* ===============================
-   MAIN CONTAINER
-================================ */
-
-
-.lms-container{
-
-    max-width:1200px;
-
-    margin:auto;
-
-    padding:30px 20px;
-
-}
-
-
-
-
-
-/* ===============================
-   HERO SECTION
-================================ */
-
-
-.course-hero{
-
-
-    display:flex;
-
-    justify-content:space-between;
-
-    align-items:center;
-
-    gap:30px;
-
+.course-page {
+    min-height: calc(100vh - 70px);
+    display: flex;
 
     background:
-    linear-gradient(
-    135deg,
-    #2563eb,
-    #06b6d4
-    );
+        radial-gradient(
+            circle at 10% 10%,
+            rgba(99, 102, 241, 0.08),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 90% 90%,
+            rgba(139, 92, 246, 0.08),
+            transparent 30%
+        ),
+        var(--bg);
 
-
-    padding:45px;
-
-    border-radius:30px;
-
-    color:white;
-
-    box-shadow:var(--shadow);
-
-
+    color: var(--text);
 }
 
 
+/* =========================================================
+   SIDEBAR
+   ========================================================= */
 
-.hero-left{
+.sidebar {
+    width: var(--sidebar-width);
 
-    max-width:650px;
+    height: calc(100vh - 70px);
 
-}
+    position: sticky;
+    top: 70px;
 
+    overflow-y: auto;
 
-
-.course-tag{
-
-    display:inline-block;
+    padding: 25px 18px;
 
     background:
-    rgba(255,255,255,.2);
+        rgba(255, 255, 255, 0.82);
 
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
 
-    padding:8px 18px;
+    border-right: 1px solid rgba(226, 232, 240, 0.8);
 
-    border-radius:30px;
+    z-index: 50;
 
-    font-weight:600;
-
-    margin-bottom:15px;
-
+    transition: 0.3s ease;
 }
 
 
+/* Scrollbar */
 
+.sidebar::-webkit-scrollbar {
+    width: 5px;
+}
 
-.hero-left h1{
-
-    font-size:45px;
-
-    margin:10px 0;
-
+.sidebar::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
 }
 
 
+/* =========================================================
+   COURSE HEADER
+   ========================================================= */
 
-
-.hero-left p{
-
-    font-size:18px;
-
-    opacity:.9;
-
-    line-height:1.6;
-
+.course-header {
+    padding: 10px 10px 20px;
 }
 
+.course-header h2 {
+    margin: 0 0 8px;
 
+    font-size: 21px;
+    font-weight: 800;
 
-
-
-.hero-buttons{
-
-
-    display:flex;
-
-    gap:15px;
-
-    margin-top:25px;
-
-
-}
-
-
-
-
-
-.continue-btn,
-.outline-btn{
-
-
-    padding:14px 25px;
-
-    border:none;
-
-    border-radius:15px;
-
-    font-weight:700;
-
-    cursor:pointer;
-
-    transition:.3s;
-
-
-}
-
-
-
-
-.continue-btn{
-
-
-    background:white;
-
-    color:#2563eb;
-
-}
-
-
-
-.outline-btn{
-
+    line-height: 1.3;
 
     background:
-    rgba(255,255,255,.2);
+        linear-gradient(
+            135deg,
+            var(--primary),
+            var(--secondary)
+        );
 
-    color:white;
+    -webkit-background-clip: text;
+    background-clip: text;
+
+    -webkit-text-fill-color: transparent;
+}
+
+.course-header span {
+    display: inline-flex;
+
+    padding: 6px 10px;
+
+    border-radius: 20px;
+
+    background: rgba(99, 102, 241, 0.09);
+
+    color: var(--primary);
+
+    font-size: 12px;
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   COURSE PROGRESS
+   ========================================================= */
+
+.course-progress {
+    margin: 5px 10px 25px;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 9px;
+
+    background: #e8edf5;
+
+    border-radius: 20px;
+
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+
+    min-width: 0;
+
+    border-radius: inherit;
+
+    background:
+        linear-gradient(
+            90deg,
+            var(--primary),
+            var(--secondary)
+        );
+
+    box-shadow:
+        0 0 12px rgba(99, 102, 241, 0.35);
+
+    transition:
+        width 0.6s cubic-bezier(.4,0,.2,1);
+}
+
+.course-progress h3 {
+    margin: 9px 0 0;
+
+    font-size: 13px;
+
+    color: var(--muted);
+
+    text-align: right;
+}
+
+
+/* =========================================================
+   DAY LIST
+   ========================================================= */
+
+.day-list {
+    margin: 0;
+    padding: 0;
+
+    list-style: none;
+}
+
+.day-list li {
+    position: relative;
+
+    margin-bottom: 6px;
+
+    border-radius: 12px;
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.day-list li:hover {
+    transform: translateX(4px);
+
+    background:
+        rgba(99, 102, 241, 0.07);
+}
+
+.day-list li a {
+    display: flex;
+    align-items: center;
+
+    padding: 11px 13px;
+
+    text-decoration: none;
+
+    color: #475569;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    border-radius: 12px;
+
+    transition: 0.2s ease;
+}
+
+
+/* Day number indicator */
+
+.day-list li a::before {
+    content: "";
+
+    width: 9px;
+    height: 9px;
+
+    margin-right: 12px;
+
+    border-radius: 50%;
+
+    background: #cbd5e1;
+
+    transition: 0.25s ease;
+}
+
+
+/* Completed */
+
+.day-list li.completed a {
+    color: var(--success);
+}
+
+.day-list li.completed a::before {
+    background: var(--success);
+
+    box-shadow:
+        0 0 0 4px rgba(16, 185, 129, 0.12);
+}
+
+.day-list li.completed a::after {
+    content: "✓";
+
+    margin-left: auto;
+
+    font-size: 14px;
+    font-weight: 800;
+}
+
+
+/* =========================================================
+   MAIN CONTENT
+   ========================================================= */
+
+.course-content {
+    flex: 1;
+
+    width: 100%;
+    max-width: 1100px;
+
+    margin: 0 auto;
+
+    padding: 35px 35px 100px;
+}
+
+
+/* =========================================================
+   LESSON CARD
+   ========================================================= */
+
+.lesson-card {
+    position: relative;
+
+    margin-bottom: 30px;
+
+    padding: 26px;
+
+    background:
+        rgba(255, 255, 255, 0.9);
 
     border:
-    1px solid white;
+        1px solid rgba(226, 232, 240, 0.8);
 
+    border-radius: var(--radius);
 
+    box-shadow: var(--shadow);
+
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+
+    overflow: hidden;
+
+    animation:
+        cardAppear 0.5s ease both;
+
+    scroll-margin-top: 90px;
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+.lesson-card:hover {
+    transform: translateY(-3px);
+
+    box-shadow: var(--shadow-lg);
 }
 
 
+/* Top gradient line */
 
+.lesson-card::before {
+    content: "";
 
-.continue-btn:hover,
-.outline-btn:hover{
+    position: absolute;
 
-    transform:translateY(-3px);
+    top: 0;
+    left: 0;
+    right: 0;
 
-}
-
-
-
-
-
-
-.course-image{
-
-
-    width:180px;
-
-    height:180px;
-
-
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
-
-    font-size:90px;
-
+    height: 4px;
 
     background:
-    rgba(255,255,255,.15);
-
-
-    border-radius:50%;
-
-
+        linear-gradient(
+            90deg,
+            var(--primary),
+            var(--secondary)
+        );
 }
 
 
+/* =========================================================
+   LESSON TOP
+   ========================================================= */
 
+.lesson-top {
+    display: flex;
 
+    align-items: center;
+    justify-content: space-between;
 
+    gap: 20px;
 
-
-/* ===============================
-   STATS
-================================ */
-
-
-.stats-grid{
-
-
-    display:grid;
-
-    grid-template-columns:
-    repeat(4,1fr);
-
-
-    gap:20px;
-
-    margin-top:30px;
-
-
+    margin-bottom: 22px;
 }
 
+.lesson-top h2 {
+    margin: 0;
 
+    font-size: 25px;
 
-.stat-card{
+    font-weight: 800;
 
-
-    background:var(--card);
-
-
-    padding:22px;
-
-
-    border-radius:22px;
-
-
-    display:flex;
-
-    align-items:center;
-
-
-    gap:18px;
-
-
-    box-shadow:var(--shadow);
-
-
-    transition:.3s;
-
-
+    color: var(--text);
 }
 
-
-
-.stat-card:hover{
-
-
-    transform:translateY(-5px);
-
-}
-
-
-
-
-.stat-card span{
-
-
-    font-size:35px;
-
-
-}
-
-
-
-.stat-card h3{
-
-
-    margin:0;
-
-    font-size:28px;
-
-
-}
-
-
-
-
-.stat-card p{
-
-    margin:5px 0;
-
-    color:var(--muted);
-
-
-}
-
-
-
-
-
-
-
-/* ===============================
-   PROGRESS
-================================ */
-
-
-.progress-card{
-
-
-    background:white;
-
-
-    padding:30px;
-
-
-    margin-top:30px;
-
-
-    border-radius:25px;
-
-
-    box-shadow:var(--shadow);
-
-
-}
-
-
-
-
-.progress-title{
-
-
-    display:flex;
-
-    justify-content:space-between;
-
-    align-items:center;
-
-
-}
-
-
-
-.progress-title h2{
-
-
-    margin:0;
-
-}
-
-
-
-.progress-title span{
-
-
-    font-size:25px;
-
-    font-weight:700;
-
-    color:var(--primary);
-
-
-}
-
-
-
-
-
-.progress-track{
-
-
-    height:15px;
-
-
-    background:#e5e7eb;
-
-
-    border-radius:20px;
-
-
-    overflow:hidden;
-
-
-    margin-top:20px;
-
-
-}
-
-
-
-#progress-bar{
-
-
-    height:100%;
-
-
-    width:0%;
-
+.lesson-top span {
+    padding: 8px 13px;
 
     background:
-    linear-gradient(
-    90deg,
-    #2563eb,
-    #06b6d4
-    );
+        rgba(99, 102, 241, 0.08);
+
+    color: var(--primary);
+
+    border-radius: 30px;
+
+    font-size: 13px;
+
+    font-weight: 700;
+}
 
 
-    transition:.5s;
+/* =========================================================
+   TABS
+   ========================================================= */
 
+.tabs {
+    display: flex;
+
+    gap: 6px;
+
+    padding: 5px;
+
+    margin-bottom: 20px;
+
+    width: fit-content;
+
+    background: #f1f5f9;
+
+    border-radius: 12px;
+}
+
+.tab {
+    border: none;
+
+    outline: none;
+
+    cursor: pointer;
+
+    padding: 9px 17px;
+
+    border-radius: 9px;
+
+    background: transparent;
+
+    color: #64748b;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.tab:hover {
+    color: var(--primary);
+}
+
+.tab.active {
+    background: #ffffff;
+
+    color: var(--primary);
+
+    box-shadow:
+        0 3px 10px rgba(15, 23, 42, 0.08);
+}
+
+.tab:active {
+    transform: scale(0.96);
+}
+
+
+/* =========================================================
+   TAB CONTENT
+   ========================================================= */
+
+.tab-content {
+    animation:
+        tabFade 0.25s ease;
+}
+
+
+/* =========================================================
+   NOTES
+   ========================================================= */
+
+.notes {
+    padding: 5px 2px;
+
+    color: #334155;
+
+    font-size: 15px;
+
+    line-height: 1.8;
+}
+
+.notes h1,
+.notes h2,
+.notes h3,
+.notes h4 {
+    margin-top: 20px;
+    margin-bottom: 10px;
+
+    color: #172033;
+}
+
+.notes p {
+    margin-bottom: 14px;
+}
+
+.notes ul,
+.notes ol {
+    padding-left: 25px;
+
+    margin-bottom: 15px;
+}
+
+.notes li {
+    margin-bottom: 7px;
+}
+
+.notes code {
+    padding: 3px 7px;
+
+    border-radius: 6px;
+
+    background: #eef2ff;
+
+    color: #4f46e5;
+
+    font-family:
+        "JetBrains Mono",
+        Consolas,
+        monospace;
+
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   VS CODE STYLE CODE BLOCK
+   ========================================================= */
+
+pre.code {
+    position: relative;
+
+    margin: 0;
+
+    padding: 23px;
+
+    min-height: 130px;
+
+    overflow-x: auto;
+
+    background:
+        #0d1117;
+
+    color: #e6edf3;
+
+    border-radius: 14px;
+
+    border:
+        1px solid #30363d;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.04),
+        0 10px 25px rgba(0,0,0,0.15);
+
+    font-family:
+        "JetBrains Mono",
+        "Fira Code",
+        Consolas,
+        monospace;
+
+    font-size: 13px;
+
+    line-height: 1.75;
+
+    tab-size: 4;
+}
+
+
+/* Code top dots */
+
+pre.code::before {
+    content: "●  ●  ●";
+
+    display: block;
+
+    margin-bottom: 17px;
+
+    color: #64748b;
+
+    letter-spacing: 4px;
+
+    font-size: 10px;
+}
+
+
+/* =========================================================
+   TASK
+   ========================================================= */
+
+.task {
+    padding: 20px;
+
+    border-radius: 14px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(245,158,11,0.08),
+            rgba(99,102,241,0.06)
+        );
+
+    border:
+        1px solid rgba(245,158,11,0.18);
+
+    color: #475569;
+
+    font-size: 14px;
+
+    line-height: 1.7;
+}
+
+.task strong {
+    color: #1e293b;
+}
+
+
+/* =========================================================
+   COMPLETE BUTTON
+   ========================================================= */
+
+.complete-btn {
+    margin-top: 24px;
+
+    border: none;
+
+    outline: none;
+
+    cursor: pointer;
+
+    padding: 12px 20px;
+
+    border-radius: 11px;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--primary),
+            var(--secondary)
+        );
+
+    color: #ffffff;
+
+    font-size: 13px;
+
+    font-weight: 800;
+
+    box-shadow:
+        0 8px 20px rgba(99,102,241,0.25);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        opacity 0.2s ease;
+}
+
+.complete-btn:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 12px 28px rgba(99,102,241,0.35);
+}
+
+.complete-btn:active {
+    transform: scale(0.97);
+}
+
+.complete-btn.completed {
+    background:
+        linear-gradient(
+            135deg,
+            #059669,
+            #10b981
+        );
+
+    box-shadow:
+        0 8px 20px rgba(16,185,129,0.25);
+}
+
+
+/* =========================================================
+   FLOATING PROGRESS
+   ========================================================= */
+
+.floating-progress {
+    position: fixed;
+
+    right: 22px;
+    bottom: 22px;
+
+    width: 64px;
+    height: 64px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background:
+        conic-gradient(
+            var(--primary) 0deg,
+            var(--secondary) 0deg,
+            #e2e8f0 0deg
+        );
+
+    box-shadow:
+        0 12px 35px rgba(15,23,42,0.18);
+
+    z-index: 100;
+}
+
+.floating-progress::after {
+    content: "";
+
+    position: absolute;
+
+    width: 49px;
+    height: 49px;
+
+    background: #ffffff;
+
+    border-radius: 50%;
+}
+
+.floating-progress span {
+    position: relative;
+
+    z-index: 2;
+
+    font-size: 12px;
+
+    font-weight: 800;
+
+    color: var(--primary);
+}
+
+
+/* =========================================================
+   DARK THEME
+   ========================================================= */
+
+body.dark-mode .course-page {
+    --bg: #090d16;
+    --card: #111827;
+    --text: #f1f5f9;
+    --muted: #94a3b8;
+    --border: #263244;
+
+    background:
+        radial-gradient(
+            circle at 10% 10%,
+            rgba(99,102,241,0.12),
+            transparent 30%
+        ),
+        #090d16;
+}
+
+body.dark-mode .sidebar {
+    background:
+        rgba(15, 23, 42, 0.88);
+
+    border-color:
+        rgba(51,65,85,0.7);
+}
+
+body.dark-mode .lesson-card {
+    background:
+        rgba(17,24,39,0.9);
+
+    border-color:
+        rgba(51,65,85,0.7);
+}
+
+body.dark-mode .lesson-top h2 {
+    color: #f8fafc;
+}
+
+body.dark-mode .tabs {
+    background: #0f172a;
+}
+
+body.dark-mode .tab.active {
+    background: #1e293b;
+}
+
+body.dark-mode .notes {
+    color: #cbd5e1;
+}
+
+body.dark-mode .notes h1,
+body.dark-mode .notes h2,
+body.dark-mode .notes h3,
+body.dark-mode .notes h4 {
+    color: #f8fafc;
+}
+
+body.dark-mode .task {
+    background:
+        rgba(245,158,11,0.07);
+
+    color: #cbd5e1;
+}
+
+body.dark-mode .task strong {
+    color: #f8fafc;
+}
+
+body.dark-mode .floating-progress::after {
+    background: #111827;
+}
+
+
+/* =========================================================
+   GLASSMORPHISM
+   ========================================================= */
+
+.glass {
+    background:
+        rgba(255,255,255,0.65);
+
+    backdrop-filter:
+        blur(18px);
+
+    -webkit-backdrop-filter:
+        blur(18px);
+
+    border:
+        1px solid rgba(255,255,255,0.35);
+
+    box-shadow:
+        0 8px 32px rgba(15,23,42,0.08);
+}
+
+
+/* =========================================================
+   ANIMATIONS
+   ========================================================= */
+
+@keyframes cardAppear {
+
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+}
+
+@keyframes tabFade {
+
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 
 }
 
 
+/* =========================================================
+   MOBILE
+   ========================================================= */
 
+@media (max-width: 900px) {
 
+    .course-page {
+        display: block;
+    }
 
-.progress-info{
+    .sidebar {
 
+        width: 100%;
 
-    margin-top:15px;
+        height: auto;
 
+        position: relative;
 
-    display:flex;
+        top: 0;
 
+        border-right: none;
 
-    justify-content:space-between;
+        border-bottom:
+            1px solid var(--border);
 
+        padding: 18px;
 
-    color:var(--muted);
+    }
 
+    .course-header {
+        display: flex;
 
-}
+        align-items: center;
+        justify-content: space-between;
 
+        gap: 15px;
+    }
 
+    .course-header h2 {
+        font-size: 18px;
+    }
 
+    .course-progress {
+        margin-bottom: 15px;
+    }
 
+    .day-list {
 
+        display: flex;
 
+        gap: 7px;
 
+        overflow-x: auto;
 
-/* ===============================
-   LEARNING AREA
-================================ */
+        padding-bottom: 5px;
 
+    }
 
+    .day-list li {
 
-.learning-layout{
+        flex-shrink: 0;
 
+        margin: 0;
 
-    display:grid;
+    }
 
+    .day-list li a {
 
-    grid-template-columns:
-    1fr 320px;
+        padding: 9px 12px;
 
+        background:
+            rgba(99,102,241,0.06);
 
-    gap:25px;
+    }
 
+    .course-content {
 
-    margin-top:30px;
+        padding:
+            22px 16px 90px;
 
-
-}
-
-
-
-
-
-.lesson-area{
-
-
-    background:white;
-
-
-    padding:35px;
-
-
-    border-radius:25px;
-
-
-    box-shadow:var(--shadow);
-
-
-}
-
-
-
-
-.lesson-header{
-
-
-    display:flex;
-
-
-    justify-content:space-between;
-
-
-    align-items:center;
-
+    }
 
 }
 
 
+@media (max-width: 600px) {
 
+    .lesson-card {
 
+        padding: 18px;
 
-.day-pill{
+        border-radius: 15px;
 
+    }
 
-    background:#dbeafe;
+    .lesson-top {
 
+        align-items: flex-start;
 
-    color:#2563eb;
+        flex-direction: column;
 
+        gap: 10px;
 
-    padding:8px 18px;
+    }
 
+    .lesson-top h2 {
 
-    border-radius:30px;
+        font-size: 21px;
 
+    }
 
-    font-weight:700;
+    .lesson-top span {
 
+        font-size: 12px;
+
+    }
+
+    .tabs {
+
+        width: 100%;
+
+        overflow-x: auto;
+
+    }
+
+    .tab {
+
+        flex: 1;
+
+        white-space: nowrap;
+
+        padding:
+            9px 13px;
+
+    }
+
+    .notes {
+
+        font-size: 14px;
+
+    }
+
+    pre.code {
+
+        padding: 17px;
+
+        font-size: 12px;
+
+        border-radius: 11px;
+
+    }
+
+    .complete-btn {
+
+        width: 100%;
+
+    }
+
+    .floating-progress {
+
+        width: 55px;
+        height: 55px;
+
+        right: 15px;
+        bottom: 15px;
+
+    }
+
+    .floating-progress::after {
+
+        width: 42px;
+        height: 42px;
+
+    }
 
 }
 
 
+/* =========================================================
+   VERY SMALL DEVICES
+   ========================================================= */
 
+@media (max-width: 380px) {
 
+    .course-content {
 
-#day-title{
+        padding-left: 10px;
+        padding-right: 10px;
 
+    }
 
-    font-size:32px;
+    .lesson-card {
 
+        padding: 15px;
 
-    margin-top:15px;
+    }
 
+    .course-header {
 
-}
+        align-items: flex-start;
 
+        flex-direction: column;
 
-
-
-
-.bookmark-btn{
-
-
-    background:#fef3c7;
-
-
-    border:none;
-
-
-    padding:12px 18px;
-
-
-    border-radius:15px;
-
-
-    cursor:pointer;
-
+    }
 
 }
 
 
+/* =========================================================
+   ACCESSIBILITY
+   ========================================================= */
 
+button:focus-visible,
+a:focus-visible {
 
+    outline:
+        3px solid
+        rgba(99,102,241,0.35);
 
-
-
-.lesson-content{
-
-
-    margin-top:25px;
-
-
-    font-size:18px;
-
-
-    line-height:1.8;
-
+    outline-offset: 2px;
 
 }
 
 
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
 
+@media (prefers-reduced-motion: reduce) {
 
+    *,
+    *::before,
+    *::after {
 
-.lesson-content li{
+        animation-duration: 0.01ms !important;
 
+        animation-iteration-count: 1 !important;
 
-    margin:10px;
+        scroll-behavior: auto !important;
 
+        transition-duration: 0.01ms !important;
 
-}
-
-
-
-
-
-
-
-
-
-/* ===============================
-   PRACTICE BOX
-================================ */
-
-
-
-.practice-box{
-
-
-    margin-top:30px;
-
-
-    padding:25px;
-
-
-    background:#111827;
-
-
-    color:white;
-
-
-    border-radius:20px;
-
-
-}
-
-
-
-
-#code-editor{
-
-
-    width:100%;
-
-
-    height:180px;
-
-
-    margin-top:15px;
-
-
-    padding:15px;
-
-
-    background:#020617;
-
-
-    color:white;
-
-
-    border-radius:15px;
-
-
-    font-family:monospace;
-
-
-}
-
-
-
-
-.practice-box button{
-
-
-    margin-top:15px;
-
-
-    background:#10b981;
-
-
-    color:white;
-
-
-    border:none;
-
-
-    padding:12px 20px;
-
-
-    border-radius:10px;
-
-
-}
-
-
-
-
-#output-box{
-
-
-    margin-top:15px;
-
-
-    background:#020617;
-
-
-    padding:15px;
-
-
-    border-radius:10px;
-
-
-}
-
-
-
-
-
-
-
-/* ===============================
- TASK
-================================ */
-
-
-.task-section{
-
-
-    margin-top:30px;
-
-
-    background:#f8fafc;
-
-
-    padding:25px;
-
-
-    border-radius:20px;
-
-
-}
-
-
-
-.task-section label{
-
-
-    display:block;
-
-
-    margin:15px 0;
-
-
-}
-
-
-
-
-
-
-
-/* ===============================
- ACTION BUTTONS
-================================ */
-
-
-
-.lesson-actions{
-
-
-    display:flex;
-
-
-    gap:15px;
-
-
-    margin-top:25px;
-
-
-    flex-wrap:wrap;
-
-
-}
-
-
-
-.lesson-actions button{
-
-
-    padding:14px 22px;
-
-
-    border:none;
-
-
-    border-radius:12px;
-
-
-    background:#2563eb;
-
-
-    color:white;
-
-
-    cursor:pointer;
-
-
-}
-
-
-
-
-
-
-
-/* ===============================
- SIDEBAR
-================================ */
-
-
-
-.course-sidebar{
-
-
-    display:flex;
-
-
-    flex-direction:column;
-
-
-    gap:20px;
-
-
-}
-
-
-
-
-.sidebar-card{
-
-
-    background:white;
-
-
-    padding:25px;
-
-
-    border-radius:22px;
-
-
-    box-shadow:var(--shadow);
-
-
-}
-
-
-
-
-
-.sidebar-card ul{
-
-
-    list-style:none;
-
-
-    padding:0;
-
-
-}
-
-
-
-
-.sidebar-card li{
-
-
-    padding:12px;
-
-
-    border-radius:10px;
-
-
-    cursor:pointer;
-
-
-}
-
-
-
-.sidebar-card li:hover,
-.sidebar-card .active{
-
-
-    background:#dbeafe;
-
-
-    color:#2563eb;
-
-
-}
-
-
-
-
-
-
-
-.badge{
-
-
-    display:inline-block;
-
-
-    padding:8px 12px;
-
-
-    background:#ecfdf5;
-
-
-    color:#059669;
-
-
-    border-radius:20px;
-
-
-    margin:5px;
-
-
-}
-
-
-
-
-
-
-
-/* ===============================
- NAVIGATION
-================================ */
-
-
-
-.navigation-buttons{
-
-
-    display:flex;
-
-
-    justify-content:space-between;
-
-
-    margin-top:30px;
-
-
-}
-
-
-
-.navigation-buttons button{
-
-
-    padding:15px 35px;
-
-
-    border:none;
-
-
-    background:#2563eb;
-
-
-    color:white;
-
-
-    border-radius:15px;
-
-
-    cursor:pointer;
-
-
-}
-
-
-
-
-
-
-/* ===============================
- AI CHAT
-================================ */
-
-
-
-.ai-floating{
-
-
-    position:fixed;
-
-
-    right:30px;
-
-
-    bottom:30px;
-
-
-    background:#111827;
-
-
-    color:white;
-
-
-    border:none;
-
-
-    padding:18px 25px;
-
-
-    border-radius:50px;
-
-
-    cursor:pointer;
-
-
-}
-
-
-
-
-
-.ai-box{
-
-
-    position:fixed;
-
-
-    right:30px;
-
-
-    bottom:100px;
-
-
-    width:330px;
-
-
-    background:white;
-
-
-    padding:20px;
-
-
-    border-radius:20px;
-
-
-    box-shadow:var(--shadow);
-
-
-}
-
-
-
-.ai-header{
-
-
-    display:flex;
-
-
-    justify-content:space-between;
-
-
-}
-
-
-
-
-
-.ai-box input{
-
-
-    width:100%;
-
-
-    padding:12px;
-
-
-    margin-top:15px;
-
-
-}
-
-
-
-
-
-
-.hidden{
-
-display:none;
-
-}
-
-
-
-
-
-
-
-
-/* ===============================
- MOBILE
-================================ */
-
-
-
-@media(max-width:900px){
-
-
-.course-hero{
-
-flex-direction:column;
-
-text-align:center;
-
-}
-
-
-
-.stats-grid{
-
-grid-template-columns:
-repeat(2,1fr);
-
-}
-
-
-
-.learning-layout{
-
-grid-template-columns:1fr;
-
-}
-
-
-
-}
-
-
-
-
-
-@media(max-width:500px){
-
-
-.stats-grid{
-
-grid-template-columns:1fr;
-
-}
-
-
-
-.hero-left h1{
-
-font-size:32px;
-
-}
-
-
-
-.lesson-area{
-
-padding:20px;
-
-}
-
-
+    }
 
 }
