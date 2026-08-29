@@ -76,10 +76,6 @@ def get_db_connection():
     )
 
 
-# --------------------------------------------------
-# GOOGLE OAUTH
-# --------------------------------------------------
-
 oauth = OAuth(app)
 
 google = oauth.register(
@@ -93,18 +89,13 @@ google = oauth.register(
 )
 
 
-# --------------------------------------------------
-# HOME
-# --------------------------------------------------
+
 
 @app.route("/")
 def home():
     return redirect(url_for("login"))
 
 
-# --------------------------------------------------
-# GOOGLE LOGIN
-# --------------------------------------------------
 
 @app.route("/login/google")
 def google_login():
@@ -118,9 +109,7 @@ def google_login():
     )
 
     return google.authorize_redirect(redirect_uri)
-    # --------------------------------------------------
-# GOOGLE CALLBACK
-# --------------------------------------------------
+   
 
 @app.route("/login/google/callback")
 def google_callback():
@@ -223,17 +212,9 @@ def google_callback():
         flash("Google Login Failed", "danger")
 
         return redirect(url_for("login"))
-
-
-# --------------------------------------------------
-# SIGNUP
-# --------------------------------------------------
-
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
-
     if request.method == "POST":
-
         name = request.form.get("name", "").strip()
         email = request.form.get("email", "").strip().lower()
         password = request.form.get("password", "")
@@ -252,8 +233,7 @@ def signup():
             conn.close()
 
             flash("Email already exists.", "danger")
-            return redirect(url_for("signup"))
-
+            return redirect(url_for("signup")
         hashed = bcrypt.generate_password_hash(
             password
         ).decode("utf-8")
@@ -283,11 +263,6 @@ def signup():
         return redirect(url_for("login"))
 
     return render_template("signup.html")
-
-
-# --------------------------------------------------
-# LOGIN
-# --------------------------------------------------
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -353,15 +328,8 @@ def logout():
     )
 
     return redirect(url_for("login"))
-    # =========================================================
-# PART 3 — DASHBOARD + MOCK TEST ROUTES
-# =========================================================
-
 @app.route("/dashboard")
 def dashboard():
-    # -----------------------------------------------------
-    # LOGIN CHECK
-    # -----------------------------------------------------
     if "user_id" not in session:
         flash("Please login first.", "warning")
         return redirect(url_for("login"))
@@ -374,11 +342,7 @@ def dashboard():
     try:
         conn = get_db_connection()
         cursor = conn.cursor(pymysql.cursors.DictCursor)
-
-        # -------------------------------------------------
-        # USER DETAILS
-        # -------------------------------------------------
-        cursor.execute("""
+cursor.execute("""
             SELECT
                 id,
                 name,
@@ -396,9 +360,7 @@ def dashboard():
             flash("User account not found.", "danger")
             return redirect(url_for("login"))
 
-        # -------------------------------------------------
-        # TOTAL MOCK QUESTIONS
-        # -------------------------------------------------
+        
         cursor.execute("""
             SELECT COUNT(*) AS total
             FROM mock_questions
@@ -407,9 +369,7 @@ def dashboard():
         question_result = cursor.fetchone()
         total_questions = question_result["total"] if question_result else 0
 
-        # -------------------------------------------------
-        # TOTAL MOCK TESTS ATTEMPTED
-        # -------------------------------------------------
+        
         cursor.execute("""
             SELECT COUNT(*) AS total
             FROM results
@@ -419,9 +379,7 @@ def dashboard():
         test_result = cursor.fetchone()
         total_tests = test_result["total"] if test_result else 0
 
-        # -------------------------------------------------
-        # AVERAGE SCORE
-        # -------------------------------------------------
+        
         cursor.execute("""
             SELECT AVG(percentage) AS avg_percentage
             FROM results
@@ -435,9 +393,7 @@ def dashboard():
         if avg_result and avg_result["avg_percentage"] is not None:
             average_score = round(float(avg_result["avg_percentage"]), 2)
 
-        # -------------------------------------------------
-        # BEST SCORE
-        # -------------------------------------------------
+      
         cursor.execute("""
             SELECT MAX(percentage) AS best_percentage
             FROM results
@@ -451,9 +407,7 @@ def dashboard():
         if best_result and best_result["best_percentage"] is not None:
             best_score = round(float(best_result["best_percentage"]), 2)
 
-        # -------------------------------------------------
-        # RECENT TEST RESULTS
-        # -------------------------------------------------
+      
         cursor.execute("""
             SELECT
                 id,
@@ -469,9 +423,7 @@ def dashboard():
 
         recent_results = cursor.fetchall()
 
-        # -------------------------------------------------
-        # CATEGORY-WISE PERFORMANCE
-        # -------------------------------------------------
+     
         category_stats = []
 
         try:
@@ -489,9 +441,7 @@ def dashboard():
         except Exception:
             category_stats = []
 
-        # -------------------------------------------------
-        # DASHBOARD
-        # -------------------------------------------------
+    
         return render_template(
             "dashboard.html",
             user=user,
@@ -523,9 +473,7 @@ def dashboard():
             conn.close()
 
 
-# =========================================================
-# MOCK TEST CATEGORIES
-# =========================================================
+
 
 @app.route("/mock_categories")
 def mock_categories():
@@ -577,11 +525,6 @@ def mock_categories():
         if conn:
             conn.close()
 
-
-# =========================================================
-# START MOCK TEST
-# =========================================================
-
 @app.route("/mock_test")
 def mock_test():
 
@@ -599,9 +542,7 @@ def mock_test():
         conn = get_db_connection()
         cursor = conn.cursor(pymysql.cursors.DictCursor)
 
-        # -------------------------------------------------
-        # CATEGORY FILTER
-        # -------------------------------------------------
+        
         if category:
 
             cursor.execute("""
@@ -641,9 +582,7 @@ def mock_test():
 
         questions = cursor.fetchall()
 
-        # -------------------------------------------------
-        # NO QUESTIONS
-        # -------------------------------------------------
+        
         if not questions:
 
             flash(
@@ -655,9 +594,7 @@ def mock_test():
                 url_for("mock_categories")
             )
 
-        # -------------------------------------------------
-        # REMOVE ANSWER FROM FRONTEND
-        # -------------------------------------------------
+        
         safe_questions = []
 
         for q in questions:
@@ -673,9 +610,7 @@ def mock_test():
                 "level": q.get("level")
             })
 
-        # -------------------------------------------------
-        # SAVE TEST QUESTIONS IN SESSION
-        # -------------------------------------------------
+        
         session["mock_question_ids"] = [
             q["id"] for q in questions
         ]
@@ -709,11 +644,6 @@ def mock_test():
         if conn:
             conn.close()
 
-
-# =========================================================
-# SUBMIT MOCK TEST
-# =========================================================
-
 @app.route("/submit_mock_test", methods=["POST"])
 def submit_mock_test():
 
@@ -729,15 +659,12 @@ def submit_mock_test():
     cursor = None
 
     try:
-
         data = request.get_json(silent=True)
 
         if not data:
             data = request.form.to_dict()
 
-        # -------------------------------------------------
-        # ANSWERS
-        # -------------------------------------------------
+        
         answers = data.get("answers", {})
 
         if isinstance(answers, str):
@@ -763,9 +690,7 @@ def submit_mock_test():
         conn = get_db_connection()
         cursor = conn.cursor(pymysql.cursors.DictCursor)
 
-        # -------------------------------------------------
-        # FETCH CORRECT ANSWERS
-        # -------------------------------------------------
+        
         placeholders = ",".join(
             ["%s"] * len(question_ids)
         )
@@ -787,11 +712,7 @@ def submit_mock_test():
             str(q["id"]): str(q["answer"]).strip()
             for q in db_questions
         }
-
-        # -------------------------------------------------
-        # CALCULATE SCORE
-        # -------------------------------------------------
-        score = 0
+           score = 0
         total_questions = len(question_ids)
 
         for question_id in question_ids:
@@ -812,9 +733,7 @@ def submit_mock_test():
             ):
                 score += 1
 
-        # -------------------------------------------------
-        # PERCENTAGE
-        # -------------------------------------------------
+        
         percentage = 0
 
         if total_questions > 0:
@@ -824,9 +743,7 @@ def submit_mock_test():
                 2
             )
 
-        # -------------------------------------------------
-        # SAVE RESULT
-        # -------------------------------------------------
+        
         cursor.execute("""
             INSERT INTO results
             (
@@ -851,9 +768,7 @@ def submit_mock_test():
 
         conn.commit()
 
-        # -------------------------------------------------
-        # CLEAR TEST SESSION
-        # -------------------------------------------------
+        
         session.pop(
             "mock_question_ids",
             None
@@ -6288,20 +6203,14 @@ def results():
 # ============================================================
 # COURSE / NOTES ROUTES
 # ============================================================
-@app.route("/java")
+@@app.route("/java")
 @login_required
 def java():
 
     cursor = mysql.connection.cursor()
 
     cursor.execute("""
-        SELECT
-            id,
-            day_number,
-            title,
-            notes,
-            code_snippet,
-            practice_task
+        SELECT id, day_number, title, notes, code_snippet, practice_task
         FROM advanced_java_lessons
         ORDER BY day_number ASC
     """)
@@ -6309,33 +6218,31 @@ def java():
     rows = cursor.fetchall()
     cursor.close()
 
-    lessons = []
+    lessons = [{
+        "id": row[0],
+        "day_number": row[1],
+        "title": row[2],
+        "notes": row[3],
+        "code_snippet": row[4],
+        "practice_task": row[5]
+    } for row in rows]
 
-    for row in rows:
-        lessons.append({
-            "id": row[0],
-            "day_number": row[1],
-            "title": row[2],
-            "notes": row[3],
-            "code_snippet": row[4],
-            "practice_task": row[5]
-        })
+    course = {
+        "name": "Advanced Java",
+        "description": "Learn JDBC, Servlets, JSP, Hibernate, Spring Boot and REST API.",
+        "level": "Professional",
+        "icon": "☕",
+        "projects": "5 Real Projects"
+    }
 
     total_days = len(lessons)
-
     completed_days = []
-
     progress = len(completed_days)
-
-    percentage = (
-        round((progress / total_days) * 100)
-        if total_days > 0
-        else 0
-    )
+    percentage = round((progress / total_days) * 100) if total_days else 0
 
     return render_template(
-        "java.html",              # ✅ तुमची file
-        course_name="Advanced Java",
+        "java.html",
+        course=course,
         lessons=lessons,
         completed_days=completed_days,
         progress=progress,
@@ -6452,9 +6359,7 @@ def software_engineering():
         return redirect(url_for("login"))
 
     return render_template("software_engineering.html")
-# =========================================================
-# APPLICATION STARTUP
-# =========================================================
+
 
 if __name__ == "__main__":
 
