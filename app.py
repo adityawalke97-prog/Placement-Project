@@ -3924,12 +3924,6 @@ def admin_dashboard():
             conn.close()
 
 
-# =========================================================
-# ADMIN — USERS
-# =========================================================
-# =========================================================
-# ADMIN — CHANGE USER ROLE
-# =========================================================
 
 @app.route(
     "/admin/users/<int:user_id>/role",
@@ -6200,9 +6194,6 @@ def results():
         if conn:
             conn.close()
 
-# ============================================================
-# COURSE / NOTES ROUTES
-# ============================================================
 @app.route("/java")
 @login_required
 def java():
@@ -6210,15 +6201,14 @@ def java():
     cursor = mysql.connection.cursor()
 
     cursor.execute("""
-        SELECT
-            id,
-            day_number,
-            title,
-            notes,
-            code_snippet,
-            practice_task
+        SELECT id,
+               day_number,
+               title,
+               notes,
+               code_snippet,
+               practice_task
         FROM advanced_java_lessons
-        ORDER BY day_number ASC
+        ORDER BY day_number
     """)
 
     rows = cursor.fetchall()
@@ -6241,17 +6231,18 @@ def java():
     total_days = len(lessons)
     progress = len(completed_days)
 
-    percentage = int((progress / total_days) * 100) if total_days else 0
+    percentage = int(progress * 100 / total_days) if total_days else 0
 
     course = {
         "name": "Advanced Java",
         "level": "Professional",
-        "description": "Learn JDBC, Servlets, JSP, Hibernate, Spring Boot, REST API and Enterprise Java.",
+        "description": "Learn JDBC, Servlets, JSP, Hibernate, Spring Boot and REST API.",
         "icon": "☕",
         "projects": "5 Real Projects"
     }
-print(lessons)
-print(len(lessons))
+
+    print("Lessons:", lessons)
+
     return render_template(
         "java.html",
         course=course,
