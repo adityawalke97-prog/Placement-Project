@@ -6203,14 +6203,20 @@ def results():
 # ============================================================
 # COURSE / NOTES ROUTES
 # ============================================================
-@@app.route("/java")
+@app.route("/java")
 @login_required
 def java():
 
     cursor = mysql.connection.cursor()
 
     cursor.execute("""
-        SELECT id, day_number, title, notes, code_snippet, practice_task
+        SELECT
+            id,
+            day_number,
+            title,
+            notes,
+            code_snippet,
+            practice_task
         FROM advanced_java_lessons
         ORDER BY day_number ASC
     """)
@@ -6218,28 +6224,34 @@ def java():
     rows = cursor.fetchall()
     cursor.close()
 
-    lessons = [{
-        "id": row[0],
-        "day_number": row[1],
-        "title": row[2],
-        "notes": row[3],
-        "code_snippet": row[4],
-        "practice_task": row[5]
-    } for row in rows]
+    lessons = []
+
+    for row in rows:
+        lessons.append({
+            "id": row[0],
+            "day_number": row[1],
+            "title": row[2],
+            "notes": row[3],
+            "code_snippet": row[4],
+            "practice_task": row[5]
+        })
+
+    completed_days = []
+
+    total_days = len(lessons)
+    progress = len(completed_days)
+
+    percentage = int((progress / total_days) * 100) if total_days else 0
 
     course = {
         "name": "Advanced Java",
-        "description": "Learn JDBC, Servlets, JSP, Hibernate, Spring Boot and REST API.",
         "level": "Professional",
+        "description": "Learn JDBC, Servlets, JSP, Hibernate, Spring Boot, REST API and Enterprise Java.",
         "icon": "☕",
         "projects": "5 Real Projects"
     }
-
-    total_days = len(lessons)
-    completed_days = []
-    progress = len(completed_days)
-    percentage = round((progress / total_days) * 100) if total_days else 0
-
+print(lessons)
+print(len(lessons))
     return render_template(
         "java.html",
         course=course,
