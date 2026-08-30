@@ -1,35 +1,178 @@
 {% extends "layout.html" %}
 
-{% block title %}{{ course_name }} - Day {{ day }}{% endblock %}
+{% block title %}
+{{ course_name|capitalize }} - Day {{ day }}
+{% endblock %}
 
 {% block content %}
 
-<div class="course-section">
+<div class="day-container">
 
-    <h2>{{ title }}</h2>
+    <!-- Header -->
 
-    <div class="notes">
-        {{ notes|safe }}
+    <div class="lesson-header">
+
+        <div>
+
+            <span class="badge">
+                {{ course_name|upper }}
+            </span>
+
+            <h1>
+                Day {{ day }} - {{ title }}
+            </h1>
+
+            <p>
+                Continue your learning journey and complete today's lesson.
+            </p>
+
+        </div>
+
+        <div class="progress-box">
+
+            <div class="progress-circle">
+
+                {{ day }}
+
+            </div>
+
+        </div>
+
     </div>
 
+
+    <!-- Lesson Notes -->
+
+    <div class="card">
+
+        <h2>
+            📘 Notes
+        </h2>
+
+        <div class="notes">
+
+            {{ notes|safe }}
+
+        </div>
+
+    </div>
+
+
+    <!-- Code -->
+
     {% if code_snippet %}
-    <h3>Code</h3>
-    <pre><code>{{ code_snippet }}</code></pre>
+
+    <div class="card">
+
+        <h2>
+
+            💻 Program
+
+        </h2>
+
+        <pre><code>{{ code_snippet }}</code></pre>
+
+    </div>
+
     {% endif %}
+
+
+    <!-- Practice -->
 
     {% if practice_task %}
-    <h3>Practice Task</h3>
-    <div>{{ practice_task|safe }}</div>
+
+    <div class="card">
+
+        <h2>
+
+            📝 Practice Task
+
+        </h2>
+
+        <div class="practice">
+
+            {{ practice_task|safe }}
+
+        </div>
+
+    </div>
+
     {% endif %}
 
-    <div class="nav-buttons">
+
+    <!-- Navigation -->
+
+    <div class="lesson-navigation">
+
         {% if day > 1 %}
-        <a href="{{ url_for('course_day', course_name=course_name, day=day-1) }}">⬅ Previous</a>
+
+        <a
+            class="btn btn-secondary"
+            href="{{ url_for('course_day',
+            course_name=course_name,
+            day=day-1) }}">
+
+            ← Previous Day
+
+        </a>
+
         {% endif %}
 
-        <a href="{{ url_for('course_day', course_name=course_name, day=day+1) }}">Next ➡</a>
+
+        <button
+            class="btn btn-success"
+            onclick="completeLesson()">
+
+            ✅ Mark Complete
+
+        </button>
+
+
+        <a
+            class="btn btn-primary"
+            href="{{ url_for('course_day',
+            course_name=course_name,
+            day=day+1) }}">
+
+            Next Day →
+
+        </a>
+
     </div>
 
 </div>
+
+
+<script>
+
+function completeLesson(){
+
+fetch("/complete_day/{{course_name}}/{{day}}",{
+
+method:"POST"
+
+})
+
+.then(res=>res.json())
+
+.then(data=>{
+
+if(data.success){
+
+alert("Lesson Completed!");
+
+location.reload();
+
+}else{
+
+alert("Unable to save progress.");
+
+}
+
+});
+
+}
+
+</script>
 
 {% endblock %}
