@@ -1,2859 +1,685 @@
 {% extends "layout.html" %}
 
-{% block title %}
-{{ course.name }} | Placement Training Portal
-{% endblock %}
+{% block title %}Advanced Java{% endblock %}
 
 {% block content %}
 
-<div class="course-page">
-    <section class="course-hero">
+<div class="course-container">
 
-        <div class="hero-glow"></div>
+    <!-- ================= SIDEBAR ================= -->
 
-        <div class="hero-container">
+    <aside class="sidebar">
 
-            <div class="hero-content">
+        <div class="logo">
 
-                <span class="course-badge">
-                    🚀 {{ course.level|default('Professional')|upper }}
-                </span>
+            <div class="logo-icon">
+                ☕
+            </div>
 
-                <h1>
-                    {{ course.name }}
-                </h1>
+            <div>
+                <h2>{{ course.name }}</h2>
+                <p>{{ course.level }}</p>
+            </div>
 
-                <p>
-                    {{ course.description }}
-                </p>
+        </div>
 
-                <div class="hero-actions">
+        <!-- Progress -->
 
-                    <a
-                        href="#lesson1"
-                        class="primary-btn"
-                    >
-                        ▶ Continue Learning
-                    </a>
+        <div class="progress-card">
 
-                    <button
-                        type="button"
-                        class="secondary-btn"
-                        onclick="toggleCourseInfo()"
-                    >
-                        ℹ Course Info
-                    </button>
+            <div class="progress-title">
 
+                <span>Course Progress</span>
+
+                <strong>{{ percentage }}%</strong>
+
+            </div>
+
+            <div class="progress-bar">
+
+                <div class="progress-fill"
+                     style="width:{{ percentage }}%;">
                 </div>
 
             </div>
 
-
-            <!-- HERO STATS -->
-
-            <div class="hero-stats">
-
-                <div class="hero-stat">
-
-                    <span>📚</span>
-
-                    <strong>
-                        {{ total_days }}
-                    </strong>
-
-                    <small>
-                        Lessons
-                    </small>
-
-                </div>
-
-
-                <div class="hero-stat">
-
-                    <span>✅</span>
-
-                    <strong id="completedCount">
-                        {{ progress }}
-                    </strong>
-
-                    <small>
-                        Completed
-                    </small>
-
-                </div>
-
-
-                <div class="hero-stat">
-
-                    <span>📈</span>
-
-                    <strong id="heroPercentage">
-                        {{ percentage }}%
-                    </strong>
-
-                    <small>
-                        Progress
-                    </small>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- =====================================================
-         COURSE INFO
-    ====================================================== -->
-
-    <section
-        class="course-info"
-        id="courseInfo"
-    >
-
-        <div class="info-card">
-
-            <span>🎯</span>
-
-            <div>
-                <small>LEVEL</small>
-                <strong>
-                    {{ course.level|default('Professional') }}
-                </strong>
-            </div>
-
-        </div>
-
-
-        <div class="info-card">
-
-            <span>⏱️</span>
-
-            <div>
-                <small>DURATION</small>
-                <strong>
-                    {{ total_days }} Lessons
-                </strong>
-            </div>
-
-        </div>
-
-
-        <div class="info-card">
-
-            <span>💻</span>
-
-            <div>
-                <small>PROJECTS</small>
-                <strong>
-                    {{ course.projects|default('Practical Projects') }}
-                </strong>
-            </div>
-
-        </div>
-
-
-        <div class="info-card">
-
-            <span>🏆</span>
-
-            <div>
-                <small>CERTIFICATE</small>
-                <strong>
-                    After Completion
-                </strong>
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- =====================================================
-         MAIN LAYOUT
-    ====================================================== -->
-
-    <div class="course-layout">
-
-
-        <!-- =================================================
-             SIDEBAR
-        ================================================== -->
-
-        <aside class="course-sidebar">
-
-            <div class="sidebar-top">
+            <div class="progress-info">
 
                 <div>
 
-                    <span>
-                        COURSE ROADMAP
-                    </span>
+                    <h3>{{ progress }}</h3>
 
-                    <h2>
-                        {{ course.name }}
-                    </h2>
+                    <span>Completed</span>
 
-                </div>
-
-                <button
-                    type="button"
-                    class="mobile-sidebar-btn"
-                    onclick="toggleSidebar()"
-                >
-                    ☰
-                </button>
-
-            </div>
-
-
-            <!-- PROGRESS -->
-
-            <div class="sidebar-progress">
-
-                <div class="progress-heading">
-
-                    <span>
-                        Your Progress
-                    </span>
-
-                    <strong id="sidebarPercentage">
-                        {{ percentage }}%
-                    </strong>
-
-                </div>
-
-                <div class="progress-bar">
-
-                    <div
-                        class="progress-fill"
-                        id="progressFill"
-                        style="width: {{ percentage }}%"
-                    ></div>
-
-                </div>
-
-                <small id="progressText">
-                    {{ progress }} of
-                    {{ total_days }}
-                    lessons completed
-                </small>
-
-            </div>
-
-
-            <!-- SEARCH -->
-
-            <div class="lesson-search">
-
-                <span>🔍</span>
-
-                <input
-                    type="text"
-                    id="lessonSearch"
-                    placeholder="Search lessons..."
-                    autocomplete="off"
-                >
-
-            </div>
-
-
-            <!-- LESSON LIST -->
-
-            <nav class="lesson-list">
-
-                {% for lesson in lessons %}
-
-                <a
-                    href="#lesson{{ lesson.day_number }}"
-                    class="lesson-link
-                    {% if lesson.day_number in completed_days %}
-                    completed
-                    {% endif %}"
-                    data-day="{{ lesson.day_number }}"
-                    data-title="{{ lesson.title|lower }}"
-                >
-
-                    <span class="lesson-number">
-
-                        {% if lesson.day_number in completed_days %}
-
-                            ✓
-
-                        {% else %}
-
-                            {{ lesson.day_number }}
-
-                        {% endif %}
-
-                    </span>
-
-
-                    <span class="lesson-details">
-
-                        <strong>
-                            Lesson {{ lesson.day_number }}
-                        </strong>
-
-                        <small>
-                            {{ lesson.title }}
-                        </small>
-
-                    </span>
-
-
-                    {% if lesson.day_number in completed_days %}
-
-                    <span class="lesson-check">
-                        ✓
-                    </span>
-
-                    {% endif %}
-
-                </a>
-
-                {% endfor %}
-
-            </nav>
-
-        </aside>
-
-
-        <!-- =================================================
-             MAIN CONTENT
-        ================================================== -->
-
-        <main class="course-content">
-
-
-            <!-- WELCOME -->
-
-            <div class="welcome-card">
-
-                <div class="welcome-icon">
-                    {{ course.icon|default('🚀') }}
                 </div>
 
                 <div>
 
-                    <span>
-                        WELCOME TO THE COURSE
-                    </span>
+                    <h3>{{ total_days }}</h3>
 
-                    <h2>
-                        Master {{ course.name }}
-                    </h2>
-
-                    <p>
-                        Learn step-by-step, practice regularly
-                        and complete every lesson.
-                    </p>
+                    <span>Total Lessons</span>
 
                 </div>
 
             </div>
 
+        </div>
 
-            <!-- =================================================
-                 LESSON LOOP
-            ================================================== -->
+        <!-- Navigation -->
+
+        <div class="roadmap">
+
+            <h3>Course Roadmap</h3>
 
             {% for lesson in lessons %}
 
-            <article
-                class="lesson-card"
-                id="lesson{{ lesson.day_number }}"
-                data-day="{{ lesson.day_number }}"
-            >
+            <a
+               href="{{ url_for('course_day',
+               course_name='java',
+               day=lesson.day_number) }}"
+               class="roadmap-card">
 
+                <div class="roadmap-left">
 
-                <!-- LESSON HEADER -->
+                    <div class="roadmap-number
+                    {% if lesson.day_number in completed_days %}
+                    completed
+                    {% endif %}
+                    ">
 
-                <header class="lesson-header">
+                        {{ lesson.day_number }}
 
-                    <div class="lesson-badge">
-
-                        <small>
-                            LESSON
-                        </small>
-
-                        <strong>
-                            {{ lesson.day_number }}
-                        </strong>
-
-                    </div>
-
-
-                    <div class="lesson-heading">
-
-                        <span>
-                            {{ course.name|upper }}
-                        </span>
-
-                        <h2>
-                            {{ lesson.title }}
-                        </h2>
-
-                        <p>
-                            Learn the concept,
-                            study the example
-                            and complete the challenge.
-                        </p>
-
-                    </div>
-
-
-                    <div
-                        class="lesson-status
-                        {% if lesson.day_number in completed_days %}
-                        completed
-                        {% endif %}"
-                    >
-
-                        {% if lesson.day_number in completed_days %}
-
-                            ✓ Completed
-
-                        {% else %}
-
-                            📖 Learning
-
-                        {% endif %}
-
-                    </div>
-
-                </header>
-
-
-                <!-- =================================================
-                     TABS
-                ================================================== -->
-
-                <div class="lesson-tabs">
-
-                    <button
-                        class="tab-btn active"
-                        onclick="switchTab(
-                            {{ lesson.day_number }},
-                            'notes',
-                            this
-                        )"
-                    >
-                        📚 Notes
-                    </button>
-
-
-                    <button
-                        class="tab-btn"
-                        onclick="switchTab(
-                            {{ lesson.day_number }},
-                            'code',
-                            this
-                        )"
-                    >
-                        💻 Code
-                    </button>
-
-
-                    <button
-                        class="tab-btn"
-                        onclick="switchTab(
-                            {{ lesson.day_number }},
-                            'practice',
-                            this
-                        )"
-                    >
-                        🧠 Practice
-                    </button>
-
-                </div>
-
-
-                <!-- =================================================
-                     NOTES
-                ================================================== -->
-
-                <div
-                    class="tab-content notes-tab"
-                    id="notes{{ lesson.day_number }}"
-                >
-
-                    {{ lesson.notes|safe }}
-
-                </div>
-
-
-                <!-- =================================================
-                     CODE
-                ================================================== -->
-
-                <div
-                    class="tab-content code-tab"
-                    id="code{{ lesson.day_number }}"
-                    style="display:none;"
-                >
-
-                    <div class="code-header">
-
-                        <span>
-                            💻 {{ course.name }}
-                        </span>
-
-                        <button
-                            type="button"
-                            onclick="copyCode(
-                                {{ lesson.day_number }}
-                            )"
-                        >
-                            📋 Copy
-                        </button>
-
-                    </div>
-
-
-                    <pre
-                        id="codeBlock{{ lesson.day_number }}"
-                    ><code>{{ lesson.code_snippet }}</code></pre>
-
-                </div>
-
-
-                <!-- =================================================
-                     PRACTICE
-                ================================================== -->
-
-                <div
-                    class="tab-content practice-tab"
-                    id="practice{{ lesson.day_number }}"
-                    style="display:none;"
-                >
-
-                    <div class="practice-icon">
-                        🧠
                     </div>
 
                     <div>
 
-                        <span>
-                            PRACTICE CHALLENGE
-                        </span>
+                        <h4>
 
-                        <h3>
-                            Test Your Knowledge
-                        </h3>
+                            Day {{ lesson.day_number }}
 
-                        <p>
-                            {{ lesson.practice_task }}
-                        </p>
+                        </h4>
+
+                        <small>
+
+                            {{ lesson.title }}
+
+                        </small>
 
                     </div>
 
                 </div>
 
+                {% if lesson.day_number in completed_days %}
 
-                <!-- =================================================
-                     FOOTER
-                ================================================== -->
+                    ✅
 
-                <footer class="lesson-footer">
+                {% else %}
 
+                    ➜
 
-                    {% if not loop.first %}
+                {% endif %}
 
-                    <a
-                        href="#lesson{{ lessons[loop.index0 - 1].day_number }}"
-                        class="nav-btn"
-                    >
-                        ← Previous
-                    </a>
-
-                    {% else %}
-
-                    <div></div>
-
-                    {% endif %}
-
-
-                    <!-- COMPLETE -->
-
-                    <button
-                        type="button"
-                        class="complete-btn
-                        {% if lesson.day_number in completed_days %}
-                        completed
-                        {% endif %}"
-                        data-course="{{ course.name }}"
-                        data-day="{{ lesson.day_number }}"
-                    >
-
-                        {% if lesson.day_number in completed_days %}
-
-                            ✓ Completed
-
-                        {% else %}
-
-                            ✓ Mark Complete
-
-                        {% endif %}
-
-                    </button>
-
-
-                    {% if not loop.last %}
-
-                    <a
-                        href="#lesson{{ lessons[loop.index0 + 1].day_number }}"
-                        class="nav-btn next"
-                    >
-                        Next Lesson →
-                    </a>
-
-                    {% else %}
-
-                    <button
-                        type="button"
-                        class="nav-btn certificate"
-                        onclick="openCertificate()"
-                    >
-                        🏆 Certificate
-                    </button>
-
-                    {% endif %}
-
-                </footer>
-
-            </article>
+            </a>
 
             {% endfor %}
 
-
-            <!-- =================================================
-                 COMPLETION
-            ================================================== -->
-
-            <section class="completion-card">
-
-                <div class="completion-icon">
-                    🏆
-                </div>
-
-                <div class="completion-text">
-
-                    <span>
-                        COURSE COMPLETION
-                    </span>
-
-                    <h2>
-                        Complete {{ course.name }}
-                    </h2>
-
-                    <p>
-                        Complete all lessons to unlock
-                        your certificate.
-                    </p>
-
-                </div>
-
-
-                <div class="completion-stat">
-
-                    <strong id="completionPercentage">
-                        {{ percentage }}%
-                    </strong>
-
-                    <small>
-                        {{ progress }}/{{ total_days }}
-                    </small>
-
-                </div>
-
-            </section>
-
-        </main>
-
-    </div>
-
-
-    <!-- =====================================================
-         FLOATING PROGRESS
-    ====================================================== -->
-
-    <div
-        class="floating-progress"
-        id="floatingProgress"
-    >
-
-        <div>
-
-            <strong id="floatingPercentage">
-                {{ percentage }}%
-            </strong>
-
         </div>
 
-    </div>
+    </aside>
 
+    <!-- ================= MAIN ================= -->
 
-    <!-- =====================================================
-         CERTIFICATE MODAL
-    ====================================================== -->
+    <main class="main-content">
 
-    <div
-        class="certificate-modal"
-        id="certificateModal"
-    >
+        <!-- Hero -->
 
-        <div class="certificate-box">
+        <section class="hero">
 
-            <button
-                type="button"
-                class="close-btn"
-                onclick="closeCertificate()"
-            >
-                ×
-            </button>
+            <div class="hero-left">
 
-            <div class="certificate-icon">
-                🏆
+                <h1>
+
+                    {{ course.name }}
+
+                </h1>
+
+                <p>
+
+                    {{ course.description }}
+
+                </p>
+
+                <div class="hero-buttons">
+
+                    <button class="btn-primary">
+
+                        Continue Learning
+
+                    </button>
+
+                    <button class="btn-secondary">
+
+                        Download Notes
+
+                    </button>
+
+                </div>
+
             </div>
 
-            <span>
-                CONGRATULATIONS
-            </span>
+            <div class="hero-right">
 
-            <h2>
-                {{ course.name }} Completed!
-            </h2>
+                <div class="hero-card">
 
-            <p>
-                You have successfully completed
-                the {{ course.name }} learning path.
-            </p>
+                    <h2>
 
-            <button
-                type="button"
-                onclick="getCertificate()"
-                class="certificate-download"
-            >
-                📜 Get Certificate
-            </button>
+                        {{ percentage }}%
+
+                    </h2>
+
+                    <span>
+
+                        Completed
+
+                    </span>
+
+                </div>
+
+                <div class="hero-card">
+
+                    <h2>
+
+                        {{ total_days }}
+
+                    </h2>
+
+                    <span>
+
+                        Lessons
+
+                    </span>
+
+                </div>
+
+                <div class="hero-card">
+
+                    <h2>
+
+                        {{ course.projects }}
+
+                    </h2>
+
+                    <span>
+
+                        Projects
+
+                    </span>
+
+                </div>
+
+                <div class="hero-card">
+
+                    <h2>
+
+                        {{ course.level }}
+
+                    </h2>
+
+                    <span>
+
+                        Level
+
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- Stats -->
+
+        <section class="stats-grid">
+
+            <div class="stat-card">
+
+                <h2>
+
+                    {{ progress }}
+
+                </h2>
+
+                <p>
+
+                    Lessons Completed
+
+                </p>
+
+            </div>
+
+            <div class="stat-card">
+
+                <h2>
+
+                    {{ total_days-progress }}
+
+                </h2>
+
+                <p>
+
+                    Remaining
+
+                </p>
+
+            </div>
+
+            <div class="stat-card">
+
+                <h2>
+
+                    {{ total_days }}
+
+                </h2>
+
+                <p>
+
+                    Total Lessons
+
+                </p>
+
+            </div>
+
+            <div class="stat-card">
+
+                <h2>
+
+                    {{ percentage }}%
+
+                </h2>
+
+                <p>
+
+                    Progress
+
+                </p>
+
+            </div>
+
+        </section>
+
+        <!-- Lesson Section -->
+
+        <section class="lesson-section">
+
+            <div class="section-header">
+
+                <h2>
+
+                    Course Lessons
+
+                </h2>
+
+            </div>
+
+            <div class="lesson-grid">
+
+                            {% for lesson in lessons %}
+
+            <div class="lesson-card" id="day{{ lesson.day_number }}">
+
+                <div class="lesson-header">
+
+                    <div class="lesson-day">
+
+                        Day {{ lesson.day_number }}
+
+                    </div>
+
+                    {% if lesson.day_number in completed_days %}
+
+                        <span class="status completed">
+
+                            ✅ Completed
+
+                        </span>
+
+                    {% else %}
+
+                        <span class="status pending">
+
+                            📖 Pending
+
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+                <h2>
+
+                    {{ lesson.title }}
+
+                </h2>
+
+                <p class="lesson-description">
+
+                    {{ lesson.notes[:250] }}...
+
+                </p>
+
+                <div class="lesson-footer">
+
+                    <a
+                    href="{{ url_for('course_day',
+                    course_name='java',
+                    day=lesson.day_number) }}"
+                    class="btn-start">
+
+                        Start Learning →
+
+                    </a>
+
+                    {% if lesson.day_number in completed_days %}
+
+                        <button
+                        class="btn-completed"
+                        disabled>
+
+                            ✔ Completed
+
+                        </button>
+
+                    {% else %}
+
+                        <button
+                        class="btn-complete"
+                        onclick="completeDay({{ lesson.day_number }})">
+
+                            Mark Complete
+
+                        </button>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+            {% endfor %}
 
         </div>
 
-    </div>
+    </section>
+
+    <!-- ================= RIGHT SIDEBAR ================= -->
+
+    <aside class="right-sidebar">
+
+        <div class="right-card">
+
+            <h3>
+
+                Today's Goal
+
+            </h3>
+
+            <p>
+
+                Complete today's lesson and practice
+                every program before moving to the next day.
+
+            </p>
+
+        </div>
+
+        <div class="right-card">
+
+            <h3>
+
+                Course Topics
+
+            </h3>
+
+            <ul>
+
+                <li>✔ Core Java</li>
+
+                <li>✔ OOP</li>
+
+                <li>✔ Exception Handling</li>
+
+                <li>✔ Collections</li>
+
+                <li>✔ Multithreading</li>
+
+                <li>✔ JDBC</li>
+
+                <li>✔ Servlet</li>
+
+                <li>✔ JSP</li>
+
+                <li>✔ Hibernate</li>
+
+                <li>✔ Spring Boot</li>
+
+                <li>✔ REST API</li>
+
+            </ul>
+
+        </div>
+
+        <div class="right-card">
+
+            <h3>
+
+                Quick Actions
+
+            </h3>
+
+            <a href="#" class="action-btn">
+
+                📄 Download PDF Notes
+
+            </a>
+
+            <a href="#" class="action-btn">
+
+                💻 Practice Programs
+
+            </a>
+
+            <a href="#" class="action-btn">
+
+                🎯 Java Interview Questions
+
+            </a>
+
+            <a href="#" class="action-btn">
+
+                📝 Mock Test
+
+            </a>
+
+        </div>
+
+        <div class="right-card">
+
+            <h3>
+
+                Course Information
+
+            </h3>
+
+            <table class="info-table">
+
+                <tr>
+
+                    <td>Level</td>
+
+                    <td>{{ course.level }}</td>
+
+                </tr>
+
+                <tr>
+
+                    <td>Projects</td>
+
+                    <td>{{ course.projects }}</td>
+
+                </tr>
+
+                <tr>
+
+                    <td>Total Lessons</td>
+
+                    <td>{{ total_days }}</td>
+
+                </tr>
+
+                <tr>
+
+                    <td>Progress</td>
+
+                    <td>{{ percentage }}%</td>
+
+                </tr>
+
+            </table>
+
+        </div>
+
+    </aside>
+
+</main>
 
 </div>
-
-
-<!-- =========================================================
-     CSS
-========================================================= -->
-
-<style>
-
-* {
-    box-sizing: border-box;
-}
-
-.course-page {
-    min-height: 100vh;
-    background: #f6f8fc;
-    color: #172033;
-}
-
-
-/* =====================================================
-   HERO
-===================================================== */
-
-.course-hero {
-    position: relative;
-    overflow: hidden;
-    padding: 65px 6%;
-    color: white;
-
-    background:
-        linear-gradient(
-            135deg,
-            #111827,
-            #312e81,
-            #4c1d95
-        );
-}
-
-.hero-glow {
-    position: absolute;
-    width: 500px;
-    height: 500px;
-    right: -150px;
-    top: -200px;
-
-    border-radius: 50%;
-
-    background:
-        radial-gradient(
-            circle,
-            rgba(139,92,246,.4),
-            transparent 65%
-        );
-}
-
-.hero-container {
-    position: relative;
-    z-index: 2;
-
-    max-width: 1400px;
-    margin: auto;
-
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    gap: 50px;
-}
-
-.hero-content {
-    max-width: 760px;
-}
-
-.course-badge {
-    display: inline-block;
-
-    padding: 8px 14px;
-
-    border-radius: 30px;
-
-    background: rgba(255,255,255,.1);
-
-    border:
-        1px solid
-        rgba(255,255,255,.2);
-
-    font-size: 11px;
-    font-weight: 900;
-    letter-spacing: 1px;
-}
-
-.hero-content h1 {
-    margin: 18px 0 12px;
-
-    font-size:
-        clamp(38px,5vw,65px);
-
-    line-height: 1.05;
-    font-weight: 900;
-}
-
-.hero-content p {
-    max-width: 680px;
-
-    color: #dbeafe;
-
-    line-height: 1.7;
-
-    font-size: 16px;
-}
-
-.hero-actions {
-    display: flex;
-    flex-wrap: wrap;
-
-    gap: 12px;
-
-    margin-top: 25px;
-}
-
-.primary-btn,
-.secondary-btn {
-    padding: 13px 20px;
-
-    border-radius: 12px;
-
-    text-decoration: none;
-
-    font-weight: 800;
-
-    cursor: pointer;
-
-    transition: .25s;
-}
-
-.primary-btn {
-    color: white;
-
-    background:
-        linear-gradient(
-            135deg,
-            #6366f1,
-            #8b5cf6
-        );
-}
-
-.secondary-btn {
-    color: white;
-
-    background:
-        rgba(255,255,255,.08);
-
-    border:
-        1px solid
-        rgba(255,255,255,.2);
-}
-
-.primary-btn:hover,
-.secondary-btn:hover {
-    transform: translateY(-3px);
-}
-
-
-/* =====================================================
-   HERO STATS
-===================================================== */
-
-.hero-stats {
-    display: grid;
-
-    grid-template-columns:
-        repeat(3,120px);
-
-    gap: 12px;
-}
-
-.hero-stat {
-    padding: 18px 10px;
-
-    text-align: center;
-
-    border-radius: 16px;
-
-    background:
-        rgba(255,255,255,.08);
-
-    border:
-        1px solid
-        rgba(255,255,255,.12);
-
-    backdrop-filter: blur(10px);
-}
-
-.hero-stat span {
-    display: block;
-
-    font-size: 22px;
-
-    margin-bottom: 7px;
-}
-
-.hero-stat strong {
-    display: block;
-
-    font-size: 23px;
-}
-
-.hero-stat small {
-    color: #cbd5e1;
-}
-
-
-/* =====================================================
-   INFO
-===================================================== */
-
-.course-info {
-    max-width: 1400px;
-
-    margin: 20px auto;
-
-    padding: 0 25px;
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(4,1fr);
-
-    gap: 15px;
-}
-
-.info-card {
-    display: flex;
-
-    align-items: center;
-
-    gap: 12px;
-
-    padding: 17px;
-
-    border-radius: 15px;
-
-    background: white;
-
-    border:
-        1px solid #e5e7eb;
-
-    box-shadow:
-        0 8px 25px
-        rgba(15,23,42,.05);
-}
-
-.info-card > span {
-    font-size: 25px;
-}
-
-.info-card small {
-    display: block;
-
-    color: #94a3b8;
-
-    font-size: 9px;
-
-    font-weight: 900;
-}
-
-.info-card strong {
-    display: block;
-
-    margin-top: 3px;
-}
-
-
-/* =====================================================
-   LAYOUT
-===================================================== */
-
-.course-layout {
-    max-width: 1450px;
-
-    margin: auto;
-
-    padding:
-        30px 25px 100px;
-
-    display: grid;
-
-    grid-template-columns:
-        310px 1fr;
-
-    gap: 25px;
-}
-
-
-/* =====================================================
-   SIDEBAR
-===================================================== */
-
-.course-sidebar {
-    position: sticky;
-
-    top: 85px;
-
-    height:
-        calc(100vh - 105px);
-
-    overflow-y: auto;
-
-    padding: 20px;
-
-    background: white;
-
-    border:
-        1px solid #e5e7eb;
-
-    border-radius: 20px;
-
-    box-shadow:
-        0 10px 30px
-        rgba(15,23,42,.06);
-}
-
-.sidebar-top {
-    display: flex;
-
-    justify-content: space-between;
-
-    align-items: center;
-
-    margin-bottom: 20px;
-}
-
-.sidebar-top span {
-    color: #6366f1;
-
-    font-size: 9px;
-
-    font-weight: 900;
-
-    letter-spacing: 1px;
-}
-
-.sidebar-top h2 {
-    margin: 4px 0 0;
-
-    font-size: 19px;
-}
-
-.mobile-sidebar-btn {
-    display: none;
-}
-
-
-/* =====================================================
-   PROGRESS
-===================================================== */
-
-.sidebar-progress {
-    margin-bottom: 20px;
-}
-
-.progress-heading {
-    display: flex;
-
-    justify-content: space-between;
-
-    margin-bottom: 8px;
-
-    color: #64748b;
-
-    font-size: 12px;
-}
-
-.progress-heading strong {
-    color: #6366f1;
-}
-
-.progress-bar {
-    height: 8px;
-
-    overflow: hidden;
-
-    border-radius: 20px;
-
-    background: #e5e7eb;
-}
-
-.progress-fill {
-    height: 100%;
-
-    border-radius: inherit;
-
-    background:
-        linear-gradient(
-            90deg,
-            #6366f1,
-            #8b5cf6
-        );
-
-    transition:
-        width .5s ease;
-}
-
-.sidebar-progress > small {
-    display: block;
-
-    margin-top: 8px;
-
-    color: #94a3b8;
-
-    font-size: 10px;
-}
-
-
-/* =====================================================
-   SEARCH
-===================================================== */
-
-.lesson-search {
-    display: flex;
-
-    align-items: center;
-
-    gap: 8px;
-
-    padding: 10px 12px;
-
-    margin-bottom: 15px;
-
-    background: #f8fafc;
-
-    border:
-        1px solid #e2e8f0;
-
-    border-radius: 11px;
-}
-
-.lesson-search input {
-    width: 100%;
-
-    border: none;
-
-    outline: none;
-
-    background: transparent;
-
-    font-size: 13px;
-}
-
-
-/* =====================================================
-   LESSON LIST
-===================================================== */
-
-.lesson-list {
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 5px;
-}
-
-.lesson-link {
-    display: flex;
-
-    align-items: center;
-
-    gap: 10px;
-
-    padding: 10px;
-
-    color: #475569;
-
-    text-decoration: none;
-
-    border-radius: 11px;
-
-    transition: .2s;
-}
-
-.lesson-link:hover {
-    background: #f1f5f9;
-
-    transform:
-        translateX(3px);
-}
-
-.lesson-link.completed {
-    color: #059669;
-}
-
-.lesson-number {
-    width: 29px;
-    height: 29px;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    flex-shrink: 0;
-
-    border-radius: 9px;
-
-    background: #eef2ff;
-
-    color: #6366f1;
-
-    font-size: 11px;
-
-    font-weight: 900;
-}
-
-.lesson-link.completed
-.lesson-number {
-    background: #dcfce7;
-
-    color: #059669;
-}
-
-.lesson-details {
-    min-width: 0;
-}
-
-.lesson-details strong {
-    display: block;
-
-    font-size: 12px;
-}
-
-.lesson-details small {
-    display: block;
-
-    overflow: hidden;
-
-    margin-top: 2px;
-
-    color: #94a3b8;
-
-    font-size: 10px;
-
-    text-overflow: ellipsis;
-
-    white-space: nowrap;
-}
-
-.lesson-check {
-    margin-left: auto;
-
-    font-weight: 900;
-}
-
-
-/* =====================================================
-   WELCOME
-===================================================== */
-
-.welcome-card {
-    display: flex;
-
-    align-items: center;
-
-    gap: 18px;
-
-    margin-bottom: 22px;
-
-    padding: 22px;
-
-    border-radius: 18px;
-
-    background:
-        linear-gradient(
-            135deg,
-            #eef2ff,
-            #f5f3ff
-        );
-
-    border:
-        1px solid #e0e7ff;
-}
-
-.welcome-icon {
-    width: 55px;
-    height: 55px;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    flex-shrink: 0;
-
-    border-radius: 15px;
-
-    background: white;
-
-    font-size: 27px;
-}
-
-.welcome-card span {
-    color: #6366f1;
-
-    font-size: 9px;
-
-    font-weight: 900;
-
-    letter-spacing: 1px;
-}
-
-.welcome-card h2 {
-    margin: 5px 0;
-
-    font-size: 20px;
-}
-
-.welcome-card p {
-    margin: 0;
-
-    color: #64748b;
-
-    font-size: 13px;
-}
-
-
-/* =====================================================
-   LESSON
-===================================================== */
-
-.lesson-card {
-    margin-bottom: 25px;
-
-    overflow: hidden;
-
-    background: white;
-
-    border:
-        1px solid #e5e7eb;
-
-    border-radius: 20px;
-
-    box-shadow:
-        0 10px 30px
-        rgba(15,23,42,.06);
-
-    scroll-margin-top: 95px;
-}
-
-
-/* =====================================================
-   LESSON HEADER
-===================================================== */
-
-.lesson-header {
-    display: flex;
-
-    align-items: center;
-
-    gap: 18px;
-
-    padding: 25px;
-
-    border-bottom:
-        1px solid #eef2f7;
-}
-
-.lesson-badge {
-    width: 62px;
-    height: 62px;
-
-    display: flex;
-
-    flex-direction: column;
-
-    align-items: center;
-    justify-content: center;
-
-    flex-shrink: 0;
-
-    border-radius: 16px;
-
-    color: white;
-
-    background:
-        linear-gradient(
-            135deg,
-            #6366f1,
-            #8b5cf6
-        );
-}
-
-.lesson-badge small {
-    font-size: 8px;
-
-    font-weight: 800;
-}
-
-.lesson-badge strong {
-    font-size: 24px;
-}
-
-.lesson-heading {
-    flex: 1;
-}
-
-.lesson-heading > span {
-    color: #6366f1;
-
-    font-size: 9px;
-
-    font-weight: 900;
-
-    letter-spacing: 1px;
-}
-
-.lesson-heading h2 {
-    margin: 4px 0;
-
-    font-size: 23px;
-}
-
-.lesson-heading p {
-    margin: 0;
-
-    color: #64748b;
-
-    font-size: 12px;
-}
-
-.lesson-status {
-    padding: 7px 10px;
-
-    border-radius: 20px;
-
-    background: #fff7ed;
-
-    color: #ea580c;
-
-    font-size: 10px;
-
-    font-weight: 800;
-}
-
-.lesson-status.completed {
-    background: #dcfce7;
-
-    color: #059669;
-}
-
-
-/* =====================================================
-   TABS
-===================================================== */
-
-.lesson-tabs {
-    display: flex;
-
-    gap: 5px;
-
-    padding:
-        8px 20px 0;
-
-    background: #fafbff;
-}
-
-.tab-btn {
-    border: none;
-
-    cursor: pointer;
-
-    padding: 12px 17px;
-
-    border-radius:
-        10px 10px 0 0;
-
-    background: transparent;
-
-    color: #64748b;
-
-    font-weight: 700;
-}
-
-.tab-btn:hover {
-    color: #6366f1;
-}
-
-.tab-btn.active {
-    background: white;
-
-    color: #6366f1;
-}
-
-
-/* =====================================================
-   TAB CONTENT
-===================================================== */
-
-.tab-content {
-    padding: 27px;
-
-    animation:
-        contentFade .25s ease;
-}
-
-@keyframes contentFade {
-
-    from {
-        opacity: 0;
-        transform: translateY(5px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-
-}
-
-
-/* =====================================================
-   NOTES
-===================================================== */
-
-.notes-tab {
-    color: #334155;
-
-    font-size: 15px;
-
-    line-height: 1.8;
-}
-
-.notes-tab h1,
-.notes-tab h2,
-.notes-tab h3,
-.notes-tab h4 {
-    margin-top: 22px;
-
-    margin-bottom: 10px;
-
-    color: #172033;
-}
-
-.notes-tab h3:first-child {
-    margin-top: 0;
-}
-
-.notes-tab p {
-    margin-bottom: 13px;
-}
-
-.notes-tab li {
-    margin-bottom: 7px;
-}
-
-.notes-tab code {
-    padding: 3px 7px;
-
-    border-radius: 6px;
-
-    background: #eef2ff;
-
-    color: #4f46e5;
-}
-
-
-/* =====================================================
-   CODE
-===================================================== */
-
-.code-tab {
-    padding:
-        0 27px 27px;
-}
-
-.code-header {
-    display: flex;
-
-    align-items: center;
-
-    justify-content: space-between;
-
-    padding: 11px 15px;
-
-    color: #c9d1d9;
-
-    background: #161b22;
-
-    font-size: 12px;
-
-    border-radius:
-        12px 12px 0 0;
-}
-
-.code-header button {
-    border: none;
-
-    cursor: pointer;
-
-    padding: 6px 10px;
-
-    border-radius: 7px;
-
-    background: #21262d;
-
-    color: #c9d1d9;
-}
-
-.code-tab pre {
-    margin: 0;
-
-    padding: 22px;
-
-    overflow-x: auto;
-
-    background: #0d1117;
-
-    color: #e6edf3;
-
-    border-radius:
-        0 0 12px 12px;
-
-    font-family:
-        Consolas,
-        "Courier New",
-        monospace;
-
-    font-size: 13px;
-
-    line-height: 1.7;
-}
-
-
-/* =====================================================
-   PRACTICE
-===================================================== */
-
-.practice-tab {
-    display: flex;
-
-    align-items: flex-start;
-
-    gap: 18px;
-
-    margin: 25px 27px;
-
-    padding: 22px;
-
-    border-radius: 15px;
-
-    background:
-        linear-gradient(
-            135deg,
-            #fff7ed,
-            #fffbeb
-        );
-
-    border:
-        1px solid #fed7aa;
-}
-
-.practice-icon {
-    font-size: 32px;
-}
-
-.practice-tab span {
-    color: #ea580c;
-
-    font-size: 9px;
-
-    font-weight: 900;
-
-    letter-spacing: 1px;
-}
-
-.practice-tab h3 {
-    margin: 5px 0;
-
-    font-size: 19px;
-}
-
-.practice-tab p {
-    margin: 0;
-
-    color: #64748b;
-
-    line-height: 1.6;
-}
-
-
-/* =====================================================
-   FOOTER
-===================================================== */
-
-.lesson-footer {
-    display: grid;
-
-    grid-template-columns:
-        1fr auto 1fr;
-
-    align-items: center;
-
-    gap: 10px;
-
-    padding: 18px 25px;
-
-    border-top:
-        1px solid #eef2f7;
-
-    background: #fafbfc;
-}
-
-.nav-btn,
-.complete-btn {
-    display: inline-flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    min-height: 40px;
-
-    padding: 9px 14px;
-
-    border: none;
-
-    border-radius: 10px;
-
-    text-decoration: none;
-
-    cursor: pointer;
-
-    font-size: 12px;
-
-    font-weight: 800;
-}
-
-.nav-btn {
-    width: fit-content;
-
-    background: #f1f5f9;
-
-    color: #475569;
-}
-
-.nav-btn.next {
-    justify-self: end;
-}
-
-.complete-btn {
-    color: white;
-
-    background:
-        linear-gradient(
-            135deg,
-            #6366f1,
-            #8b5cf6
-        );
-}
-
-.complete-btn.completed {
-    background:
-        linear-gradient(
-            135deg,
-            #059669,
-            #10b981
-        );
-}
-
-
-/* =====================================================
-   COMPLETION
-===================================================== */
-
-.completion-card {
-    display: flex;
-
-    align-items: center;
-
-    gap: 20px;
-
-    padding: 25px;
-
-    border-radius: 20px;
-
-    color: white;
-
-    background:
-        linear-gradient(
-            135deg,
-            #111827,
-            #312e81
-        );
-}
-
-.completion-icon {
-    font-size: 45px;
-}
-
-.completion-text {
-    flex: 1;
-}
-
-.completion-text span {
-    color: #c4b5fd;
-
-    font-size: 9px;
-
-    font-weight: 900;
-}
-
-.completion-text h2 {
-    margin: 5px 0;
-
-    font-size: 22px;
-}
-
-.completion-text p {
-    margin: 0;
-
-    color: #cbd5e1;
-
-    font-size: 12px;
-}
-
-.completion-stat {
-    text-align: center;
-}
-
-.completion-stat strong {
-    display: block;
-
-    font-size: 30px;
-}
-
-.completion-stat small {
-    color: #cbd5e1;
-}
-
-
-/* =====================================================
-   FLOATING PROGRESS
-===================================================== */
-
-.floating-progress {
-    position: fixed;
-
-    right: 22px;
-    bottom: 22px;
-
-    z-index: 100;
-
-    width: 64px;
-    height: 64px;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 50%;
-
-    background:
-        conic-gradient(
-            #6366f1
-            {{ percentage * 3.6 }}deg,
-            #e2e8f0 0deg
-        );
-
-    box-shadow:
-        0 12px 35px
-        rgba(15,23,42,.2);
-}
-
-.floating-progress > div {
-    width: 50px;
-    height: 50px;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 50%;
-
-    background: white;
-}
-
-.floating-progress strong {
-    color: #6366f1;
-
-    font-size: 11px;
-}
-
-
-/* =====================================================
-   CERTIFICATE
-===================================================== */
-
-.certificate-modal {
-    position: fixed;
-
-    inset: 0;
-
-    z-index: 9999;
-
-    display: none;
-
-    align-items: center;
-    justify-content: center;
-
-    padding: 20px;
-
-    background:
-        rgba(15,23,42,.7);
-
-    backdrop-filter: blur(8px);
-}
-
-.certificate-box {
-    position: relative;
-
-    width:
-        min(480px,100%);
-
-    padding: 40px;
-
-    text-align: center;
-
-    background: white;
-
-    border-radius: 25px;
-
-    box-shadow:
-        0 30px 80px
-        rgba(0,0,0,.3);
-}
-
-.close-btn {
-    position: absolute;
-
-    top: 12px;
-    right: 15px;
-
-    border: none;
-
-    background: transparent;
-
-    cursor: pointer;
-
-    color: #64748b;
-
-    font-size: 27px;
-}
-
-.certificate-icon {
-    font-size: 60px;
-}
-
-.certificate-box > span {
-    color: #6366f1;
-
-    font-size: 10px;
-
-    font-weight: 900;
-
-    letter-spacing: 2px;
-}
-
-.certificate-box h2 {
-    margin: 8px 0;
-
-    font-size: 27px;
-}
-
-.certificate-box p {
-    color: #64748b;
-
-    line-height: 1.6;
-}
-
-.certificate-download {
-    margin-top: 15px;
-
-    padding: 12px 20px;
-
-    border: none;
-
-    border-radius: 11px;
-
-    cursor: pointer;
-
-    color: white;
-
-    background:
-        linear-gradient(
-            135deg,
-            #6366f1,
-            #8b5cf6
-        );
-
-    font-weight: 800;
-}
-
-
-/* =====================================================
-   MOBILE
-===================================================== */
-
-@media(max-width:1000px) {
-
-    .hero-container {
-        flex-direction: column;
-
-        align-items: flex-start;
-    }
-
-    .hero-stats {
-        width: 100%;
-
-        grid-template-columns:
-            repeat(3,1fr);
-    }
-
-    .course-layout {
-        grid-template-columns: 1fr;
-    }
-
-    .course-sidebar {
-        position: relative;
-
-        top: 0;
-
-        height: auto;
-    }
-
-    .mobile-sidebar-btn {
-        display: block;
-
-        border: none;
-
-        background: #eef2ff;
-
-        color: #6366f1;
-
-        padding: 8px 10px;
-
-        border-radius: 8px;
-
-        cursor: pointer;
-    }
-
-}
-
-
-@media(max-width:650px) {
-
-    .course-hero {
-        padding: 40px 18px;
-    }
-
-    .hero-content h1 {
-        font-size: 38px;
-    }
-
-    .hero-content p {
-        font-size: 14px;
-    }
-
-    .hero-stats {
-        gap: 7px;
-    }
-
-    .hero-stat {
-        padding: 12px 5px;
-    }
-
-    .course-info {
-        grid-template-columns:
-            1fr 1fr;
-
-        padding:
-            0 12px;
-    }
-
-    .course-layout {
-        padding:
-            18px 10px 80px;
-    }
-
-    .lesson-header {
-        align-items: flex-start;
-
-        flex-wrap: wrap;
-
-        padding: 18px;
-    }
-
-    .lesson-heading {
-        min-width:
-            calc(100% - 80px);
-    }
-
-    .lesson-status {
-        width: 100%;
-
-        text-align: center;
-    }
-
-    .lesson-tabs {
-        overflow-x: auto;
-
-        padding-left: 10px;
-        padding-right: 10px;
-    }
-
-    .tab-btn {
-        flex: 1;
-
-        white-space: nowrap;
-    }
-
-    .tab-content {
-        padding: 18px;
-    }
-
-    .code-tab {
-        padding:
-            0 12px 18px;
-    }
-
-    .practice-tab {
-        margin:
-            18px 12px;
-
-        flex-direction: column;
-    }
-
-    .lesson-footer {
-        grid-template-columns: 1fr;
-
-        padding: 15px;
-    }
-
-    .nav-btn,
-    .complete-btn {
-        width: 100%;
-    }
-
-    .nav-btn.next {
-        justify-self: stretch;
-    }
-
-    .completion-card {
-        flex-direction: column;
-
-        text-align: center;
-    }
-
-    .floating-progress {
-        right: 12px;
-        bottom: 12px;
-
-        width: 55px;
-        height: 55px;
-    }
-
-    .floating-progress > div {
-        width: 43px;
-        height: 43px;
-    }
-
-}
-
-</style>
-
-
-<!-- =========================================================
-     JAVASCRIPT
-========================================================= -->
-
 <script>
 
-document.addEventListener(
-    "DOMContentLoaded",
-    function () {
+function completeDay(day){
 
-        /* ==============================================
-           SEARCH LESSONS
-        ============================================== */
+    fetch("/complete_day/java/" + day,{
 
-        const search =
-            document.getElementById(
-                "lessonSearch"
-            );
+        method:"POST"
 
-        const lessons =
-            document.querySelectorAll(
-                ".lesson-link"
-            );
+    })
 
+    .then(response=>response.json())
 
-        if (search) {
+    .then(data=>{
 
-            search.addEventListener(
-                "input",
-                function () {
+        if(data.success){
 
-                    const value =
-                        this.value
-                        .toLowerCase()
-                        .trim();
+            alert("🎉 Day "+day+" Completed!");
 
+            location.reload();
 
-                    lessons.forEach(
-                        lesson => {
+        }else{
 
-                            const title =
-                                lesson.dataset.title
-                                || "";
-
-                            const day =
-                                lesson.dataset.day
-                                || "";
-
-
-                            if (
-                                title.includes(value)
-                                ||
-                                day.includes(value)
-                            ) {
-
-                                lesson.style.display =
-                                    "flex";
-
-                            } else {
-
-                                lesson.style.display =
-                                    "none";
-
-                            }
-
-                        }
-                    );
-
-                }
-            );
+            alert("Something went wrong.");
 
         }
 
+    })
 
-        /* ==============================================
-           COMPLETE BUTTON
-        ============================================== */
+    .catch(error=>{
 
-        document
-            .querySelectorAll(
-                ".complete-btn"
-            )
-            .forEach(
-                button => {
+        console.log(error);
 
-                    button.addEventListener(
-                        "click",
-                        function () {
+        alert("Server Error");
 
-                            completeLesson(
-                                this
-                            );
-
-                        }
-                    );
-
-                }
-            );
-
-    }
-);
-
-
-/* =====================================================
-   TAB SWITCH
-===================================================== */
-
-function switchTab(
-    day,
-    tab,
-    button
-) {
-
-    const notes =
-        document.getElementById(
-            "notes" + day
-        );
-
-    const code =
-        document.getElementById(
-            "code" + day
-        );
-
-    const practice =
-        document.getElementById(
-            "practice" + day
-        );
-
-
-    notes.style.display = "none";
-    code.style.display = "none";
-    practice.style.display = "none";
-
-
-    if (tab === "notes") {
-        notes.style.display = "block";
-    }
-
-    if (tab === "code") {
-        code.style.display = "block";
-    }
-
-    if (tab === "practice") {
-        practice.style.display = "flex";
-    }
-
-
-    const parent =
-        button.closest(
-            ".lesson-tabs"
-        );
-
-
-    parent
-        .querySelectorAll(
-            ".tab-btn"
-        )
-        .forEach(
-            btn => {
-
-                btn.classList.remove(
-                    "active"
-                );
-
-            }
-        );
-
-
-    button.classList.add(
-        "active"
-    );
-}
-
-
-/* =====================================================
-   COPY CODE
-===================================================== */
-
-function copyCode(day) {
-
-    const code =
-        document.getElementById(
-            "codeBlock" + day
-        );
-
-    if (!code) return;
-
-
-    navigator.clipboard
-        .writeText(
-            code.innerText
-        )
-        .then(
-            () => {
-
-                showToast(
-                    "Code copied successfully 📋"
-                );
-
-            }
-        )
-        .catch(
-            () => {
-
-                showToast(
-                    "Unable to copy code"
-                );
-
-            }
-        );
-}
-
-
-/* =====================================================
-   COURSE INFO
-===================================================== */
-
-function toggleCourseInfo() {
-
-    const info =
-        document.getElementById(
-            "courseInfo"
-        );
-
-
-    if (
-        info.style.display ===
-        "none"
-        ||
-        !info.style.display
-    ) {
-
-        info.style.display =
-            "grid";
-
-    } else {
-
-        info.style.display =
-            "none";
-
-    }
+    });
 
 }
 
 
-/* =====================================================
-   SIDEBAR
-===================================================== */
+// Search Lesson
 
-function toggleSidebar() {
+const searchBox=document.getElementById("lessonSearch");
 
-    const sidebar =
-        document.querySelector(
-            ".course-sidebar"
-        );
+if(searchBox){
 
-    sidebar.classList.toggle(
-        "mobile-open"
-    );
+searchBox.addEventListener("keyup",function(){
 
-}
+let value=this.value.toLowerCase();
 
+document.querySelectorAll(".lesson-card").forEach(card=>{
 
-/* =====================================================
-   COMPLETE LESSON
-===================================================== */
+let text=card.innerText.toLowerCase();
 
-async function completeLesson(
-    button
-) {
+card.style.display=text.includes(value)
+?"block":"none";
 
-    if (
-        button.classList.contains(
-            "completed"
-        )
-    ) {
+});
 
-        showToast(
-            "Lesson already completed ✅"
-        );
-
-        return;
-    }
-
-
-    const course =
-        button.dataset.course;
-
-    const day =
-        button.dataset.day;
-
-
-    const original =
-        button.innerHTML;
-
-
-    button.disabled = true;
-
-    button.innerHTML =
-        "⏳ Saving...";
-
-
-    try {
-
-        const response =
-            await fetch(
-                "/mark_complete",
-                {
-                    method: "POST",
-
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
-
-                    body:
-                        JSON.stringify({
-
-                            course: course,
-
-                            day:
-                                parseInt(day)
-
-                        })
-                }
-            );
-
-
-        const data =
-            await response.json();
-
-
-        if (
-            !response.ok
-            ||
-            !data.success
-        ) {
-
-            throw new Error(
-                data.message
-                ||
-                "Unable to save progress"
-            );
-
-        }
-
-
-        button.classList.add(
-            "completed"
-        );
-
-        button.innerHTML =
-            "✓ Completed";
-
-
-        /* SIDEBAR */
-
-        const sidebar =
-            document.querySelector(
-                `.lesson-link[data-day="${day}"]`
-            );
-
-
-        if (sidebar) {
-
-            sidebar.classList.add(
-                "completed"
-            );
-
-
-            const number =
-                sidebar.querySelector(
-                    ".lesson-number"
-                );
-
-
-            if (number) {
-
-                number.innerHTML =
-                    "✓";
-
-            }
-
-        }
-
-
-        /* PROGRESS */
-
-        if (
-            data.percentage !== undefined
-        ) {
-
-            updateProgress(
-                data.percentage,
-                data.progress,
-                data.total_days
-            );
-
-        }
-
-
-        showToast(
-            "Lesson completed 🎉"
-        );
-
-
-    }
-    catch (error) {
-
-        console.error(error);
-
-        button.innerHTML =
-            original;
-
-        showToast(
-            error.message
-            ||
-            "Something went wrong ❌"
-        );
-
-    }
-    finally {
-
-        button.disabled =
-            false;
-
-    }
+});
 
 }
 
 
-/* =====================================================
-   UPDATE PROGRESS
-===================================================== */
+// Progress Animation
 
-function updateProgress(
-    percentage,
-    progress,
-    total
-) {
+window.addEventListener("load",()=>{
 
-    document
-        .getElementById(
-            "progressFill"
-        )
-        .style.width =
-        percentage + "%";
+const fill=document.querySelector(".progress-fill");
 
+if(fill){
 
-    document
-        .getElementById(
-            "sidebarPercentage"
-        )
-        .textContent =
-        percentage + "%";
+let width=fill.style.width;
 
+fill.style.width="0%";
 
-    document
-        .getElementById(
-            "heroPercentage"
-        )
-        .textContent =
-        percentage + "%";
+setTimeout(()=>{
 
+fill.style.transition="1.2s";
 
-    document
-        .getElementById(
-            "completionPercentage"
-        )
-        .textContent =
-        percentage + "%";
+fill.style.width=width;
 
-
-    document
-        .getElementById(
-            "floatingPercentage"
-        )
-        .textContent =
-        percentage + "%";
-
-
-    document
-        .getElementById(
-            "completedCount"
-        )
-        .textContent =
-        progress;
-
-
-    document
-        .getElementById(
-            "progressText"
-        )
-        .textContent =
-        `${progress} of ${total} lessons completed`;
-
-
-    document
-        .getElementById(
-            "floatingProgress"
-        )
-        .style.background =
-        `conic-gradient(
-            #6366f1
-            ${percentage * 3.6}deg,
-            #e2e8f0 0deg
-        )`;
+},300);
 
 }
 
-
-/* =====================================================
-   TOAST
-===================================================== */
-
-function showToast(
-    message
-) {
-
-    let toast =
-        document.getElementById(
-            "courseToast"
-        );
+});
 
 
-    if (!toast) {
+// Active Roadmap
 
-        toast =
-            document.createElement(
-                "div"
-            );
+document.querySelectorAll(".roadmap-card").forEach(item=>{
 
-        toast.id =
-            "courseToast";
+item.addEventListener("click",function(){
 
+document.querySelectorAll(".roadmap-card")
+.forEach(x=>x.classList.remove("active"));
 
-        toast.style.cssText = `
+this.classList.add("active");
 
-            position:fixed;
+});
 
-            top:90px;
-
-            right:20px;
-
-            z-index:99999;
-
-            padding:14px 18px;
-
-            border-radius:13px;
-
-            background:#111827;
-
-            color:white;
-
-            box-shadow:
-                0 15px 40px
-                rgba(0,0,0,.2);
-
-            font-size:13px;
-
-            font-weight:700;
-
-        `;
+});
 
 
-        document.body.appendChild(
-            toast
-        );
+// Smooth Scroll
 
-    }
+document.querySelectorAll('a[href^="#"]').forEach(anchor=>{
 
+anchor.addEventListener("click",function(e){
 
-    toast.textContent =
-        message;
+e.preventDefault();
 
+const target=document.querySelector(this.getAttribute("href"));
 
-    toast.style.display =
-        "block";
+if(target){
 
+target.scrollIntoView({
 
-    clearTimeout(
-        window.courseToastTimer
-    );
+behavior:"smooth"
 
-
-    window.courseToastTimer =
-        setTimeout(
-            () => {
-
-                toast.style.display =
-                    "none";
-
-            },
-            3000
-        );
+});
 
 }
 
+});
 
-/* =====================================================
-   CERTIFICATE
-===================================================== */
-
-function openCertificate() {
-
-    document
-        .getElementById(
-            "certificateModal"
-        )
-        .style.display =
-        "flex";
-
-}
-
-
-function closeCertificate() {
-
-    document
-        .getElementById(
-            "certificateModal"
-        )
-        .style.display =
-        "none";
-
-}
-
-
-function getCertificate() {
-
-    showToast(
-        "Certificate generation will be connected to backend 📜"
-    );
-
-}
+});
 
 </script>
 
