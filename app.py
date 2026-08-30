@@ -6204,28 +6204,38 @@ def java():
 
     rows = cursor.fetchall()
 
-    print("ROWS =", rows)
-    print("TOTAL =", len(rows))
+    print("======================================")
+    print("ROWS FROM DATABASE:")
+    print(rows)
+    print("======================================")
 
     cursor.close()
 
     lessons = []
 
     for row in rows:
-        lessons.append({
+        lesson = {
             "id": row[0],
             "day_number": row[1],
             "title": row[2],
             "notes": row[3],
             "code_snippet": row[4],
             "practice_task": row[5]
-        })
+        }
+
+        lessons.append(lesson)
+
+    print("======================================")
+    print("LESSONS LIST:")
+    print(lessons)
+    print("TOTAL LESSONS:", len(lessons))
+    print("======================================")
 
     completed_days = []
 
     total_days = len(lessons)
     progress = len(completed_days)
-    percentage = int(progress * 100 / total_days) if total_days else 0
+    percentage = int((progress / total_days) * 100) if total_days > 0 else 0
 
     course = {
         "name": "Advanced Java",
