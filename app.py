@@ -340,27 +340,26 @@ def dashboard():
     cursor = None
 
     try:
-    conn = get_db_connection()
-    cursor = conn.cursor(pymysql.cursors.DictCursor)
+        conn = get_db_connection()
+        cursor = conn.cursor(pymysql.cursors.DictCursor)
 
-    cursor.execute("""
-        SELECT
-            id,
-            name,
-            email,
-            role
-        FROM users
-        WHERE id = %s
-        LIMIT 1
-    """, (user_id,))
+        cursor.execute("""
+            SELECT
+                id,
+                name,
+                email,
+                role
+            FROM users
+            WHERE id = %s
+            LIMIT 1
+        """, (user_id,))
 
-    user = cursor.fetchone()
+        user = cursor.fetchone()
 
         if not user:
             session.clear()
             flash("User account not found.", "danger")
             return redirect(url_for("login"))
-
         
         cursor.execute("""
             SELECT COUNT(*) AS total
@@ -575,7 +574,7 @@ def mock_test():
 
         if not questions:
             flash("No questions found for the selected category.", "warning")
-            return redirect(url_for("mock_caegories"))
+            return redirect(url_for("mock_categories"))
 
         # Remove old session data
         session.pop("mock_answers", None)
@@ -617,7 +616,7 @@ def mock_test():
     except Exception as e:
         app.logger.exception(f"Mock Test Error: {e}")
         flash("Unable to load mock test. Please try again.", "danger")
-        return redirect(url_for("mock_caegories"))
+        return redirect(url_for("mock_categories"))
 
     finally:
         if cursor:
