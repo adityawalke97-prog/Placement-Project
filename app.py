@@ -6191,17 +6191,22 @@ def java():
     cursor = mysql.connection.cursor()
 
     cursor.execute("""
-        SELECT id,
-               day_number,
-               title,
-               notes,
-               code_snippet,
-               practice_task
+        SELECT
+            id,
+            day_number,
+            title,
+            notes,
+            code_snippet,
+            practice_task
         FROM advanced_java_lessons
         ORDER BY day_number
     """)
 
     rows = cursor.fetchall()
+
+    print("ROWS =", rows)
+    print("TOTAL =", len(rows))
+
     cursor.close()
 
     lessons = []
@@ -6220,7 +6225,6 @@ def java():
 
     total_days = len(lessons)
     progress = len(completed_days)
-
     percentage = int(progress * 100 / total_days) if total_days else 0
 
     course = {
@@ -6231,11 +6235,11 @@ def java():
         "projects": "5 Real Projects"
     }
 
-    print("Lessons:", lessons)
-
     return render_template(
         "java.html",
         course=course,
+        course_title=course["name"],
+        course_name="java",
         lessons=lessons,
         completed_days=completed_days,
         progress=progress,
