@@ -340,20 +340,21 @@ def dashboard():
     cursor = None
 
     try:
-        conn = get_db_connection()
-        cursor = conn.cursor(pymysql.cursors.DictCursor)
-cursor.execute("""
-            SELECT
-                id,
-                name,
-                email,
-                role
-            FROM users
-            WHERE id = %s
-            LIMIT 1
-        """, (user_id,))
+    conn = get_db_connection()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
 
-        user = cursor.fetchone()
+    cursor.execute("""
+        SELECT
+            id,
+            name,
+            email,
+            role
+        FROM users
+        WHERE id = %s
+        LIMIT 1
+    """, (user_id,))
+
+    user = cursor.fetchone()
 
         if not user:
             session.clear()
