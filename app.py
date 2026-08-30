@@ -6078,14 +6078,21 @@ def complete_day(course_name,day):
 
         cursor.close()
         conn.close()
+import pymysql
+
 @app.route("/notes")
 def notes():
 
     if "user_id" not in session:
         return redirect(url_for("login"))
 
+    conn = None
+    cursor = None
+
     try:
         conn = get_db_connection()
+
+        # DictCursor use karo
         cursor = conn.cursor(pymysql.cursors.DictCursor)
 
         cursor.execute("""
@@ -6101,14 +6108,11 @@ def notes():
                 topic_count,
                 page_url
             FROM notes
-            WHERE is_active = TRUE
+            WHERE is_active = 1
             ORDER BY id ASC
         """)
 
         notes_data = cursor.fetchall()
-
-        cursor.close()
-        conn.close()
 
         return render_template(
             "notes.html",
@@ -6124,7 +6128,13 @@ def notes():
             "notes.html",
             notes=[]
         )
-    
+
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+                
 @app.route("/leaderboard")
 def leaderboard():
     return render_template("leaderboard.html")
