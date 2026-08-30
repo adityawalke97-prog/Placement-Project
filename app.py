@@ -6023,63 +6023,41 @@ def course_page(course_name):
 
         if conn:
             conn.close()
-@app.route("/complete_day/<course_name>/<int:day>",methods=["POST"])
-def complete_day(course_name,day):
 
-    if "user_id" not in session:
-        return jsonify({"success":False})
+@app.route("/complete_day/<course_name>/<int:day>", methods=["POST"])
+@login_required
+def complete_day(course_name, day):
 
-    conn = get_db_connection()
-    cursor = conn.cursor()
+    cursor = mysql.connection.cursor()
 
     try:
-
         cursor.execute("""
-
-        INSERT IGNORE INTO
-        user_course_progress
-        (
-            user_id,
-            course_name,
-            completed_day
-        )
-
-        VALUES(%s,%s,%s)
-
-        """,(
-
+            INSERT IGNORE INTO user_course_progress
+            (user_id, course_name, completed_day)
+            VALUES (%s, %s, %s)
+        """, (
             session["user_id"],
             course_name,
             day
-
         ))
 
-        conn.commit()
+        mysql.connection.commit()
 
         return jsonify({
-
-            "success":True
-
+            "success": True
         })
 
     except Exception as e:
-
-        conn.rollback()
-
-        print(e)
+        mysql.connection.rollback()
+        print("ERROR:", e)
 
         return jsonify({
-
-            "success":False
-
-        })
+            "success": False,
+            "message": str(e)
+        }), 500
 
     finally:
-
         cursor.close()
-        conn.close()
-import pymysql
-
 @app.route("/notes")
 def notes():
 
