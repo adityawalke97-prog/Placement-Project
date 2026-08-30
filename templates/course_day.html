@@ -1,17 +1,35 @@
-{% extends 'layout.html' %}
+{% extends "layout.html" %}
 
 {% block title %}{{ course_name }} - Day {{ day }}{% endblock %}
 
 {% block content %}
+
 <div class="course-section">
-    <h2>{{ course_name }} - Day {{ day }}</h2>
-    <p>{{ notes }}</p>
+
+    <h2>{{ title }}</h2>
+
+    <div class="notes">
+        {{ notes|safe }}
+    </div>
+
+    {% if code_snippet %}
+    <h3>Code</h3>
+    <pre><code>{{ code_snippet }}</code></pre>
+    {% endif %}
+
+    {% if practice_task %}
+    <h3>Practice Task</h3>
+    <div>{{ practice_task|safe }}</div>
+    {% endif %}
 
     <div class="nav-buttons">
         {% if day > 1 %}
-        <a href="/courses/{{ course_name }}/{{ day-1 }}" class="btn">⬅ Yesterday</a>
+        <a href="{{ url_for('course_day', course_name=course_name, day=day-1) }}">⬅ Previous</a>
         {% endif %}
-        <a href="/courses/{{ course_name }}/{{ day+1 }}" class="btn">Next ➡</a>
+
+        <a href="{{ url_for('course_day', course_name=course_name, day=day+1) }}">Next ➡</a>
     </div>
+
 </div>
+
 {% endblock %}
