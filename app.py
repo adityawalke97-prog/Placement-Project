@@ -616,7 +616,7 @@ def mock_test():
     except Exception as e:
         app.logger.exception(f"Mock Test Error: {e}")
         flash("Unable to load mock test. Please try again.", "danger")
-        return redirect(url_for("mock_categories"))
+        return redirect(url_for("mock_caegories"))
 
     finally:
         if cursor:
