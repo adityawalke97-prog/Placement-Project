@@ -5914,20 +5914,20 @@ def courses():
 # ==========================================================
 
 @app.route("/course/<course_name>")
-@login_required
 def course_page(course_name):
+
+    if "user_id" not in session:
+        flash("Please login first.", "warning")
+        return redirect(url_for("login"))
 
     conn = None
     cursor = None
 
     try:
         conn = get_db_connection()
-        cursor = conn.cursor(dictionary=True)
+        cursor = conn.cursor(pymysql.cursors.DictCursor)
 
-        # -------------------------------------------------
-        # LESSONS
-        # -------------------------------------------------
-
+        # Lessons
         cursor.execute("""
             SELECT
                 id,
@@ -5938,60 +5938,41 @@ def course_page(course_name):
                 code_snippet,
                 practice_task
             FROM course_lessons
-            WHERE LOWER(course_name) = LOWER(%s)
-            ORDER BY day_number ASC
+            WHERE course_name = %s
+            ORDER BY day_number
         """, (course_name,))
 
         lessons = cursor.fetchall()
 
-        # -------------------------------------------------
-        # COMPLETED LESSONS
-        # -------------------------------------------------
+        # Completed lessons
+        cursor.execute("""
+            SELECT day_number
+            FROM course_progress
+            WHERE user_id=%s
+            AND course_name=%s
+        """, (
+            session["user_id"],
+            course_name
+        ))
 
-        completed_days = set()
-
-        if current_user.is_authenticated:
-
-            cursor.execute("""
-                SELECT day_number
-                FROM course_progress
-                WHERE user_id = %s
-                  AND LOWER(course_name) = LOWER(%s)
-                  AND completed = 1
-            """, (
-                current_user.id,
-                course_name
-            ))
-
-            rows = cursor.fetchall()
-
-            completed_days = {
-                int(row["day_number"])
-                for row in rows
-            }
-
-        # -------------------------------------------------
-        # PROGRESS
-        # -------------------------------------------------
+        completed_days = [
+            row["day_number"]
+            for row in cursor.fetchall()
+        ]
 
         total_days = len(lessons)
-
         progress = len(completed_days)
 
-        percentage = (
-            round((progress / total_days) * 100)
-            if total_days > 0
-            else 0
-        )
+        percentage = 0
+        if total_days > 0:
+            percentage = round(
+                (progress / total_days) * 100
+            )
 
-        # -------------------------------------------------
-        # COURSE DISPLAY NAME
-        # -------------------------------------------------
-
-        course_title = course_name.replace("-", " ").title()
+        course_title = course_name.replace("_", " ").title()
 
         return render_template(
-            "course.html",
+            "advanced_course.html",
             course_name=course_name,
             course_title=course_title,
             lessons=lessons,
@@ -6002,27 +5983,17 @@ def course_page(course_name):
         )
 
     except Exception as e:
-
-        print("COURSE ERROR :", e)
-
-        return render_template(
-            "course.html",
-            course_name=course_name,
-            course_title=course_name.replace("-", " ").title(),
-            lessons=[],
-            completed_days=set(),
-            total_days=0,
-            progress=0,
-            percentage=0
-        )
+        app.logger.exception(e)
+        flash("Unable to load course.", "danger")
+        return redirect(url_for("dashboard"))
 
     finally:
-
         if cursor:
             cursor.close()
 
         if conn:
             conn.close()
+            
 @app.route("/course/<course_name>/<int:day>")
 @login_required
 def course_day(course_name,day):
