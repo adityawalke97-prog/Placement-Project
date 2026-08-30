@@ -527,78 +527,74 @@ def mock_categories():
 
 @app.route("/mock_test")
 def mock_test():
-
     if "user_id" not in session:
         flash("Please login first.", "warning")
         return redirect(url_for("login"))
 
     category = request.args.get("category", "").strip()
+    level = request.args.get("level", "").strip()
 
     conn = None
     cursor = None
 
     try:
-
         conn = get_db_connection()
         cursor = conn.cursor(pymysql.cursors.DictCursor)
 
-        
+        # Base Query
+        query = """
+            SELECT
+                id,
+                question,
+                option1,
+                option2,
+                option3,
+                option4,
+                answer,
+                category,
+                level
+            FROM mock_questions
+            WHERE 1=1
+        """
+
+        params = []
+
         if category:
+            query += " AND category = %s"
+            params.append(category)
 
-            cursor.execute("""
-                SELECT
-                    id,
-                    question,
-                    option1,
-                    option2,
-                    option3,
-                    option4,
-                    answer,
-                    category,
-                    level
-                FROM mock_questions
-                WHERE category = %s
-                ORDER BY RAND()
-                LIMIT 20
-            """, (category,))
+        if level:
+            query += " AND level = %s"
+            params.append(level)
 
-        else:
+        query += " ORDER BY RAND() LIMIT 20"
 
-            cursor.execute("""
-                SELECT
-                    id,
-                    question,
-                    option1,
-                    option2,
-                    option3,
-                    option4,
-                    answer,
-                    category,
-                    level
-                FROM mock_questions
-                ORDER BY RAND()
-                LIMIT 20
-            """)
-
+        cursor.execute(query, tuple(params))
         questions = cursor.fetchall()
 
-        
         if not questions:
+            flash("No questions found for the selected category.", "warning")
+            return redirect(url_for("mock_categories"))
 
-            flash(
-                "No questions available for this category.",
-                "warning"
-            )
+        # Remove old session data
+        session.pop("mock_answers", None)
+        session.pop("mock_score", None)
 
-            return redirect(
-                url_for("mock_categories")
-            )
+        # Save question IDs and answers in session
+        session["mock_question_ids"] = [q["id"] for q in questions]
 
-        
+        session["correct_answers"] = {
+            str(q["id"]): q["answer"]
+            for q in questions
+        }
+
+        session["mock_category"] = category
+        session["mock_level"] = level
+
+        # Send only safe data to frontend
         safe_questions = []
 
         for q in questions:
-
             safe_questions.append({
                 "id": q["id"],
                 "question": q["question"],
@@ -607,40 +603,24 @@ def mock_test():
                 "option3": q["option3"],
                 "option4": q["option4"],
                 "category": q["category"],
-                "level": q.get("level")
+                "level": q["level"]
             })
-
-        
-        session["mock_question_ids"] = [
-            q["id"] for q in questions
-        ]
-
-        session["mock_category"] = category
 
         return render_template(
             "mock_test.html",
             questions=safe_questions,
-            category=category
+            category=category,
+            level=level
         )
 
-    except Exception:
-
-        app.logger.exception("Mock test loading error")
-
-        flash(
-            "Unable to start mock test.",
-            "danger"
-        )
-
-        return redirect(
-            url_for("mock_categories")
-        )
+    except Exception as e:
+        app.logger.exception(f"Mock Test Error: {e}")
+        flash("Unable to load mock test. Please try again.", "danger")
+        return redirect(url_for("mock_categories"))
 
     finally:
-
         if cursor:
             cursor.close()
-
         if conn:
             conn.close()
 
