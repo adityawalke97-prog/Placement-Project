@@ -5914,7 +5914,7 @@ def courses():
 # ==========================================================
 
 @app.route("/course/<course_name>")
-def course_page(course_name):
+def course(course_name):
 
     if "user_id" not in session:
         flash("Please login first.", "warning")
@@ -5927,16 +5927,27 @@ def course_page(course_name):
         conn = get_db_connection()
         cursor = conn.cursor(pymysql.cursors.DictCursor)
 
-        # Lessons
+        # -----------------------------
+        # Get Course Details
+        # -----------------------------
         cursor.execute("""
-            SELECT
-                id,
-                course_name,
-                day_number,
-                title,
-                notes,
-                code_snippet,
-                practice_task
+            SELECT *
+            FROM courses
+            WHERE course_name = %s
+            LIMIT 1
+        """, (course_name,))
+
+        course = cursor.fetchone()
+
+        if not course:
+            flash("Course not found.", "danger")
+            return redirect(url_for("courses"))
+
+        # -----------------------------
+        # Get Lessons
+        # -----------------------------
+        cursor.execute("""
+            SELECT *
             FROM course_lessons
             WHERE course_name = %s
             ORDER BY day_number
@@ -5944,12 +5955,14 @@ def course_page(course_name):
 
         lessons = cursor.fetchall()
 
-        # Completed lessons
+        # -----------------------------
+        # Completed Days
+        # -----------------------------
         cursor.execute("""
             SELECT day_number
             FROM course_progress
-            WHERE user_id=%s
-            AND course_name=%s
+            WHERE user_id = %s
+            AND course_name = %s
         """, (
             session["user_id"],
             course_name
@@ -5960,21 +5973,27 @@ def course_page(course_name):
             for row in cursor.fetchall()
         ]
 
+        # -----------------------------
+        # Progress
+        # -----------------------------
         total_days = len(lessons)
+
         progress = len(completed_days)
 
         percentage = 0
+
         if total_days > 0:
             percentage = round(
                 (progress / total_days) * 100
             )
 
-        course_title = course_name.replace("_", " ").title()
-
+        # -----------------------------
+        # Render Page
+        # -----------------------------
         return render_template(
             "advanced_course.html",
             course_name=course_name,
-            course_title=course_title,
+            course_title=course["course_title"],
             lessons=lessons,
             completed_days=completed_days,
             total_days=total_days,
@@ -5983,11 +6002,18 @@ def course_page(course_name):
         )
 
     except Exception as e:
+
         app.logger.exception(e)
-        flash("Unable to load course.", "danger")
-        return redirect(url_for("dashboard"))
+
+        flash(
+            "Unable to load course.",
+            "danger"
+        )
+
+        return redirect(url_for("courses"))
 
     finally:
+
         if cursor:
             cursor.close()
 
