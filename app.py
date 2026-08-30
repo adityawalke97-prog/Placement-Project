@@ -6086,7 +6086,7 @@ def notes():
 
     try:
         conn = get_db_connection()
-        cursor = conn.cursor(dictionary=True)
+        cursor = conn.cursor(pymysql.cursors.DictCursor)
 
         cursor.execute("""
             SELECT
