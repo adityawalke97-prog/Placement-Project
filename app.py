@@ -5804,44 +5804,26 @@ def courses():
     try:
 
         cursor.execute("""
-            SELECT
-                course_name,
-                COUNT(*) AS total_days
-            FROM course_content
-            GROUP BY course_name
-            ORDER BY course_name
+            SELECT *
+            FROM courses
+            ORDER BY course_title
         """)
 
         db_courses = cursor.fetchall()
 
         icons = {
-            "Java":"☕",
-            "Python":"🐍",
-            "HTML":"🌐",
-            "CSS":"🎨",
-            "JavaScript":"⚡",
-            "DBMS":"🗄️",
-            "SQL":"📊",
-            "Operating System":"💻",
-            "Computer Networks":"🌍",
-            "DSA":"📚",
-            "Aptitude":"🧠",
-            "HR":"👨‍💼"
-        }
-
-        descriptions = {
-            "Java":"Complete Java from Beginner to Advanced with Interview Preparation.",
-            "Python":"Master Python with Projects and Placement Questions.",
-            "HTML":"Learn HTML5 from scratch with practical examples.",
-            "CSS":"Modern CSS including Flexbox, Grid and Responsive Design.",
-            "JavaScript":"JavaScript ES6+, DOM, APIs and Projects.",
-            "DBMS":"Complete Database Management System Notes.",
-            "SQL":"Learn SQL Queries from Basic to Advanced.",
-            "Operating System":"Scheduling, Memory, Deadlock and Interview Questions.",
-            "Computer Networks":"OSI Model, TCP/IP, Routing and Networking.",
-            "DSA":"Arrays, Linked List, Trees, Graphs and Dynamic Programming.",
-            "Aptitude":"Quantitative Aptitude for Placements.",
-            "HR":"HR Interview Questions and Communication Skills."
+            "java":"☕",
+            "python":"🐍",
+            "html":"🌐",
+            "css":"🎨",
+            "javascript":"⚡",
+            "dbms":"🗄️",
+            "sql":"📊",
+            "operating system":"💻",
+            "computer networks":"🌍",
+            "dsa":"📚",
+            "aptitude":"🧠",
+            "hr":"👨‍💼"
         }
 
         courses = []
@@ -5849,43 +5831,49 @@ def courses():
         for row in db_courses:
 
             cursor.execute("""
-                SELECT COUNT(*) progress
-                FROM user_course_progress
+                SELECT COUNT(*) AS total_days
+                FROM course_lessons
+                WHERE course_name=%s
+            """, (row["course_name"],))
+
+            total_days = cursor.fetchone()["total_days"]
+
+            cursor.execute("""
+                SELECT COUNT(*) AS progress
+                FROM course_progress
                 WHERE user_id=%s
-                AND LOWER(course_name)=LOWER(%s)
-            """,(session["user_id"],row["course_name"]))
+                AND course_name=%s
+            """, (session["user_id"], row["course_name"]))
 
             progress = cursor.fetchone()["progress"]
 
-            total = row["total_days"]
+            percentage = 0
 
-            percent = 0
-
-            if total>0:
-                percent = int((progress/total)*100)
+            if total_days > 0:
+                percentage = int((progress / total_days) * 100)
 
             courses.append({
 
-                "name":row["course_name"],
+                "course_name": row["course_name"],
+                "course_title": row["course_title"],
+                "description": row["description"],
 
-                "icon":icons.get(row["course_name"],"📘"),
-
-                "description":descriptions.get(
-                    row["course_name"],
-                    "Complete Placement Preparation Course."
+                "icon": icons.get(
+                    row["course_name"].lower(),
+                    "📘"
                 ),
 
-                "days":total,
+                "days": total_days,
 
-                "progress":progress,
+                "progress": progress,
 
-                "percentage":percent,
+                "percentage": percentage,
 
-                "rating":4.9,
+                "rating": 4.9,
 
-                "students":"25K+",
+                "students": "25K+",
 
-                "level":"Beginner to Advanced"
+                "level": "Beginner to Advanced"
 
             })
 
@@ -5907,8 +5895,6 @@ def courses():
 
         cursor.close()
         conn.close()
-
-
 # ==========================================================
 # COURSE LEARNING
 # ==========================================================
