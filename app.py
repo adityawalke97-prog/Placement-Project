@@ -574,7 +574,7 @@ def mock_test():
 
         if not questions:
             flash("No questions found for the selected category.", "warning")
-            return redirect(url_for("mock_categories"))
+            return redirect(url_for("mock_caegories"))
 
         # Remove old session data
         session.pop("mock_answers", None)
