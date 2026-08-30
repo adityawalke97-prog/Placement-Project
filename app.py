@@ -6023,40 +6023,120 @@ def course_page(course_name):
 
         if conn:
             conn.close()
-
-@app.route("/complete_day/<course_name>/<int:day>", methods=["POST"])
+@app.route("/course/<course_name>/<int:day>")
 @login_required
-def complete_day(course_name, day):
+def course_day(course_name,day):
 
     cursor = mysql.connection.cursor()
 
+    if course_name.lower()=="java":
+
+        table="advanced_java_lessons"
+
+    elif course_name.lower()=="python":
+
+        table="advanced_python_lessons"
+
+    elif course_name.lower()=="c":
+
+        table="c_lessons"
+
+    else:
+
+        return "Course Not Found"
+
+    cursor.execute(f"""
+
+        SELECT
+
+        title,
+        notes,
+        code_snippet,
+        practice_task
+
+        FROM {table}
+
+        WHERE day_number=%s
+
+    """,(day,))
+
+    row=cursor.fetchone()
+
+    cursor.close()
+
+    if not row:
+
+        return "Lesson Not Found"
+
+    return render_template(
+
+        "course_day.html",
+
+        course_name=course_name,
+
+        day=day,
+
+        title=row[0],
+
+        notes=row[1],
+
+        code_snippet=row[2],
+
+        practice_task=row[3]
+
+    )
+@app.route("/complete_day/<course_name>/<int:day>",methods=["POST"])
+@login_required
+def complete_day(course_name,day):
+
+    cursor=mysql.connection.cursor()
+
     try:
+
         cursor.execute("""
-            INSERT IGNORE INTO user_course_progress
-            (user_id, course_name, completed_day)
-            VALUES (%s, %s, %s)
-        """, (
-            session["user_id"],
+
+        INSERT IGNORE INTO
+        user_course_progress
+        (
+
+            user_id,
             course_name,
+            completed_day
+
+        )
+
+        VALUES(%s,%s,%s)
+
+        """,(
+
+            session["user_id"],
+            course_name.lower(),
             day
+
         ))
 
         mysql.connection.commit()
 
         return jsonify({
-            "success": True
+
+            "success":True
+
         })
 
     except Exception as e:
+
         mysql.connection.rollback()
-        print("ERROR:", e)
+
+        print(e)
 
         return jsonify({
-            "success": False,
-            "message": str(e)
-        }), 500
+
+            "success":False
+
+        })
 
     finally:
+
         cursor.close()
 @app.route("/notes")
 def notes():
@@ -6182,52 +6262,41 @@ def java():
 
     rows = cursor.fetchall()
 
-    print("======================================")
-    print("ROWS FROM DATABASE:")
-    print(rows)
-    print("======================================")
-
     cursor.close()
 
     lessons = []
-
     for row in rows:
-        lesson = {
+        lessons.append({
             "id": row[0],
             "day_number": row[1],
             "title": row[2],
             "notes": row[3],
             "code_snippet": row[4],
             "practice_task": row[5]
-        }
-
-        lessons.append(lesson)
-
-    print("======================================")
-    print("LESSONS LIST:")
-    print(lessons)
-    print("TOTAL LESSONS:", len(lessons))
-    print("======================================")
-
-    completed_days = []
-
+        })
+    cursor = mysql.connection.cursor()
+    cursor.execute("""
+        SELECT completed_day
+        FROM user_course_progress
+        WHERE
+        user_id=%s
+        AND
+        course_name='java'
+    """,(session["user_id"],))
+    completed_days = [x[0] for x in cursor.fetchall()]
+    cursor.close()
     total_days = len(lessons)
     progress = len(completed_days)
-    percentage = int((progress / total_days) * 100) if total_days > 0 else 0
-
+    percentage = int(progress*100/total_days) if total_days else 0
     course = {
-        "name": "Advanced Java",
-        "level": "Professional",
-        "description": "Learn JDBC, Servlets, JSP, Hibernate, Spring Boot and REST API.",
-        "icon": "☕",
-        "projects": "5 Real Projects"
+        "name":"Advanced Java",
+        "level":"Professional",
+        "description":"Master JDBC, Collections, Multithreading, Servlets, JSP, Hibernate, Spring Boot & REST API.",
+        "projects":"5"
     }
-
     return render_template(
         "java.html",
         course=course,
-        course_title=course["name"],
-        course_name="java",
         lessons=lessons,
         completed_days=completed_days,
         progress=progress,
