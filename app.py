@@ -233,7 +233,7 @@ def signup():
             conn.close()
 
             flash("Email already exists.", "danger")
-            return redirect(url_for("signup")
+            return redirect(url_for("signup"))
         hashed = bcrypt.generate_password_hash(
             password
         ).decode("utf-8")
