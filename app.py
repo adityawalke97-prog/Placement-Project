@@ -692,7 +692,7 @@ def submit_mock_test():
             str(q["id"]): str(q["answer"]).strip()
             for q in db_questions
         }
-           score = 0
+        score = 0
         total_questions = len(question_ids)
 
         for question_id in question_ids:
