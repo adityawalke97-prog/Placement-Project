@@ -108,9 +108,7 @@
 
         <main class="question-area">
 
-            <form id="mockTestForm"
-                  method="POST"
-                  action="{{ url_for('submit_test') }}">                 {% for q in questions %}
+            <form method="POST" action="{{ url_for('submit_mock_test') }}">                 {% for q in questions %}
 
                 <div class="question-card"
                      id="question-{{ loop.index }}"
