@@ -49,42 +49,26 @@
         </div>
 
     </header>
-
-    <!-- ================= MAIN LAYOUT ================= -->
-
     <div class="exam-layout">
-
         <!-- LEFT SIDEBAR -->
-
         <aside class="question-sidebar">
-
             <h3>Question Palette</h3>
-
             <div class="question-grid">
-
                 {% for q in questions %}
-
                 <button
                     type="button"
                     id="palette-{{ loop.index }}"
                     class="palette-btn not-visited"
                     onclick="openQuestion({{ loop.index }})">
-
                     {{ loop.index }}
-
                 </button>
-
                 {% endfor %}
-
             </div>
-
             <div class="legend">
-
                 <div>
                     <span class="dot answered"></span>
                     Answered
                 </div>
-
                 <div>
                     <span class="dot review"></span>
                     Marked
@@ -103,12 +87,11 @@
             </div>
 
         </aside>
-
-        <!-- ================= QUESTION AREA ================= -->
-
         <main class="question-area">
 
-            <form method="POST" action="{{ url_for('submit_mock_test') }}">                 {% for q in questions %}
+           <form id="mockTestForm"
+      method="POST"
+      action="{{ url_for('submit_mock_test') }}">
 
                 <div class="question-card"
                      id="question-{{ loop.index }}"
