@@ -14,9 +14,7 @@
 
         <div class="left-header">
             <h2>🚀 Placement Mock Test</h2>
-            <p>
-                Practice • Learn • Crack Your Placement
-            </p>
+            <p>Practice • Learn • Crack Your Placement</p>
         </div>
 
         <div class="right-header">
@@ -34,41 +32,57 @@
                 📚 Categories
             </a>
 
-            <button type="button"
-                    class="icon-btn"
-                    onclick="showInstruction()">
+            <button
+                type="button"
+                class="icon-btn"
+                onclick="showInstruction()">
                 ℹ Instructions
             </button>
 
-            <button type="button"
-                    class="icon-btn"
-                    onclick="toggleFullscreen()">
+            <button
+                type="button"
+                class="icon-btn"
+                onclick="toggleFullscreen()">
                 ⛶ Full Screen
             </button>
 
         </div>
 
     </header>
+
     <div class="exam-layout">
-        <!-- LEFT SIDEBAR -->
+
+        <!-- ================= LEFT SIDEBAR ================= -->
+
         <aside class="question-sidebar">
+
             <h3>Question Palette</h3>
+
             <div class="question-grid">
+
                 {% for q in questions %}
+
                 <button
                     type="button"
                     id="palette-{{ loop.index }}"
                     class="palette-btn not-visited"
                     onclick="openQuestion({{ loop.index }})">
+
                     {{ loop.index }}
+
                 </button>
+
                 {% endfor %}
+
             </div>
+
             <div class="legend">
+
                 <div>
                     <span class="dot answered"></span>
                     Answered
                 </div>
+
                 <div>
                     <span class="dot review"></span>
                     Marked
@@ -87,40 +101,54 @@
             </div>
 
         </aside>
+
+        <!-- ================= QUESTION AREA ================= -->
+
         <main class="question-area">
 
-           <form id="mockTestForm"
-      method="POST"
-      action="{{ url_for('submit_mock_test') }}">
+            <form
+                id="mockTestForm"
+                method="POST"
+                action="{{ url_for('submit_mock_test') }}">
 
-                <div class="question-card"
-                     id="question-{{ loop.index }}"
-                     {% if not loop.first %}style="display:none"{% endif %}>
+                {% for q in questions %}
+
+                <div
+                    class="question-card"
+                    id="question-{{ loop.index }}"
+                    {% if not loop.first %}
+                    style="display:none;"
+                    {% endif %}>
 
                     <div class="question-header">
 
                         <h3>
-                            Question {{ loop.index }} / {{ questions|length }}
+                            Question {{ loop.index }}
+                            /
+                            {{ questions|length }}
                         </h3>
 
                         <span class="category">
-                            {{ q.category or "General" }}
+                            {{ q.category if q.category else "General" }}
                         </span>
 
                     </div>
 
                     <div class="question-text">
+
                         {{ q.question }}
+
                     </div>
 
                     <div class="options">
 
                         {% if q.option1 %}
                         <label class="option-item">
-                            <input type="radio"
-                                   name="q{{ q.id }}"
-                                   value="{{ q.option1 }}"
-                                   onclick="answerSelected({{ loop.index }})">
+                            <input
+                                type="radio"
+                                name="q{{ q.id }}"
+                                value="{{ q.option1 }}"
+                                onclick="answerSelected({{ loop.index }})">
 
                             <span>{{ q.option1 }}</span>
                         </label>
@@ -128,10 +156,11 @@
 
                         {% if q.option2 %}
                         <label class="option-item">
-                            <input type="radio"
-                                   name="q{{ q.id }}"
-                                   value="{{ q.option2 }}"
-                                   onclick="answerSelected({{ loop.index }})">
+                            <input
+                                type="radio"
+                                name="q{{ q.id }}"
+                                value="{{ q.option2 }}"
+                                onclick="answerSelected({{ loop.index }})">
 
                             <span>{{ q.option2 }}</span>
                         </label>
@@ -139,10 +168,11 @@
 
                         {% if q.option3 %}
                         <label class="option-item">
-                            <input type="radio"
-                                   name="q{{ q.id }}"
-                                   value="{{ q.option3 }}"
-                                   onclick="answerSelected({{ loop.index }})">
+                            <input
+                                type="radio"
+                                name="q{{ q.id }}"
+                                value="{{ q.option3 }}"
+                                onclick="answerSelected({{ loop.index }})">
 
                             <span>{{ q.option3 }}</span>
                         </label>
@@ -150,10 +180,11 @@
 
                         {% if q.option4 %}
                         <label class="option-item">
-                            <input type="radio"
-                                   name="q{{ q.id }}"
-                                   value="{{ q.option4 }}"
-                                   onclick="answerSelected({{ loop.index }})">
+                            <input
+                                type="radio"
+                                name="q{{ q.id }}"
+                                value="{{ q.option4 }}"
+                                onclick="answerSelected({{ loop.index }})">
 
                             <span>{{ q.option4 }}</span>
                         </label>
@@ -163,38 +194,49 @@
 
                     <div class="question-actions">
 
-                        <button type="button"
-                                class="clear-btn"
-                                onclick="clearAnswer({{ loop.index }})">
+                        <button
+                            type="button"
+                            class="clear-btn"
+                            onclick="clearAnswer({{ loop.index }})">
+
                             ❌ Clear Answer
+
                         </button>
 
-                        <button type="button"
-                                class="review-btn"
-                                onclick="markQuestion({{ loop.index }})">
+                        <button
+                            type="button"
+                            class="review-btn"
+                            onclick="markQuestion({{ loop.index }})">
+
                             ⭐ Mark for Review
+
                         </button>
 
                     </div>
 
                 </div>
-
-                {% endfor %}
+                                {% endfor %}
 
                 <!-- ================= NAVIGATION ================= -->
 
                 <div class="navigation">
 
-                    <button type="button"
-                            class="nav-btn"
-                            onclick="previousQuestion()">
+                    <button
+                        type="button"
+                        class="nav-btn"
+                        onclick="previousQuestion()">
+
                         ⬅ Previous
+
                     </button>
 
-                    <button type="button"
-                            class="nav-btn"
-                            onclick="nextQuestion()">
+                    <button
+                        type="button"
+                        class="nav-btn"
+                        onclick="nextQuestion()">
+
                         Next ➜
+
                     </button>
 
                 </div>
@@ -203,9 +245,10 @@
 
                 <div class="submit-area">
 
-                    <button type="button"
-                            class="submit-btn"
-                            onclick="openSubmitModal()">
+                    <button
+                        type="button"
+                        class="submit-btn"
+                        onclick="openSubmitModal()">
 
                         ✅ Submit Test
 
@@ -216,6 +259,7 @@
             </form>
 
         </main>
+
         <!-- ================= RIGHT SIDEBAR ================= -->
 
         <aside class="right-sidebar">
@@ -261,7 +305,9 @@
                 </div>
 
                 <p id="progressText">
+
                     0% Completed
+
                 </p>
 
             </div>
@@ -274,7 +320,9 @@
 
 <!-- ================= INSTRUCTION MODAL ================= -->
 
-<div class="modal" id="instructionModal">
+<div
+    class="modal"
+    id="instructionModal">
 
     <div class="modal-box">
 
@@ -290,7 +338,8 @@
 
         <ul>
 
-            <li>Total Questions :
+            <li>
+                Total Questions :
                 <strong>{{ questions|length }}</strong>
             </li>
 
@@ -322,7 +371,9 @@
 
 <!-- ================= SUBMIT MODAL ================= -->
 
-<div class="modal" id="submitModal">
+<div
+    class="modal"
+    id="submitModal">
 
     <div class="modal-box">
 
@@ -337,20 +388,28 @@
         <div class="submit-summary">
 
             <p>
+
                 Answered :
                 <strong id="submitAnswered">0</strong>
+
             </p>
 
             <p>
+
                 Remaining :
                 <strong id="submitNotAnswered">
+
                     {{ questions|length }}
+
                 </strong>
+
             </p>
 
             <p>
+
                 Marked :
                 <strong id="submitMarked">0</strong>
+
             </p>
 
         </div>
@@ -537,7 +596,9 @@
             <h4>Strong Topics</h4>
 
             <p id="strongTopics">
+
                 Loading...
+
             </p>
 
         </div>
@@ -547,7 +608,9 @@
             <h4>Need Improvement</h4>
 
             <p id="weakTopics">
+
                 Loading...
+
             </p>
 
         </div>
