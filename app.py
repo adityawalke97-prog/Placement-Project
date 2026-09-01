@@ -5900,11 +5900,8 @@ def courses():
 # ==========================================================
 
 @app.route("/course/<course_name>")
+@login_required
 def course(course_name):
-
-    if "user_id" not in session:
-        flash("Please login first.", "warning")
-        return redirect(url_for("login"))
 
     conn = None
     cursor = None
@@ -5933,7 +5930,13 @@ def course(course_name):
         # Get Lessons
         # -----------------------------
         cursor.execute("""
-            SELECT *
+            SELECT
+                id,
+                day_number,
+                title,
+                notes,
+                code_snippet,
+                practice_task
             FROM course_lessons
             WHERE course_name = %s
             ORDER BY day_number
@@ -5942,11 +5945,11 @@ def course(course_name):
         lessons = cursor.fetchall()
 
         # -----------------------------
-        # Completed Days
+        # User Progress
         # -----------------------------
         cursor.execute("""
-            SELECT day_number
-            FROM course_progress
+            SELECT completed_day
+            FROM user_course_progress
             WHERE user_id = %s
             AND course_name = %s
         """, (
@@ -5955,54 +5958,39 @@ def course(course_name):
         ))
 
         completed_days = [
-            row["day_number"]
+            row["completed_day"]
             for row in cursor.fetchall()
         ]
 
-        # -----------------------------
-        # Progress
-        # -----------------------------
         total_days = len(lessons)
-
         progress = len(completed_days)
+        percentage = int((progress * 100) / total_days) if total_days else 0
 
-        percentage = 0
+        course_data = {
+            "name": course["course_title"],
+            "level": course.get("level", "Beginner"),
+            "description": course.get("description", ""),
+            "projects": course.get("projects", "0")
+        }
 
-        if total_days > 0:
-            percentage = round(
-                (progress / total_days) * 100
-            )
-
-        # -----------------------------
-        # Render Page
-        # -----------------------------
         return render_template(
-            "advanced_course.html",
-            course_name=course_name,
-            course_title=course["course_title"],
+            "java.html",
+            course=course_data,
             lessons=lessons,
-            completed_days=completed_days,
-            total_days=total_days,
             progress=progress,
-            percentage=percentage
+            percentage=percentage,
+            total_days=total_days,
+            completed_days=completed_days
         )
 
     except Exception as e:
-
         app.logger.exception(e)
-
-        flash(
-            "Unable to load course.",
-            "danger"
-        )
-
+        flash("Unable to load course.", "danger")
         return redirect(url_for("courses"))
 
     finally:
-
         if cursor:
             cursor.close()
-
         if conn:
             conn.close()
             
@@ -6224,179 +6212,6 @@ def results():
             cursor.close()
         if conn:
             conn.close()
-
-@app.route("/java")
-@login_required
-def java():
-
-    cursor = mysql.connection.cursor()
-
-    cursor.execute("""
-        SELECT
-            id,
-            day_number,
-            title,
-            notes,
-            code_snippet,
-            practice_task
-        FROM advanced_java_lessons
-        ORDER BY day_number
-    """)
-
-    rows = cursor.fetchall()
-    print("Rows from DB:", rows)
-    print("Total Rows:", len(rows))
-    cursor.close()
-
-    lessons = []
-    for row in rows:
-        lessons.append({
-            "id": row[0],
-            "day_number": row[1],
-            "title": row[2],
-            "notes": row[3],
-            "code_snippet": row[4],
-            "practice_task": row[5]
-        })
-    cursor = mysql.connection.cursor()
-    cursor.execute("""
-        SELECT completed_day
-        FROM user_course_progress
-        WHERE
-        user_id=%s
-        AND
-        course_name='java'
-    """,(session["user_id"],))
-    completed_days = [x[0] for x in cursor.fetchall()]
-    cursor.close()
-    total_days = len(lessons)
-    progress = len(completed_days)
-    percentage = int(progress*100/total_days) if total_days else 0
-    course = {
-        "name":"Advanced Java",
-        "level":"Professional",
-        "description":"Master JDBC, Collections, Multithreading, Servlets, JSP, Hibernate, Spring Boot & REST API.",
-        "projects":"5"
-    }
-    return render_template(
-        "java.html",
-        course=course,
-        lessons=lessons,
-        completed_days=completed_days,
-        progress=progress,
-        total_days=total_days,
-        percentage=percentage
-    )
-@app.route("/python")
-def python():
-    if "user_id" not in session:
-        return redirect(url_for("login"))
-
-    return render_template("python.html")
-
-
-@app.route("/dsa")
-def dsa():
-    if "user_id" not in session:
-        return redirect(url_for("login"))
-
-    return render_template("dsa.html")
-
-
-@app.route("/c")
-def c():
-    if "user_id" not in session:
-        return redirect(url_for("login"))
-
-    return render_template("c.html")
-
-
-@app.route("/html")
-def html():
-    if "user_id" not in session:
-        return redirect(url_for("login"))
-
-    return render_template("html.html")
-
-
-@app.route("/css")
-def css():
-    if "user_id" not in session:
-        return redirect(url_for("login"))
-
-    return render_template("css.html")
-
-
-@app.route("/javascript")
-def javascript():
-    if "user_id" not in session:
-        return redirect(url_for("login"))
-
-    return render_template("javascript.html")
-
-
-@app.route("/frontend")
-def frontend():
-    if "user_id" not in session:
-        return redirect(url_for("login"))
-
-    return render_template("frontend.html")
-
-
-@app.route("/backend")
-def backend():
-    if "user_id" not in session:
-        return redirect(url_for("login"))
-
-    return render_template("backend.html")
-
-
-@app.route("/full-stack-java")
-def full_stack_java():
-    if "user_id" not in session:
-        return redirect(url_for("login"))
-
-    return render_template("full_stack_java.html")
-
-
-@app.route("/full-stack-python")
-def full_stack_python():
-    if "user_id" not in session:
-        return redirect(url_for("login"))
-
-    return render_template("full_stack_python.html")
-
-
-@app.route("/dbms")
-def dbms():
-    if "user_id" not in session:
-        return redirect(url_for("login"))
-
-    return render_template("dbms.html")
-
-
-@app.route("/os")
-def os():
-    if "user_id" not in session:
-        return redirect(url_for("login"))
-
-    return render_template("os.html")
-
-
-@app.route("/cn")
-def cn():
-    if "user_id" not in session:
-        return redirect(url_for("login"))
-
-    return render_template("cn.html")
-
-
-@app.route("/software-engineering")
-def software_engineering():
-    if "user_id" not in session:
-        return redirect(url_for("login"))
-
-    return render_template("software_engineering.html")
 
 
 if __name__ == "__main__":
