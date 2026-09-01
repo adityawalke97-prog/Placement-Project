@@ -6244,7 +6244,8 @@ def java():
     """)
 
     rows = cursor.fetchall()
-
+    print("Rows from DB:", rows)
+    print("Total Rows:", len(rows))
     cursor.close()
 
     lessons = []
