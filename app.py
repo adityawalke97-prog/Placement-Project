@@ -708,124 +708,105 @@ def submit_mock_test():
             "message": "Please login first."
         }), 401
 
-    user_id = session["user_id"]
-
     conn = None
     cursor = None
 
     try:
-        data = request.get_json(silent=True)
 
-        if not data:
-            data = request.form.to_dict()
+        data = request.get_json()
 
-        
         answers = data.get("answers", {})
 
-        if isinstance(answers, str):
+        question_ids = session.get("mock_question_ids", [])
 
-            try:
-                answers = json.loads(answers)
-
-            except Exception:
-                answers = {}
-
-        question_ids = session.get(
-            "mock_question_ids",
-            []
-        )
+        user_id = session["user_id"]
 
         if not question_ids:
-
             return jsonify({
                 "success": False,
-                "message": "Test session expired."
+                "message": "No questions found."
             }), 400
 
         conn = get_db_connection()
         cursor = conn.cursor(pymysql.cursors.DictCursor)
 
-        
-        placeholders = ",".join(
-            ["%s"] * len(question_ids)
-        )
+        placeholders = ",".join(["%s"] * len(question_ids))
 
-        cursor.execute(
-            f"""
+        cursor.execute(f"""
             SELECT
                 id,
                 answer
             FROM mock_questions
             WHERE id IN ({placeholders})
-            """,
-            tuple(question_ids)
-        )
+        """, tuple(question_ids))
 
         db_questions = cursor.fetchall()
 
         correct_map = {
-            str(q["id"]): str(q["answer"]).strip()
-            for q in db_questions
+            str(row["id"]): str(row["answer"]).strip().lower()
+            for row in db_questions
         }
+
         score = 0
+
         total_questions = len(question_ids)
 
-        for question_id in question_ids:
+        for qid in question_ids:
 
-            user_answer = answers.get(
-                str(question_id),
-                ""
-            )
+            user_answer = str(
+                answers.get(str(qid), "")
+            ).strip().lower()
 
             correct_answer = correct_map.get(
-                str(question_id),
+                str(qid),
                 ""
             )
 
-            if (
-                str(user_answer).strip().lower()
-                == str(correct_answer).strip().lower()
-            ):
+            if user_answer == correct_answer:
                 score += 1
 
-        
-        percentage = 0
+        percentage = round(
+            (score / total_questions) * 100,
+            2
+        ) if total_questions else 0
 
-        if total_questions > 0:
+        category = session.get(
+            "mock_category",
+            "General"
+        )
 
-            percentage = round(
-                (score / total_questions) * 100,
-                2
-            )
+        subject = category
 
-        category = session.get("mock_category", "General")
         cursor.execute("""
-        INSERT INTO results
-        (
-        user_id,
-        score,
-        total_questions,
-        percentage,
-        category
-        )
-        VALUES
-        (
-        %s,
-        %s,
-        %s,
-        %s,
-        %s
-        )
+            INSERT INTO results
+            (
+                user_id,
+                score,
+                total_questions,
+                percentage,
+                category,
+                subject
+            )
+            VALUES
+            (
+                %s,
+                %s,
+                %s,
+                %s,
+                %s,
+                %s
+            )
         """, (
-        user_id,
-        score,
-        total_questions,
-        percentage,
-        category
-            ))
+            user_id,
+            score,
+            total_questions,
+            percentage,
+            category,
+            subject
+        ))
+
         conn.commit()
 
-        
         session.pop(
             "mock_question_ids",
             None
@@ -838,24 +819,22 @@ def submit_mock_test():
 
         return jsonify({
             "success": True,
+            "message": "Mock test submitted successfully.",
             "score": score,
             "total_questions": total_questions,
-            "percentage": percentage,
-            "message": "Mock test submitted successfully."
+            "percentage": percentage
         })
 
-    except Exception:
+    except Exception as e:
 
         if conn:
             conn.rollback()
 
-        app.logger.exception(
-            "Mock test submission error"
-        )
+        app.logger.exception(e)
 
         return jsonify({
             "success": False,
-            "message": "Unable to submit mock test."
+            "message": str(e)
         }), 500
 
     finally:
@@ -865,7 +844,6 @@ def submit_mock_test():
 
         if conn:
             conn.close()
-
 
 # =========================================================
 # MOCK TEST RESULT
