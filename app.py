@@ -354,31 +354,27 @@ def dashboard():
     try:
 
         # ================= USER =================
-
-        cursor.execute("""
-            SELECT *
-            FROM users
-            WHERE id=%s
-        """, (user_id,))
+        cursor.execute(
+            "SELECT * FROM users WHERE id=%s",
+            (user_id,)
+        )
         user = cursor.fetchone()
 
-        # ================= MOCK TEST =================
-
+        # ================= MOCK TEST STATS =================
         cursor.execute("""
             SELECT
-                COUNT(*) AS total_tests,
-                IFNULL(AVG(percentage),0) AS avg_score,
-                IFNULL(MAX(percentage),0) AS best_score
+                COUNT(*) total_tests,
+                IFNULL(AVG(percentage),0) avg_score,
+                IFNULL(MAX(percentage),0) best_score
             FROM results
             WHERE user_id=%s
         """, (user_id,))
         stats = cursor.fetchone()
 
         # ================= RECENT TESTS =================
-
         cursor.execute("""
             SELECT
-                subject,
+                category,
                 score,
                 total_questions,
                 percentage,
@@ -391,73 +387,118 @@ def dashboard():
         recent_tests = cursor.fetchall()
 
         # ================= COMMUNICATION =================
-
-        cursor.execute("""
-            SELECT *
-            FROM communication_progress
-            WHERE user_id=%s
-        """, (user_id,))
-        communication = cursor.fetchone()
+        try:
+            cursor.execute(
+                "SELECT * FROM communication_progress WHERE user_id=%s",
+                (user_id,)
+            )
+            communication = cursor.fetchone()
+        except:
+            communication = {}
 
         # ================= COURSE =================
-
-        cursor.execute("""
-            SELECT *
-            FROM course_progress
-            WHERE user_id=%s
-        """, (user_id,))
-        course = cursor.fetchone()
+        try:
+            cursor.execute(
+                "SELECT * FROM course_progress WHERE user_id=%s",
+                (user_id,)
+            )
+            course = cursor.fetchone()
+        except:
+            course = {}
 
         # ================= INTERVIEW =================
-
-        cursor.execute("""
-            SELECT *
-            FROM interview_progress
-            WHERE user_id=%s
-        """, (user_id,))
-        interview = cursor.fetchone()
+        try:
+            cursor.execute(
+                "SELECT * FROM interview_progress WHERE user_id=%s",
+                (user_id,)
+            )
+            interview = cursor.fetchone()
+        except:
+            interview = {}
 
         # ================= RESUME =================
+        try:
+            cursor.execute(
+                "SELECT * FROM resume WHERE user_id=%s",
+                (user_id,)
+            )
+            resume = cursor.fetchone()
+        except:
+            resume = {}
 
-        cursor.execute("""
-            SELECT *
-            FROM resume
-            WHERE user_id=%s
-        """, (user_id,))
-        resume = cursor.fetchone()
+        # ================= GOALS =================
+        try:
+            cursor.execute(
+                "SELECT * FROM daily_goals WHERE user_id=%s",
+                (user_id,)
+            )
+            goals = cursor.fetchall()
+        except:
+            goals = []
 
-        # ================= DAILY GOAL =================
-
-        cursor.execute("""
-            SELECT *
-            FROM daily_goals
-            WHERE user_id=%s
-        """, (user_id,))
-        goals = cursor.fetchall()
-
-        # ================= COMPANY TRACKER =================
-
-        cursor.execute("""
-            SELECT *
-            FROM companies
-            ORDER BY company_name
-        """)
-        companies = cursor.fetchall()
+        # ================= COMPANIES =================
+        try:
+            cursor.execute(
+                "SELECT * FROM companies ORDER BY company_name"
+            )
+            company_progress = cursor.fetchall()
+        except:
+            company_progress = []
 
         # ================= LEADERBOARD =================
+        try:
+            cursor.execute("""
+                SELECT
+                    u.name,
+                    ROUND(AVG(r.percentage),2) percentage
+                FROM users u
+                JOIN results r
+                ON u.id=r.user_id
+                GROUP BY u.id
+                ORDER BY percentage DESC
+                LIMIT 10
+            """)
+            leaderboard = cursor.fetchall()
+        except:
+            leaderboard = []
 
-        cursor.execute("""
-            SELECT
-                u.name,
-                ROUND(AVG(r.percentage),2) AS score
-            FROM users u
-            JOIN results r
-            ON u.id=r.user_id
-            GROUP BY u.id
-            ORDER BY score DESC
-            LIMIT 10
-        """)
-        leaderboard = cursor.fetchall()
+        # ================= EXTRA VARIABLES =================
+
+        xp = int(stats["total_tests"]) * 20
+        level = max(1, xp // 100 + 1)
+        streak = 0
+        rank = 1
+        completed_courses = 0
+        study_hours = 0
+        ats_score = 80
+
+        skills = [
+            {"subject":"Java","progress":70,"icon":"fas fa-coffee"},
+            {"subject":"Python","progress":60,"icon":"fab fa-python"},
+            {"subject":"DBMS","progress":65,"icon":"fas fa-database"},
+            {"subject":"OS","progress":55,"icon":"fas fa-desktop"},
+            {"subject":"Aptitude","progress":75,"icon":"fas fa-brain"}
+        ]
+
+        ai_title = "Today's Recommendation"
+
+        ai_message = "Solve one mock test and practice interview questions."
+
+        ai_tasks = [
+            "Complete one mock test",
+            "Practice Java interview",
+            "Improve communication"
+        ]
+
+        weekly_chart = {
+            "labels": ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
+            "scores": [40,55,65,70,75,80,90]
+        }
+
+        subject_chart = {
+            "labels": ["Java","Python","DBMS","OS","HR"],
+            "scores": [80,70,75,65,85]
+        }
 
         return render_template(
             "dashboard.html",
@@ -468,32 +509,47 @@ def dashboard():
             avg_score=round(stats["avg_score"],2),
             best_score=stats["best_score"],
 
+            streak=streak,
+            rank=rank,
+
+            companies=len(company_progress),
+            completed_courses=completed_courses,
+            study_hours=study_hours,
+            ats_score=ats_score,
+
             recent_tests=recent_tests,
 
             communication=communication,
-
             course=course,
-
             interview=interview,
-
             resume=resume,
 
             goals=goals,
+            company_progress=company_progress,
 
-            companies=companies,
+            leaderboard=leaderboard,
 
-            leaderboard=leaderboard
+            xp=xp,
+            level=level,
+
+            skills=skills,
+
+            ai_title=ai_title,
+            ai_message=ai_message,
+            ai_tasks=ai_tasks,
+
+            weekly_chart=weekly_chart,
+            subject_chart=subject_chart
         )
 
     except Exception as e:
         app.logger.exception(e)
-        flash("Dashboard loading failed.")
+        flash("Dashboard loading failed.", "danger")
         return redirect(url_for("home"))
 
     finally:
         cursor.close()
         conn.close()
-
 @app.route("/mock_categories")
 def mock_categories():
 
