@@ -1,0 +1,5713 @@
+/* ==========================================================
+   COURSE LEARNING CSS
+   PART 1A
+   Global Styles • Variables • Layout • Header • Hero
+========================================================== */
+
+/* ==========================
+   Google Font
+========================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+/* ==========================
+   Root Variables
+========================== */
+
+:root{
+
+--primary:#2563eb;
+--primary-dark:#1d4ed8;
+--secondary:#64748b;
+
+--success:#22c55e;
+--warning:#f59e0b;
+--danger:#ef4444;
+--info:#0ea5e9;
+
+--background:#f4f7fb;
+
+--surface:#ffffff;
+--surface-2:#eef4ff;
+
+--text:#1f2937;
+--text-light:#6b7280;
+
+--border:#e5e7eb;
+
+--radius-sm:8px;
+--radius:16px;
+--radius-lg:24px;
+
+--shadow-sm:0 5px 15px rgba(0,0,0,.05);
+--shadow:0 12px 30px rgba(0,0,0,.08);
+--shadow-lg:0 25px 50px rgba(0,0,0,.15);
+
+--transition:.3s ease;
+
+}
+
+/* ==========================
+   Reset
+========================== */
+
+*{
+
+margin:0;
+padding:0;
+box-sizing:border-box;
+
+}
+
+html{
+
+scroll-behavior:smooth;
+
+}
+
+body{
+
+font-family:'Poppins',sans-serif;
+
+background:var(--background);
+
+color:var(--text);
+
+line-height:1.7;
+
+overflow-x:hidden;
+
+}
+
+/* ==========================
+   Scrollbar
+========================== */
+
+::-webkit-scrollbar{
+
+width:10px;
+
+}
+
+::-webkit-scrollbar-track{
+
+background:#edf2f7;
+
+}
+
+::-webkit-scrollbar-thumb{
+
+background:var(--primary);
+
+border-radius:50px;
+
+}
+
+::-webkit-scrollbar-thumb:hover{
+
+background:var(--primary-dark);
+
+}
+
+/* ==========================
+   Links
+========================== */
+
+a{
+
+text-decoration:none;
+
+color:inherit;
+
+transition:var(--transition);
+
+}
+
+a:hover{
+
+color:var(--primary);
+
+}
+
+/* ==========================
+   Images
+========================== */
+
+img{
+
+max-width:100%;
+
+display:block;
+
+}
+
+/* ==========================
+   Buttons
+========================== */
+
+button{
+
+cursor:pointer;
+
+font-family:inherit;
+
+transition:.3s;
+
+}
+
+.btn{
+
+border:none;
+
+border-radius:12px;
+
+padding:12px 22px;
+
+font-weight:600;
+
+transition:.3s;
+
+}
+
+.btn-primary{
+
+background:var(--primary);
+
+color:#fff;
+
+}
+
+.btn-primary:hover{
+
+background:var(--primary-dark);
+
+transform:translateY(-2px);
+
+}
+
+.btn-success{
+
+background:var(--success);
+
+color:#fff;
+
+}
+
+.btn-warning{
+
+background:var(--warning);
+
+color:#fff;
+
+}
+
+.btn-danger{
+
+background:var(--danger);
+
+color:#fff;
+
+}
+
+/* ==========================
+   Container
+========================== */
+
+.container-fluid{
+
+padding:30px;
+
+}
+
+.container{
+
+max-width:1400px;
+
+margin:auto;
+
+}
+
+/* ==========================
+   Header
+========================== */
+
+.course-header{
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+gap:30px;
+
+background:linear-gradient(
+135deg,
+#ffffff,
+#eef4ff
+);
+
+padding:35px;
+
+border-radius:24px;
+
+box-shadow:var(--shadow);
+
+margin-bottom:30px;
+
+}
+
+.course-header-left{
+
+flex:1;
+
+}
+
+.course-header h1{
+
+font-size:38px;
+
+font-weight:700;
+
+margin-bottom:12px;
+
+}
+
+.course-header p{
+
+font-size:15px;
+
+color:var(--text-light);
+
+}
+
+.course-header-right{
+
+display:flex;
+
+gap:15px;
+
+align-items:center;
+
+}
+
+/* ==========================
+   Hero
+========================== */
+
+.hero{
+
+background:linear-gradient(
+135deg,
+#2563eb,
+#4f46e5
+);
+
+color:#fff;
+
+padding:60px;
+
+border-radius:25px;
+
+margin-bottom:40px;
+
+position:relative;
+
+overflow:hidden;
+
+}
+
+.hero::before{
+
+content:"";
+
+position:absolute;
+
+right:-60px;
+
+top:-60px;
+
+width:220px;
+
+height:220px;
+
+background:rgba(255,255,255,.1);
+
+border-radius:50%;
+
+}
+
+.hero::after{
+
+content:"";
+
+position:absolute;
+
+left:-80px;
+
+bottom:-80px;
+
+width:260px;
+
+height:260px;
+
+background:rgba(255,255,255,.08);
+
+border-radius:50%;
+
+}
+
+.hero h2{
+
+font-size:42px;
+
+font-weight:700;
+
+margin-bottom:15px;
+
+position:relative;
+
+z-index:2;
+
+}
+
+.hero p{
+
+font-size:17px;
+
+max-width:700px;
+
+opacity:.95;
+
+position:relative;
+
+z-index:2;
+
+}
+
+.hero-buttons{
+
+margin-top:30px;
+
+display:flex;
+
+gap:15px;
+
+position:relative;
+
+z-index:2;
+
+}
+
+.hero .btn{
+
+padding:14px 28px;
+
+font-size:15px;
+
+}
+
+/* ==========================
+   Progress
+========================== */
+
+.progress{
+
+height:14px;
+
+background:#dbeafe;
+
+border-radius:30px;
+
+overflow:hidden;
+
+}
+
+.progress-bar{
+
+background:linear-gradient(
+90deg,
+#2563eb,
+#4f46e5
+);
+
+font-weight:600;
+
+color:white;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+height:100%;
+
+transition:width .5s;
+
+}
+
+/* ==========================
+   Cards
+========================== */
+
+.card{
+
+background:white;
+
+border:none;
+
+border-radius:20px;
+
+box-shadow:var(--shadow);
+
+transition:.3s;
+
+}
+
+.card:hover{
+
+transform:translateY(-8px);
+
+box-shadow:var(--shadow-lg);
+
+}
+
+/* ==========================
+   Section
+========================== */
+
+.section-title{
+
+font-size:30px;
+
+font-weight:700;
+
+margin-bottom:10px;
+
+}
+
+.section-subtitle{
+
+color:var(--text-light);
+
+margin-bottom:30px;
+
+}
+
+/* ==========================
+   Responsive
+========================== */
+
+@media(max-width:992px){
+
+.course-header{
+
+flex-direction:column;
+
+text-align:center;
+
+}
+
+.hero{
+
+padding:40px;
+
+}
+
+.hero h2{
+
+font-size:32px;
+
+}
+
+}
+
+@media(max-width:768px){
+
+.container-fluid{
+
+padding:15px;
+
+}
+
+.hero{
+
+padding:30px;
+
+}
+
+.hero h2{
+
+font-size:26px;
+
+}
+
+.hero-buttons{
+
+flex-direction:column;
+
+}
+
+.course-header h1{
+
+font-size:28px;
+
+}
+
+}
+
+/* ==========================================================
+   COURSE LEARNING CSS
+   PART 1B
+   Sidebar • Lesson List • Video • Tabs • Utilities
+==========================================================*/
+
+/* ==========================
+   Sidebar
+========================== */
+
+.lesson-sidebar{
+
+background:var(--surface);
+
+border-radius:20px;
+
+padding:25px;
+
+box-shadow:var(--shadow);
+
+position:sticky;
+
+top:90px;
+
+height:calc(100vh - 110px);
+
+overflow-y:auto;
+
+}
+
+.lesson-sidebar h3{
+
+font-size:22px;
+
+font-weight:700;
+
+margin-bottom:20px;
+
+}
+
+.lesson-sidebar hr{
+
+margin:20px 0;
+
+border-color:var(--border);
+
+}
+
+/* ==========================
+   Lesson Item
+========================== */
+
+.lesson-item{
+
+display:flex;
+
+align-items:center;
+
+justify-content:space-between;
+
+padding:15px;
+
+margin-bottom:12px;
+
+border-radius:14px;
+
+background:#fff;
+
+cursor:pointer;
+
+transition:.3s;
+
+border:1px solid transparent;
+
+}
+
+.lesson-item:hover{
+
+transform:translateX(5px);
+
+background:#eef4ff;
+
+border-color:#bfdbfe;
+
+}
+
+.lesson-item.active{
+
+background:var(--primary);
+
+color:#fff;
+
+}
+
+.lesson-left{
+
+display:flex;
+
+align-items:center;
+
+gap:12px;
+
+}
+
+.lesson-number{
+
+width:40px;
+
+height:40px;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+background:var(--primary);
+
+color:#fff;
+
+border-radius:50%;
+
+font-weight:700;
+
+}
+
+.lesson-item.active .lesson-number{
+
+background:#fff;
+
+color:var(--primary);
+
+}
+
+.lesson-title{
+
+font-size:15px;
+
+font-weight:600;
+
+}
+
+.lesson-status{
+
+font-size:18px;
+
+}
+
+/* ==========================
+   Video Card
+========================== */
+
+.video-card{
+
+background:#fff;
+
+border-radius:20px;
+
+padding:25px;
+
+box-shadow:var(--shadow);
+
+margin-bottom:30px;
+
+}
+
+.video-wrapper{
+
+position:relative;
+
+overflow:hidden;
+
+border-radius:18px;
+
+background:#000;
+
+}
+
+.video-wrapper iframe,
+
+.video-wrapper video{
+
+width:100%;
+
+height:520px;
+
+border:none;
+
+display:block;
+
+}
+
+.video-info{
+
+margin-top:20px;
+
+}
+
+.video-info h2{
+
+font-size:28px;
+
+font-weight:700;
+
+margin-bottom:10px;
+
+}
+
+.video-info p{
+
+color:var(--text-light);
+
+}
+
+/* ==========================
+   Notes
+========================== */
+
+.notes-box{
+
+background:#fff;
+
+padding:25px;
+
+border-radius:20px;
+
+box-shadow:var(--shadow);
+
+}
+
+.notes-box h3{
+
+margin-bottom:20px;
+
+font-weight:700;
+
+}
+
+.notes-content{
+
+line-height:1.9;
+
+font-size:15px;
+
+}
+
+.notes-content pre{
+
+background:#0f172a;
+
+color:#fff;
+
+padding:18px;
+
+border-radius:12px;
+
+overflow:auto;
+
+margin:20px 0;
+
+}
+
+.notes-content code{
+
+font-family:Consolas,monospace;
+
+}
+
+/* ==========================
+   Bootstrap Tabs
+========================== */
+
+.nav-tabs{
+
+border:none;
+
+margin-bottom:25px;
+
+gap:10px;
+
+}
+
+.nav-tabs .nav-link{
+
+border:none;
+
+padding:12px 22px;
+
+font-weight:600;
+
+border-radius:12px;
+
+background:#eef2ff;
+
+color:#475569;
+
+transition:.3s;
+
+}
+
+.nav-tabs .nav-link:hover{
+
+background:#dbeafe;
+
+}
+
+.nav-tabs .nav-link.active{
+
+background:var(--primary);
+
+color:#fff;
+
+}
+
+/* ==========================
+   Tab Content
+========================== */
+
+.tab-content{
+
+background:#fff;
+
+padding:30px;
+
+border-radius:20px;
+
+box-shadow:var(--shadow);
+
+}
+
+/* ==========================
+   Badges
+========================== */
+
+.badge-premium{
+
+background:#fbbf24;
+
+color:#111;
+
+padding:8px 15px;
+
+border-radius:50px;
+
+font-weight:700;
+
+}
+
+.badge-success{
+
+background:#22c55e;
+
+color:#fff;
+
+padding:8px 15px;
+
+border-radius:50px;
+
+}
+
+/* ==========================
+   Utility Cards
+========================== */
+
+.info-card{
+
+background:#fff;
+
+padding:25px;
+
+border-radius:18px;
+
+box-shadow:var(--shadow);
+
+margin-bottom:25px;
+
+transition:.3s;
+
+}
+
+.info-card:hover{
+
+transform:translateY(-8px);
+
+}
+
+.info-card h4{
+
+margin-bottom:10px;
+
+font-weight:700;
+
+}
+
+.info-card p{
+
+color:var(--text-light);
+
+}
+
+/* ==========================
+   Lists
+========================== */
+
+.custom-list{
+
+list-style:none;
+
+padding:0;
+
+}
+
+.custom-list li{
+
+padding:12px 0;
+
+border-bottom:1px solid #eee;
+
+display:flex;
+
+align-items:center;
+
+gap:10px;
+
+}
+
+.custom-list li:last-child{
+
+border-bottom:none;
+
+}
+
+/* ==========================
+   Utilities
+========================== */
+
+.text-primary{
+
+color:var(--primary)!important;
+
+}
+
+.text-success{
+
+color:var(--success)!important;
+
+}
+
+.text-danger{
+
+color:var(--danger)!important;
+
+}
+
+.text-muted{
+
+color:var(--text-light)!important;
+
+}
+
+.rounded-xl{
+
+border-radius:24px;
+
+}
+
+.shadow-lg{
+
+box-shadow:var(--shadow-lg);
+
+}
+
+.w-100{
+
+width:100%;
+
+}
+
+.mt-40{
+
+margin-top:40px;
+
+}
+
+.mb-40{
+
+margin-bottom:40px;
+
+}
+
+/* ==========================
+   Responsive
+========================== */
+
+@media(max-width:992px){
+
+.lesson-sidebar{
+
+position:relative;
+
+height:auto;
+
+margin-bottom:25px;
+
+}
+
+.video-wrapper iframe,
+
+.video-wrapper video{
+
+height:400px;
+
+}
+
+}
+
+@media(max-width:768px){
+
+.video-wrapper iframe,
+
+.video-wrapper video{
+
+height:220px;
+
+}
+
+.tab-content{
+
+padding:18px;
+
+}
+
+.lesson-item{
+
+padding:12px;
+
+}
+
+.lesson-title{
+
+font-size:14px;
+
+}
+
+}
+/* ==========================================================
+   COURSE LEARNING CSS
+   PART 2A
+   Notes • VS Code Editor • Output Console • Copy Button
+==========================================================*/
+
+/* ==========================
+   NOTES SECTION
+========================== */
+
+.notes-container{
+
+background:#ffffff;
+
+border-radius:20px;
+
+box-shadow:var(--shadow);
+
+padding:30px;
+
+margin-bottom:30px;
+
+}
+
+.notes-header{
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+margin-bottom:25px;
+
+padding-bottom:15px;
+
+border-bottom:1px solid var(--border);
+
+}
+
+.notes-title{
+
+font-size:28px;
+
+font-weight:700;
+
+color:var(--text);
+
+}
+
+.notes-actions{
+
+display:flex;
+
+gap:10px;
+
+}
+
+.notes-content{
+
+font-size:16px;
+
+line-height:1.9;
+
+color:var(--text);
+
+}
+
+.notes-content h1,
+.notes-content h2,
+.notes-content h3,
+.notes-content h4{
+
+margin:25px 0 15px;
+
+font-weight:700;
+
+}
+
+.notes-content p{
+
+margin-bottom:15px;
+
+}
+
+.notes-content ul{
+
+padding-left:25px;
+
+margin-bottom:20px;
+
+}
+
+.notes-content li{
+
+margin-bottom:8px;
+
+}
+
+.notes-content blockquote{
+
+border-left:5px solid var(--primary);
+
+padding:15px 20px;
+
+background:#eef4ff;
+
+border-radius:10px;
+
+margin:20px 0;
+
+}
+
+.notes-content img{
+
+border-radius:12px;
+
+margin:20px auto;
+
+box-shadow:var(--shadow-sm);
+
+}
+
+.notes-content table{
+
+width:100%;
+
+border-collapse:collapse;
+
+margin:20px 0;
+
+}
+
+.notes-content table th{
+
+background:var(--primary);
+
+color:#fff;
+
+padding:12px;
+
+}
+
+.notes-content table td{
+
+padding:12px;
+
+border:1px solid #ddd;
+
+}
+
+.notes-content pre{
+
+background:#0f172a;
+
+color:#f8fafc;
+
+padding:20px;
+
+border-radius:12px;
+
+overflow:auto;
+
+margin:25px 0;
+
+}
+
+.notes-content code{
+
+font-family:Consolas,monospace;
+
+font-size:15px;
+
+}
+
+/* ==========================
+   CODE EDITOR
+========================== */
+
+.editor-container{
+
+background:#1e1e1e;
+
+border-radius:18px;
+
+overflow:hidden;
+
+box-shadow:var(--shadow);
+
+margin-top:25px;
+
+}
+
+.editor-header{
+
+height:48px;
+
+background:#2d2d2d;
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+padding:0 18px;
+
+}
+
+.editor-left{
+
+display:flex;
+
+align-items:center;
+
+gap:8px;
+
+}
+
+.dot{
+
+width:12px;
+
+height:12px;
+
+border-radius:50%;
+
+}
+
+.red{
+
+background:#ff5f56;
+
+}
+
+.yellow{
+
+background:#ffbd2e;
+
+}
+
+.green{
+
+background:#27c93f;
+
+}
+
+.editor-title{
+
+color:#fff;
+
+font-size:14px;
+
+font-weight:600;
+
+}
+
+.editor-actions{
+
+display:flex;
+
+gap:10px;
+
+}
+
+.editor-btn{
+
+background:#3b82f6;
+
+border:none;
+
+color:#fff;
+
+padding:8px 14px;
+
+border-radius:8px;
+
+font-size:13px;
+
+cursor:pointer;
+
+transition:.3s;
+
+}
+
+.editor-btn:hover{
+
+background:#2563eb;
+
+}
+
+.editor-body{
+
+display:flex;
+
+min-height:450px;
+
+}
+
+.line-numbers{
+
+background:#252526;
+
+color:#858585;
+
+padding:18px 12px;
+
+text-align:right;
+
+user-select:none;
+
+font-family:Consolas,monospace;
+
+line-height:28px;
+
+}
+
+.code-area{
+
+flex:1;
+
+}
+
+.code-area textarea{
+
+width:100%;
+
+height:450px;
+
+border:none;
+
+outline:none;
+
+resize:none;
+
+background:#1e1e1e;
+
+color:#d4d4d4;
+
+padding:18px;
+
+font-size:15px;
+
+font-family:Consolas,monospace;
+
+line-height:28px;
+
+}
+
+/* ==========================
+   SYNTAX COLORS
+========================== */
+
+.keyword{
+
+color:#569cd6;
+
+}
+
+.string{
+
+color:#ce9178;
+
+}
+
+.comment{
+
+color:#6a9955;
+
+font-style:italic;
+
+}
+
+.number{
+
+color:#b5cea8;
+
+}
+
+.function{
+
+color:#dcdcaa;
+
+}
+
+.class{
+
+color:#4ec9b0;
+
+}
+
+/* ==========================
+   OUTPUT CONSOLE
+========================== */
+
+.console{
+
+margin-top:20px;
+
+background:#111827;
+
+border-radius:15px;
+
+overflow:hidden;
+
+}
+
+.console-header{
+
+background:#1f2937;
+
+padding:12px 18px;
+
+color:#fff;
+
+font-weight:600;
+
+}
+
+.console-body{
+
+padding:18px;
+
+font-family:Consolas,monospace;
+
+font-size:15px;
+
+color:#22c55e;
+
+min-height:150px;
+
+white-space:pre-wrap;
+
+}
+
+/* ==========================
+   COPY BUTTON
+========================== */
+
+.copy-btn{
+
+background:#16a34a;
+
+color:#fff;
+
+border:none;
+
+padding:10px 18px;
+
+border-radius:10px;
+
+font-weight:600;
+
+cursor:pointer;
+
+transition:.3s;
+
+}
+
+.copy-btn:hover{
+
+background:#15803d;
+
+transform:translateY(-2px);
+
+}
+
+/* ==========================
+   DOWNLOAD BUTTON
+========================== */
+
+.download-btn{
+
+background:#2563eb;
+
+color:#fff;
+
+padding:10px 18px;
+
+border:none;
+
+border-radius:10px;
+
+font-weight:600;
+
+cursor:pointer;
+
+transition:.3s;
+
+}
+
+.download-btn:hover{
+
+background:#1d4ed8;
+
+}
+
+/* ==========================
+   SEARCH BAR
+========================== */
+
+.notes-search{
+
+width:100%;
+
+padding:14px 18px;
+
+border:1px solid #ddd;
+
+border-radius:12px;
+
+font-size:15px;
+
+margin-bottom:20px;
+
+outline:none;
+
+transition:.3s;
+
+}
+
+.notes-search:focus{
+
+border-color:var(--primary);
+
+box-shadow:0 0 0 3px rgba(37,99,235,.15);
+
+}
+
+/* ==========================
+   RESPONSIVE
+========================== */
+
+@media(max-width:992px){
+
+.editor-body{
+
+flex-direction:column;
+
+}
+
+.line-numbers{
+
+display:none;
+
+}
+
+.code-area textarea{
+
+height:350px;
+
+}
+
+}
+
+@media(max-width:768px){
+
+.notes-container{
+
+padding:20px;
+
+}
+
+.editor-header{
+
+flex-direction:column;
+
+height:auto;
+
+padding:12px;
+
+gap:10px;
+
+}
+
+.editor-actions{
+
+width:100%;
+
+justify-content:center;
+
+}
+
+.code-area textarea{
+
+height:280px;
+
+font-size:14px;
+
+}
+
+.notes-title{
+
+font-size:22px;
+
+}
+
+}
+/* ==========================================================
+   COURSE LEARNING CSS
+   PART 2B
+   Practice • Quiz • Resources • Assignments • Challenges
+==========================================================*/
+
+/* ==========================
+   PRACTICE SECTION
+========================== */
+
+.practice-container{
+
+background:#ffffff;
+
+border-radius:20px;
+
+padding:30px;
+
+box-shadow:var(--shadow);
+
+margin-bottom:30px;
+
+}
+
+.practice-header{
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+margin-bottom:25px;
+
+padding-bottom:15px;
+
+border-bottom:1px solid var(--border);
+
+}
+
+.practice-title{
+
+font-size:28px;
+
+font-weight:700;
+
+}
+
+.practice-grid{
+
+display:grid;
+
+grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+
+gap:25px;
+
+margin-top:20px;
+
+}
+
+.practice-card{
+
+background:#fff;
+
+border-radius:18px;
+
+padding:25px;
+
+border:1px solid #e5e7eb;
+
+transition:.3s;
+
+position:relative;
+
+overflow:hidden;
+
+}
+
+.practice-card:hover{
+
+transform:translateY(-8px);
+
+box-shadow:var(--shadow-lg);
+
+border-color:var(--primary);
+
+}
+
+.practice-card::before{
+
+content:"";
+
+position:absolute;
+
+top:0;
+
+left:0;
+
+width:5px;
+
+height:100%;
+
+background:var(--primary);
+
+}
+
+.practice-card h4{
+
+font-size:20px;
+
+margin-bottom:12px;
+
+font-weight:700;
+
+}
+
+.practice-card p{
+
+color:var(--text-light);
+
+margin-bottom:18px;
+
+}
+
+.practice-meta{
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+margin-top:15px;
+
+font-size:14px;
+
+}
+
+.difficulty{
+
+padding:6px 12px;
+
+border-radius:30px;
+
+font-size:13px;
+
+font-weight:600;
+
+}
+
+.easy{
+
+background:#dcfce7;
+
+color:#15803d;
+
+}
+
+.medium{
+
+background:#fef3c7;
+
+color:#b45309;
+
+}
+
+.hard{
+
+background:#fee2e2;
+
+color:#b91c1c;
+
+}
+
+/* ==========================
+   QUIZ SECTION
+========================== */
+
+.quiz-container{
+
+background:#fff;
+
+border-radius:20px;
+
+padding:30px;
+
+box-shadow:var(--shadow);
+
+margin-bottom:30px;
+
+}
+
+.quiz-question{
+
+font-size:20px;
+
+font-weight:600;
+
+margin-bottom:25px;
+
+}
+
+.quiz-options{
+
+display:flex;
+
+flex-direction:column;
+
+gap:15px;
+
+}
+
+.quiz-option{
+
+padding:16px 20px;
+
+border:2px solid #e5e7eb;
+
+border-radius:14px;
+
+cursor:pointer;
+
+transition:.3s;
+
+display:flex;
+
+align-items:center;
+
+gap:12px;
+
+}
+
+.quiz-option:hover{
+
+border-color:var(--primary);
+
+background:#eef4ff;
+
+}
+
+.quiz-option.correct{
+
+background:#dcfce7;
+
+border-color:#22c55e;
+
+}
+
+.quiz-option.wrong{
+
+background:#fee2e2;
+
+border-color:#ef4444;
+
+}
+
+.quiz-footer{
+
+margin-top:30px;
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+}
+
+.quiz-score{
+
+font-size:18px;
+
+font-weight:700;
+
+}
+
+/* ==========================
+   ASSIGNMENT
+========================== */
+
+.assignment-card{
+
+background:#fff;
+
+padding:30px;
+
+border-radius:20px;
+
+box-shadow:var(--shadow);
+
+margin-bottom:30px;
+
+}
+
+.assignment-title{
+
+font-size:24px;
+
+font-weight:700;
+
+margin-bottom:15px;
+
+}
+
+.assignment-box{
+
+background:#f8fafc;
+
+padding:20px;
+
+border-radius:14px;
+
+border-left:5px solid var(--primary);
+
+margin:20px 0;
+
+}
+
+.assignment-upload{
+
+border:2px dashed #cbd5e1;
+
+border-radius:15px;
+
+padding:40px;
+
+text-align:center;
+
+transition:.3s;
+
+cursor:pointer;
+
+}
+
+.assignment-upload:hover{
+
+border-color:var(--primary);
+
+background:#eef4ff;
+
+}
+
+/* ==========================
+   CHALLENGE SECTION
+========================== */
+
+.challenge-grid{
+
+display:grid;
+
+grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+
+gap:20px;
+
+}
+
+.challenge-card{
+
+background:linear-gradient(
+
+135deg,
+
+#2563eb,
+
+#4f46e5
+
+);
+
+color:#fff;
+
+padding:25px;
+
+border-radius:20px;
+
+transition:.3s;
+
+position:relative;
+
+overflow:hidden;
+
+}
+
+.challenge-card:hover{
+
+transform:translateY(-10px);
+
+}
+
+.challenge-card::after{
+
+content:"🏆";
+
+position:absolute;
+
+right:20px;
+
+top:15px;
+
+font-size:42px;
+
+opacity:.15;
+
+}
+
+.challenge-card h4{
+
+font-size:22px;
+
+margin-bottom:10px;
+
+}
+
+.challenge-card p{
+
+opacity:.9;
+
+margin-bottom:20px;
+
+}
+
+/* ==========================
+   RESOURCES
+========================== */
+
+.resources-grid{
+
+display:grid;
+
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+
+gap:20px;
+
+margin-top:20px;
+
+}
+
+.resource-item{
+
+background:#fff;
+
+padding:22px;
+
+border-radius:18px;
+
+box-shadow:var(--shadow-sm);
+
+display:flex;
+
+align-items:center;
+
+gap:15px;
+
+transition:.3s;
+
+}
+
+.resource-item:hover{
+
+transform:translateY(-6px);
+
+box-shadow:var(--shadow);
+
+}
+
+.resource-icon{
+
+width:55px;
+
+height:55px;
+
+border-radius:14px;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+font-size:24px;
+
+background:#eef4ff;
+
+color:var(--primary);
+
+}
+
+.resource-content h5{
+
+margin-bottom:5px;
+
+font-weight:700;
+
+}
+
+.resource-content p{
+
+font-size:14px;
+
+color:var(--text-light);
+
+}
+
+/* ==========================
+   DOWNLOAD CARD
+========================== */
+
+.download-card{
+
+background:#fff;
+
+padding:25px;
+
+border-radius:18px;
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+box-shadow:var(--shadow);
+
+margin-top:20px;
+
+}
+
+/* ==========================
+   TAGS
+========================== */
+
+.tag{
+
+display:inline-block;
+
+padding:6px 12px;
+
+background:#eef4ff;
+
+color:var(--primary);
+
+border-radius:30px;
+
+font-size:13px;
+
+margin:4px;
+
+font-weight:600;
+
+}
+
+/* ==========================
+   RESPONSIVE
+========================== */
+
+@media(max-width:992px){
+
+.practice-grid,
+
+.challenge-grid,
+
+.resources-grid{
+
+grid-template-columns:1fr;
+
+}
+
+}
+
+@media(max-width:768px){
+
+.practice-container,
+
+.quiz-container,
+
+.assignment-card{
+
+padding:20px;
+
+}
+
+.quiz-footer{
+
+flex-direction:column;
+
+gap:15px;
+
+}
+
+.practice-title,
+
+.assignment-title{
+
+font-size:22px;
+
+}
+
+.resource-item{
+
+flex-direction:column;
+
+text-align:center;
+
+}
+
+.download-card{
+
+flex-direction:column;
+
+gap:15px;
+
+text-align:center;
+
+}
+
+}
+/* ==========================================================
+   COURSE LEARNING CSS
+   PART 3A-1
+   Analytics Dashboard • Statistics • XP • Progress Cards
+==========================================================*/
+
+/* ==========================
+   ANALYTICS SECTION
+========================== */
+
+.analytics-section{
+
+margin-top:40px;
+
+margin-bottom:40px;
+
+}
+
+.analytics-header{
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+margin-bottom:30px;
+
+}
+
+.analytics-title{
+
+font-size:30px;
+
+font-weight:700;
+
+color:var(--text);
+
+}
+
+.analytics-subtitle{
+
+color:var(--text-light);
+
+font-size:15px;
+
+margin-top:5px;
+
+}
+
+/* ==========================
+   STATS GRID
+========================== */
+
+.stats-grid{
+
+display:grid;
+
+grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+
+gap:24px;
+
+}
+
+/* ==========================
+   STAT CARD
+========================== */
+
+.stat-card{
+
+background:#fff;
+
+padding:28px;
+
+border-radius:22px;
+
+box-shadow:var(--shadow);
+
+transition:.35s;
+
+position:relative;
+
+overflow:hidden;
+
+border:1px solid #eef2f7;
+
+}
+
+.stat-card:hover{
+
+transform:translateY(-8px);
+
+box-shadow:var(--shadow-lg);
+
+}
+
+.stat-card::before{
+
+content:"";
+
+position:absolute;
+
+left:0;
+
+top:0;
+
+width:6px;
+
+height:100%;
+
+background:var(--primary);
+
+}
+
+/* ==========================
+   ICON
+========================== */
+
+.stat-icon{
+
+width:70px;
+
+height:70px;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+border-radius:18px;
+
+font-size:32px;
+
+margin-bottom:20px;
+
+color:#fff;
+
+}
+
+.icon-blue{
+
+background:#2563eb;
+
+}
+
+.icon-green{
+
+background:#22c55e;
+
+}
+
+.icon-orange{
+
+background:#f59e0b;
+
+}
+
+.icon-red{
+
+background:#ef4444;
+
+}
+
+.icon-purple{
+
+background:#7c3aed;
+
+}
+
+/* ==========================
+   VALUE
+========================== */
+
+.stat-value{
+
+font-size:34px;
+
+font-weight:700;
+
+margin-bottom:6px;
+
+color:var(--text);
+
+}
+
+.stat-title{
+
+font-size:15px;
+
+font-weight:600;
+
+color:var(--text-light);
+
+}
+
+.stat-change{
+
+margin-top:15px;
+
+display:inline-flex;
+
+align-items:center;
+
+padding:6px 12px;
+
+border-radius:30px;
+
+font-size:13px;
+
+font-weight:600;
+
+}
+
+.up{
+
+background:#dcfce7;
+
+color:#15803d;
+
+}
+
+.down{
+
+background:#fee2e2;
+
+color:#b91c1c;
+
+}
+
+/* ==========================
+   PROGRESS PANEL
+========================== */
+
+.progress-panel{
+
+background:#fff;
+
+padding:30px;
+
+margin-top:35px;
+
+border-radius:22px;
+
+box-shadow:var(--shadow);
+
+}
+
+.progress-panel h3{
+
+font-size:24px;
+
+font-weight:700;
+
+margin-bottom:25px;
+
+}
+
+/* ==========================
+   COURSE PROGRESS
+========================== */
+
+.progress-item{
+
+margin-bottom:24px;
+
+}
+
+.progress-item:last-child{
+
+margin-bottom:0;
+
+}
+
+.progress-label{
+
+display:flex;
+
+justify-content:space-between;
+
+margin-bottom:10px;
+
+font-size:15px;
+
+font-weight:600;
+
+}
+
+.progress-track{
+
+height:14px;
+
+background:#e5e7eb;
+
+border-radius:30px;
+
+overflow:hidden;
+
+}
+
+.progress-fill{
+
+height:100%;
+
+border-radius:30px;
+
+background:linear-gradient(
+
+90deg,
+
+#2563eb,
+
+#4f46e5
+
+);
+
+transition:width .5s;
+
+}
+
+/* ==========================
+   XP CARD
+========================== */
+
+.xp-card{
+
+background:linear-gradient(
+
+135deg,
+
+#2563eb,
+
+#4f46e5
+
+);
+
+color:#fff;
+
+padding:30px;
+
+border-radius:22px;
+
+margin-top:30px;
+
+position:relative;
+
+overflow:hidden;
+
+}
+
+.xp-card::after{
+
+content:"⭐";
+
+position:absolute;
+
+right:20px;
+
+top:10px;
+
+font-size:90px;
+
+opacity:.15;
+
+}
+
+.xp-title{
+
+font-size:18px;
+
+font-weight:600;
+
+margin-bottom:10px;
+
+}
+
+.xp-value{
+
+font-size:42px;
+
+font-weight:700;
+
+margin-bottom:15px;
+
+}
+
+.xp-level{
+
+display:inline-block;
+
+padding:8px 16px;
+
+background:rgba(255,255,255,.18);
+
+border-radius:40px;
+
+font-size:14px;
+
+}
+
+/* ==========================
+   STREAK CARD
+========================== */
+
+.streak-card{
+
+background:linear-gradient(
+
+135deg,
+
+#f97316,
+
+#ea580c
+
+);
+
+color:#fff;
+
+padding:28px;
+
+border-radius:22px;
+
+margin-top:25px;
+
+position:relative;
+
+overflow:hidden;
+
+}
+
+.streak-card::after{
+
+content:"🔥";
+
+position:absolute;
+
+right:20px;
+
+top:10px;
+
+font-size:80px;
+
+opacity:.18;
+
+}
+
+.streak-value{
+
+font-size:42px;
+
+font-weight:700;
+
+}
+
+.streak-text{
+
+font-size:15px;
+
+opacity:.9;
+
+}
+
+/* ==========================
+   ACHIEVEMENTS
+========================== */
+
+.badges-grid{
+
+display:grid;
+
+grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+
+gap:20px;
+
+margin-top:30px;
+
+}
+
+.badge-card{
+
+background:#fff;
+
+border-radius:18px;
+
+padding:20px;
+
+text-align:center;
+
+box-shadow:var(--shadow-sm);
+
+transition:.3s;
+
+}
+
+.badge-card:hover{
+
+transform:translateY(-6px);
+
+}
+
+.badge-icon{
+
+font-size:40px;
+
+margin-bottom:10px;
+
+}
+
+.badge-name{
+
+font-size:14px;
+
+font-weight:600;
+
+}
+
+/* ==========================
+   RESPONSIVE
+========================== */
+
+@media(max-width:992px){
+
+.stats-grid{
+
+grid-template-columns:repeat(2,1fr);
+
+}
+
+}
+
+@media(max-width:768px){
+
+.analytics-header{
+
+flex-direction:column;
+
+align-items:flex-start;
+
+gap:12px;
+
+}
+
+.analytics-title{
+
+font-size:24px;
+
+}
+
+.stats-grid{
+
+grid-template-columns:1fr;
+
+}
+
+.stat-card{
+
+padding:22px;
+
+}
+
+.stat-value{
+
+font-size:28px;
+
+}
+
+.progress-panel{
+
+padding:20px;
+
+}
+
+.xp-card,
+
+.streak-card{
+
+padding:22px;
+
+}
+
+.xp-value,
+
+.streak-value{
+
+font-size:34px;
+
+}
+
+.badges-grid{
+
+grid-template-columns:repeat(2,1fr);
+
+}
+
+}
+
+/* ==========================================================
+   COURSE LEARNING CSS
+   PART 3A-2
+   Calendar • Pomodoro Timer • Study Stats • Goals • Sessions
+==========================================================*/
+
+/* ==========================
+   STUDY DASHBOARD
+========================== */
+
+.study-dashboard{
+
+margin-top:40px;
+
+display:grid;
+
+grid-template-columns:2fr 1fr;
+
+gap:25px;
+
+}
+
+/* ==========================
+   CALENDAR CARD
+========================== */
+
+.calendar-card{
+
+background:#fff;
+
+padding:28px;
+
+border-radius:22px;
+
+box-shadow:var(--shadow);
+
+}
+
+.calendar-header{
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+margin-bottom:25px;
+
+}
+
+.calendar-title{
+
+font-size:24px;
+
+font-weight:700;
+
+}
+
+.calendar-nav{
+
+display:flex;
+
+gap:10px;
+
+}
+
+.calendar-btn{
+
+width:40px;
+
+height:40px;
+
+border:none;
+
+border-radius:12px;
+
+background:#eef4ff;
+
+color:var(--primary);
+
+font-size:18px;
+
+cursor:pointer;
+
+transition:.3s;
+
+}
+
+.calendar-btn:hover{
+
+background:var(--primary);
+
+color:#fff;
+
+}
+
+.calendar-week{
+
+display:grid;
+
+grid-template-columns:repeat(7,1fr);
+
+gap:10px;
+
+margin-bottom:15px;
+
+font-weight:600;
+
+text-align:center;
+
+color:var(--text-light);
+
+}
+
+.calendar-days{
+
+display:grid;
+
+grid-template-columns:repeat(7,1fr);
+
+gap:10px;
+
+}
+
+.day{
+
+height:55px;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+border-radius:14px;
+
+background:#f8fafc;
+
+cursor:pointer;
+
+transition:.3s;
+
+font-weight:600;
+
+}
+
+.day:hover{
+
+background:#dbeafe;
+
+}
+
+.day.active{
+
+background:var(--primary);
+
+color:#fff;
+
+}
+
+.day.completed{
+
+background:#22c55e;
+
+color:#fff;
+
+}
+
+.day.today{
+
+border:2px solid var(--primary);
+
+}
+
+/* ==========================
+   GOALS PANEL
+========================== */
+
+.goal-panel{
+
+background:#fff;
+
+padding:28px;
+
+border-radius:22px;
+
+box-shadow:var(--shadow);
+
+}
+
+.goal-title{
+
+font-size:22px;
+
+font-weight:700;
+
+margin-bottom:20px;
+
+}
+
+.goal-item{
+
+margin-bottom:22px;
+
+}
+
+.goal-item:last-child{
+
+margin-bottom:0;
+
+}
+
+.goal-head{
+
+display:flex;
+
+justify-content:space-between;
+
+margin-bottom:10px;
+
+font-weight:600;
+
+}
+
+.goal-progress{
+
+height:12px;
+
+border-radius:30px;
+
+background:#e5e7eb;
+
+overflow:hidden;
+
+}
+
+.goal-fill{
+
+height:100%;
+
+background:linear-gradient(90deg,#22c55e,#16a34a);
+
+border-radius:30px;
+
+}
+
+/* ==========================
+   POMODORO TIMER
+========================== */
+
+.timer-card{
+
+background:#fff;
+
+padding:30px;
+
+border-radius:22px;
+
+box-shadow:var(--shadow);
+
+margin-top:30px;
+
+text-align:center;
+
+}
+
+.timer-circle{
+
+width:220px;
+
+height:220px;
+
+margin:20px auto;
+
+border-radius:50%;
+
+border:10px solid #dbeafe;
+
+display:flex;
+
+flex-direction:column;
+
+justify-content:center;
+
+align-items:center;
+
+background:#fff;
+
+}
+
+.timer-circle h1{
+
+font-size:46px;
+
+font-weight:700;
+
+margin:0;
+
+}
+
+.timer-circle span{
+
+font-size:15px;
+
+color:var(--text-light);
+
+}
+
+.timer-buttons{
+
+display:flex;
+
+justify-content:center;
+
+gap:15px;
+
+margin-top:20px;
+
+}
+
+.timer-btn{
+
+padding:12px 22px;
+
+border:none;
+
+border-radius:12px;
+
+background:var(--primary);
+
+color:#fff;
+
+font-weight:600;
+
+cursor:pointer;
+
+transition:.3s;
+
+}
+
+.timer-btn:hover{
+
+background:var(--primary-dark);
+
+transform:translateY(-2px);
+
+}
+
+/* ==========================
+   STUDY SESSION
+========================== */
+
+.session-card{
+
+background:#fff;
+
+padding:28px;
+
+border-radius:22px;
+
+box-shadow:var(--shadow);
+
+margin-top:30px;
+
+}
+
+.session-title{
+
+font-size:22px;
+
+font-weight:700;
+
+margin-bottom:20px;
+
+}
+
+.session-item{
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+padding:15px 0;
+
+border-bottom:1px solid #eef2f7;
+
+}
+
+.session-item:last-child{
+
+border-bottom:none;
+
+}
+
+.session-time{
+
+font-weight:700;
+
+color:var(--primary);
+
+}
+
+.session-subject{
+
+font-weight:600;
+
+}
+
+.session-duration{
+
+color:var(--text-light);
+
+}
+
+/* ==========================
+   STUDY STATISTICS
+========================== */
+
+.study-stats{
+
+display:grid;
+
+grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+
+gap:20px;
+
+margin-top:30px;
+
+}
+
+.study-box{
+
+background:#fff;
+
+padding:24px;
+
+border-radius:18px;
+
+text-align:center;
+
+box-shadow:var(--shadow-sm);
+
+transition:.3s;
+
+}
+
+.study-box:hover{
+
+transform:translateY(-6px);
+
+}
+
+.study-box h2{
+
+font-size:34px;
+
+font-weight:700;
+
+color:var(--primary);
+
+margin-bottom:8px;
+
+}
+
+.study-box p{
+
+font-size:14px;
+
+color:var(--text-light);
+
+}
+
+/* ==========================
+   WEEKLY TARGET
+========================== */
+
+.week-target{
+
+margin-top:30px;
+
+padding:25px;
+
+background:linear-gradient(135deg,#2563eb,#4f46e5);
+
+color:#fff;
+
+border-radius:20px;
+
+position:relative;
+
+overflow:hidden;
+
+}
+
+.week-target::after{
+
+content:"🎯";
+
+position:absolute;
+
+right:20px;
+
+top:15px;
+
+font-size:70px;
+
+opacity:.18;
+
+}
+
+.week-target h3{
+
+font-size:24px;
+
+margin-bottom:10px;
+
+}
+
+.week-target p{
+
+opacity:.9;
+
+}
+
+/* ==========================
+   RESPONSIVE
+========================== */
+
+@media(max-width:992px){
+
+.study-dashboard{
+
+grid-template-columns:1fr;
+
+}
+
+}
+
+@media(max-width:768px){
+
+.calendar-card,
+
+.goal-panel,
+
+.timer-card,
+
+.session-card{
+
+padding:20px;
+
+}
+
+.calendar-days{
+
+gap:6px;
+
+}
+
+.day{
+
+height:42px;
+
+font-size:13px;
+
+}
+
+.timer-circle{
+
+width:170px;
+
+height:170px;
+
+}
+
+.timer-circle h1{
+
+font-size:34px;
+
+}
+
+.timer-buttons{
+
+flex-direction:column;
+
+}
+
+.study-stats{
+
+grid-template-columns:repeat(2,1fr);
+
+}
+
+}
+
+@media(max-width:480px){
+
+.study-stats{
+
+grid-template-columns:1fr;
+
+}
+
+.calendar-week{
+
+font-size:12px;
+
+}
+
+.day{
+
+height:38px;
+
+}
+
+}
+
+/* ==========================================================
+   COURSE LEARNING CSS
+   PART 3B-1
+   Certificate • Completion • Achievements • Rewards
+==========================================================*/
+
+/* ==========================
+   COURSE COMPLETION
+========================== */
+
+.completion-section{
+
+margin-top:40px;
+
+}
+
+.completion-card{
+
+background:linear-gradient(135deg,#22c55e,#16a34a);
+
+color:#fff;
+
+padding:40px;
+
+border-radius:24px;
+
+box-shadow:var(--shadow-lg);
+
+text-align:center;
+
+position:relative;
+
+overflow:hidden;
+
+}
+
+.completion-card::before{
+
+content:"🎉";
+
+position:absolute;
+
+top:15px;
+
+left:20px;
+
+font-size:70px;
+
+opacity:.15;
+
+}
+
+.completion-card::after{
+
+content:"🏆";
+
+position:absolute;
+
+right:20px;
+
+bottom:10px;
+
+font-size:90px;
+
+opacity:.12;
+
+}
+
+.completion-card h2{
+
+font-size:36px;
+
+font-weight:700;
+
+margin-bottom:15px;
+
+}
+
+.completion-card p{
+
+font-size:17px;
+
+opacity:.95;
+
+margin-bottom:25px;
+
+}
+
+.completion-actions{
+
+display:flex;
+
+justify-content:center;
+
+gap:18px;
+
+flex-wrap:wrap;
+
+}
+
+/* ==========================
+   CERTIFICATE
+========================== */
+
+.certificate-card{
+
+margin-top:35px;
+
+padding:35px;
+
+background:#fff;
+
+border-radius:24px;
+
+box-shadow:var(--shadow);
+
+}
+
+.certificate{
+
+background:#fffdf7;
+
+border:8px solid #d4af37;
+
+border-radius:20px;
+
+padding:60px 40px;
+
+text-align:center;
+
+position:relative;
+
+overflow:hidden;
+
+}
+
+.certificate::before{
+
+content:"★";
+
+position:absolute;
+
+top:20px;
+
+left:20px;
+
+font-size:50px;
+
+color:#d4af37;
+
+opacity:.3;
+
+}
+
+.certificate::after{
+
+content:"★";
+
+position:absolute;
+
+right:20px;
+
+bottom:20px;
+
+font-size:50px;
+
+color:#d4af37;
+
+opacity:.3;
+
+}
+
+.certificate-title{
+
+font-size:40px;
+
+font-weight:700;
+
+color:#b8860b;
+
+margin-bottom:15px;
+
+}
+
+.certificate-subtitle{
+
+font-size:18px;
+
+color:#555;
+
+margin-bottom:35px;
+
+}
+
+.student-name{
+
+font-size:34px;
+
+font-weight:700;
+
+color:#111827;
+
+margin:20px 0;
+
+border-bottom:2px solid #d4af37;
+
+display:inline-block;
+
+padding-bottom:10px;
+
+}
+
+.course-name{
+
+font-size:22px;
+
+font-weight:600;
+
+margin-top:20px;
+
+color:#2563eb;
+
+}
+
+.certificate-footer{
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+margin-top:50px;
+
+gap:20px;
+
+flex-wrap:wrap;
+
+}
+
+.signature-box{
+
+text-align:center;
+
+min-width:180px;
+
+}
+
+.signature-line{
+
+border-top:2px solid #111827;
+
+margin-bottom:8px;
+
+}
+
+.signature-label{
+
+font-size:14px;
+
+color:#6b7280;
+
+}
+
+.certificate-seal{
+
+width:100px;
+
+height:100px;
+
+border-radius:50%;
+
+background:linear-gradient(135deg,#fbbf24,#d97706);
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+font-size:40px;
+
+color:#fff;
+
+margin:auto;
+
+box-shadow:0 10px 20px rgba(0,0,0,.15);
+
+}
+
+/* ==========================
+   ACHIEVEMENTS
+========================== */
+
+.achievement-grid{
+
+display:grid;
+
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+
+gap:24px;
+
+margin-top:35px;
+
+}
+
+.achievement-card{
+
+background:#fff;
+
+padding:25px;
+
+border-radius:20px;
+
+box-shadow:var(--shadow-sm);
+
+text-align:center;
+
+transition:.3s;
+
+border:1px solid #eef2f7;
+
+}
+
+.achievement-card:hover{
+
+transform:translateY(-8px);
+
+box-shadow:var(--shadow);
+
+}
+
+.achievement-icon{
+
+font-size:50px;
+
+margin-bottom:15px;
+
+}
+
+.achievement-title{
+
+font-size:18px;
+
+font-weight:700;
+
+margin-bottom:10px;
+
+}
+
+.achievement-desc{
+
+font-size:14px;
+
+color:var(--text-light);
+
+}
+
+/* ==========================
+   REWARD POINTS
+========================== */
+
+.reward-card{
+
+margin-top:35px;
+
+background:linear-gradient(135deg,#7c3aed,#5b21b6);
+
+color:#fff;
+
+padding:30px;
+
+border-radius:22px;
+
+position:relative;
+
+overflow:hidden;
+
+}
+
+.reward-card::after{
+
+content:"💎";
+
+position:absolute;
+
+right:20px;
+
+top:10px;
+
+font-size:70px;
+
+opacity:.18;
+
+}
+
+.reward-value{
+
+font-size:46px;
+
+font-weight:700;
+
+margin:10px 0;
+
+}
+
+.reward-label{
+
+font-size:16px;
+
+opacity:.9;
+
+}
+
+/* ==========================
+   LEVEL BADGE
+========================== */
+
+.level-badge{
+
+display:inline-flex;
+
+align-items:center;
+
+gap:10px;
+
+padding:10px 18px;
+
+background:#eef4ff;
+
+color:var(--primary);
+
+font-weight:700;
+
+border-radius:50px;
+
+margin-top:20px;
+
+}
+
+.level-badge i{
+
+font-size:22px;
+
+}
+
+/* ==========================
+   SHARE SECTION
+========================== */
+
+.share-card{
+
+margin-top:35px;
+
+background:#fff;
+
+padding:28px;
+
+border-radius:22px;
+
+box-shadow:var(--shadow);
+
+text-align:center;
+
+}
+
+.share-buttons{
+
+display:flex;
+
+justify-content:center;
+
+gap:15px;
+
+flex-wrap:wrap;
+
+margin-top:20px;
+
+}
+
+.share-btn{
+
+padding:12px 22px;
+
+border:none;
+
+border-radius:12px;
+
+font-weight:600;
+
+cursor:pointer;
+
+transition:.3s;
+
+color:#fff;
+
+}
+
+.share-linkedin{
+
+background:#0a66c2;
+
+}
+
+.share-twitter{
+
+background:#1da1f2;
+
+}
+
+.share-whatsapp{
+
+background:#25d366;
+
+}
+
+.share-btn:hover{
+
+transform:translateY(-3px);
+
+opacity:.9;
+
+}
+
+/* ==========================
+   RESPONSIVE
+========================== */
+
+@media(max-width:768px){
+
+.completion-card{
+
+padding:28px 20px;
+
+}
+
+.completion-card h2{
+
+font-size:28px;
+
+}
+
+.certificate{
+
+padding:35px 20px;
+
+}
+
+.certificate-title{
+
+font-size:28px;
+
+}
+
+.student-name{
+
+font-size:26px;
+
+}
+
+.certificate-footer{
+
+flex-direction:column;
+
+text-align:center;
+
+}
+
+.achievement-grid{
+
+grid-template-columns:1fr;
+
+}
+
+.reward-value{
+
+font-size:34px;
+
+}
+
+.share-buttons{
+
+flex-direction:column;
+
+}
+
+.share-btn{
+
+width:100%;
+
+}
+
+}
+
+/* ==========================================================
+   COURSE LEARNING CSS
+   PART 3B-2
+   Dark Mode • Glassmorphism • Theme • UI Effects
+==========================================================*/
+
+/* ==========================
+   DARK MODE VARIABLES
+========================== */
+
+body.dark-mode{
+
+--background:#0f172a;
+
+--surface:#1e293b;
+
+--surface-2:#334155;
+
+--text:#f8fafc;
+
+--text-light:#cbd5e1;
+
+--border:#475569;
+
+background:var(--background);
+
+color:var(--text);
+
+transition:.35s ease;
+
+}
+
+/* ==========================
+   GLOBAL DARK MODE
+========================== */
+
+body.dark-mode .card,
+body.dark-mode .lesson-card,
+body.dark-mode .lesson-sidebar,
+body.dark-mode .video-card,
+body.dark-mode .notes-container,
+body.dark-mode .practice-container,
+body.dark-mode .quiz-container,
+body.dark-mode .calendar-card,
+body.dark-mode .goal-panel,
+body.dark-mode .analytics-card,
+body.dark-mode .session-card,
+body.dark-mode .study-box,
+body.dark-mode .resource-item,
+body.dark-mode .certificate-card,
+body.dark-mode .share-card,
+body.dark-mode .assignment-card{
+
+background:var(--surface);
+
+color:var(--text);
+
+border-color:var(--border);
+
+}
+
+/* ==========================
+   HERO
+========================== */
+
+body.dark-mode .hero{
+
+background:linear-gradient(
+
+135deg,
+
+#1d4ed8,
+
+#312e81
+
+);
+
+}
+
+/* ==========================
+   SIDEBAR
+========================== */
+
+body.dark-mode .lesson-item{
+
+background:#243447;
+
+color:#fff;
+
+}
+
+body.dark-mode .lesson-item:hover{
+
+background:#334155;
+
+}
+
+body.dark-mode .lesson-item.active{
+
+background:#2563eb;
+
+}
+
+/* ==========================
+   TABS
+========================== */
+
+body.dark-mode .nav-tabs .nav-link{
+
+background:#243447;
+
+color:#fff;
+
+}
+
+body.dark-mode .nav-tabs .nav-link.active{
+
+background:#2563eb;
+
+}
+
+/* ==========================
+   INPUTS
+========================== */
+
+body.dark-mode input,
+body.dark-mode textarea,
+body.dark-mode select{
+
+background:#243447;
+
+color:#fff;
+
+border:1px solid #475569;
+
+}
+
+body.dark-mode input::placeholder,
+body.dark-mode textarea::placeholder{
+
+color:#94a3b8;
+
+}
+
+/* ==========================
+   TABLE
+========================== */
+
+body.dark-mode table{
+
+color:#fff;
+
+}
+
+body.dark-mode td{
+
+border-color:#475569;
+
+}
+
+body.dark-mode th{
+
+background:#1d4ed8;
+
+}
+
+/* ==========================
+   CODE EDITOR
+========================== */
+
+body.dark-mode .editor-container{
+
+background:#0d1117;
+
+}
+
+body.dark-mode .editor-header{
+
+background:#161b22;
+
+}
+
+body.dark-mode textarea{
+
+background:#0d1117;
+
+color:#f8fafc;
+
+}
+
+/* ==========================
+   PROGRESS
+========================== */
+
+body.dark-mode .progress-track{
+
+background:#334155;
+
+}
+
+/* ==========================
+   GLASSMORPHISM
+========================== */
+
+.glass{
+
+background:rgba(255,255,255,.08);
+
+backdrop-filter:blur(18px);
+
+-webkit-backdrop-filter:blur(18px);
+
+border:1px solid rgba(255,255,255,.15);
+
+box-shadow:0 10px 40px rgba(0,0,0,.25);
+
+}
+
+body.dark-mode .glass{
+
+background:rgba(30,41,59,.55);
+
+}
+
+/* ==========================
+   HOVER EFFECTS
+========================== */
+
+.hover-lift{
+
+transition:.35s;
+
+}
+
+.hover-lift:hover{
+
+transform:translateY(-8px);
+
+box-shadow:0 20px 45px rgba(0,0,0,.15);
+
+}
+
+.hover-scale{
+
+transition:.3s;
+
+}
+
+.hover-scale:hover{
+
+transform:scale(1.04);
+
+}
+
+/* ==========================
+   GLOW BUTTON
+========================== */
+
+.glow-btn{
+
+position:relative;
+
+overflow:hidden;
+
+}
+
+.glow-btn:hover{
+
+box-shadow:
+
+0 0 20px rgba(37,99,235,.45),
+
+0 0 45px rgba(37,99,235,.25);
+
+}
+
+/* ==========================
+   ICON BOX
+========================== */
+
+.icon-box{
+
+width:65px;
+
+height:65px;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+border-radius:18px;
+
+background:linear-gradient(
+
+135deg,
+
+#2563eb,
+
+#4f46e5
+
+);
+
+color:#fff;
+
+font-size:28px;
+
+}
+
+/* ==========================
+   FLOATING CARD
+========================== */
+
+.float-card{
+
+animation:floating 4s ease-in-out infinite;
+
+}
+
+@keyframes floating{
+
+0%{
+
+transform:translateY(0);
+
+}
+
+50%{
+
+transform:translateY(-10px);
+
+}
+
+100%{
+
+transform:translateY(0);
+
+}
+
+}
+
+/* ==========================
+   SHIMMER EFFECT
+========================== */
+
+.shimmer{
+
+position:relative;
+
+overflow:hidden;
+
+}
+
+.shimmer::before{
+
+content:"";
+
+position:absolute;
+
+top:0;
+
+left:-120%;
+
+width:60%;
+
+height:100%;
+
+background:linear-gradient(
+
+90deg,
+
+transparent,
+
+rgba(255,255,255,.35),
+
+transparent
+
+);
+
+animation:shine 2.8s infinite;
+
+}
+
+@keyframes shine{
+
+100%{
+
+left:140%;
+
+}
+
+}
+
+/* ==========================
+   GRADIENT TEXT
+========================== */
+
+.gradient-text{
+
+background:linear-gradient(
+
+90deg,
+
+#2563eb,
+
+#7c3aed,
+
+#22c55e
+
+);
+
+-webkit-background-clip:text;
+
+-webkit-text-fill-color:transparent;
+
+font-weight:700;
+
+}
+
+/* ==========================
+   BADGES
+========================== */
+
+.badge-premium{
+
+background:linear-gradient(
+
+135deg,
+
+#fbbf24,
+
+#f59e0b
+
+);
+
+color:#111827;
+
+font-weight:700;
+
+padding:8px 16px;
+
+border-radius:40px;
+
+}
+
+/* ==========================
+   DIVIDER
+========================== */
+
+.divider{
+
+height:2px;
+
+background:linear-gradient(
+
+90deg,
+
+transparent,
+
+#2563eb,
+
+transparent
+
+);
+
+margin:35px 0;
+
+}
+
+/* ==========================
+   RESPONSIVE
+========================== */
+
+@media(max-width:768px){
+
+.icon-box{
+
+width:55px;
+
+height:55px;
+
+font-size:22px;
+
+}
+
+.gradient-text{
+
+font-size:inherit;
+
+}
+
+.glass{
+
+padding:18px;
+
+}
+
+}
+
+/* ==========================================================
+   COURSE LEARNING CSS
+   PART 4A-1
+   Loading • Animations • Reveal • Reading Progress
+==========================================================*/
+
+/* ==========================
+   PAGE LOADER
+========================== */
+
+#loader{
+
+position:fixed;
+
+top:0;
+left:0;
+
+width:100%;
+height:100%;
+
+background:#ffffff;
+
+display:flex;
+
+justify-content:center;
+align-items:center;
+
+flex-direction:column;
+
+z-index:999999;
+
+transition:.5s;
+
+}
+
+body.dark-mode #loader{
+
+background:#0f172a;
+
+color:#fff;
+
+}
+
+.loader-circle{
+
+width:90px;
+height:90px;
+
+border:8px solid #dbeafe;
+
+border-top:8px solid var(--primary);
+
+border-radius:50%;
+
+animation:loaderSpin 1s linear infinite;
+
+margin-bottom:20px;
+
+}
+
+.loader-text{
+
+font-size:20px;
+
+font-weight:700;
+
+letter-spacing:.5px;
+
+}
+
+.loader-subtitle{
+
+margin-top:8px;
+
+color:var(--text-light);
+
+font-size:14px;
+
+}
+
+@keyframes loaderSpin{
+
+100%{
+
+transform:rotate(360deg);
+
+}
+
+}
+
+/* ==========================
+   SKELETON LOADER
+========================== */
+
+.skeleton{
+
+background:linear-gradient(
+
+90deg,
+
+#eeeeee 25%,
+
+#f7f7f7 50%,
+
+#eeeeee 75%
+
+);
+
+background-size:200% 100%;
+
+animation:skeletonLoading 1.4s infinite;
+
+border-radius:12px;
+
+}
+
+.skeleton-text{
+
+height:18px;
+
+margin-bottom:12px;
+
+}
+
+.skeleton-card{
+
+height:220px;
+
+}
+
+@keyframes skeletonLoading{
+
+0%{
+
+background-position:200% 0;
+
+}
+
+100%{
+
+background-position:-200% 0;
+
+}
+
+}
+
+/* ==========================
+   FADE ANIMATIONS
+========================== */
+
+.fade-in{
+
+animation:fadeIn .7s ease;
+
+}
+
+.fade-up{
+
+animation:fadeUp .7s ease;
+
+}
+
+.fade-down{
+
+animation:fadeDown .7s ease;
+
+}
+
+@keyframes fadeIn{
+
+from{
+
+opacity:0;
+
+}
+
+to{
+
+opacity:1;
+
+}
+
+}
+
+@keyframes fadeUp{
+
+from{
+
+opacity:0;
+
+transform:translateY(35px);
+
+}
+
+to{
+
+opacity:1;
+
+transform:translateY(0);
+
+}
+
+}
+
+@keyframes fadeDown{
+
+from{
+
+opacity:0;
+
+transform:translateY(-35px);
+
+}
+
+to{
+
+opacity:1;
+
+transform:translateY(0);
+
+}
+
+}
+
+/* ==========================
+   SLIDE EFFECTS
+========================== */
+
+.slide-left{
+
+animation:slideLeft .8s ease;
+
+}
+
+.slide-right{
+
+animation:slideRight .8s ease;
+
+}
+
+@keyframes slideLeft{
+
+from{
+
+opacity:0;
+
+transform:translateX(-80px);
+
+}
+
+to{
+
+opacity:1;
+
+transform:translateX(0);
+
+}
+
+}
+
+@keyframes slideRight{
+
+from{
+
+opacity:0;
+
+transform:translateX(80px);
+
+}
+
+to{
+
+opacity:1;
+
+transform:translateX(0);
+
+}
+
+}
+
+/* ==========================
+   ZOOM
+========================== */
+
+.zoom-in{
+
+animation:zoomIn .6s ease;
+
+}
+
+.zoom-out{
+
+animation:zoomOut .6s ease;
+
+}
+
+@keyframes zoomIn{
+
+from{
+
+opacity:0;
+
+transform:scale(.8);
+
+}
+
+to{
+
+opacity:1;
+
+transform:scale(1);
+
+}
+
+}
+
+@keyframes zoomOut{
+
+from{
+
+opacity:0;
+
+transform:scale(1.2);
+
+}
+
+to{
+
+opacity:1;
+
+transform:scale(1);
+
+}
+
+}
+
+/* ==========================
+   BOUNCE
+========================== */
+
+.bounce{
+
+animation:bounce 2s infinite;
+
+}
+
+@keyframes bounce{
+
+0%,20%,50%,80%,100%{
+
+transform:translateY(0);
+
+}
+
+40%{
+
+transform:translateY(-14px);
+
+}
+
+60%{
+
+transform:translateY(-8px);
+
+}
+
+}
+
+/* ==========================
+   FLOAT
+========================== */
+
+.float{
+
+animation:floatCard 3.5s ease-in-out infinite;
+
+}
+
+@keyframes floatCard{
+
+0%{
+
+transform:translateY(0);
+
+}
+
+50%{
+
+transform:translateY(-10px);
+
+}
+
+100%{
+
+transform:translateY(0);
+
+}
+
+}
+
+/* ==========================
+   ROTATE
+========================== */
+
+.rotate{
+
+animation:rotate360 8s linear infinite;
+
+}
+
+@keyframes rotate360{
+
+100%{
+
+transform:rotate(360deg);
+
+}
+
+}
+
+/* ==========================
+   PULSE
+========================== */
+
+.pulse{
+
+animation:pulse 2s infinite;
+
+}
+
+@keyframes pulse{
+
+0%{
+
+transform:scale(1);
+
+}
+
+50%{
+
+transform:scale(1.05);
+
+}
+
+100%{
+
+transform:scale(1);
+
+}
+
+}
+
+/* ==========================
+   REVEAL ON SCROLL
+========================== */
+
+.reveal{
+
+opacity:0;
+
+transform:translateY(60px);
+
+transition:all .8s ease;
+
+}
+
+.reveal.active{
+
+opacity:1;
+
+transform:translateY(0);
+
+}
+
+.reveal-left{
+
+opacity:0;
+
+transform:translateX(-60px);
+
+transition:.8s;
+
+}
+
+.reveal-left.active{
+
+opacity:1;
+
+transform:translateX(0);
+
+}
+
+.reveal-right{
+
+opacity:0;
+
+transform:translateX(60px);
+
+transition:.8s;
+
+}
+
+.reveal-right.active{
+
+opacity:1;
+
+transform:translateX(0);
+
+}
+
+/* ==========================
+   READING BAR
+========================== */
+
+:root{
+
+--reading-progress:0%;
+
+}
+
+#readingProgress{
+
+position:fixed;
+
+top:0;
+
+left:0;
+
+height:4px;
+
+width:var(--reading-progress);
+
+background:linear-gradient(
+
+90deg,
+
+#2563eb,
+
+#7c3aed,
+
+#22c55e
+
+);
+
+z-index:999999;
+
+transition:.12s;
+
+box-shadow:0 2px 12px rgba(37,99,235,.4);
+
+}
+
+/* ==========================
+   SECTION DELAY
+========================== */
+
+.delay-1{
+
+animation-delay:.1s;
+
+}
+
+.delay-2{
+
+animation-delay:.2s;
+
+}
+
+.delay-3{
+
+animation-delay:.3s;
+
+}
+
+.delay-4{
+
+animation-delay:.4s;
+
+}
+
+.delay-5{
+
+animation-delay:.5s;
+
+}
+
+/* ==========================================================
+   COURSE LEARNING CSS
+   PART 4A-2 (FINAL)
+   Toast • Scroll Top • FAB • Confetti • Print • Utilities
+==========================================================*/
+
+/* ==========================
+   TOAST NOTIFICATION
+========================== */
+
+.custom-toast{
+
+position:fixed;
+
+top:25px;
+right:25px;
+
+min-width:320px;
+
+background:#ffffff;
+
+border-radius:18px;
+
+padding:18px 22px;
+
+display:flex;
+
+align-items:center;
+
+gap:15px;
+
+box-shadow:0 15px 40px rgba(0,0,0,.18);
+
+opacity:0;
+
+visibility:hidden;
+
+transform:translateX(120px);
+
+transition:.35s;
+
+z-index:999999;
+
+}
+
+.custom-toast.show{
+
+opacity:1;
+
+visibility:visible;
+
+transform:translateX(0);
+
+}
+
+.toast-icon{
+
+width:55px;
+height:55px;
+
+border-radius:16px;
+
+display:flex;
+
+align-items:center;
+justify-content:center;
+
+font-size:28px;
+
+background:#dcfce7;
+
+color:#16a34a;
+
+}
+
+.toast-title{
+
+font-weight:700;
+
+font-size:17px;
+
+margin-bottom:3px;
+
+}
+
+.toast-message{
+
+font-size:14px;
+
+color:var(--text-light);
+
+}
+
+/* ==========================
+   SCROLL TO TOP
+========================== */
+
+.scroll-top{
+
+position:fixed;
+
+right:28px;
+
+bottom:28px;
+
+width:60px;
+
+height:60px;
+
+border:none;
+
+border-radius:50%;
+
+background:linear-gradient(
+135deg,
+#2563eb,
+#4f46e5
+);
+
+color:#fff;
+
+font-size:24px;
+
+cursor:pointer;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+box-shadow:0 12px 30px rgba(37,99,235,.35);
+
+transition:.35s;
+
+z-index:99999;
+
+}
+
+.scroll-top:hover{
+
+transform:translateY(-6px) scale(1.05);
+
+}
+
+/* ==========================
+   FLOATING HELP BUTTON
+========================== */
+
+.help-button{
+
+position:fixed;
+
+left:28px;
+
+bottom:28px;
+
+width:62px;
+
+height:62px;
+
+border:none;
+
+border-radius:50%;
+
+background:#22c55e;
+
+color:#fff;
+
+font-size:28px;
+
+cursor:pointer;
+
+box-shadow:0 12px 30px rgba(34,197,94,.35);
+
+transition:.35s;
+
+z-index:99999;
+
+}
+
+.help-button:hover{
+
+transform:scale(1.08);
+
+}
+
+/* ==========================
+   RIPPLE EFFECT
+========================== */
+
+.ripple{
+
+position:relative;
+
+overflow:hidden;
+
+}
+
+.ripple::after{
+
+content:"";
+
+position:absolute;
+
+left:50%;
+
+top:50%;
+
+width:5px;
+
+height:5px;
+
+background:rgba(255,255,255,.5);
+
+border-radius:50%;
+
+transform:translate(-50%,-50%);
+
+opacity:0;
+
+transition:.6s;
+
+}
+
+.ripple:hover::after{
+
+width:280px;
+
+height:280px;
+
+opacity:1;
+
+}
+
+/* ==========================
+   CONFETTI
+========================== */
+
+.confetti{
+
+position:fixed;
+
+width:12px;
+
+height:12px;
+
+background:red;
+
+top:-20px;
+
+animation:confettiFall 5s linear forwards;
+
+z-index:999999;
+
+}
+
+@keyframes confettiFall{
+
+0%{
+
+transform:translateY(0) rotate(0deg);
+
+}
+
+100%{
+
+transform:translateY(110vh) rotate(720deg);
+
+}
+
+}
+
+/* ==========================
+   SHADOW UTILITIES
+========================== */
+
+.shadow-sm{
+
+box-shadow:0 5px 15px rgba(0,0,0,.08);
+
+}
+
+.shadow{
+
+box-shadow:0 10px 30px rgba(0,0,0,.12);
+
+}
+
+.shadow-lg{
+
+box-shadow:0 20px 50px rgba(0,0,0,.18);
+
+}
+
+/* ==========================
+   ROUNDED
+========================== */
+
+.rounded-sm{
+
+border-radius:8px;
+
+}
+
+.rounded{
+
+border-radius:16px;
+
+}
+
+.rounded-lg{
+
+border-radius:24px;
+
+}
+
+.rounded-circle{
+
+border-radius:50%;
+
+}
+
+/* ==========================
+   DISPLAY
+========================== */
+
+.d-flex{
+
+display:flex;
+
+}
+
+.flex-column{
+
+flex-direction:column;
+
+}
+
+.justify-center{
+
+justify-content:center;
+
+}
+
+.align-center{
+
+align-items:center;
+
+}
+
+.text-center{
+
+text-align:center;
+
+}
+
+.w-100{
+
+width:100%;
+
+}
+
+.h-100{
+
+height:100%;
+
+}
+
+/* ==========================
+   SPACING
+========================== */
+
+.mt-20{margin-top:20px;}
+.mt-30{margin-top:30px;}
+.mt-40{margin-top:40px;}
+
+.mb-20{margin-bottom:20px;}
+.mb-30{margin-bottom:30px;}
+.mb-40{margin-bottom:40px;}
+
+.p-20{padding:20px;}
+.p-30{padding:30px;}
+.p-40{padding:40px;}
+
+/* ==========================
+   GLASS PANEL
+========================== */
+
+.glass-panel{
+
+background:rgba(255,255,255,.12);
+
+backdrop-filter:blur(15px);
+
+border:1px solid rgba(255,255,255,.18);
+
+}
+
+/* ==========================
+   PRINT MODE
+========================== */
+
+@media print{
+
+nav,
+footer,
+.theme-btn,
+.scroll-top,
+.help-button,
+.custom-toast,
+#loader{
+
+display:none !important;
+
+}
+
+body{
+
+background:#fff !important;
+
+}
+
+.certificate{
+
+box-shadow:none;
+
+border:4px solid #d4af37;
+
+page-break-inside:avoid;
+
+}
+
+}
+
+/* ==========================
+   MOBILE
+========================== */
+
+@media(max-width:768px){
+
+.custom-toast{
+
+left:15px;
+
+right:15px;
+
+min-width:auto;
+
+}
+
+.scroll-top{
+
+width:52px;
+
+height:52px;
+
+right:15px;
+
+bottom:15px;
+
+}
+
+.help-button{
+
+width:52px;
+
+height:52px;
+
+left:15px;
+
+bottom:15px;
+
+font-size:22px;
+
+}
+
+}
+
+/* ==========================
+   PERFORMANCE
+========================== */
+
+img{
+
+content-visibility:auto;
+
+}
+
+.card,
+.lesson-card,
+.practice-card,
+.quiz-container,
+.analytics-card{
+
+will-change:transform;
+
+}
+
+/* ==========================================================
+   END OF course_learning.css
+========================================================== */
