@@ -250,56 +250,49 @@
 
 <!-- ================= QUICK ACTION ================= -->
 
+
+
 <section class="quick-grid">
 
     <a href="{{ url_for('mock_categories') }}" class="quick-card glass">
-
         <i class="fas fa-play-circle"></i>
-
         <h4>Mock Test</h4>
-
         <p>Practice MCQs</p>
-
     </a>
-
-
 
     <a href="{{ url_for('interview_questions') }}" class="quick-card glass">
-
         <i class="fas fa-user-tie"></i>
-
         <h4>Interview</h4>
-
         <p>Top Questions</p>
-
     </a>
-
-
 
     <a href="{{ url_for('ai_communication') }}" class="quick-card glass">
-
         <i class="fas fa-comments"></i>
-
         <h4>Communication</h4>
-
         <p>Improve English</p>
-
     </a>
 
+    <!-- NEW COURSES -->
+    <a href="{{ url_for('courses') }}" class="quick-card glass">
+        <i class="fas fa-graduation-cap"></i>
+        <h4>Courses</h4>
+        <p>Learn Programming</p>
+    </a>
 
+    <!-- NEW NOTES -->
+    <a href="{{ url_for('notes') }}" class="quick-card glass">
+        <i class="fas fa-book-open"></i>
+        <h4>Notes</h4>
+        <p>Study Materials</p>
+    </a>
 
     <a href="{{ url_for('resume_builder') }}" class="quick-card glass">
-
         <i class="fas fa-file-alt"></i>
-
         <h4>Resume</h4>
-
         <p>ATS Resume</p>
-
     </a>
 
 </section>
-
 
 
 <!-- ================= AI COACH + LEADERBOARD ================= -->
