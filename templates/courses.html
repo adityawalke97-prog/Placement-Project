@@ -4,48 +4,71 @@
 
 {% block content %}
 
-<div class="container mt-5">
+<div class="container py-5">
 
-    <h1 class="text-center mb-5">
-        📚 Our Courses
-    </h1>
+    <!-- Heading -->
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold">
+            📚 Explore Our Courses
+        </h1>
 
-    <div class="row">
+        <p class="text-muted fs-5">
+            Learn In-Demand Skills & Get Placement Ready
+        </p>
+    </div>
+
+    <div class="row g-4">
 
         {% if courses %}
 
             {% for course in courses %}
 
-            <div class="col-lg-4 col-md-6 mb-4">
+            <div class="col-lg-4 col-md-6">
 
-                <div class="card shadow h-100 border-0 rounded-4">
+                <div class="course-card h-100">
 
-                    <div class="card-body">
+                    <div class="course-top">
 
-                        <h3 class="card-title">
-                            {{ course.course_title }}
-                        </h3>
+                        <div class="course-icon">
+                            📘
+                        </div>
 
-                        <p class="text-muted">
-                            {{ course.description }}
-                        </p>
+                        <span class="badge bg-success">
+                            Beginner
+                        </span>
 
                     </div>
 
-                    <div class="card-footer bg-white border-0">
+                    <h3>
+                        {{ course.course_title }}
+                    </h3>
 
-                        <a href="{{ url_for('course', course_name=course.course_name) }}"
-                           class="btn btn-primary w-100">
+                    <p>
+                        {{ course.description }}
+                    </p>
 
-                            🚀 Start Course
+                    <div class="course-info">
 
-                        </a>
+                        <div>
+                            📖 Notes
+                        </div>
 
-                        <a href="{{ url_for('course', course_name=course.course_name) }}"
-   class="start-course-btn">
-    🚀 Start Course  ee
-</a>
+                        <div>
+                            💻 Coding
+                        </div>
+
+                        <div>
+                            📝 Quiz
+                        </div>
+
                     </div>
+
+                    <a href="{{ url_for('course', course_name=course.course_name) }}"
+                       class="btn start-btn mt-4">
+
+                        🚀 Start Learning
+
+                    </a>
 
                 </div>
 
@@ -55,15 +78,15 @@
 
         {% else %}
 
-            <div class="col-12">
+        <div class="col-12">
 
-                <div class="alert alert-warning text-center">
+            <div class="alert alert-warning text-center">
 
-                    No Courses Available.
-
-                </div>
+                No Courses Available.
 
             </div>
+
+        </div>
 
         {% endif %}
 
@@ -73,24 +96,125 @@
 
 <style>
 
-.card{
-    transition:.3s;
+body{
+    background:#f4f7fc;
 }
 
-.card:hover{
-    transform:translateY(-8px);
+.course-card{
+
+    background:#fff;
+    border-radius:20px;
+    padding:30px;
+    box-shadow:0 12px 35px rgba(0,0,0,.08);
+
+    transition:.35s;
+
+    height:100%;
 }
 
-.card-title{
-    font-size:24px;
+.course-card:hover{
+
+    transform:translateY(-10px);
+    box-shadow:0 20px 45px rgba(0,0,0,.15);
+
+}
+
+.course-top{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+
+}
+
+.course-icon{
+
+    width:70px;
+    height:70px;
+
+    border-radius:18px;
+
+    background:linear-gradient(135deg,#4f46e5,#2563eb);
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    color:white;
+    font-size:30px;
+
+}
+
+.course-card h3{
+
     font-weight:700;
+    margin-bottom:15px;
+
 }
 
-.btn-primary{
+.course-card p{
+
+    color:#666;
+    min-height:80px;
+
+}
+
+.course-info{
+
+    display:flex;
+    justify-content:space-between;
+    margin-top:20px;
+    color:#555;
+    font-weight:600;
+
+}
+
+.start-btn{
+
+    width:100%;
+
+    padding:13px;
+
     border:none;
-    border-radius:10px;
-    padding:12px;
-    font-weight:bold;
+
+    border-radius:12px;
+
+    background:linear-gradient(135deg,#2563eb,#4f46e5);
+
+    color:white;
+
+    font-weight:700;
+
+    transition:.3s;
+
+}
+
+.start-btn:hover{
+
+    transform:scale(1.03);
+
+    color:white;
+
+    box-shadow:0 10px 25px rgba(37,99,235,.4);
+
+}
+
+@media(max-width:768px){
+
+.course-card{
+
+padding:22px;
+
+}
+
+.course-info{
+
+flex-direction:column;
+gap:10px;
+
+}
+
 }
 
 </style>
