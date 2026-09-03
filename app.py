@@ -342,149 +342,169 @@ def logout():
     return redirect(url_for("login"))
 @app.route("/dashboard")
 def dashboard():
+
     if "user_id" not in session:
-        flash("Please login first.", "warning")
         return redirect(url_for("login"))
 
     user_id = session["user_id"]
 
-    conn = None
-    cursor = None
+    conn = get_db_connection()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
 
     try:
-        conn = get_db_connection()
-        cursor = conn.cursor(pymysql.cursors.DictCursor)
+
+        # ---------------- USER ----------------
 
         cursor.execute("""
-            SELECT
-                id,
-                name,
-                email,
-                role
+            SELECT name
             FROM users
-            WHERE id = %s
-            LIMIT 1
+            WHERE id=%s
         """, (user_id,))
-
         user = cursor.fetchone()
 
-        if not user:
-            session.clear()
-            flash("User account not found.", "danger")
-            return redirect(url_for("login"))
-        
-        cursor.execute("""
-            SELECT COUNT(*) AS total
-            FROM mock_questions
-        """)
+        # ---------------- MOCK TESTS ----------------
 
-        question_result = cursor.fetchone()
-        total_questions = question_result["total"] if question_result else 0
-
-        
-        cursor.execute("""
-            SELECT COUNT(*) AS total
-            FROM results
-            WHERE user_id = %s
-        """, (user_id,))
-
-        test_result = cursor.fetchone()
-        total_tests = test_result["total"] if test_result else 0
-
-        
-        cursor.execute("""
-            SELECT AVG(percentage) AS avg_percentage
-            FROM results
-            WHERE user_id = %s
-        """, (user_id,))
-
-        avg_result = cursor.fetchone()
-
-        average_score = 0
-
-        if avg_result and avg_result["avg_percentage"] is not None:
-            average_score = round(float(avg_result["avg_percentage"]), 2)
-
-      
-        cursor.execute("""
-            SELECT MAX(percentage) AS best_percentage
-            FROM results
-            WHERE user_id = %s
-        """, (user_id,))
-
-        best_result = cursor.fetchone()
-
-        best_score = 0
-
-        if best_result and best_result["best_percentage"] is not None:
-            best_score = round(float(best_result["best_percentage"]), 2)
-
-      
         cursor.execute("""
             SELECT
-                id,
+                COUNT(*) AS total_tests,
+                IFNULL(ROUND(AVG(percentage),2),0) AS avg_score,
+                IFNULL(MAX(score),0) AS best_score
+            FROM results
+            WHERE user_id=%s
+        """, (user_id,))
+        stats = cursor.fetchone()
+
+        # ---------------- RECENT TESTS ----------------
+
+        cursor.execute("""
+            SELECT
+                category,
                 score,
                 total_questions,
                 percentage,
                 test_date
             FROM results
-            WHERE user_id = %s
+            WHERE user_id=%s
             ORDER BY test_date DESC
             LIMIT 5
         """, (user_id,))
+        recent_tests = cursor.fetchall()
 
-        recent_results = cursor.fetchall()
+        # ---------------- COURSES ----------------
 
-     
-        category_stats = []
+        cursor.execute("""
+            SELECT COUNT(*) AS completed
+            FROM user_courses
+            WHERE user_id=%s
+            AND completed=1
+        """, (user_id,))
+        completed_courses = cursor.fetchone()["completed"]
 
-        try:
-            cursor.execute("""
-                SELECT
-                    mq.category,
-                    COUNT(*) AS total_attempts
-                FROM mock_questions mq
-                GROUP BY mq.category
-                ORDER BY mq.category
-            """)
+        # ---------------- STUDY HOURS ----------------
 
-            category_stats = cursor.fetchall()
+        cursor.execute("""
+            SELECT IFNULL(SUM(hours),0) AS hours
+            FROM study_sessions
+            WHERE user_id=%s
+        """, (user_id,))
+        study_hours = cursor.fetchone()["hours"]
 
-        except Exception:
-            category_stats = []
+        # ---------------- ATS SCORE ----------------
 
-    
+        cursor.execute("""
+            SELECT IFNULL(MAX(score),0) AS ats
+            FROM resume_scores
+            WHERE user_id=%s
+        """, (user_id,))
+        ats_score = cursor.fetchone()["ats"]
+
+        # ---------------- COMPANIES ----------------
+
+        cursor.execute("""
+            SELECT COUNT(*) AS total
+            FROM companies
+        """)
+        companies = cursor.fetchone()["total"]
+
+        # ---------------- LEADERBOARD ----------------
+
+        cursor.execute("""
+            SELECT
+                u.name,
+                ROUND(MAX(r.percentage),2) AS score
+            FROM users u
+            JOIN results r
+                ON u.id=r.user_id
+            GROUP BY u.id
+            ORDER BY score DESC
+            LIMIT 10
+        """)
+        leaderboard = cursor.fetchall()
+
+        # ---------------- USER RANK ----------------
+
+        rank = 1
+
+        for row in leaderboard:
+
+            if row["name"] == user["name"]:
+                break
+
+            rank += 1
+
+        # ---------------- SUBJECT PROGRESS ----------------
+
+        cursor.execute("""
+            SELECT
+                category,
+                ROUND(AVG(percentage),2) AS percentage
+            FROM results
+            WHERE user_id=%s
+            GROUP BY category
+        """, (user_id,))
+        progress = cursor.fetchall()
+
+        # ---------------- WEEKLY CHART ----------------
+
+        cursor.execute("""
+            SELECT
+                DATE(test_date) AS day,
+                ROUND(AVG(percentage),2) AS score
+            FROM results
+            WHERE user_id=%s
+            GROUP BY DATE(test_date)
+            ORDER BY day DESC
+            LIMIT 7
+        """, (user_id,))
+        weekly = cursor.fetchall()
+
         return render_template(
             "dashboard.html",
+
             user=user,
-            total_questions=total_questions,
-            total_tests=total_tests,
-            average_score=average_score,
-            best_score=best_score,
-            recent_results=recent_results,
-            category_stats=category_stats
+
+            total_tests=stats["total_tests"],
+            avg_score=stats["avg_score"],
+            best_score=stats["best_score"],
+
+            completed_courses=completed_courses,
+            study_hours=study_hours,
+            ats_score=ats_score,
+
+            companies=companies,
+            rank=rank,
+
+            leaderboard=leaderboard,
+            recent_tests=recent_tests,
+
+            progress=progress,
+            weekly=weekly
         )
-
-    except Exception as e:
-
-        app.logger.exception(
-            "Dashboard error for user_id=%s",
-            user_id
-        )
-
-        flash("Unable to load dashboard.", "danger")
-
-        return redirect(url_for("login"))
 
     finally:
 
-        if cursor:
-            cursor.close()
-
-        if conn:
-            conn.close()
-
-
+        cursor.close()
+        conn.close()
 
 
 @app.route("/mock_categories")
