@@ -4,7 +4,8 @@
 <head>
 
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
     <title>
         {% block title %}
@@ -12,161 +13,252 @@
         {% endblock %}
     </title>
 
+    <meta name="description"
+          content="Placement Training Portal for Mock Tests, Interview Preparation, Resume Builder and Courses">
 
-    <!-- Main CSS -->
+    <meta name="theme-color"
+          content="#2563eb">
+
+    <link rel="icon"
+          href="{{ url_for('static', filename='images/favicon.ico') }}">
+
     <link rel="stylesheet"
           href="{{ url_for('static', filename='css/layout.css') }}">
 
-
-    <!-- Font Awesome -->
     <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+          href="{{ url_for('static', filename='css/dashboard.css') }}">
 
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/course.css') }}">
 
-    <!-- Google Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-          rel="stylesheet">
-
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
-    <link
-    rel="stylesheet"
-    href="{{ url_for('static', filename='css/course.css') }}"
->
     {% block css %}
     {% endblock %}
 
-</head>
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
 
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+          rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+</head>
 
 <body>
 
+<div class="page-loader" id="pageLoader">
 
-<!-- ================= NAVBAR ================= -->
+    <div class="loader-box">
 
-<nav class="navbar">
+        <div class="loader-circle"></div>
 
+        <h2>Placement Portal</h2>
 
-    <div class="logo">
-
-        <i class="fas fa-graduation-cap"></i>
-<div class="menu-toggle" id="menu-toggle">
-    <i class="fas fa-bars"></i>
-</div>
-
-<ul class="nav-links" id="nav-links">
-        <span>
-            Placement Portal
-        </span>
+        <p>Loading...</p>
 
     </div>
 
+</div>
 
+<nav class="navbar">
 
-    <ul class="nav-links">
+    <div class="nav-left">
 
+        <a href="/"
+           class="logo">
+
+            <i class="fas fa-graduation-cap"></i>
+
+            <div>
+
+                <h2>Placement Portal</h2>
+
+                <span>Train • Practice • Get Placed</span>
+
+            </div>
+
+        </a>
+
+    </div>
+
+    {% if session.get("user_id") %}
+
+    <div class="nav-search">
+
+        <i class="fas fa-search"></i>
+
+        <input type="text"
+               placeholder="Search Courses, Mock Tests...">
+
+    </div>
+
+    {% endif %}
+
+    <div class="menu-toggle"
+         id="menu-toggle">
+
+        <i class="fas fa-bars"></i>
+
+    </div>
+
+    <ul class="nav-links"
+        id="nav-links">
 
         <li>
+
             <a href="/">
-                <i class="fas fa-home"></i>
+
+                <i class="fas fa-house"></i>
+
                 Home
+
             </a>
+
         </li>
 
-
-
-        {% if session.get('user_id') %}
-
-
+        {% if session.get("user_id") %}
 
         <li>
+
             <a href="/dashboard">
+
                 <i class="fas fa-chart-line"></i>
+
                 Dashboard
+
             </a>
+
         </li>
 
+        <li>
 
+            <a href="/courses">
+
+                <i class="fas fa-book-open"></i>
+
+                Courses
+
+            </a>
+
+        </li>
 
         <li>
+
             <a href="/mock_test">
+
                 <i class="fas fa-file-circle-question"></i>
+
                 Mock Test
+
             </a>
+
         </li>
 
-
-
         <li>
+
             <a href="/interview_questions">
+
                 <i class="fas fa-user-tie"></i>
+
                 Interview
+
             </a>
+
         </li>
 
-
-
         <li>
+
             <a href="/communication">
+
                 <i class="fas fa-comments"></i>
+
                 Communication
+
             </a>
+
         </li>
 
-
-
         <li>
+
             <a href="/resume_builder">
+
                 <i class="fas fa-file-lines"></i>
+
                 Resume
+
             </a>
+
         </li>
-
-
 
         <li>
+
             <a href="/leaderboard">
+
                 <i class="fas fa-trophy"></i>
+
                 Leaderboard
+
             </a>
+
         </li>
 
+        <li class="profile-dropdown">
 
-
-        <!-- User -->
-
-        <li class="profile">
-
-            <a href="#">
+            <button class="profile-btn">
 
                 <i class="fas fa-user-circle"></i>
 
-                {{session.get('name','Student')}}
+                {{ session.get("name","Student") }}
 
-            </a>
+                <i class="fas fa-chevron-down"></i>
+
+            </button>
+
+            <div class="dropdown-menu">
+
+                <a href="/dashboard">
+
+                    <i class="fas fa-chart-line"></i>
+
+                    Dashboard
+
+                </a>
+
+                <a href="/profile">
+
+                    <i class="fas fa-user"></i>
+
+                    Profile
+
+                </a>
+
+                <a href="/settings">
+
+                    <i class="fas fa-gear"></i>
+
+                    Settings
+
+                </a>
+
+                <a href="/logout"
+                   class="logout">
+
+                    <i class="fas fa-right-from-bracket"></i>
+
+                    Logout
+
+                </a>
+
+            </div>
 
         </li>
-
-
-
-
-        <li>
-
-            <a href="/logout"
-               class="logout">
-
-                <i class="fas fa-power-off"></i>
-
-                Logout
-
-            </a>
-
-        </li>
-
-
 
         {% else %}
-
-
 
         <li>
 
@@ -179,8 +271,6 @@
             </a>
 
         </li>
-
-
 
         <li>
 
@@ -195,277 +285,478 @@
 
         </li>
 
-
-
         {% endif %}
-
-
 
     </ul>
 
-
 </nav>
 
+    <header class="hero">
 
+    <div class="hero-overlay"></div>
 
+    <div class="hero-container">
 
+        <div class="hero-left">
 
-<!-- ================= HERO SECTION ================= -->
+            <span class="hero-badge">
 
+                <i class="fas fa-star"></i>
 
-<header class="hero">
+                India's Smart Placement Preparation Platform
 
+            </span>
 
-    <div class="hero-content">
+            <h1>
 
+                Crack Your Dream Job
+                <span>with Confidence 🚀</span>
 
-        <h1>
+            </h1>
 
-            Crack Your Dream Job 🚀
+            <p>
 
-        </h1>
+                Practice company-level Mock Tests, prepare for Technical &
+                HR Interviews, improve Communication Skills, build an ATS-friendly
+                Resume, learn Courses, and track your complete placement journey
+                in one platform.
 
+            </p>
 
+            {% if not session.get("user_id") %}
 
-        <p>
+            <div class="hero-buttons">
 
-            Practice Mock Tests,
-            Improve Communication,
-            Create Resume and Prepare for Interviews.
+                <a href="/signup"
+                   class="hero-btn">
 
-        </p>
+                    <i class="fas fa-rocket"></i>
 
+                    Start Preparation
 
+                </a>
 
+                <a href="/login"
+                   class="hero-outline">
 
-        {% if not session.get('user_id') %}
+                    <i class="fas fa-right-to-bracket"></i>
 
+                    Login
 
-        <div class="hero-buttons">
-
-
-            <a href="/signup"
-               class="hero-btn">
-
-                Start Preparation
-
-            </a>
-
-
-
-            <a href="/login"
-               class="hero-outline">
-
-                Login
-
-            </a>
-
-
-        </div>
-
-
-        {% endif %}
-
-
-
-
-    </div>
-
-
-
-</header>
-
-
-
-
-
-<!-- ================= MAIN CONTENT ================= -->
-
-
-<div class="container">
-
-
-
-    {% with messages = get_flashed_messages() %}
-
-
-        {% if messages %}
-
-
-
-            {% for message in messages %}
-
-
-            <div class="flash">
-
-                <i class="fas fa-circle-info"></i>
-
-                {{message}}
+                </a>
 
             </div>
 
+            {% else %}
 
+            <div class="hero-buttons">
 
-            {% endfor %}
+                <a href="/dashboard"
+                   class="hero-btn">
 
+                    <i class="fas fa-chart-line"></i>
 
+                    Go to Dashboard
+
+                </a>
+
+                <a href="/courses"
+                   class="hero-outline">
+
+                    <i class="fas fa-book-open"></i>
+
+                    Explore Courses
+
+                </a>
+
+            </div>
+
+            {% endif %}
+
+            <div class="hero-stats">
+
+                <div class="hero-stat">
+
+                    <h2>5000+</h2>
+
+                    <span>Questions</span>
+
+                </div>
+
+                <div class="hero-stat">
+
+                    <h2>100+</h2>
+
+                    <span>Mock Tests</span>
+
+                </div>
+
+                <div class="hero-stat">
+
+                    <h2>25+</h2>
+
+                    <span>Courses</span>
+
+                </div>
+
+                <div class="hero-stat">
+
+                    <h2>24/7</h2>
+
+                    <span>Learning</span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="hero-right">
+
+            <div class="hero-card">
+
+                <i class="fas fa-laptop-code"></i>
+
+                <h3>Technical Skills</h3>
+
+                <p>
+
+                    Java, Python, DBMS, OS, Aptitude and more.
+
+                </p>
+
+            </div>
+
+            <div class="hero-card">
+
+                <i class="fas fa-user-tie"></i>
+
+                <h3>Interview Ready</h3>
+
+                <p>
+
+                    HR & Technical Interview Preparation.
+
+                </p>
+
+            </div>
+
+            <div class="hero-card">
+
+                <i class="fas fa-file-lines"></i>
+
+                <h3>Resume Builder</h3>
+
+                <p>
+
+                    Build professional ATS-friendly resumes.
+
+                </p>
+
+            </div>
+
+            <div class="hero-card">
+
+                <i class="fas fa-trophy"></i>
+
+                <h3>Leaderboard</h3>
+
+                <p>
+
+                    Compete with other students.
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</header>
+
+<main class="main-container">
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+
+        {% if messages %}
+
+            <div class="flash-wrapper">
+
+                {% for category, message in messages %}
+
+                    <div class="flash flash-{{ category }}">
+
+                        <span>
+
+                            {% if category == "success" %}
+
+                                <i class="fas fa-circle-check"></i>
+
+                            {% elif category == "danger" %}
+
+                                <i class="fas fa-circle-xmark"></i>
+
+                            {% elif category == "warning" %}
+
+                                <i class="fas fa-triangle-exclamation"></i>
+
+                            {% else %}
+
+                                <i class="fas fa-circle-info"></i>
+
+                            {% endif %}
+
+                        </span>
+
+                        <p>{{ message }}</p>
+
+                        <button class="flash-close">
+
+                            <i class="fas fa-times"></i>
+
+                        </button>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
 
         {% endif %}
 
-
-
     {% endwith %}
 
+    <div class="container">
 
+        {% block content %}
+        {% endblock %}
 
+    </div>
 
+</main>
+<footer class="footer">
 
-    {% block content %}
+    <div class="footer-container">
 
-    {% endblock %}
+        <div class="footer-column">
 
+            <div class="footer-logo">
 
+                <i class="fas fa-graduation-cap"></i>
 
-</div>
+                <h2>Placement Portal</h2>
 
+            </div>
 
+            <p>
 
+                A complete Placement Preparation Portal built with Flask & MySQL.
+                Practice Mock Tests, prepare for Interviews, build Resume,
+                improve Communication Skills and track your learning journey.
 
+            </p>
 
+            <div class="social-icons">
 
-<!-- ================= FOOTER ================= -->
+                <a href="#" title="GitHub">
+                    <i class="fab fa-github"></i>
+                </a>
 
+                <a href="#" title="LinkedIn">
+                    <i class="fab fa-linkedin"></i>
+                </a>
 
-<footer>
+                <a href="#" title="Instagram">
+                    <i class="fab fa-instagram"></i>
+                </a>
 
+                <a href="#" title="YouTube">
+                    <i class="fab fa-youtube"></i>
+                </a>
 
+            </div>
 
-<div class="footer-content">
+        </div>
 
+        <div class="footer-column">
 
-<h3>
+            <h3>Quick Links</h3>
 
-<i class="fas fa-graduation-cap"></i>
+            <ul>
 
-Placement Training Portal
+                <li><a href="/">Home</a></li>
 
-</h3>
+                <li><a href="/dashboard">Dashboard</a></li>
 
+                <li><a href="/courses">Courses</a></li>
 
+                <li><a href="/mock_test">Mock Test</a></li>
 
+                <li><a href="/resume_builder">Resume Builder</a></li>
 
-<p>
+                <li><a href="/leaderboard">Leaderboard</a></li>
 
-Complete platform for students to prepare
-for IT placement interviews.
+            </ul>
 
-</p>
+        </div>
 
+        <div class="footer-column">
 
+            <h3>Resources</h3>
 
+            <ul>
 
+                <li><a href="/communication">Communication</a></li>
 
-<div class="footer-links">
+                <li><a href="/interview_questions">Interview Questions</a></li>
 
+                <li><a href="/contact">Contact</a></li>
 
-<a href="/">
+                <li><a href="/about">About</a></li>
 
-Home
+                <li><a href="/privacy">Privacy Policy</a></li>
 
-</a>
+                <li><a href="/terms">Terms & Conditions</a></li>
 
+            </ul>
 
-<a href="/mock_test">
+        </div>
 
-Tests
+        <div class="footer-column">
 
-</a>
+            <h3>Contact</h3>
 
+            <p>
+                <i class="fas fa-envelope"></i>
+                support@placementportal.com
+            </p>
 
-<a href="/resume_builder">
+            <p>
+                <i class="fas fa-phone"></i>
+                +91 XXXXX XXXXX
+            </p>
 
-Resume
+            <p>
+                <i class="fas fa-location-dot"></i>
+                Pune, Maharashtra
+            </p>
 
-</a>
+        </div>
 
+    </div>
 
-<a href="/contact">
+    <div class="footer-bottom">
 
-Contact
+        <p>
 
-</a>
+            © 2026 Placement Training Portal |
+            Built with ❤️ using Flask, MySQL, HTML, CSS & JavaScript
 
+        </p>
 
-</div>
-
-
-
-
-
-<div class="social">
-
-
-<a href="#">
-<i class="fab fa-github"></i>
-</a>
-
-
-<a href="#">
-<i class="fab fa-linkedin"></i>
-</a>
-
-
-<a href="#">
-<i class="fab fa-instagram"></i>
-</a>
-
-
-
-</div>
-
-
-
-
-
-<p class="copyright">
-
-
-© 2026 Placement Training Portal
-
-<br>
-
-Built with Flask + MySQL
-
-
-</p>
-
-
-<script>
-
-const menu = document.getElementById("menu-toggle");
-const nav = document.getElementById("nav-links");
-
-menu.addEventListener("click", function(){
-
-    nav.classList.toggle("active");
-
-});
-
-</script>
-</div>
-
+    </div>
 
 </footer>
 
+<button id="scrollTop"
+        class="scroll-top">
 
+    <i class="fas fa-arrow-up"></i>
 
-
+</button>
 
 {% block js %}
-
 {% endblock %}
 
+<script>
 
+const menuToggle = document.getElementById("menu-toggle");
+const navLinks = document.getElementById("nav-links");
+
+if(menuToggle){
+
+    menuToggle.addEventListener("click",()=>{
+
+        navLinks.classList.toggle("active");
+
+    });
+
+}
+
+document.querySelectorAll(".flash-close").forEach(btn=>{
+
+    btn.onclick=function(){
+
+        this.parentElement.remove();
+
+    }
+
+});
+
+setTimeout(()=>{
+
+    document.querySelectorAll(".flash").forEach(item=>{
+
+        item.style.opacity="0";
+
+        setTimeout(()=>{
+
+            item.remove();
+
+        },500);
+
+    });
+
+},4000);
+
+const loader=document.getElementById("pageLoader");
+
+window.addEventListener("load",()=>{
+
+    if(loader){
+
+        loader.style.opacity="0";
+
+        setTimeout(()=>{
+
+            loader.style.display="none";
+
+        },500);
+
+    }
+
+});
+
+const topBtn=document.getElementById("scrollTop");
+
+window.addEventListener("scroll",()=>{
+
+    if(window.scrollY>300){
+
+        topBtn.classList.add("show");
+
+    }else{
+
+        topBtn.classList.remove("show");
+
+    }
+
+});
+
+topBtn.onclick=function(){
+
+    window.scrollTo({
+
+        top:0,
+
+        behavior:"smooth"
+
+    });
+
+};
+
+</script>
 
 </body>
 
