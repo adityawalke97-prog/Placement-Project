@@ -60,7 +60,6 @@ bcrypt = Bcrypt(app)
 # --------------------------------------------------
 
 def get_db_connection():
-
     return pymysql.connect(
         host=os.getenv("DB_HOST"),
         user=os.getenv("DB_USER"),
@@ -74,7 +73,6 @@ def get_db_connection():
         cursorclass=pymysql.cursors.DictCursor,
         autocommit=False
     )
-
 from functools import wraps
 from flask import session, redirect, url_for
 
