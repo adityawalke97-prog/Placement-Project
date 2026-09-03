@@ -1,410 +1,464 @@
-/* =========================================================
-   PLACEMENT TRAINING PORTAL
-   STUDENT DASHBOARD JAVASCRIPT
-   ========================================================= */
+/* =====================================
+   PREMIUM DASHBOARD JS - PART 1
+===================================== */
 
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", () => {
 
-    console.log("Student Dashboard Loaded");
+    /* ===========================
+       Animated Counter
+    =========================== */
 
+    document.querySelectorAll(".stat-card h2").forEach(counter => {
 
-    /* =====================================================
-       1. ANIMATED NUMBER COUNTERS
-       ===================================================== */
+        let text = counter.innerText.replace(/[^0-9]/g, "");
 
-    const counters = document.querySelectorAll(
-        ".stat-card h2"
-    );
+        if (text === "") return;
 
-    counters.forEach(function (counter) {
-
-        const text = counter.textContent.trim();
-
-        /*
-         * Extract number from:
-         * 120
-         * 85%
-         * 7
-         */
-
-        const match = text.match(/\d+/);
-
-        if (!match) {
-            return;
-        }
-
-        const target = parseInt(match[0]);
-
-        const hasPercent =
-            text.includes("%");
+        let target = parseInt(text);
 
         let current = 0;
 
-        const duration = 1000;
+        let increment = Math.ceil(target / 80);
 
-        const stepTime =
-            Math.max(
-                20,
-                duration / target
-            );
+        let suffix = counter.innerText.replace(/[0-9]/g, "");
 
-        const timer = setInterval(function () {
+        const update = () => {
 
-            current++;
-
-            counter.textContent =
-                current +
-                (hasPercent ? "%" : "");
+            current += increment;
 
             if (current >= target) {
 
-                counter.textContent =
-                    target +
-                    (hasPercent ? "%" : "");
+                current = target;
 
-                clearInterval(timer);
             }
 
-        }, stepTime);
+            counter.innerText = current + suffix;
+
+            if (current < target) {
+
+                requestAnimationFrame(update);
+
+            }
+
+        };
+
+        update();
 
     });
 
 
-    /* =====================================================
-       2. PROGRESS BAR ANIMATION
-       ===================================================== */
+    /* ===========================
+       Progress Bar Animation
+    =========================== */
 
-    const progressBars =
-        document.querySelectorAll(
-            ".progress-fill"
-        );
+    document.querySelectorAll(".progress-fill").forEach(bar => {
 
-    progressBars.forEach(function (bar) {
+        let width = bar.style.width;
 
-        const finalWidth =
-            bar.style.width;
+        bar.style.width = "0";
 
-        bar.style.width = "0%";
+        setTimeout(() => {
 
-        setTimeout(function () {
+            bar.style.width = width;
 
-            bar.style.width =
-                finalWidth;
+            bar.style.transition = "1.5s ease";
 
         }, 300);
 
     });
 
 
-    /* =====================================================
-       3. QUICK CARD CLICK FEEDBACK
-       ===================================================== */
+    /* ===========================
+       Weekly Performance Chart
+    =========================== */
 
-    const quickCards =
-        document.querySelectorAll(
-            ".quick-card"
-        );
+    if (document.getElementById("performanceChart")) {
 
-    quickCards.forEach(function (card) {
+        new Chart(document.getElementById("performanceChart"), {
 
-        card.addEventListener(
-            "click",
-            function () {
+            type: "line",
 
-                card.classList.add(
-                    "clicked"
-                );
+            data: {
 
-                setTimeout(function () {
+                labels: [
+                    "Mon",
+                    "Tue",
+                    "Wed",
+                    "Thu",
+                    "Fri",
+                    "Sat",
+                    "Sun"
+                ],
 
-                    card.classList.remove(
-                        "clicked"
-                    );
+                datasets: [{
 
-                }, 300);
+                    label: "Score",
+
+                    data: [62, 71, 83, 79, 91, 86, 95],
+
+                    borderWidth: 3,
+
+                    tension: .4,
+
+                    fill: true
+
+                }]
+
+            },
+
+            options: {
+
+                responsive: true,
+
+                plugins: {
+
+                    legend: {
+
+                        display: false
+
+                    }
+
+                }
 
             }
-        );
-
-    });
-
-
-    /* =====================================================
-       4. CURRENT DATE
-       ===================================================== */
-
-    const dateElements =
-        document.querySelectorAll(
-            "[data-dashboard-date]"
-        );
-
-    if (dateElements.length > 0) {
-
-        const today = new Date();
-
-        const options = {
-            day: "2-digit",
-            month: "short",
-            year: "numeric"
-        };
-
-        const formattedDate =
-            today.toLocaleDateString(
-                "en-IN",
-                options
-            );
-
-        dateElements.forEach(function (element) {
-
-            element.textContent =
-                formattedDate;
 
         });
 
     }
 
 
-    /* =====================================================
-       5. PLACEMENT SCORE
-       ===================================================== */
+    /* ===========================
+       Subject Accuracy Chart
+    =========================== */
 
-    const circle =
-        document.querySelector(
-            ".circle"
-        );
+    if (document.getElementById("subjectChart")) {
 
-    if (circle) {
+        new Chart(document.getElementById("subjectChart"), {
 
-        const scoreElement =
-            circle.querySelector("h1");
+            type: "doughnut",
 
-        if (scoreElement) {
+            data: {
 
-            const scoreText =
-                scoreElement.textContent;
+                labels: [
 
-            const match =
-                scoreText.match(/\d+/);
+                    "Java",
 
-            if (match) {
+                    "Python",
 
-                const score =
-                    parseInt(match[0]);
+                    "DBMS",
 
-                const safeScore =
-                    Math.min(
-                        Math.max(score, 0),
-                        100
-                    );
+                    "OS",
 
-                circle.style.background =
-                    `conic-gradient(
-                        #2563eb ${safeScore}%,
-                        #e8edf5 ${safeScore}%
-                    )`;
+                    "CN"
+
+                ],
+
+                datasets: [{
+
+                    data: [
+
+                        90,
+
+                        85,
+
+                        75,
+
+                        80,
+
+                        70
+
+                    ],
+
+                    borderWidth: 1
+
+                }]
+
+            },
+
+            options: {
+
+                responsive: true,
+
+                plugins: {
+
+                    legend: {
+
+                        position: "bottom"
+
+                    }
+
+                }
 
             }
+
+        });
+
+    }
+
+
+    /* ===========================
+       Card Hover Animation
+    =========================== */
+
+    document.querySelectorAll(".glass").forEach(card => {
+
+        card.addEventListener("mouseenter", () => {
+
+            card.style.transform = "translateY(-6px)";
+
+        });
+
+        card.addEventListener("mouseleave", () => {
+
+            card.style.transform = "translateY(0)";
+
+        });
+
+    });
+
+});/* =====================================
+   PREMIUM DASHBOARD JS - PART 2
+   Dark Mode • Notification • AI
+===================================== */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    /* ==========================
+       Dynamic Greeting
+    ========================== */
+
+    const greeting = document.getElementById("greeting");
+
+    if (greeting) {
+
+        const hour = new Date().getHours();
+
+        let text = "Welcome";
+
+        if (hour < 12) {
+
+            text = "🌞 Good Morning";
+
+        } else if (hour < 17) {
+
+            text = "☀️ Good Afternoon";
+
+        } else {
+
+            text = "🌙 Good Evening";
 
         }
 
-    }
-
-
-    /* =====================================================
-       6. TOOLTIP FOR STAT CARDS
-       ===================================================== */
-
-    const statCards =
-        document.querySelectorAll(
-            ".stat-card"
-        );
-
-    statCards.forEach(function (card) {
-
-        card.addEventListener(
-            "mouseenter",
-            function () {
-
-                card.setAttribute(
-                    "data-hover",
-                    "true"
-                );
-
-            }
-        );
-
-        card.addEventListener(
-            "mouseleave",
-            function () {
-
-                card.removeAttribute(
-                    "data-hover"
-                );
-
-            }
-        );
-
-    });
-
-
-    /* =====================================================
-       7. SMOOTH INTERNAL NAVIGATION
-       ===================================================== */
-
-    const links =
-        document.querySelectorAll(
-            'a[href^="#"]'
-        );
-
-    links.forEach(function (link) {
-
-        link.addEventListener(
-            "click",
-            function (event) {
-
-                const targetId =
-                    link.getAttribute(
-                        "href"
-                    );
-
-                if (
-                    targetId === "#" ||
-                    targetId.length < 2
-                ) {
-                    return;
-                }
-
-                const target =
-                    document.querySelector(
-                        targetId
-                    );
-
-                if (!target) {
-                    return;
-                }
-
-                event.preventDefault();
-
-                target.scrollIntoView({
-                    behavior: "smooth",
-                    block: "start"
-                });
-
-            }
-        );
-
-    });
-
-
-    /* =====================================================
-       8. SCROLL REVEAL
-       ===================================================== */
-
-    const revealElements =
-        document.querySelectorAll(
-            ".progress-card, " +
-            ".goal-card, " +
-            ".activity-card, " +
-            ".placement-card, " +
-            ".recommendation-card, " +
-            ".campus-drive, " +
-            ".motivation-card"
-        );
-
-    if (
-        "IntersectionObserver"
-        in window
-    ) {
-
-        const observer =
-            new IntersectionObserver(
-                function (entries) {
-
-                    entries.forEach(
-                        function (entry) {
-
-                            if (
-                                entry.isIntersecting
-                            ) {
-
-                                entry.target.classList.add(
-                                    "visible"
-                                );
-
-                                observer.unobserve(
-                                    entry.target
-                                );
-
-                            }
-
-                        }
-                    );
-
-                },
-                {
-                    threshold: 0.12
-                }
-            );
-
-        revealElements.forEach(
-            function (element) {
-
-                element.classList.add(
-                    "scroll-hidden"
-                );
-
-                observer.observe(
-                    element
-                );
-
-            }
-        );
+        greeting.innerHTML = text;
 
     }
 
 
-    /* =====================================================
-       9. PREVENT DOUBLE CLICK
-       ===================================================== */
+    /* ==========================
+       Live Clock
+    ========================== */
 
-    const actionLinks =
-        document.querySelectorAll(
-            ".btn-primary, " +
-            ".btn-secondary, " +
-            ".quick-card, " +
-            ".recommend-item"
-        );
+    const clock = document.getElementById("liveClock");
 
-    actionLinks.forEach(function (link) {
+    function updateClock() {
 
-        link.addEventListener(
-            "click",
-            function () {
+        if (!clock) return;
 
-                link.style.pointerEvents =
-                    "none";
+        clock.innerHTML = new Date().toLocaleTimeString();
 
-                setTimeout(function () {
+    }
 
-                    link.style.pointerEvents =
-                        "";
+    setInterval(updateClock, 1000);
 
-                }, 1000);
+    updateClock();
+
+
+    /* ==========================
+       Dark Mode
+    ========================== */
+
+    const darkBtn = document.getElementById("darkMode");
+
+    if (darkBtn) {
+
+        if (localStorage.getItem("theme") === "dark") {
+
+            document.body.classList.add("dark");
+
+            darkBtn.innerHTML = '<i class="fas fa-sun"></i>';
+
+        }
+
+        darkBtn.onclick = () => {
+
+            document.body.classList.toggle("dark");
+
+            if (document.body.classList.contains("dark")) {
+
+                localStorage.setItem("theme", "dark");
+
+                darkBtn.innerHTML = '<i class="fas fa-sun"></i>';
+
+            } else {
+
+                localStorage.setItem("theme", "light");
+
+                darkBtn.innerHTML = '<i class="fas fa-moon"></i>';
 
             }
-        );
+
+        };
+
+    }
+
+
+    /* ==========================
+       Notification Badge
+    ========================== */
+
+    const badge = document.getElementById("notifyCount");
+
+    if (badge) {
+
+        let count = 5;
+
+        badge.innerHTML = count;
+
+        setInterval(() => {
+
+            count++;
+
+            badge.innerHTML = count;
+
+            badge.classList.add("pulse");
+
+            setTimeout(() => {
+
+                badge.classList.remove("pulse");
+
+            }, 700);
+
+        }, 45000);
+
+    }
+
+
+    /* ==========================
+       Floating AI Button
+    ========================== */
+
+    const ai = document.querySelector(".floating-ai");
+
+    if (ai) {
+
+        ai.addEventListener("mouseenter", () => {
+
+            ai.style.transform = "scale(1.1)";
+
+        });
+
+        ai.addEventListener("mouseleave", () => {
+
+            ai.style.transform = "scale(1)";
+
+        });
+
+    }
+
+
+    /* ==========================
+       Scroll Reveal
+    ========================== */
+
+    const observer = new IntersectionObserver(entries => {
+
+        entries.forEach(entry => {
+
+            if (entry.isIntersecting) {
+
+                entry.target.classList.add("show");
+
+            }
+
+        });
+
+    }, {
+
+        threshold: .15
+
+    });
+
+    document.querySelectorAll(".glass").forEach(card => {
+
+        card.classList.add("hidden");
+
+        observer.observe(card);
 
     });
 
 
-    /* =====================================================
-       10. DASHBOARD LOADED EVENT
-       ===================================================== */
+    /* ==========================
+       Daily Goal Progress
+    ========================== */
 
-    window.dispatchEvent(
-        new CustomEvent(
-            "dashboardReady"
-        )
-    );
+    document.querySelectorAll("progress").forEach(bar => {
+
+        const value = bar.value;
+
+        bar.value = 0;
+
+        let current = 0;
+
+        const timer = setInterval(() => {
+
+            current++;
+
+            bar.value = current;
+
+            if (current >= value) {
+
+                clearInterval(timer);
+
+            }
+
+        }, 20);
+
+    });
+
+
+    /* ==========================
+       Auto Toast
+    ========================== */
+
+    setTimeout(() => {
+
+        const toast = document.createElement("div");
+
+        toast.className = "dashboard-toast";
+
+        toast.innerHTML =
+            "🎉 Welcome back! Keep preparing for your placement.";
+
+        document.body.appendChild(toast);
+
+        setTimeout(() => {
+
+            toast.classList.add("show");
+
+        }, 100);
+
+        setTimeout(() => {
+
+            toast.classList.remove("show");
+
+            setTimeout(() => {
+
+                toast.remove();
+
+            }, 400);
+
+        }, 4000);
+
+    }, 1200);
 
 });
