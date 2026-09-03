@@ -4,7 +4,7 @@
 
 {% block content %}
 
-<!-- ================= PREMIUM WELCOME ================= -->
+<!-- ================= DASHBOARD HERO ================= -->
 
 <section class="dashboard-hero">
 
@@ -18,19 +18,25 @@
             </h1>
 
             <p>
-                Continue your placement preparation and improve your skills every day.
+                Continue your placement preparation and improve your placement skills every day.
             </p>
 
             <div class="hero-buttons">
 
-                <a href="/mock_categories" class="btn-primary">
+                <a href="{{ url_for('mock_categories') }}" class="btn-primary">
+
                     <i class="fas fa-play"></i>
+
                     Start Mock Test
+
                 </a>
 
-                <a href="/resume_builder" class="btn-secondary">
+                <a href="{{ url_for('resume_builder') }}" class="btn-secondary">
+
                     <i class="fas fa-file-lines"></i>
-                    Resume
+
+                    Resume Builder
+
                 </a>
 
             </div>
@@ -41,9 +47,13 @@
 
             <div class="xp-circle">
 
-                <h2>Lv.12</h2>
+                <h2>
+                    Lv.{{ level }}
+                </h2>
 
-                <span>820 XP</span>
+                <span>
+                    {{ xp }} XP
+                </span>
 
             </div>
 
@@ -59,231 +69,180 @@
 
 <section class="stats-grid">
 
-<div class="stat-card glass">
+    <div class="stat-card glass">
 
-<i class="fas fa-file-circle-question"></i>
+        <i class="fas fa-file-circle-question"></i>
 
-<h2>{{ total_tests or 125 }}</h2>
+        <h2>{{ total_tests }}</h2>
 
-<p>Mock Tests</p>
+        <p>Mock Tests</p>
 
-</div>
-
-
-
-<div class="stat-card glass">
-
-<i class="fas fa-chart-line"></i>
-
-<h2>{{ avg_score or 86 }}%</h2>
-
-<p>Average Score</p>
-
-</div>
+    </div>
 
 
 
-<div class="stat-card glass">
+    <div class="stat-card glass">
 
-<i class="fas fa-fire"></i>
+        <i class="fas fa-chart-line"></i>
 
-<h2>{{ streak or 15 }}</h2>
+        <h2>{{ avg_score }}%</h2>
 
-<p>Day Streak</p>
+        <p>Average Score</p>
 
-</div>
-
-
-
-<div class="stat-card glass">
-
-<i class="fas fa-trophy"></i>
-
-<h2>#{{ rank or 32 }}</h2>
-
-<p>Leaderboard Rank</p>
-
-</div>
+    </div>
 
 
 
-<div class="stat-card glass">
+    <div class="stat-card glass">
 
-<i class="fas fa-building"></i>
+        <i class="fas fa-fire"></i>
 
-<h2>{{ companies or 48 }}</h2>
+        <h2>{{ streak }}</h2>
 
-<p>Companies</p>
+        <p>Current Streak</p>
 
-</div>
-
-
-
-<div class="stat-card glass">
-
-<i class="fas fa-book"></i>
-
-<h2>{{ completed_courses or 9 }}</h2>
-
-<p>Completed Courses</p>
-
-</div>
+    </div>
 
 
 
-<div class="stat-card glass">
+    <div class="stat-card glass">
 
-<i class="fas fa-clock"></i>
+        <i class="fas fa-trophy"></i>
 
-<h2>{{ study_hours or 96 }}</h2>
+        <h2>#{{ rank }}</h2>
 
-<p>Study Hours</p>
+        <p>Leaderboard Rank</p>
 
-</div>
+    </div>
 
 
 
-<div class="stat-card glass">
+    <div class="stat-card glass">
 
-<i class="fas fa-star"></i>
+        <i class="fas fa-building"></i>
 
-<h2>{{ ats_score or 88 }}%</h2>
+        <h2>{{ companies }}</h2>
 
-<p>ATS Resume Score</p>
+        <p>Companies Ready</p>
 
-</div>
+    </div>
+
+
+
+    <div class="stat-card glass">
+
+        <i class="fas fa-book"></i>
+
+        <h2>{{ completed_courses }}</h2>
+
+        <p>Completed Courses</p>
+
+    </div>
+
+
+
+    <div class="stat-card glass">
+
+        <i class="fas fa-clock"></i>
+
+        <h2>{{ study_hours }}</h2>
+
+        <p>Study Hours</p>
+
+    </div>
+
+
+
+    <div class="stat-card glass">
+
+        <i class="fas fa-star"></i>
+
+        <h2>{{ ats_score }}%</h2>
+
+        <p>ATS Resume Score</p>
+
+    </div>
 
 </section>
 
 
 
-<!-- ================= CHARTS ================= -->
+<!-- ================= PERFORMANCE CHART ================= -->
 
 <section class="chart-grid">
 
-<div class="chart-card glass">
+    <div class="chart-card glass">
 
-<h3>
+        <div class="card-header">
 
-<i class="fas fa-chart-area"></i>
+            <h3>
 
-Weekly Performance
+                <i class="fas fa-chart-line"></i>
 
-</h3>
+                Weekly Performance
 
-<canvas id="performanceChart"></canvas>
+            </h3>
 
-</div>
+        </div>
+
+        <canvas id="performanceChart"></canvas>
+
+    </div>
 
 
 
-<div class="chart-card glass">
+    <div class="chart-card glass">
 
-<h3>
+        <div class="card-header">
 
-<i class="fas fa-chart-pie"></i>
+            <h3>
 
-Subject Accuracy
+                <i class="fas fa-chart-pie"></i>
 
-</h3>
+                Subject Accuracy
 
-<canvas id="subjectChart"></canvas>
+            </h3>
 
-</div>
+        </div>
+
+        <canvas id="subjectChart"></canvas>
+
+    </div>
 
 </section>
-
-
-
-<!-- ================= PROGRESS ================= -->
+<!-- ================= SKILL PROGRESS ================= -->
 
 <section class="progress-grid">
 
-<div class="progress-card glass">
+    {% for skill in skills %}
 
-<h3>
+    <div class="progress-card glass">
 
-<i class="fas fa-code"></i>
+        <div class="progress-header">
 
-Programming
+            <h3>
 
-</h3>
+                <i class="{{ skill.icon }}"></i>
 
-<div class="progress">
+                {{ skill.subject }}
 
-<div class="progress-fill" style="width:82%"></div>
+            </h3>
 
-</div>
+            <span>{{ skill.progress }}%</span>
 
-<span>82%</span>
+        </div>
 
-</div>
+        <div class="progress">
 
+            <div class="progress-fill"
+                 style="width: {{ skill.progress }}%">
+            </div>
 
+        </div>
 
-<div class="progress-card glass">
+    </div>
 
-<h3>
-
-<i class="fas fa-database"></i>
-
-DBMS
-
-</h3>
-
-<div class="progress">
-
-<div class="progress-fill" style="width:75%"></div>
-
-</div>
-
-<span>75%</span>
-
-</div>
-
-
-
-<div class="progress-card glass">
-
-<h3>
-
-<i class="fas fa-network-wired"></i>
-
-Computer Networks
-
-</h3>
-
-<div class="progress">
-
-<div class="progress-fill" style="width:67%"></div>
-
-</div>
-
-<span>67%</span>
-
-</div>
-
-
-
-<div class="progress-card glass">
-
-<h3>
-
-<i class="fas fa-microchip"></i>
-
-Operating System
-
-</h3>
-
-<div class="progress">
-
-<div class="progress-fill" style="width:79%"></div>
-
-</div>
-
-<span>79%</span>
-
-</div>
+    {% endfor %}
 
 </section>
 
@@ -293,45 +252,56 @@ Operating System
 
 <section class="quick-grid">
 
-<a href="/mock_categories" class="quick-card glass">
+    <a href="{{ url_for('mock_categories') }}" class="quick-card glass">
 
-<i class="fas fa-play-circle"></i>
+        <i class="fas fa-play-circle"></i>
 
-<h4>Mock Test</h4>
+        <h4>Mock Test</h4>
 
-</a>
+        <p>Practice MCQs</p>
 
-
-
-<a href="/communication" class="quick-card glass">
-
-<i class="fas fa-comments"></i>
-
-<h4>Communication</h4>
-
-</a>
+    </a>
 
 
 
-<a href="/resume_builder" class="quick-card glass">
+    <a href="{{ url_for('interview_questions') }}" class="quick-card glass">
 
-<i class="fas fa-file-alt"></i>
+        <i class="fas fa-user-tie"></i>
 
-<h4>Resume</h4>
+        <h4>Interview</h4>
 
-</a>
+        <p>Top Questions</p>
+
+    </a>
 
 
 
-<a href="/interview_questions" class="quick-card glass">
+    <a href="{{ url_for('communication') }}" class="quick-card glass">
 
-<i class="fas fa-user-tie"></i>
+        <i class="fas fa-comments"></i>
 
-<h4>Interview</h4>
+        <h4>Communication</h4>
 
-</a>
+        <p>Improve English</p>
+
+    </a>
+
+
+
+    <a href="{{ url_for('resume_builder') }}" class="quick-card glass">
+
+        <i class="fas fa-file-alt"></i>
+
+        <h4>Resume</h4>
+
+        <p>ATS Resume</p>
+
+    </a>
 
 </section>
+
+
+
 <!-- ================= AI COACH + LEADERBOARD ================= -->
 
 <section class="dashboard-grid">
@@ -343,7 +313,9 @@ Operating System
         <div class="card-header">
 
             <h3>
+
                 🤖 AI Placement Coach
+
             </h3>
 
         </div>
@@ -351,17 +323,16 @@ Operating System
         <div class="coach-box">
 
             <div class="coach-avatar">
+
                 <i class="fas fa-robot"></i>
+
             </div>
 
             <div class="coach-text">
 
-                <h4>Today's Suggestion</h4>
+                <h4>{{ ai_title }}</h4>
 
-                <p>
-                    Improve your DBMS concepts and solve at least
-                    20 aptitude questions today.
-                </p>
+                <p>{{ ai_message }}</p>
 
             </div>
 
@@ -369,25 +340,20 @@ Operating System
 
         <ul class="coach-list">
 
-            <li>
-                ✅ Practice Java MCQs
-            </li>
+            {% for task in ai_tasks %}
 
             <li>
-                ✅ Complete Resume ATS
+
+                ✅ {{ task }}
+
             </li>
 
-            <li>
-                ✅ Improve Communication
-            </li>
-
-            <li>
-                ✅ Attempt One Mock Test
-            </li>
+            {% endfor %}
 
         </ul>
 
-        <a href="/communication" class="btn-primary">
+        <a href="{{ url_for('communication') }}"
+           class="btn-primary">
 
             Ask AI Coach
 
@@ -429,45 +395,31 @@ Operating System
 
             <tbody>
 
-                <tr>
-
-                    <td>🥇</td>
-
-                    <td>Rahul</td>
-
-                    <td>98%</td>
-
-                </tr>
+                {% for user in leaderboard %}
 
                 <tr>
 
-                    <td>🥈</td>
+                    <td>
 
-                    <td>Priya</td>
+                        {% if loop.index == 1 %}
+                        🥇
+                        {% elif loop.index == 2 %}
+                        🥈
+                        {% elif loop.index == 3 %}
+                        🥉
+                        {% else %}
+                        {{ loop.index }}
+                        {% endif %}
 
-                    <td>96%</td>
+                    </td>
 
-                </tr>
+                    <td>{{ user.name }}</td>
 
-                <tr>
-
-                    <td>🥉</td>
-
-                    <td>Aditya</td>
-
-                    <td>94%</td>
-
-                </tr>
-
-                <tr>
-
-                    <td>4</td>
-
-                    <td>Rohit</td>
-
-                    <td>92%</td>
+                    <td>{{ user.percentage }}%</td>
 
                 </tr>
+
+                {% endfor %}
 
             </tbody>
 
@@ -476,12 +428,9 @@ Operating System
     </div>
 
 </section>
-
-
-
 <!-- ================= RECENT MOCK TEST ================= -->
 
-<section class="glass">
+<section class="glass recent-tests">
 
     <div class="card-header">
 
@@ -490,6 +439,12 @@ Operating System
             📝 Recent Mock Tests
 
         </h3>
+
+        <a href="{{ url_for('mock_test_history') }}">
+
+            View All
+
+        </a>
 
     </div>
 
@@ -505,6 +460,8 @@ Operating System
 
                 <th>Score</th>
 
+                <th>Percentage</th>
+
                 <th>Status</th>
 
             </tr>
@@ -513,55 +470,21 @@ Operating System
 
         <tbody>
 
-            <tr>
-
-                <td>Java</td>
-
-                <td>02 Sept</td>
-
-                <td>45/50</td>
-
-                <td>
-
-                    <span class="badge success">
-
-                        Passed
-
-                    </span>
-
-                </td>
-
-            </tr>
+            {% for test in recent_tests %}
 
             <tr>
 
-                <td>Python</td>
+                <td>{{ test.category }}</td>
 
-                <td>01 Sept</td>
+                <td>{{ test.test_date }}</td>
 
-                <td>40/50</td>
+                <td>{{ test.score }}/{{ test.total_questions }}</td>
 
-                <td>
-
-                    <span class="badge warning">
-
-                        Good
-
-                    </span>
-
-                </td>
-
-            </tr>
-
-            <tr>
-
-                <td>DBMS</td>
-
-                <td>30 Aug</td>
-
-                <td>47/50</td>
+                <td>{{ test.percentage }}%</td>
 
                 <td>
+
+                    {% if test.percentage >= 80 %}
 
                     <span class="badge success">
 
@@ -569,9 +492,29 @@ Operating System
 
                     </span>
 
+                    {% elif test.percentage >= 60 %}
+
+                    <span class="badge warning">
+
+                        Good
+
+                    </span>
+
+                    {% else %}
+
+                    <span class="badge danger">
+
+                        Improve
+
+                    </span>
+
+                    {% endif %}
+
                 </td>
 
             </tr>
+
+            {% endfor %}
 
         </tbody>
 
@@ -585,137 +528,91 @@ Operating System
 
 <section class="company-grid">
 
-<div class="glass company-card">
+    {% for company in company_progress %}
 
-<i class="fas fa-building"></i>
+    <div class="glass company-card">
 
-<h4>TCS</h4>
+        <div class="company-top">
 
-<p>Preparation 80%</p>
+            <i class="fas fa-building"></i>
 
-<div class="progress">
+            <h4>
 
-<div class="progress-fill" style="width:80%"></div>
+                {{ company.company_name }}
 
-</div>
+            </h4>
 
-</div>
+        </div>
 
+        <p>
 
+            Preparation {{ company.progress }}%
 
-<div class="glass company-card">
+        </p>
 
-<i class="fas fa-building"></i>
+        <div class="progress">
 
-<h4>Infosys</h4>
+            <div class="progress-fill"
 
-<p>Preparation 74%</p>
+                 style="width: {{ company.progress }}%">
 
-<div class="progress">
+            </div>
 
-<div class="progress-fill" style="width:74%"></div>
+        </div>
 
-</div>
+    </div>
 
-</div>
-
-
-
-<div class="glass company-card">
-
-<i class="fas fa-building"></i>
-
-<h4>Accenture</h4>
-
-<p>Preparation 68%</p>
-
-<div class="progress">
-
-<div class="progress-fill" style="width:68%"></div>
-
-</div>
-
-</div>
-
-
-
-<div class="glass company-card">
-
-<i class="fas fa-building"></i>
-
-<h4>Capgemini</h4>
-
-<p>Preparation 91%</p>
-
-<div class="progress">
-
-<div class="progress-fill" style="width:91%"></div>
-
-</div>
-
-</div>
+    {% endfor %}
 
 </section>
 
 
 
-<!-- ================= DAILY GOAL ================= -->
+<!-- ================= DAILY GOALS ================= -->
 
 <section class="glass goal-card">
 
-<h3>
+    <div class="card-header">
 
-🎯 Today's Goal
+        <h3>
 
-</h3>
+            🎯 Today's Goals
 
-<div class="goal-item">
+        </h3>
 
-<label>
+    </div>
 
-Complete One Mock Test
+    {% for goal in goals %}
 
-</label>
+    <div class="goal-item">
 
-<progress value="100" max="100"></progress>
+        <div class="goal-title">
 
-</div>
+            <span>
 
-<div class="goal-item">
+                {{ goal.goal_name }}
 
-<label>
+            </span>
 
-Java Practice
+            <span>
 
-</label>
+                {{ goal.progress }}%
 
-<progress value="80" max="100"></progress>
+            </span>
 
-</div>
+        </div>
 
-<div class="goal-item">
+        <progress
 
-<label>
+            value="{{ goal.progress }}"
 
-Communication Practice
+            max="100">
 
-</label>
+        </progress>
 
-<progress value="60" max="100"></progress>
+    </div>
 
-</div>
-
-<div class="goal-item">
-
-<label>
-
-Resume Improvement
-
-</label>
-
-<progress value="45" max="100"></progress>
-
-</div>
+    {% endfor %}
 
 </section>
 
@@ -725,13 +622,30 @@ Resume Improvement
 
 <div class="floating-ai">
 
-<a href="/communication">
+    <a href="{{ url_for('communication') }}">
 
-<i class="fas fa-robot"></i>
+        <i class="fas fa-robot"></i>
 
-</a>
+    </a>
 
 </div>
 
+{% endblock %}
+
+
+
+{% block js %}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+
+const weeklyChart = {{ weekly_chart|tojson }};
+
+const subjectChart = {{ subject_chart|tojson }};
+
+</script>
+
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
 
 {% endblock %}
