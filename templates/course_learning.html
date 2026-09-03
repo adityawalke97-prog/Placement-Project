@@ -1,1 +1,4817 @@
+{% extends "layout.html" %}
 
+{% block title %}{{ course.course_title }}{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <!-- Course Header -->
+    <div class="course-header shadow-sm mb-4">
+
+        <div>
+            <h2>{{ course.course_title }}</h2>
+            <p class="mb-0 text-muted">
+                Welcome back! Continue your learning journey.
+            </p>
+        </div>
+
+        <div class="text-end">
+
+            <span class="badge bg-success fs-6">
+                Beginner
+            </span>
+
+            <h5 class="mt-3 mb-1">
+                Progress
+            </h5>
+
+            <div class="progress progress-lg">
+
+                <div class="progress-bar bg-primary"
+                     role="progressbar"
+                     style="width: {{ progress }}%;">
+
+                    {{ progress }}%
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="row">
+
+        <!-- Sidebar -->
+        <div class="col-lg-3">
+
+            <div class="lesson-sidebar shadow-sm">
+
+                <h4 class="mb-4">
+                    📚 Lessons
+                </h4>
+
+                {% for item in lessons %}
+
+                <a href="{{ url_for('course_lesson',
+                                    course_name=course.course_name,
+                                    lesson_id=item.id) }}"
+                   class="lesson-item
+                   {% if lesson.id == item.id %}active{% endif %}">
+
+                    <div>
+
+                        <span class="lesson-number">
+
+                            {{ loop.index }}
+
+                        </span>
+
+                        {{ item.title }}
+
+                    </div>
+
+                    {% if item.completed %}
+
+                    <span class="text-success">
+
+                        ✔
+
+                    </span>
+
+                    {% endif %}
+
+                </a>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-lg-9">
+
+            <!-- Lesson Title -->
+
+            <div class="lesson-card shadow-sm">
+
+                <div class="d-flex justify-content-between align-items-center">
+
+                    <div>
+
+                        <h2>
+
+                            {{ lesson.title }}
+
+                        </h2>
+
+                        <small class="text-muted">
+
+                            {{ lesson.duration or "20 Minutes" }}
+
+                        </small>
+
+                    </div>
+
+                    <button class="btn btn-success">
+
+                        ✓ Mark Complete
+
+                    </button>
+
+                </div>
+
+            </div>
+
+            <!-- Video -->
+
+            <div class="video-card shadow-sm mt-4">
+
+                {% if lesson.video_url %}
+
+                <div class="ratio ratio-16x9">
+
+                    <iframe
+                        src="{{ lesson.video_url }}"
+                        allowfullscreen>
+                    </iframe>
+
+                </div>
+
+                {% else %}
+
+                <div class="video-placeholder">
+
+                    <div>
+
+                        <h1>🎥</h1>
+
+                        <h3>No Video Available</h3>
+
+                        <p class="text-muted">
+
+                            This lesson currently contains notes only.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+                {% endif %}
+
+            </div>
+
+            <!-- Tabs -->
+
+            <div class="card shadow-sm mt-4">
+
+                <div class="card-header bg-white">
+
+                    <ul class="nav nav-tabs card-header-tabs">
+
+                        <li class="nav-item">
+
+                            <button
+                                class="nav-link active"
+                                data-bs-toggle="tab"
+                                data-bs-target="#notes">
+
+                                📝 Notes
+
+                            </button>
+
+                        </li>
+
+                        <li class="nav-item">
+
+                            <button
+                                class="nav-link"
+                                data-bs-toggle="tab"
+                                data-bs-target="#code">
+
+                                💻 Code
+
+                            </button>
+
+                        </li>
+
+                        <li class="nav-item">
+
+                            <button
+                                class="nav-link"
+                                data-bs-toggle="tab"
+                                data-bs-target="#practice">
+
+                                🎯 Practice
+
+                            </button>
+
+                        </li>
+
+                        <li class="nav-item">
+
+                            <button
+                                class="nav-link"
+                                data-bs-toggle="tab"
+                                data-bs-target="#resources">
+
+                                📂 Resources
+
+                            </button>
+
+                        </li>
+
+                    </ul>
+
+                </div>
+
+                <div class="card-body">
+
+                    <div class="tab-content">
+
+                        <!-- Notes -->
+
+                        <div class="tab-pane fade show active"
+                             id="notes">
+
+                            <div class="text-center py-5">
+
+                                <h3>
+
+                                    📝 Lesson Notes
+
+                                </h3>
+
+                                <p>
+
+                                    {{ lesson.notes[:200] if lesson.notes else "Notes will appear here." }}
+
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <!-- Code -->
+
+                        <div class="tab-pane fade"
+                             id="code">
+
+                            <div class="text-center py-5">
+
+                                <h3>
+
+                                    💻 Code Examples
+
+                                </h3>
+
+                                <p>
+
+                                    Code examples will appear here.
+
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <!-- Practice -->
+
+                        <div class="tab-pane fade"
+                             id="practice">
+
+                            <div class="text-center py-5">
+
+                                <h3>
+
+                                    🎯 Practice Tasks
+
+                                </h3>
+
+                                <p>
+
+                                    Practice exercises will appear here.
+
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <!-- Resources -->
+
+                        <div class="tab-pane fade"
+                             id="resources">
+
+                            <div class="text-center py-5">
+
+                                <h3>
+
+                                    📂 Downloads
+
+                                </h3>
+
+                                <button class="btn btn-primary">
+
+                                    Download Notes
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Previous / Next -->
+
+            <div class="d-flex justify-content-between mt-4">
+
+                <button class="btn btn-outline-primary">
+
+                    ← Previous Lesson
+
+                </button>
+
+                <button class="btn btn-primary">
+
+                    Next Lesson →
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<style>
+
+body{
+
+background:#f5f7fb;
+
+}
+
+.course-header{
+
+background:white;
+
+padding:30px;
+
+border-radius:18px;
+
+}
+
+.progress-lg{
+
+height:14px;
+
+border-radius:20px;
+
+}
+
+.lesson-sidebar{
+
+background:white;
+
+padding:20px;
+
+border-radius:18px;
+
+position:sticky;
+
+top:90px;
+
+}
+
+.lesson-item{
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+padding:14px;
+
+margin-bottom:12px;
+
+text-decoration:none;
+
+color:#333;
+
+border-radius:12px;
+
+transition:.3s;
+
+}
+
+.lesson-item:hover{
+
+background:#eef4ff;
+
+}
+
+.lesson-item.active{
+
+background:#0d6efd;
+
+color:white;
+
+}
+
+.lesson-number{
+
+width:32px;
+
+height:32px;
+
+display:inline-flex;
+
+justify-content:center;
+
+align-items:center;
+
+background:#0d6efd;
+
+color:white;
+
+border-radius:50%;
+
+margin-right:10px;
+
+font-weight:bold;
+
+}
+
+.lesson-item.active .lesson-number{
+
+background:white;
+
+color:#0d6efd;
+
+}
+
+.lesson-card{
+
+background:white;
+
+padding:25px;
+
+border-radius:18px;
+
+}
+
+.video-card{
+
+background:white;
+
+padding:20px;
+
+border-radius:18px;
+
+}
+
+.video-placeholder{
+
+height:420px;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+background:#eef2f7;
+
+border-radius:15px;
+
+text-align:center;
+
+}
+
+.card{
+
+border:none;
+
+border-radius:18px;
+
+}
+
+.nav-tabs .nav-link{
+
+font-weight:600;
+
+}
+
+.nav-tabs .nav-link.active{
+
+background:#0d6efd;
+
+color:white;
+
+border-radius:10px;
+
+}
+
+@media(max-width:991px){
+
+.lesson-sidebar{
+
+position:relative;
+
+top:0;
+
+margin-bottom:20px;
+
+}
+
+}
+
+</style>
+<!-- ========================= -->
+<!-- PART 2A : PREMIUM NOTES TAB -->
+<!-- Replace your Notes Tab with this -->
+<!-- ========================= -->
+
+<div class="tab-pane fade show active" id="notes">
+
+    <!-- Search -->
+    <div class="row mb-4">
+
+        <div class="col-md-8">
+
+            <input
+                type="text"
+                id="notesSearch"
+                class="form-control form-control-lg"
+                placeholder="🔍 Search in notes...">
+
+        </div>
+
+        <div class="col-md-4 text-end">
+
+            <button class="btn btn-primary">
+
+                📄 Download PDF
+
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- Lesson Header -->
+
+    <div class="lesson-banner">
+
+        <h2>
+
+            {{ lesson.title }}
+
+        </h2>
+
+        <p>
+
+            {{ lesson.short_description or
+            "Master this lesson with detailed explanations, examples, and practical exercises." }}
+
+        </p>
+
+    </div>
+
+    <!-- Lesson Notes -->
+
+    <div class="lesson-notes mt-4">
+
+        <h3>
+
+            📘 Lesson Notes
+
+        </h3>
+
+        <hr>
+
+        <div id="lessonContent">
+
+            {{ lesson.notes|safe }}
+
+        </div>
+
+    </div>
+
+    <!-- Important Points -->
+
+    <div class="mt-5">
+
+        <h3>
+
+            ⭐ Important Points
+
+        </h3>
+
+        <div class="row">
+
+            <div class="col-md-6">
+
+                <div class="point-card">
+
+                    ✅ Understand the core concept.
+
+                </div>
+
+            </div>
+
+            <div class="col-md-6">
+
+                <div class="point-card">
+
+                    📌 Learn syntax carefully.
+
+                </div>
+
+            </div>
+
+            <div class="col-md-6">
+
+                <div class="point-card">
+
+                    💡 Practice coding daily.
+
+                </div>
+
+            </div>
+
+            <div class="col-md-6">
+
+                <div class="point-card">
+
+                    🚀 Solve interview questions.
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Tip -->
+
+    <div class="tip-box mt-5">
+
+        <h4>
+
+            💡 Pro Tip
+
+        </h4>
+
+        <p>
+
+            Always understand the logic before memorizing the syntax.
+            Building small projects is the fastest way to learn.
+
+        </p>
+
+    </div>
+
+    <!-- Warning -->
+
+    <div class="warning-box mt-4">
+
+        <h4>
+
+            ⚠ Common Mistakes
+
+        </h4>
+
+        <ul>
+
+            <li>Skipping basic concepts.</li>
+
+            <li>Learning theory without coding.</li>
+
+            <li>Ignoring debugging practice.</li>
+
+            <li>Not revising previous lessons.</li>
+
+        </ul>
+
+    </div>
+
+    <!-- Example -->
+
+    <div class="example-box mt-5">
+
+        <h3>
+
+            🧪 Example
+
+        </h3>
+
+<pre><code>
+public class Hello{
+
+    public static void main(String[] args){
+
+        System.out.println("Hello World");
+
+    }
+
+}
+</code></pre>
+
+    </div>
+
+    <!-- Summary -->
+
+    <div class="summary-box mt-5">
+
+        <h3>
+
+            📚 Lesson Summary
+
+        </h3>
+
+        <p>
+
+            ✔ Concepts Covered
+
+            <br>
+
+            ✔ Syntax
+
+            <br>
+
+            ✔ Practical Example
+
+            <br>
+
+            ✔ Best Practices
+
+            <br>
+
+            ✔ Common Mistakes
+
+        </p>
+
+    </div>
+
+</div>
+
+<!-- ========================= -->
+<!-- CSS -->
+<!-- ========================= -->
+
+<style>
+
+.lesson-banner{
+
+background:linear-gradient(135deg,#2563eb,#4f46e5);
+
+padding:35px;
+
+border-radius:20px;
+
+color:white;
+
+}
+
+.lesson-banner h2{
+
+font-weight:700;
+
+margin-bottom:10px;
+
+}
+
+.lesson-notes{
+
+background:white;
+
+padding:30px;
+
+border-radius:18px;
+
+box-shadow:0 10px 30px rgba(0,0,0,.08);
+
+line-height:1.9;
+
+font-size:17px;
+
+}
+
+.point-card{
+
+background:#fff;
+
+padding:20px;
+
+border-left:5px solid #2563eb;
+
+border-radius:15px;
+
+margin-bottom:20px;
+
+box-shadow:0 8px 20px rgba(0,0,0,.05);
+
+font-weight:600;
+
+transition:.3s;
+
+}
+
+.point-card:hover{
+
+transform:translateY(-5px);
+
+}
+
+.tip-box{
+
+background:#e8fff1;
+
+padding:25px;
+
+border-left:6px solid green;
+
+border-radius:15px;
+
+}
+
+.warning-box{
+
+background:#fff7e8;
+
+padding:25px;
+
+border-left:6px solid orange;
+
+border-radius:15px;
+
+}
+
+.example-box{
+
+background:#1e293b;
+
+padding:25px;
+
+border-radius:15px;
+
+color:white;
+
+}
+
+.example-box pre{
+
+margin:0;
+
+color:#38bdf8;
+
+overflow:auto;
+
+}
+
+.summary-box{
+
+background:#eef5ff;
+
+padding:30px;
+
+border-radius:18px;
+
+}
+
+#notesSearch{
+
+border-radius:12px;
+
+}
+
+</style>
+
+<!-- ========================= -->
+<!-- Search Script -->
+<!-- ========================= -->
+
+<script>
+
+document.getElementById("notesSearch").addEventListener("keyup",function(){
+
+let value=this.value.toLowerCase();
+
+let lesson=document.getElementById("lessonContent");
+
+if(lesson.innerText.toLowerCase().includes(value)){
+
+lesson.style.background="#fff";
+
+}else{
+
+lesson.style.background="#ffe6e6";
+
+}
+
+});
+
+</script>
+<!-- ================================================= -->
+<!-- PART 2B-1 : PREMIUM CODE TAB (Replace #code tab) -->
+<!-- ================================================= -->
+
+<div class="tab-pane fade" id="code">
+
+    <!-- Top Toolbar -->
+    <div class="code-toolbar d-flex justify-content-between align-items-center">
+
+        <div>
+
+            <span class="badge bg-success me-2">
+                Java
+            </span>
+
+            <span class="badge bg-secondary">
+                Example Program
+            </span>
+
+        </div>
+
+        <div>
+
+            <button class="btn btn-sm btn-outline-light me-2"
+                    id="copyCode">
+
+                📋 Copy
+
+            </button>
+
+            <button class="btn btn-sm btn-outline-light me-2">
+
+                📥 Download
+
+            </button>
+
+            <button class="btn btn-sm btn-warning"
+                    id="fullscreenBtn">
+
+                ⛶ Fullscreen
+
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- Code Editor -->
+
+    <div class="editor-wrapper mt-3" id="editorWrapper">
+
+        <!-- Line Numbers -->
+
+        <div class="line-numbers">
+
+1<br>
+2<br>
+3<br>
+4<br>
+5<br>
+6<br>
+7<br>
+8<br>
+9<br>
+10<br>
+11<br>
+12<br>
+
+        </div>
+
+        <!-- Code -->
+
+<pre id="codeBlock"><code>{{ lesson.code_snippet or
+'public class HelloWorld {
+
+    public static void main(String[] args) {
+
+        System.out.println("Hello World");
+
+    }
+
+}'
+}}</code></pre>
+
+    </div>
+
+    <!-- Output -->
+
+    <div class="output-card mt-4">
+
+        <h5>
+
+            ▶ Expected Output
+
+        </h5>
+
+        <hr>
+
+<pre class="output-box">
+Hello World
+</pre>
+
+    </div>
+
+    <!-- Explanation -->
+
+    <div class="code-explanation mt-4">
+
+        <h4>
+
+            💡 Code Explanation
+
+        </h4>
+
+        <p>
+
+            This example demonstrates the basic structure of a Java
+            program.
+
+        </p>
+
+        <ul>
+
+            <li>
+                <b>class</b> defines a class.
+            </li>
+
+            <li>
+                <b>main()</b> is the program entry point.
+            </li>
+
+            <li>
+                <b>System.out.println()</b> prints text.
+            </li>
+
+        </ul>
+
+    </div>
+
+    <!-- Interview Tips -->
+
+    <div class="interview-box mt-4">
+
+        <h4>
+
+            🎯 Interview Tip
+
+        </h4>
+
+        <p>
+
+            Interviewers often ask you to explain every line of a
+            simple program before moving to advanced topics.
+
+        </p>
+
+    </div>
+
+</div>
+
+<!-- =========================================== -->
+<!-- CSS -->
+<!-- =========================================== -->
+
+<style>
+
+.code-toolbar{
+
+background:#1e293b;
+
+padding:15px 20px;
+
+border-radius:15px;
+
+}
+
+.editor-wrapper{
+
+display:flex;
+
+background:#0f172a;
+
+border-radius:15px;
+
+overflow:hidden;
+
+min-height:420px;
+
+}
+
+.line-numbers{
+
+width:60px;
+
+background:#1e293b;
+
+color:#94a3b8;
+
+padding:20px 10px;
+
+text-align:right;
+
+font-family:Consolas, monospace;
+
+line-height:28px;
+
+user-select:none;
+
+}
+
+#codeBlock{
+
+margin:0;
+
+padding:20px;
+
+width:100%;
+
+overflow:auto;
+
+font-size:16px;
+
+font-family:Consolas, monospace;
+
+color:#f8fafc;
+
+background:#0f172a;
+
+line-height:28px;
+
+}
+
+.output-card{
+
+background:white;
+
+padding:25px;
+
+border-radius:15px;
+
+box-shadow:0 8px 20px rgba(0,0,0,.08);
+
+}
+
+.output-box{
+
+background:#111827;
+
+color:#22c55e;
+
+padding:20px;
+
+border-radius:12px;
+
+font-family:Consolas, monospace;
+
+font-size:16px;
+
+}
+
+.code-explanation{
+
+background:#eef6ff;
+
+padding:25px;
+
+border-radius:15px;
+
+}
+
+.code-explanation ul{
+
+margin-top:15px;
+
+}
+
+.code-explanation li{
+
+margin-bottom:10px;
+
+}
+
+.interview-box{
+
+background:#fff8e8;
+
+padding:25px;
+
+border-left:6px solid orange;
+
+border-radius:15px;
+
+}
+
+.editor-wrapper::-webkit-scrollbar{
+
+height:8px;
+
+}
+
+.editor-wrapper::-webkit-scrollbar-thumb{
+
+background:#475569;
+
+border-radius:20px;
+
+}
+
+@media(max-width:768px){
+
+.editor-wrapper{
+
+font-size:14px;
+
+overflow:auto;
+
+}
+
+.line-numbers{
+
+display:none;
+
+}
+
+}
+
+</style>
+
+<!-- ==================================================== -->
+<!-- PART 2B-2 : JavaScript for Code Editor -->
+<!-- Place this BEFORE </body> or at the end of the template -->
+<!-- ===================================================== -->
+
+<script>
+
+// ==============================
+// Copy Code
+// ==============================
+
+const copyBtn = document.getElementById("copyCode");
+const codeBlock = document.getElementById("codeBlock");
+
+if(copyBtn){
+
+copyBtn.addEventListener("click", function(){
+
+    const text = codeBlock.innerText;
+
+    navigator.clipboard.writeText(text).then(()=>{
+
+        const old = copyBtn.innerHTML;
+
+        copyBtn.innerHTML = "✅ Copied";
+
+        copyBtn.classList.remove("btn-outline-light");
+        copyBtn.classList.add("btn-success");
+
+        setTimeout(()=>{
+
+            copyBtn.innerHTML = old;
+            copyBtn.classList.remove("btn-success");
+            copyBtn.classList.add("btn-outline-light");
+
+        },2000);
+
+    });
+
+});
+
+}
+
+// ==============================
+// Fullscreen
+// ==============================
+
+const fullscreenBtn = document.getElementById("fullscreenBtn");
+const editor = document.getElementById("editorWrapper");
+
+if(fullscreenBtn){
+
+fullscreenBtn.addEventListener("click",()=>{
+
+    if(!document.fullscreenElement){
+
+        editor.requestFullscreen();
+
+        fullscreenBtn.innerHTML="❌ Exit";
+
+    }else{
+
+        document.exitFullscreen();
+
+        fullscreenBtn.innerHTML="⛶ Fullscreen";
+
+    }
+
+});
+
+}
+
+// ==============================
+// Download Java File
+// ==============================
+
+const downloadBtn =
+document.querySelector(".code-toolbar .btn-outline-light:nth-child(2)");
+
+if(downloadBtn){
+
+downloadBtn.addEventListener("click",()=>{
+
+const blob = new Blob(
+[
+codeBlock.innerText
+],
+{
+type:"text/plain"
+});
+
+const link=document.createElement("a");
+
+link.href=URL.createObjectURL(blob);
+
+link.download="Example.java";
+
+link.click();
+
+URL.revokeObjectURL(link.href);
+
+});
+
+}
+
+// ==============================
+// Font Controls
+// ==============================
+
+let fontSize = 16;
+
+const toolbar=document.querySelector(".code-toolbar");
+
+const increase=document.createElement("button");
+increase.className="btn btn-sm btn-outline-light ms-2";
+increase.innerHTML="A+";
+
+const decrease=document.createElement("button");
+decrease.className="btn btn-sm btn-outline-light ms-2";
+decrease.innerHTML="A-";
+
+toolbar.appendChild(increase);
+toolbar.appendChild(decrease);
+
+increase.onclick=()=>{
+
+fontSize++;
+
+codeBlock.style.fontSize=fontSize+"px";
+
+}
+
+decrease.onclick=()=>{
+
+if(fontSize>12){
+
+fontSize--;
+
+codeBlock.style.fontSize=fontSize+"px";
+
+}
+
+}
+
+// ==============================
+// Theme Toggle
+// ==============================
+
+const themeBtn=document.createElement("button");
+
+themeBtn.className="btn btn-sm btn-info ms-2";
+
+themeBtn.innerHTML="🌙";
+
+toolbar.appendChild(themeBtn);
+
+let dark=true;
+
+themeBtn.onclick=()=>{
+
+dark=!dark;
+
+if(dark){
+
+editor.style.background="#0f172a";
+
+codeBlock.style.background="#0f172a";
+
+codeBlock.style.color="#f8fafc";
+
+themeBtn.innerHTML="🌙";
+
+}else{
+
+editor.style.background="#ffffff";
+
+codeBlock.style.background="#ffffff";
+
+codeBlock.style.color="#111827";
+
+themeBtn.innerHTML="☀";
+
+}
+
+}
+
+// ==============================
+// Auto Highlight Keywords
+// ==============================
+
+window.addEventListener("load",()=>{
+
+let html=codeBlock.innerHTML;
+
+const keywords=[
+"public",
+"class",
+"static",
+"void",
+"int",
+"double",
+"float",
+"boolean",
+"char",
+"String",
+"return",
+"new",
+"if",
+"else",
+"for",
+"while",
+"switch",
+"case",
+"break",
+"continue",
+"try",
+"catch",
+"finally",
+"extends",
+"implements"
+];
+
+keywords.forEach(word=>{
+
+const regex=new RegExp("\\\\b"+word+"\\\\b","g");
+
+html=html.replace(
+regex,
+`<span style="color:#60a5fa;font-weight:bold;">${word}</span>`
+);
+
+});
+
+html=html.replace(
+/System\.out\.println/g,
+'<span style="color:#fbbf24;">System.out.println</span>'
+);
+
+codeBlock.innerHTML=html;
+
+});
+
+// ==============================
+// Ctrl + C Shortcut
+// ==============================
+
+document.addEventListener("keydown",(e)=>{
+
+if(e.ctrlKey && e.key==="c"){
+
+console.log("Copy Shortcut");
+
+}
+
+});
+
+// ==============================
+// Ctrl + +
+// ==============================
+
+document.addEventListener("keydown",(e)=>{
+
+if(e.ctrlKey && e.key==="+"){
+
+fontSize++;
+
+codeBlock.style.fontSize=fontSize+"px";
+
+}
+
+});
+
+// ==============================
+// Ctrl + -
+// ==============================
+
+document.addEventListener("keydown",(e)=>{
+
+if(e.ctrlKey && e.key==="-" && fontSize>12){
+
+fontSize--;
+
+codeBlock.style.fontSize=fontSize+"px";
+
+}
+
+});
+
+</script>
+<!-- =========================================== -->
+<!-- PART 2C : Practice + Quiz + Resources Tab -->
+<!-- =========================================== -->
+
+<div class="tab-pane fade" id="practice">
+
+    <!-- Practice Header -->
+    <div class="practice-header">
+
+        <h2>🎯 Practice Tasks</h2>
+
+        <p class="text-muted">
+            Complete these tasks to improve your coding skills.
+        </p>
+
+    </div>
+
+    <!-- Difficulty -->
+
+    <div class="mb-4">
+
+        <span class="badge bg-success">Easy</span>
+        <span class="badge bg-warning text-dark">Medium</span>
+        <span class="badge bg-danger">Hard</span>
+
+    </div>
+
+    <!-- Tasks -->
+
+    <div class="practice-card">
+
+        <h4>Task 1</h4>
+
+        <p>
+
+            Create a Java program to print your name.
+
+        </p>
+
+        <button class="btn btn-outline-primary">
+
+            Start Task
+
+        </button>
+
+    </div>
+
+    <div class="practice-card">
+
+        <h4>Task 2</h4>
+
+        <p>
+
+            Create a Calculator using Java.
+
+        </p>
+
+        <button class="btn btn-outline-primary">
+
+            Start Task
+
+        </button>
+
+    </div>
+
+    <div class="practice-card">
+
+        <h4>Task 3</h4>
+
+        <p>
+
+            Print multiplication table.
+
+        </p>
+
+        <button class="btn btn-outline-primary">
+
+            Start Task
+
+        </button>
+
+    </div>
+
+    <!-- Coding Challenge -->
+
+    <div class="challenge-box mt-5">
+
+        <h3>
+
+            🚀 Daily Coding Challenge
+
+        </h3>
+
+        <p>
+
+            Reverse a String without using built-in reverse() method.
+
+        </p>
+
+        <button class="btn btn-warning">
+
+            Solve Challenge
+
+        </button>
+
+    </div>
+
+    <!-- Quiz -->
+
+    <div class="quiz-box mt-5">
+
+        <h3>
+
+            ❓ Quick Quiz
+
+        </h3>
+
+        <hr>
+
+        <h5>
+
+            Which method is the entry point of Java?
+
+        </h5>
+
+        <div class="form-check">
+
+            <input class="form-check-input"
+                   type="radio"
+                   name="quiz">
+
+            <label class="form-check-label">
+
+                start()
+
+            </label>
+
+        </div>
+
+        <div class="form-check">
+
+            <input class="form-check-input"
+                   type="radio"
+                   name="quiz"
+                   id="correctAnswer">
+
+            <label class="form-check-label">
+
+                main()
+
+            </label>
+
+        </div>
+
+        <div class="form-check">
+
+            <input class="form-check-input"
+                   type="radio"
+                   name="quiz">
+
+            <label class="form-check-label">
+
+                init()
+
+            </label>
+
+        </div>
+
+        <div class="form-check">
+
+            <input class="form-check-input"
+                   type="radio"
+                   name="quiz">
+
+            <label class="form-check-label">
+
+                run()
+
+            </label>
+
+        </div>
+
+        <button
+            class="btn btn-success mt-3"
+            onclick="checkQuiz()">
+
+            Submit Answer
+
+        </button>
+
+        <div
+            id="quizResult"
+            class="mt-3">
+
+        </div>
+
+    </div>
+
+    <!-- XP -->
+
+    <div class="xp-card mt-5">
+
+        <h3>
+
+            🏆 Your XP
+
+        </h3>
+
+        <div class="progress">
+
+            <div
+                class="progress-bar bg-success"
+                id="xpBar"
+                style="width:30%;">
+
+                30 XP
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Achievements -->
+
+    <div class="achievement-box mt-5">
+
+        <h3>
+
+            🎖 Achievements
+
+        </h3>
+
+        <div class="row">
+
+            <div class="col-md-4">
+
+                <div class="badge-card">
+
+                    🥇 Beginner
+
+                </div>
+
+            </div>
+
+            <div class="col-md-4">
+
+                <div class="badge-card">
+
+                    💻 First Program
+
+                </div>
+
+            </div>
+
+            <div class="col-md-4">
+
+                <div class="badge-card">
+
+                    🚀 Fast Learner
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ===================== -->
+<!-- Resources -->
+<!-- ===================== -->
+
+<div class="tab-pane fade" id="resources">
+
+    <h2 class="mb-4">
+
+        📂 Learning Resources
+
+    </h2>
+
+    <div class="resource-card">
+
+        <h5>
+
+            📄 PDF Notes
+
+        </h5>
+
+        <button class="btn btn-primary">
+
+            Download
+
+        </button>
+
+    </div>
+
+    <div class="resource-card">
+
+        <h5>
+
+            💻 Source Code
+
+        </h5>
+
+        <button class="btn btn-success">
+
+            Download ZIP
+
+        </button>
+
+    </div>
+
+    <div class="resource-card">
+
+        <h5>
+
+            🎥 Video Recording
+
+        </h5>
+
+        <button class="btn btn-danger">
+
+            Watch
+
+        </button>
+
+    </div>
+
+</div>
+
+<style>
+
+.practice-card{
+
+background:white;
+
+padding:25px;
+
+border-radius:15px;
+
+margin-bottom:20px;
+
+box-shadow:0 8px 20px rgba(0,0,0,.08);
+
+}
+
+.challenge-box{
+
+background:#fff7e6;
+
+padding:30px;
+
+border-radius:15px;
+
+border-left:6px solid orange;
+
+}
+
+.quiz-box{
+
+background:white;
+
+padding:30px;
+
+border-radius:15px;
+
+box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+}
+
+.xp-card{
+
+background:#eef9f0;
+
+padding:25px;
+
+border-radius:15px;
+
+}
+
+.badge-card{
+
+background:white;
+
+padding:30px;
+
+text-align:center;
+
+border-radius:15px;
+
+font-size:22px;
+
+font-weight:bold;
+
+box-shadow:0 8px 20px rgba(0,0,0,.08);
+
+transition:.3s;
+
+}
+
+.badge-card:hover{
+
+transform:translateY(-8px);
+
+}
+
+.resource-card{
+
+background:white;
+
+padding:25px;
+
+border-radius:15px;
+
+margin-bottom:20px;
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+box-shadow:0 8px 20px rgba(0,0,0,.08);
+
+}
+
+</style>
+
+<script>
+
+function checkQuiz(){
+
+let result=document.getElementById("quizResult");
+
+let correct=document.getElementById("correctAnswer");
+
+let xp=document.getElementById("xpBar");
+
+if(correct.checked){
+
+result.innerHTML=
+"<div class='alert alert-success'>🎉 Correct Answer! +20 XP</div>";
+
+xp.style.width="50%";
+
+xp.innerHTML="50 XP";
+
+}else{
+
+result.innerHTML=
+"<div class='alert alert-danger'>❌ Wrong Answer. Try Again!</div>";
+
+}
+
+}
+
+</script>
+<!-- ========================================= -->
+<!-- PART 3A : Learning Analytics Dashboard -->
+<!-- Place this BELOW the Practice/Resources -->
+<!-- ========================================= -->
+
+<section class="mt-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h2 class="fw-bold">
+                📊 Learning Analytics
+            </h2>
+
+            <p class="text-muted">
+                Track your learning progress in real time.
+            </p>
+
+        </div>
+
+        <button class="btn btn-primary">
+            📥 Export Report
+        </button>
+
+    </div>
+
+    <!-- Statistics -->
+
+    <div class="row g-4">
+
+        <div class="col-lg-3 col-md-6">
+
+            <div class="analytics-card">
+
+                <div class="icon blue">
+
+                    📚
+
+                </div>
+
+                <h2>
+
+                    {{ total_lessons or 30 }}
+
+                </h2>
+
+                <p>
+
+                    Total Lessons
+
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+
+            <div class="analytics-card">
+
+                <div class="icon green">
+
+                    ✅
+
+                </div>
+
+                <h2>
+
+                    {{ completed_lessons or 12 }}
+
+                </h2>
+
+                <p>
+
+                    Completed
+
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+
+            <div class="analytics-card">
+
+                <div class="icon orange">
+
+                    ⭐
+
+                </div>
+
+                <h2>
+
+                    {{ xp or 420 }}
+
+                </h2>
+
+                <p>
+
+                    XP Earned
+
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+
+            <div class="analytics-card">
+
+                <div class="icon red">
+
+                    🔥
+
+                </div>
+
+                <h2>
+
+                    {{ streak or 5 }}
+
+                </h2>
+
+                <p>
+
+                    Day Streak
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Progress -->
+
+    <div class="row mt-5">
+
+        <div class="col-lg-8">
+
+            <div class="progress-card">
+
+                <h4>
+
+                    📈 Overall Course Progress
+
+                </h4>
+
+                <div class="progress mt-4">
+
+                    <div class="progress-bar bg-success"
+
+                         style="width:{{ progress }}%;">
+
+                        {{ progress }}%
+
+                    </div>
+
+                </div>
+
+                <div class="row mt-4 text-center">
+
+                    <div class="col">
+
+                        <h4>
+
+                            {{ completed_lessons or 12 }}
+
+                        </h4>
+
+                        Lessons Done
+
+                    </div>
+
+                    <div class="col">
+
+                        <h4>
+
+                            {{ total_lessons-completed_lessons
+                               if total_lessons and completed_lessons
+                               else 18 }}
+
+                        </h4>
+
+                        Remaining
+
+                    </div>
+
+                    <div class="col">
+
+                        <h4>
+
+                            {{ progress }}%
+
+                        </h4>
+
+                        Completed
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Weekly Goal -->
+
+        <div class="col-lg-4">
+
+            <div class="goal-card">
+
+                <h4>
+
+                    🎯 Weekly Goal
+
+                </h4>
+
+                <p>
+
+                    Complete 5 lessons this week.
+
+                </p>
+
+                <div class="progress">
+
+                    <div class="progress-bar bg-primary"
+
+                         style="width:60%;">
+
+                        3 / 5
+
+                    </div>
+
+                </div>
+
+                <button class="btn btn-primary w-100 mt-4">
+
+                    Keep Learning
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Activity Timeline -->
+
+    <div class="activity-card mt-5">
+
+        <h3>
+
+            📅 Recent Activity
+
+        </h3>
+
+        <hr>
+
+        <div class="timeline-item">
+
+            ✅ Completed Lesson 5
+
+            <span>
+
+                Today
+
+            </span>
+
+        </div>
+
+        <div class="timeline-item">
+
+            💻 Solved Coding Challenge
+
+            <span>
+
+                Yesterday
+
+            </span>
+
+        </div>
+
+        <div class="timeline-item">
+
+            🏆 Earned Beginner Badge
+
+            <span>
+
+                2 Days Ago
+
+            </span>
+
+        </div>
+
+        <div class="timeline-item">
+
+            📚 Started New Chapter
+
+            <span>
+
+                4 Days Ago
+
+            </span>
+
+        </div>
+
+    </div>
+
+    <!-- Skills -->
+
+    <div class="skills-card mt-5">
+
+        <h3>
+
+            🚀 Skill Progress
+
+        </h3>
+
+        <div class="skill mt-4">
+
+            <span>Java Basics</span>
+
+            <div class="progress">
+
+                <div class="progress-bar bg-success"
+
+                     style="width:90%;">
+
+                    90%
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="skill mt-4">
+
+            <span>OOP</span>
+
+            <div class="progress">
+
+                <div class="progress-bar bg-info"
+
+                     style="width:70%;">
+
+                    70%
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="skill mt-4">
+
+            <span>Collections</span>
+
+            <div class="progress">
+
+                <div class="progress-bar bg-warning"
+
+                     style="width:40%;">
+
+                    40%
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="skill mt-4">
+
+            <span>Multithreading</span>
+
+            <div class="progress">
+
+                <div class="progress-bar bg-danger"
+
+                     style="width:25%;">
+
+                    25%
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<style>
+
+.analytics-card{
+
+background:#fff;
+
+border-radius:18px;
+
+padding:30px;
+
+text-align:center;
+
+box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+transition:.3s;
+
+}
+
+.analytics-card:hover{
+
+transform:translateY(-8px);
+
+}
+
+.icon{
+
+width:70px;
+
+height:70px;
+
+margin:auto;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+border-radius:18px;
+
+font-size:32px;
+
+margin-bottom:20px;
+
+}
+
+.blue{background:#dbeafe;}
+
+.green{background:#dcfce7;}
+
+.orange{background:#ffedd5;}
+
+.red{background:#fee2e2;}
+
+.progress-card,
+.goal-card,
+.activity-card,
+.skills-card{
+
+background:#fff;
+
+padding:30px;
+
+border-radius:18px;
+
+box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+}
+
+.timeline-item{
+
+display:flex;
+
+justify-content:space-between;
+
+padding:15px 0;
+
+border-bottom:1px solid #eee;
+
+}
+
+.skill span{
+
+font-weight:bold;
+
+}
+
+.progress{
+
+height:12px;
+
+border-radius:30px;
+
+margin-top:8px;
+
+}
+
+</style>
+<!-- ========================================= -->
+<!-- PART 3B-1 : Study Calendar + Today's Goals -->
+<!-- Add this below Part 3A -->
+<!-- ========================================= -->
+
+<section class="mt-5">
+
+    <div class="row g-4">
+
+        <!-- Calendar -->
+        <div class="col-lg-8">
+
+            <div class="calendar-card">
+
+                <div class="d-flex justify-content-between align-items-center mb-4">
+
+                    <h3>📅 Study Calendar</h3>
+
+                    <div>
+
+                        <button class="btn btn-outline-primary btn-sm">
+                            ◀
+                        </button>
+
+                        <button class="btn btn-primary btn-sm">
+                            September 2026
+                        </button>
+
+                        <button class="btn btn-outline-primary btn-sm">
+                            ▶
+                        </button>
+
+                    </div>
+
+                </div>
+
+                <!-- Week Days -->
+
+                <div class="calendar-header">
+
+                    <div>Sun</div>
+                    <div>Mon</div>
+                    <div>Tue</div>
+                    <div>Wed</div>
+                    <div>Thu</div>
+                    <div>Fri</div>
+                    <div>Sat</div>
+
+                </div>
+
+                <!-- Calendar Grid -->
+
+                <div class="calendar-grid">
+
+                    <div class="day empty"></div>
+
+                    <div class="day">1</div>
+
+                    <div class="day completed">2</div>
+
+                    <div class="day active">3</div>
+
+                    <div class="day">4</div>
+
+                    <div class="day">5</div>
+
+                    <div class="day">6</div>
+
+                    <div class="day">7</div>
+
+                    <div class="day completed">8</div>
+
+                    <div class="day completed">9</div>
+
+                    <div class="day">10</div>
+
+                    <div class="day">11</div>
+
+                    <div class="day">12</div>
+
+                    <div class="day">13</div>
+
+                    <div class="day">14</div>
+
+                    <div class="day">15</div>
+
+                    <div class="day">16</div>
+
+                    <div class="day">17</div>
+
+                    <div class="day">18</div>
+
+                    <div class="day">19</div>
+
+                    <div class="day">20</div>
+
+                    <div class="day">21</div>
+
+                    <div class="day">22</div>
+
+                    <div class="day">23</div>
+
+                    <div class="day">24</div>
+
+                    <div class="day">25</div>
+
+                    <div class="day">26</div>
+
+                    <div class="day">27</div>
+
+                    <div class="day">28</div>
+
+                    <div class="day">29</div>
+
+                    <div class="day">30</div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Today's Goals -->
+
+        <div class="col-lg-4">
+
+            <div class="goal-panel">
+
+                <h3 class="mb-4">
+
+                    🎯 Today's Goals
+
+                </h3>
+
+                <div class="goal-item">
+
+                    <input type="checkbox" checked>
+
+                    Complete Lesson 5
+
+                </div>
+
+                <div class="goal-item">
+
+                    <input type="checkbox">
+
+                    Solve 3 Coding Questions
+
+                </div>
+
+                <div class="goal-item">
+
+                    <input type="checkbox">
+
+                    Revise OOP Concepts
+
+                </div>
+
+                <div class="goal-item">
+
+                    <input type="checkbox">
+
+                    Take Mock Test
+
+                </div>
+
+                <hr>
+
+                <button class="btn btn-success w-100">
+
+                    ✔ Save Progress
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<style>
+
+.calendar-card{
+
+background:#fff;
+
+padding:30px;
+
+border-radius:20px;
+
+box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+}
+
+.calendar-header{
+
+display:grid;
+
+grid-template-columns:repeat(7,1fr);
+
+text-align:center;
+
+font-weight:bold;
+
+margin-bottom:20px;
+
+}
+
+.calendar-grid{
+
+display:grid;
+
+grid-template-columns:repeat(7,1fr);
+
+gap:12px;
+
+}
+
+.day{
+
+height:60px;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+background:#f8f9fa;
+
+border-radius:12px;
+
+font-weight:bold;
+
+cursor:pointer;
+
+transition:.3s;
+
+}
+
+.day:hover{
+
+background:#dbeafe;
+
+transform:scale(1.05);
+
+}
+
+.day.completed{
+
+background:#22c55e;
+
+color:#fff;
+
+}
+
+.day.active{
+
+background:#2563eb;
+
+color:#fff;
+
+}
+
+.day.empty{
+
+visibility:hidden;
+
+}
+
+.goal-panel{
+
+background:#fff;
+
+padding:30px;
+
+border-radius:20px;
+
+box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+height:100%;
+
+}
+
+.goal-item{
+
+padding:12px 0;
+
+font-size:16px;
+
+display:flex;
+
+align-items:center;
+
+gap:12px;
+
+border-bottom:1px solid #eee;
+
+}
+
+.goal-item:last-child{
+
+border:none;
+
+}
+
+@media(max-width:768px){
+
+.calendar-grid{
+
+gap:8px;
+
+}
+
+.day{
+
+height:45px;
+
+font-size:14px;
+
+}
+
+}
+
+</style>
+
+<!-- ===================================================== -->
+<!-- PART 3B-2 : Pomodoro Timer + Study Tracker + Streak -->
+<!-- Add below Part 3B-1 -->
+<!-- ===================================================== -->
+
+<section class="mt-5">
+
+    <div class="row g-4">
+
+        <!-- Pomodoro Timer -->
+        <div class="col-lg-6">
+
+            <div class="timer-card">
+
+                <h3 class="mb-4">
+                    ⏱ Pomodoro Timer
+                </h3>
+
+                <div class="timer-circle">
+
+                    <h1 id="timerDisplay">
+                        25:00
+                    </h1>
+
+                    <p class="text-muted">
+                        Focus Session
+                    </p>
+
+                </div>
+
+                <div class="d-flex justify-content-center gap-2 mt-4">
+
+                    <button
+                        class="btn btn-success"
+                        onclick="startPomodoro()">
+
+                        ▶ Start
+
+                    </button>
+
+                    <button
+                        class="btn btn-warning"
+                        onclick="pausePomodoro()">
+
+                        ⏸ Pause
+
+                    </button>
+
+                    <button
+                        class="btn btn-danger"
+                        onclick="resetPomodoro()">
+
+                        🔄 Reset
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Study Stats -->
+
+        <div class="col-lg-6">
+
+            <div class="study-card">
+
+                <h3>
+
+                    📈 Study Statistics
+
+                </h3>
+
+                <hr>
+
+                <div class="stat-item">
+
+                    <span>🔥 Current Streak</span>
+
+                    <strong id="streakCount">
+                        {{ streak or 5 }} Days
+                    </strong>
+
+                </div>
+
+                <div class="stat-item">
+
+                    <span>📚 Lessons Completed</span>
+
+                    <strong>
+                        {{ completed_lessons or 12 }}
+                    </strong>
+
+                </div>
+
+                <div class="stat-item">
+
+                    <span>⭐ Total XP</span>
+
+                    <strong id="xpCount">
+                        {{ xp or 420 }}
+                    </strong>
+
+                </div>
+
+                <div class="stat-item">
+
+                    <span>⏳ Today's Study Time</span>
+
+                    <strong id="studyTime">
+                        00:00
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Session Summary -->
+
+    <div class="session-card mt-4">
+
+        <h3>
+
+            📋 Today's Session
+
+        </h3>
+
+        <div class="row text-center mt-4">
+
+            <div class="col-md-3">
+
+                <h2 id="sessionCount">
+                    0
+                </h2>
+
+                Sessions
+
+            </div>
+
+            <div class="col-md-3">
+
+                <h2 id="focusMinutes">
+                    0
+                </h2>
+
+                Minutes
+
+            </div>
+
+            <div class="col-md-3">
+
+                <h2 id="breakCount">
+                    0
+                </h2>
+
+                Breaks
+
+            </div>
+
+            <div class="col-md-3">
+
+                <h2 id="earnedXP">
+                    0
+                </h2>
+
+                XP Earned
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<style>
+
+.timer-card,
+.study-card,
+.session-card{
+
+background:#fff;
+padding:30px;
+border-radius:20px;
+box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+}
+
+.timer-circle{
+
+width:220px;
+height:220px;
+margin:auto;
+
+border:10px solid #0d6efd;
+
+border-radius:50%;
+
+display:flex;
+
+flex-direction:column;
+
+justify-content:center;
+
+align-items:center;
+
+}
+
+.timer-circle h1{
+
+font-size:52px;
+
+font-weight:bold;
+
+margin:0;
+
+}
+
+.stat-item{
+
+display:flex;
+
+justify-content:space-between;
+
+padding:15px 0;
+
+border-bottom:1px solid #eee;
+
+}
+
+.stat-item:last-child{
+
+border:none;
+
+}
+
+.session-card h2{
+
+color:#0d6efd;
+
+font-weight:bold;
+
+}
+
+</style>
+
+<script>
+
+let timer = 1500;
+let interval = null;
+
+let studySeconds = 0;
+
+let sessions = 0;
+let breaks = 0;
+let xp = 0;
+
+function updateDisplay(){
+
+let min=Math.floor(timer/60);
+
+let sec=timer%60;
+
+document.getElementById("timerDisplay").innerHTML=
+
+String(min).padStart(2,"0")+":"+
+
+String(sec).padStart(2,"0");
+
+}
+
+updateDisplay();
+
+function startPomodoro(){
+
+if(interval) return;
+
+interval=setInterval(()=>{
+
+timer--;
+
+studySeconds++;
+
+updateDisplay();
+
+updateStudyTime();
+
+if(timer<=0){
+
+clearInterval(interval);
+
+interval=null;
+
+sessions++;
+
+breaks++;
+
+xp+=25;
+
+document.getElementById("sessionCount").innerHTML=sessions;
+
+document.getElementById("breakCount").innerHTML=breaks;
+
+document.getElementById("earnedXP").innerHTML=xp;
+
+alert("🎉 Focus Session Complete!");
+
+timer=1500;
+
+updateDisplay();
+
+}
+
+},1000);
+
+}
+
+function pausePomodoro(){
+
+clearInterval(interval);
+
+interval=null;
+
+}
+
+function resetPomodoro(){
+
+clearInterval(interval);
+
+interval=null;
+
+timer=1500;
+
+updateDisplay();
+
+}
+
+function updateStudyTime(){
+
+let m=Math.floor(studySeconds/60);
+
+let s=studySeconds%60;
+
+document.getElementById("studyTime").innerHTML=
+
+String(m).padStart(2,"0")+":"+
+
+String(s).padStart(2,"0");
+
+document.getElementById("focusMinutes").innerHTML=m;
+
+}
+
+</script>
+<!-- ===================================================== -->
+<!-- PART 3C-1 : Course Completion + Certificate Preview -->
+<!-- Place BELOW Part 3B -->
+<!-- ===================================================== -->
+
+<section class="mt-5">
+
+    <div class="row g-4">
+
+        <!-- Course Completion -->
+
+        <div class="col-lg-5">
+
+            <div class="completion-card">
+
+                <div class="text-center">
+
+                    <div class="completion-icon">
+
+                        🎓
+
+                    </div>
+
+                    <h2 class="mt-3">
+
+                        Course Completion
+
+                    </h2>
+
+                    <p class="text-muted">
+
+                        Complete all lessons and quizzes to unlock your
+                        certificate.
+
+                    </p>
+
+                </div>
+
+                <div class="mt-4">
+
+                    <label class="fw-bold">
+
+                        Overall Progress
+
+                    </label>
+
+                    <div class="progress mt-2">
+
+                        <div class="progress-bar bg-success"
+
+                             id="courseProgress"
+
+                             style="width:{{ progress }}%;">
+
+                            {{ progress }}%
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="row text-center mt-4">
+
+                    <div class="col-4">
+
+                        <h3>
+
+                            {{ completed_lessons or 12 }}
+
+                        </h3>
+
+                        Lessons
+
+                    </div>
+
+                    <div class="col-4">
+
+                        <h3>
+
+                            {{ xp or 420 }}
+
+                        </h3>
+
+                        XP
+
+                    </div>
+
+                    <div class="col-4">
+
+                        <h3>
+
+                            {{ streak or 5 }}
+
+                        </h3>
+
+                        Streak
+
+                    </div>
+
+                </div>
+
+                <button
+                    class="btn btn-success w-100 mt-4"
+                    id="completeCourseBtn">
+
+                    ✅ Complete Course
+
+                </button>
+
+            </div>
+
+        </div>
+
+        <!-- Certificate -->
+
+        <div class="col-lg-7">
+
+            <div class="certificate-card">
+
+                <div class="certificate">
+
+                    <div class="certificate-border">
+
+                        <h5 class="text-primary">
+
+                            Placement Training Portal
+
+                        </h5>
+
+                        <h1>
+
+                            Certificate of Completion
+
+                        </h1>
+
+                        <p>
+
+                            This Certificate is Proudly Presented To
+
+                        </p>
+
+                        <h2>
+
+                            {{ current_user.name
+                               if current_user
+                               else "Student Name" }}
+
+                        </h2>
+
+                        <p>
+
+                            for successfully completing
+
+                        </p>
+
+                        <h3>
+
+                            {{ course.course_title }}
+
+                        </h3>
+
+                        <p>
+
+                            with dedication and excellence.
+
+                        </p>
+
+                        <div class="row mt-5">
+
+                            <div class="col-6 text-center">
+
+                                ___________________
+
+                                <br>
+
+                                Instructor
+
+                            </div>
+
+                            <div class="col-6 text-center">
+
+                                ___________________
+
+                                <br>
+
+                                Director
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="text-center mt-4">
+
+                    <button
+                        class="btn btn-primary me-2"
+                        id="previewCertificate">
+
+                        👁 Preview
+
+                    </button>
+
+                    <button
+                        class="btn btn-success"
+                        id="downloadCertificate">
+
+                        📥 Download
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ============================== -->
+<!-- CSS -->
+<!-- ============================== -->
+
+<style>
+
+.completion-card{
+
+background:#ffffff;
+
+padding:30px;
+
+border-radius:20px;
+
+box-shadow:0 12px 30px rgba(0,0,0,.08);
+
+height:100%;
+
+}
+
+.completion-icon{
+
+width:90px;
+
+height:90px;
+
+margin:auto;
+
+border-radius:50%;
+
+background:#22c55e;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+font-size:42px;
+
+color:white;
+
+}
+
+.certificate-card{
+
+background:#ffffff;
+
+padding:25px;
+
+border-radius:20px;
+
+box-shadow:0 12px 30px rgba(0,0,0,.08);
+
+}
+
+.certificate{
+
+background:#fffdf6;
+
+padding:20px;
+
+border:8px solid #d4af37;
+
+border-radius:15px;
+
+}
+
+.certificate-border{
+
+border:3px dashed #d4af37;
+
+padding:40px;
+
+text-align:center;
+
+}
+
+.certificate h1{
+
+font-size:36px;
+
+font-weight:700;
+
+margin:20px 0;
+
+color:#1f2937;
+
+}
+
+.certificate h2{
+
+color:#2563eb;
+
+font-weight:bold;
+
+margin:20px 0;
+
+}
+
+.certificate h3{
+
+color:#16a34a;
+
+margin-bottom:20px;
+
+}
+
+.progress{
+
+height:18px;
+
+border-radius:20px;
+
+}
+
+.progress-bar{
+
+font-weight:bold;
+
+}
+
+@media(max-width:768px){
+
+.certificate-border{
+
+padding:20px;
+
+}
+
+.certificate h1{
+
+font-size:26px;
+
+}
+
+.certificate h2{
+
+font-size:24px;
+
+}
+
+}
+
+</style>
+<!-- ========================================== -->
+<!-- PART 3C-2 : Certificate Functions -->
+<!-- ========================================== -->
+
+<!-- Certificate Preview Modal -->
+
+<div class="modal fade"
+     id="certificateModal"
+     tabindex="-1">
+
+    <div class="modal-dialog modal-xl">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h4>
+
+                    🎓 Certificate Preview
+
+                </h4>
+
+                <button
+                    class="btn-close"
+                    data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+            <div class="modal-body">
+
+                <div id="certificateArea">
+
+                    {{ course.course_title }}
+
+                    <hr>
+
+                    <h2>
+
+                        {{ current_user.name if current_user else "Student" }}
+
+                    </h2>
+
+                    <p>
+
+                        Successfully Completed the Course
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<style>
+
+#certificateArea{
+
+background:#fffdf5;
+
+padding:50px;
+
+text-align:center;
+
+border:8px solid gold;
+
+border-radius:15px;
+
+font-family:Georgia,serif;
+
+}
+
+.confetti{
+
+position:fixed;
+
+width:12px;
+
+height:12px;
+
+border-radius:50%;
+
+pointer-events:none;
+
+animation:fall 4s linear forwards;
+
+z-index:9999;
+
+}
+
+@keyframes fall{
+
+0%{
+
+transform:translateY(-50px) rotate(0deg);
+
+opacity:1;
+
+}
+
+100%{
+
+transform:translateY(110vh) rotate(720deg);
+
+opacity:0;
+
+}
+
+}
+
+</style>
+
+<script>
+
+// Preview
+
+document
+.getElementById("previewCertificate")
+.addEventListener("click",()=>{
+
+new bootstrap.Modal(
+
+document.getElementById("certificateModal")
+
+).show();
+
+});
+
+// Download
+
+document
+.getElementById("downloadCertificate")
+.addEventListener("click",()=>{
+
+window.print();
+
+});
+
+// Complete Course
+
+document
+.getElementById("completeCourseBtn")
+.addEventListener("click",()=>{
+
+document.getElementById("courseProgress").style.width="100%";
+
+document.getElementById("courseProgress").innerHTML="100%";
+
+launchConfetti();
+
+alert("🎉 Congratulations! Course Completed.");
+
+});
+
+// Confetti
+
+function launchConfetti(){
+
+const colors=[
+"#2563eb",
+"#22c55e",
+"#f59e0b",
+"#ef4444",
+"#8b5cf6",
+"#06b6d4"
+];
+
+for(let i=0;i<150;i++){
+
+let piece=document.createElement("div");
+
+piece.className="confetti";
+
+piece.style.left=Math.random()*100+"vw";
+
+piece.style.background=
+
+colors[Math.floor(Math.random()*colors.length)];
+
+piece.style.animationDelay=Math.random()*2+"s";
+
+piece.style.transform=
+
+"translateY(-50px) rotate("+Math.random()*360+"deg)";
+
+document.body.appendChild(piece);
+
+setTimeout(()=>{
+
+piece.remove();
+
+},4500);
+
+}
+
+}
+
+</script>
+<!-- ====================================================== -->
+<!-- PART 4A : Dark Mode + Theme Switch + Loading Screen -->
+<!-- ====================================================== -->
+
+<!-- ========================= -->
+<!-- Loading Screen -->
+<!-- ========================= -->
+
+<div id="loader">
+
+    <div class="loader-content">
+
+        <div class="loader-circle"></div>
+
+        <h3 class="mt-4">
+
+            Loading Course...
+
+        </h3>
+
+        <p>
+
+            Please wait while we prepare your learning dashboard.
+
+        </p>
+
+    </div>
+
+</div>
+
+<!-- ========================= -->
+<!-- Theme Toggle -->
+<!-- ========================= -->
+
+<button
+    id="themeToggle"
+    class="theme-btn">
+
+    🌙
+
+</button>
+
+<!-- ========================= -->
+<!-- CSS -->
+<!-- ========================= -->
+
+<style>
+
+:root{
+
+--bg:#f4f7fb;
+
+--card:#ffffff;
+
+--text:#1f2937;
+
+--primary:#2563eb;
+
+--secondary:#64748b;
+
+}
+
+body{
+
+background:var(--bg);
+
+color:var(--text);
+
+transition:.35s;
+
+}
+
+.dark-mode{
+
+--bg:#0f172a;
+
+--card:#1e293b;
+
+--text:#f8fafc;
+
+--primary:#3b82f6;
+
+--secondary:#cbd5e1;
+
+}
+
+.course-card,
+.lesson-card,
+.analytics-card,
+.study-card,
+.timer-card,
+.session-card,
+.goal-card,
+.activity-card,
+.skills-card,
+.calendar-card,
+.goal-panel,
+.practice-card,
+.quiz-box,
+.resource-card,
+.completion-card,
+.certificate-card{
+
+background:var(--card);
+
+color:var(--text);
+
+transition:.35s;
+
+}
+
+.theme-btn{
+
+position:fixed;
+
+right:30px;
+
+bottom:30px;
+
+width:60px;
+
+height:60px;
+
+border:none;
+
+border-radius:50%;
+
+background:var(--primary);
+
+color:white;
+
+font-size:24px;
+
+cursor:pointer;
+
+box-shadow:0 10px 25px rgba(0,0,0,.2);
+
+z-index:9999;
+
+transition:.3s;
+
+}
+
+.theme-btn:hover{
+
+transform:scale(1.1);
+
+}
+
+/* Loader */
+
+#loader{
+
+position:fixed;
+
+top:0;
+
+left:0;
+
+width:100%;
+
+height:100%;
+
+background:white;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+z-index:99999;
+
+transition:.5s;
+
+}
+
+.loader-content{
+
+text-align:center;
+
+}
+
+.loader-circle{
+
+width:80px;
+
+height:80px;
+
+border:8px solid #ddd;
+
+border-top:8px solid #2563eb;
+
+border-radius:50%;
+
+animation:spin 1s linear infinite;
+
+margin:auto;
+
+}
+
+@keyframes spin{
+
+100%{
+
+transform:rotate(360deg);
+
+}
+
+}
+
+.dark-mode #loader{
+
+background:#0f172a;
+
+color:white;
+
+}
+
+.dark-mode .lesson-sidebar{
+
+background:#1e293b;
+
+color:white;
+
+}
+
+.dark-mode .lesson-item{
+
+color:white;
+
+}
+
+.dark-mode .lesson-item:hover{
+
+background:#334155;
+
+}
+
+.dark-mode .nav-tabs .nav-link{
+
+color:white;
+
+}
+
+.dark-mode .progress{
+
+background:#334155;
+
+}
+
+.dark-mode input,
+
+.dark-mode textarea,
+
+.dark-mode select{
+
+background:#1e293b;
+
+color:white;
+
+border:1px solid #475569;
+
+}
+
+.dark-mode table{
+
+color:white;
+
+}
+
+.dark-mode .modal-content{
+
+background:#1e293b;
+
+color:white;
+
+}
+
+.dark-mode pre{
+
+background:#020617;
+
+color:#f8fafc;
+
+}
+
+.dark-mode .certificate{
+
+background:#faf6ea;
+
+color:#111827;
+
+}
+
+</style>
+
+<!-- ========================= -->
+<!-- JavaScript -->
+<!-- ========================= -->
+
+<script>
+
+/* Loader */
+
+window.addEventListener("load",()=>{
+
+setTimeout(()=>{
+
+document.getElementById("loader").style.opacity="0";
+
+document.getElementById("loader").style.visibility="hidden";
+
+},900);
+
+});
+
+/* Theme */
+
+const themeBtn=document.getElementById("themeToggle");
+
+const body=document.body;
+
+/* Restore */
+
+if(localStorage.getItem("theme")=="dark"){
+
+body.classList.add("dark-mode");
+
+themeBtn.innerHTML="☀";
+
+}
+
+themeBtn.onclick=()=>{
+
+body.classList.toggle("dark-mode");
+
+if(body.classList.contains("dark-mode")){
+
+themeBtn.innerHTML="☀";
+
+localStorage.setItem("theme","dark");
+
+}else{
+
+themeBtn.innerHTML="🌙";
+
+localStorage.setItem("theme","light");
+
+}
+
+};
+
+</script>
+
+<!-- ===================================================== -->
+<!-- PART 4B : Scroll Animation + Toast + Back To Top -->
+<!-- ===================================================== -->
+
+<!-- ========================= -->
+<!-- Scroll To Top Button -->
+<!-- ========================= -->
+
+<button id="scrollTopBtn" class="scroll-top-btn">
+    ⬆
+</button>
+
+<!-- ========================= -->
+<!-- Toast Notification -->
+<!-- ========================= -->
+
+<div id="toastNotification" class="custom-toast">
+
+    <div class="toast-icon">
+        ✅
+    </div>
+
+    <div>
+
+        <strong id="toastTitle">
+            Success
+        </strong>
+
+        <br>
+
+        <span id="toastMessage">
+
+            Action Completed Successfully
+
+        </span>
+
+    </div>
+
+</div>
+
+<!-- ========================= -->
+<!-- Floating Help Button -->
+<!-- ========================= -->
+
+<button id="helpBtn" class="help-btn">
+
+    💬
+
+</button>
+
+<!-- ========================= -->
+<!-- CSS -->
+<!-- ========================= -->
+
+<style>
+
+.scroll-top-btn{
+
+position:fixed;
+
+right:30px;
+
+bottom:105px;
+
+width:58px;
+
+height:58px;
+
+border:none;
+
+border-radius:50%;
+
+background:#2563eb;
+
+color:white;
+
+font-size:22px;
+
+cursor:pointer;
+
+display:none;
+
+box-shadow:0 10px 25px rgba(0,0,0,.25);
+
+transition:.3s;
+
+z-index:999;
+
+}
+
+.scroll-top-btn:hover{
+
+transform:translateY(-5px);
+
+}
+
+.help-btn{
+
+position:fixed;
+
+left:30px;
+
+bottom:30px;
+
+width:60px;
+
+height:60px;
+
+border:none;
+
+border-radius:50%;
+
+background:#22c55e;
+
+color:white;
+
+font-size:24px;
+
+cursor:pointer;
+
+box-shadow:0 10px 25px rgba(0,0,0,.25);
+
+transition:.3s;
+
+z-index:999;
+
+}
+
+.help-btn:hover{
+
+transform:scale(1.08);
+
+}
+
+.custom-toast{
+
+position:fixed;
+
+top:30px;
+
+right:30px;
+
+display:flex;
+
+gap:15px;
+
+align-items:center;
+
+background:white;
+
+padding:18px 24px;
+
+border-radius:15px;
+
+box-shadow:0 10px 30px rgba(0,0,0,.18);
+
+opacity:0;
+
+visibility:hidden;
+
+transform:translateX(100px);
+
+transition:.35s;
+
+z-index:99999;
+
+}
+
+.custom-toast.show{
+
+opacity:1;
+
+visibility:visible;
+
+transform:translateX(0);
+
+}
+
+.toast-icon{
+
+font-size:30px;
+
+}
+
+.reveal{
+
+opacity:0;
+
+transform:translateY(60px);
+
+transition:all .7s ease;
+
+}
+
+.reveal.active{
+
+opacity:1;
+
+transform:translateY(0);
+
+}
+
+.dark-mode .custom-toast{
+
+background:#1e293b;
+
+color:white;
+
+}
+
+</style>
+
+<!-- ========================= -->
+<!-- JavaScript -->
+<!-- ========================= -->
+
+<script>
+
+/* Scroll Reveal */
+
+const reveals=document.querySelectorAll(
+
+".course-card,.lesson-card,.analytics-card,.practice-card,.quiz-box,.resource-card,.completion-card,.calendar-card,.study-card,.timer-card,.session-card,.goal-card,.skills-card"
+
+);
+
+reveals.forEach(el=>el.classList.add("reveal"));
+
+window.addEventListener("scroll",()=>{
+
+reveals.forEach(el=>{
+
+const top=el.getBoundingClientRect().top;
+
+if(top<window.innerHeight-100){
+
+el.classList.add("active");
+
+}
+
+});
+
+});
+
+/* Scroll Button */
+
+const scrollBtn=document.getElementById("scrollTopBtn");
+
+window.addEventListener("scroll",()=>{
+
+if(window.scrollY>300){
+
+scrollBtn.style.display="block";
+
+}else{
+
+scrollBtn.style.display="none";
+
+}
+
+});
+
+scrollBtn.onclick=()=>{
+
+window.scrollTo({
+
+top:0,
+
+behavior:"smooth"
+
+});
+
+};
+
+/* Toast */
+
+function showToast(title,msg){
+
+const toast=document.getElementById("toastNotification");
+
+document.getElementById("toastTitle").innerHTML=title;
+
+document.getElementById("toastMessage").innerHTML=msg;
+
+toast.classList.add("show");
+
+setTimeout(()=>{
+
+toast.classList.remove("show");
+
+},3000);
+
+}
+
+/* Help Button */
+
+document.getElementById("helpBtn").onclick=()=>{
+
+showToast(
+
+"Learning Assistant",
+
+"Need help? Contact your instructor."
+
+);
+
+};
+
+/* Examples */
+
+document.addEventListener("DOMContentLoaded",()=>{
+
+setTimeout(()=>{
+
+showToast(
+
+"Welcome",
+
+"Happy Learning 🚀"
+
+);
+
+},1200);
+
+});
+
+/* Smooth Anchor Scroll */
+
+document.querySelectorAll('a[href^="#"]').forEach(anchor=>{
+
+anchor.addEventListener("click",function(e){
+
+e.preventDefault();
+
+const target=document.querySelector(this.getAttribute("href"));
+
+if(target){
+
+target.scrollIntoView({
+
+behavior:"smooth"
+
+});
+
+}
+
+});
+
+});
+
+</script>
+<!-- ========================================================= -->
+<!-- PART 4C : Final Premium Features -->
+<!-- ========================================================= -->
+
+<style>
+
+/* ---------- Glass Effect ---------- */
+
+.glass{
+
+background:rgba(255,255,255,.12);
+
+backdrop-filter:blur(14px);
+
+-webkit-backdrop-filter:blur(14px);
+
+border:1px solid rgba(255,255,255,.25);
+
+border-radius:18px;
+
+}
+
+/* ---------- Floating Animation ---------- */
+
+.float{
+
+animation:floating 3s ease-in-out infinite;
+
+}
+
+@keyframes floating{
+
+0%,100%{
+
+transform:translateY(0);
+
+}
+
+50%{
+
+transform:translateY(-10px);
+
+}
+
+}
+
+/* ---------- Gradient Text ---------- */
+
+.gradient-text{
+
+background:linear-gradient(90deg,#2563eb,#9333ea,#22c55e);
+
+-webkit-background-clip:text;
+
+-webkit-text-fill-color:transparent;
+
+font-weight:bold;
+
+}
+
+/* ---------- Mobile ---------- */
+
+@media(max-width:768px){
+
+.container-fluid{
+
+padding:12px;
+
+}
+
+.lesson-sidebar{
+
+margin-bottom:20px;
+
+}
+
+.course-header h2{
+
+font-size:24px;
+
+}
+
+.timer-circle{
+
+width:170px;
+
+height:170px;
+
+}
+
+.timer-circle h1{
+
+font-size:34px;
+
+}
+
+.analytics-card,
+.practice-card,
+.quiz-box,
+.resource-card{
+
+padding:20px;
+
+}
+
+}
+
+/* ---------- Print ---------- */
+
+@media print{
+
+nav,
+footer,
+.theme-btn,
+.help-btn,
+.scroll-top-btn,
+#loader{
+
+display:none!important;
+
+}
+
+body{
+
+background:white!important;
+
+}
+
+}
+
+</style>
+
+<script>
+
+/* ============================= */
+/* Auto Save Progress */
+/* ============================= */
+
+function autoSave(){
+
+const progress={
+
+lesson:"{{ lesson.id if lesson else 1 }}",
+
+time:new Date().toLocaleString(),
+
+course:"{{ course.course_name }}"
+
+};
+
+localStorage.setItem(
+
+"course_progress",
+
+JSON.stringify(progress)
+
+);
+
+}
+
+setInterval(autoSave,30000);
+
+/* ============================= */
+/* Restore Progress */
+/* ============================= */
+
+window.addEventListener("load",()=>{
+
+const saved=localStorage.getItem("course_progress");
+
+if(saved){
+
+console.log(
+
+"Progress Restored",
+
+JSON.parse(saved)
+
+);
+
+}
+
+});
+
+/* ============================= */
+/* Keyboard Shortcuts */
+/* ============================= */
+
+document.addEventListener("keydown",(e)=>{
+
+if(e.ctrlKey && e.key==="k"){
+
+e.preventDefault();
+
+document.getElementById("notesSearch")?.focus();
+
+}
+
+if(e.ctrlKey && e.key==="/"){
+
+e.preventDefault();
+
+document.getElementById("themeToggle")?.click();
+
+}
+
+});
+
+/* ============================= */
+/* Welcome Message */
+/* ============================= */
+
+window.addEventListener("load",()=>{
+
+setTimeout(()=>{
+
+if(typeof showToast==="function"){
+
+showToast(
+
+"Welcome",
+
+"Continue learning 🚀"
+
+);
+
+}
+
+},800);
+
+});
+
+/* ============================= */
+/* Lesson Complete */
+/* ============================= */
+
+const completeBtn=document.getElementById("completeCourseBtn");
+
+if(completeBtn){
+
+completeBtn.addEventListener("click",()=>{
+
+if(typeof showToast==="function"){
+
+showToast(
+
+"Congratulations!",
+
+"You completed this course 🎉"
+
+);
+
+}
+
+});
+
+}
+
+/* ============================= */
+/* Page Visibility */
+/* ============================= */
+
+document.addEventListener(
+
+"visibilitychange",
+
+()=>{
+
+if(document.hidden){
+
+console.log("Paused");
+
+}else{
+
+console.log("Back to Learning");
+
+}
+
+}
+
+);
+
+/* ============================= */
+/* Reading Progress */
+/* ============================= */
+
+window.addEventListener("scroll",()=>{
+
+const docHeight=
+
+document.documentElement.scrollHeight-
+
+window.innerHeight;
+
+const percent=
+
+(window.scrollY/docHeight)*100;
+
+document.documentElement.style.setProperty(
+
+"--reading-progress",
+
+percent+"%"
+
+);
+
+});
+
+</script>
+
+<!-- Reading Progress Bar -->
+
+<div id="readingProgress"></div>
+
+<style>
+
+#readingProgress{
+
+position:fixed;
+
+top:0;
+
+left:0;
+
+height:4px;
+
+width:var(--reading-progress);
+
+background:linear-gradient(
+
+90deg,
+
+#2563eb,
+
+#22c55e,
+
+#9333ea
+
+);
+
+z-index:99999;
+
+transition:.15s;
+
+}
+
+</style>
+
+{% endblock %}
