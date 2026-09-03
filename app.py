@@ -353,32 +353,32 @@ def dashboard():
 
     try:
 
-        # ---------------- USER ----------------
+        # ================= USER =================
 
         cursor.execute("""
-            SELECT name
+            SELECT *
             FROM users
             WHERE id=%s
         """, (user_id,))
         user = cursor.fetchone()
 
-        # ---------------- MOCK TESTS ----------------
+        # ================= MOCK TEST =================
 
         cursor.execute("""
             SELECT
                 COUNT(*) AS total_tests,
-                IFNULL(ROUND(AVG(percentage),2),0) AS avg_score,
-                IFNULL(MAX(score),0) AS best_score
+                IFNULL(AVG(percentage),0) AS avg_score,
+                IFNULL(MAX(percentage),0) AS best_score
             FROM results
             WHERE user_id=%s
         """, (user_id,))
         stats = cursor.fetchone()
 
-        # ---------------- RECENT TESTS ----------------
+        # ================= RECENT TESTS =================
 
         cursor.execute("""
             SELECT
-                category,
+                subject,
                 score,
                 total_questions,
                 percentage,
@@ -390,93 +390,74 @@ def dashboard():
         """, (user_id,))
         recent_tests = cursor.fetchall()
 
-        # ---------------- COURSES ----------------
+        # ================= COMMUNICATION =================
 
         cursor.execute("""
-            SELECT COUNT(*) AS completed
-            FROM user_courses
-            WHERE user_id=%s
-            AND completed=1
-        """, (user_id,))
-        completed_courses = cursor.fetchone()["completed"]
-
-        # ---------------- STUDY HOURS ----------------
-
-        cursor.execute("""
-            SELECT IFNULL(SUM(hours),0) AS hours
-            FROM study_sessions
+            SELECT *
+            FROM communication_progress
             WHERE user_id=%s
         """, (user_id,))
-        study_hours = cursor.fetchone()["hours"]
+        communication = cursor.fetchone()
 
-        # ---------------- ATS SCORE ----------------
+        # ================= COURSE =================
 
         cursor.execute("""
-            SELECT IFNULL(MAX(score),0) AS ats
-            FROM resume_scores
+            SELECT *
+            FROM course_progress
             WHERE user_id=%s
         """, (user_id,))
-        ats_score = cursor.fetchone()["ats"]
+        course = cursor.fetchone()
 
-        # ---------------- COMPANIES ----------------
+        # ================= INTERVIEW =================
 
         cursor.execute("""
-            SELECT COUNT(*) AS total
+            SELECT *
+            FROM interview_progress
+            WHERE user_id=%s
+        """, (user_id,))
+        interview = cursor.fetchone()
+
+        # ================= RESUME =================
+
+        cursor.execute("""
+            SELECT *
+            FROM resume
+            WHERE user_id=%s
+        """, (user_id,))
+        resume = cursor.fetchone()
+
+        # ================= DAILY GOAL =================
+
+        cursor.execute("""
+            SELECT *
+            FROM daily_goals
+            WHERE user_id=%s
+        """, (user_id,))
+        goals = cursor.fetchall()
+
+        # ================= COMPANY TRACKER =================
+
+        cursor.execute("""
+            SELECT *
             FROM companies
+            ORDER BY company_name
         """)
-        companies = cursor.fetchone()["total"]
+        companies = cursor.fetchall()
 
-        # ---------------- LEADERBOARD ----------------
+        # ================= LEADERBOARD =================
 
         cursor.execute("""
             SELECT
                 u.name,
-                ROUND(MAX(r.percentage),2) AS score
+                ROUND(AVG(r.percentage),2) AS score
             FROM users u
             JOIN results r
-                ON u.id=r.user_id
+            ON u.id=r.user_id
             GROUP BY u.id
             ORDER BY score DESC
             LIMIT 10
         """)
         leaderboard = cursor.fetchall()
-
-        # ---------------- USER RANK ----------------
-
-        rank = 1
-
-        for row in leaderboard:
-
-            if row["name"] == user["name"]:
-                break
-
-            rank += 1
-
-        # ---------------- SUBJECT PROGRESS ----------------
-
-        cursor.execute("""
-            SELECT
-                category,
-                ROUND(AVG(percentage),2) AS percentage
-            FROM results
-            WHERE user_id=%s
-            GROUP BY category
-        """, (user_id,))
-        progress = cursor.fetchall()
-
-        # ---------------- WEEKLY CHART ----------------
-
-        cursor.execute("""
-            SELECT
-                DATE(test_date) AS day,
-                ROUND(AVG(percentage),2) AS score
-            FROM results
-            WHERE user_id=%s
-            GROUP BY DATE(test_date)
-            ORDER BY day DESC
-            LIMIT 7
-        """, (user_id,))
-        weekly = cursor.fetchall()
 
         return render_template(
             "dashboard.html",
@@ -484,28 +465,34 @@ def dashboard():
             user=user,
 
             total_tests=stats["total_tests"],
-            avg_score=stats["avg_score"],
+            avg_score=round(stats["avg_score"],2),
             best_score=stats["best_score"],
 
-            completed_courses=completed_courses,
-            study_hours=study_hours,
-            ats_score=ats_score,
-
-            companies=companies,
-            rank=rank,
-
-            leaderboard=leaderboard,
             recent_tests=recent_tests,
 
-            progress=progress,
-            weekly=weekly
+            communication=communication,
+
+            course=course,
+
+            interview=interview,
+
+            resume=resume,
+
+            goals=goals,
+
+            companies=companies,
+
+            leaderboard=leaderboard
         )
 
-    finally:
+    except Exception as e:
+        app.logger.exception(e)
+        flash("Dashboard loading failed.")
+        return redirect(url_for("home"))
 
+    finally:
         cursor.close()
         conn.close()
-
 
 @app.route("/mock_categories")
 def mock_categories():
