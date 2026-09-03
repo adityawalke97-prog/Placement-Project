@@ -570,63 +570,33 @@
         <h3>
 
             🎯 Today's Goals
-
         </h3>
-
     </div>
 
     {% for goal in goals %}
-
     <div class="goal-item">
-
         <div class="goal-title">
-
             <span>
-
                 {{ goal.goal_name }}
-
             </span>
-
             <span>
-
                 {{ goal.progress }}%
-
             </span>
-
         </div>
-
         <progress
-
             value="{{ goal.progress }}"
-
             max="100">
-
         </progress>
-
     </div>
-
     {% endfor %}
-
 </section>
-
-
-
 <!-- ================= FLOATING AI ================= -->
-
 <div class="floating-ai">
-
     <a href="{{ url_for('ai_communication') }}">
-
         <i class="fas fa-robot"></i>
-
     </a>
-
 </div>
-
 {% endblock %}
-
-
-
 {% block js %}
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
