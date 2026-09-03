@@ -742,28 +742,32 @@ def submit_mock_test():
                 2
             )
 
-        
-        cursor.execute("""
-            INSERT INTO results
-            (
-                user_id,
-                score,
-                total_questions,
-                percentage
-            )
-            VALUES
-            (
-                %s,
-                %s,
-                %s,
-                %s
-            )
-        """, (
-            user_id,
-            score,
-            total_questions,
-            percentage
-        ))
+        category = session.get("mock_category", "General")
+
+cursor.execute("""
+INSERT INTO results
+(
+    user_id,
+    score,
+    total_questions,
+    percentage,
+    category
+)
+VALUES
+(
+    %s,
+    %s,
+    %s,
+    %s,
+    %s
+)
+""", (
+    user_id,
+    score,
+    total_questions,
+    percentage,
+    category
+))
 
         conn.commit()
 
