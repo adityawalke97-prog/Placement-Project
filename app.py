@@ -5820,7 +5820,100 @@ def get_pagination(
 # =========================================================
 # TEMPLATE GLOBAL VARIABLES
 # =========================================================
+from flask import request, jsonify, session
 
+# ===========================
+# Save Course Progress
+# ===========================
+from flask import request, jsonify, session
+@app.route("/api/course/progress", methods=["POST"])
+def save_course_progress():
+
+    if "user_id" not in session:
+        return jsonify({"error": "Login required"}), 401
+
+    data = request.get_json()
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        UPDATE course_progress
+        SET lesson=%s,
+            progress=%s,
+            xp=%s,
+            level=%s,
+            streak=%s
+        WHERE user_id=%s
+    """, (
+        data.get("lesson", 0),
+        data.get("progress", 0),
+        data.get("xp", 0),
+        data.get("level", 1),
+        data.get("streak", 0),
+        session["user_id"]
+    ))
+
+    conn.commit()
+
+    cursor.close()
+    conn.close()
+
+    return jsonify({
+        "success": True
+    })
+@app.route("/api/course/progress", methods=["GET"])
+def get_course_progress():
+
+    if "user_id" not in session:
+        return jsonify({"error": "Login required"}), 401
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT lesson, progress, xp, level, streak
+        FROM course_progress
+        WHERE user_id=%s
+    """, (session["user_id"],))
+
+    row = cursor.fetchone()
+
+    cursor.close()
+    conn.close()
+
+    if row:
+        return jsonify({
+            "lesson": row["lesson"],
+            "progress": row["progress"],
+            "xp": row["xp"],
+            "level": row["level"],
+            "streak": row["streak"]
+        })
+
+    return jsonify({
+        "lesson": 0,
+        "progress": 0,
+        "xp": 0,
+        "level": 1,
+        "streak": 0
+    })
+
+# ===========================
+# Load Course Progress
+# ===========================
+@app.route("/api/course/progress", methods=["GET"])
+def load_course_progress():
+
+    progress = session.get("course_progress", {
+        "lesson": 0,
+        "progress": 0,
+        "xp": 0,
+        "level": 1,
+        "streak": 0
+    })
+
+    return jsonify(progress)
 @app.context_processor
 def inject_global_data():
 
