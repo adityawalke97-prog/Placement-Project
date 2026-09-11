@@ -43,12 +43,16 @@ app.wsgi_app = ProxyFix(
     x_proto=1,
     x_host=1
 )
+
 app.config.update(
     SECRET_KEY=SECRET_KEY,
+
     SESSION_COOKIE_SECURE=True,
     SESSION_COOKIE_HTTPONLY=True,
     SESSION_COOKIE_SAMESITE="Lax",
+
     PERMANENT_SESSION_LIFETIME=timedelta(days=7),
+
     PREFERRED_URL_SCHEME="https"
 )
 
@@ -86,13 +90,20 @@ def login_required(f):
         return f(*args, **kwargs)
 
     return decorated_function
+from authlib.integrations.flask_client import OAuth
+
 oauth = OAuth(app)
 
 google = oauth.register(
     name="google",
+
     client_id=os.getenv("GOOGLE_CLIENT_ID"),
     client_secret=os.getenv("GOOGLE_CLIENT_SECRET"),
-    server_metadata_url="https://accounts.google.com/.well-known/openid-configuration",
+
+    server_metadata_url=(
+        "https://accounts.google.com/.well-known/openid-configuration"
+    ),
+
     client_kwargs={
         "scope": "openid email profile"
     }
@@ -118,28 +129,42 @@ def google_login():
         _scheme="https"
     )
 
-    return google.authorize_redirect(redirect_uri)
-   
+    print("GOOGLE REDIRECT URI:", redirect_uri)
 
+    return google.authorize_redirect(
+        redirect_uri
+    )
 @app.route("/login/google/callback")
 def google_callback():
 
+    conn = None
+    cur = None
+
     try:
+        print("===== GOOGLE CALLBACK STARTED =====")
 
         token = google.authorize_access_token()
+
+        print("GOOGLE TOKEN RECEIVED")
 
         userinfo = token.get("userinfo")
 
         if not userinfo:
-            userinfo = google.get(
+            response = google.get(
                 "https://openidconnect.googleapis.com/v1/userinfo"
-            ).json()
+            )
+            userinfo = response.json()
 
-        name = userinfo["name"]
-        email = userinfo["email"]
+        name = userinfo.get("name")
+        email = userinfo.get("email")
         picture = userinfo.get("picture")
-        google_id = userinfo["sub"]
+        google_id = userinfo.get("sub")
         verified = userinfo.get("email_verified", False)
+
+        print("GOOGLE USER:", email)
+
+        if not email or not google_id:
+            raise Exception("Google did not return email or Google ID")
 
         conn = get_db_connection()
         cur = conn.cursor()
@@ -168,12 +193,9 @@ def google_callback():
                 email
             ))
 
-            conn.commit()
+            user_id = user["id"]
 
-            session["user_id"] = user["id"]
-            session["name"] = user["name"]
-            session["email"] = user["email"]
-            session["profile_pic"] = picture
+            print("EXISTING USER LOGIN:", user_id)
 
         else:
 
@@ -204,24 +226,56 @@ def google_callback():
                 picture,
                 verified
             ))
-            conn.commit()
-            session["user_id"] = cur.lastrowid
-            session["name"] = name
-            session["email"] = email
-            session["profile_pic"] = picture
 
-        cur.close()
-        conn.close()
+            user_id = cur.lastrowid
+
+            print("NEW GOOGLE USER CREATED:", user_id)
+
+        conn.commit()
+
+        session.clear()
+        session.permanent = True
+
+        session["user_id"] = user_id
+        session["name"] = name
+        session["email"] = email
+        session["profile_pic"] = picture
+        session["login_provider"] = "google"
+
+        print("GOOGLE LOGIN SUCCESS")
+        print("REDIRECTING TO DASHBOARD")
 
         return redirect(url_for("dashboard"))
 
     except Exception as e:
 
-        print("GOOGLE LOGIN ERROR:", e)
+        print("================================")
+        print("GOOGLE LOGIN ERROR:", repr(e))
+        print("================================")
+
+        if conn:
+            try:
+                conn.rollback()
+            except Exception:
+                pass
 
         flash("Google Login Failed", "danger")
 
         return redirect(url_for("login"))
+
+    finally:
+
+        if cur:
+            try:
+                cur.close()
+            except Exception:
+                pass
+
+        if conn:
+            try:
+                conn.close()
+            except Exception:
+                pass
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
     if request.method == "POST":
