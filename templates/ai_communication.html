@@ -1,0 +1,840 @@
+{% extends "layout.html" %}
+
+{% block title %}AI Communication{% endblock %}
+
+{% block content %}
+
+<style>
+
+    .ai-page {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 35px 20px 50px;
+    }
+
+    /* ================= HEADER ================= */
+
+    .ai-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 25px;
+    }
+
+    .ai-title {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .ai-icon {
+        width: 58px;
+        height: 58px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 16px;
+
+        background: linear-gradient(
+                135deg,
+                #4f46e5,
+                #7c3aed
+        );
+
+        color: white;
+        font-size: 28px;
+
+        box-shadow: 0 8px 22px rgba(79, 70, 229, 0.25);
+    }
+
+    .ai-title h1 {
+        margin: 0;
+        color: #111827;
+        font-size: 30px;
+        font-weight: 800;
+    }
+
+    .ai-title p {
+        margin: 5px 0 0;
+        color: #6b7280;
+        font-size: 14px;
+    }
+
+    .dashboard-btn {
+        padding: 11px 18px;
+        border-radius: 10px;
+
+        background: white;
+        color: #374151 !important;
+
+        border: 1px solid #d1d5db;
+
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .dashboard-btn:hover {
+        background: #f3f4f6;
+    }
+
+
+    /* ================= CHAT CARD ================= */
+
+    .chat-card {
+        background: #ffffff;
+
+        border: 1px solid #e5e7eb;
+
+        border-radius: 20px;
+
+        overflow: hidden;
+
+        box-shadow:
+                0 12px 35px rgba(15, 23, 42, 0.08);
+    }
+
+
+    /* ================= CHAT HEADER ================= */
+
+    .chat-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        padding: 18px 22px;
+
+        border-bottom: 1px solid #e5e7eb;
+
+        background: #fafafa;
+    }
+
+    .assistant-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .assistant-avatar {
+        width: 42px;
+        height: 42px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 50%;
+
+        background: #eef2ff;
+
+        font-size: 21px;
+    }
+
+    .assistant-name {
+        font-weight: 750;
+        color: #111827;
+    }
+
+    .assistant-status {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+
+        margin-top: 2px;
+
+        color: #16a34a;
+        font-size: 12px;
+    }
+
+    .online-dot {
+        width: 7px;
+        height: 7px;
+
+        border-radius: 50%;
+
+        background: #22c55e;
+    }
+
+
+    /* ================= CHAT BODY ================= */
+
+    .chat-body {
+        height: 520px;
+
+        padding: 25px;
+
+        overflow-y: auto;
+
+        background: #f8fafc;
+    }
+
+    .message {
+        display: flex;
+
+        margin-bottom: 18px;
+    }
+
+    .message.user {
+        justify-content: flex-end;
+    }
+
+    .message.ai {
+        justify-content: flex-start;
+    }
+
+    .message-bubble {
+        max-width: 75%;
+
+        padding: 13px 16px;
+
+        border-radius: 16px;
+
+        line-height: 1.55;
+
+        font-size: 14px;
+
+        white-space: pre-wrap;
+
+        word-wrap: break-word;
+    }
+
+    .message.ai .message-bubble {
+        background: white;
+
+        color: #1f2937;
+
+        border: 1px solid #e5e7eb;
+
+        border-bottom-left-radius: 5px;
+
+        box-shadow: 0 3px 10px rgba(15, 23, 42, 0.04);
+    }
+
+    .message.user .message-bubble {
+        background: #4f46e5;
+
+        color: white;
+
+        border-bottom-right-radius: 5px;
+
+        box-shadow: 0 5px 15px rgba(79, 70, 229, 0.18);
+    }
+
+
+    /* ================= QUICK QUESTIONS ================= */
+
+    .quick-section {
+        padding: 15px 20px;
+
+        border-top: 1px solid #e5e7eb;
+
+        background: white;
+    }
+
+    .quick-title {
+        margin-bottom: 10px;
+
+        color: #6b7280;
+
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .quick-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .quick-btn {
+        padding: 8px 12px;
+
+        border-radius: 20px;
+
+        border: 1px solid #dbeafe;
+
+        background: #f8faff;
+
+        color: #4338ca;
+
+        font-size: 12px;
+
+        cursor: pointer;
+
+        transition: 0.2s;
+    }
+
+    .quick-btn:hover {
+        background: #eef2ff;
+        border-color: #c7d2fe;
+    }
+
+
+    /* ================= INPUT ================= */
+
+    .chat-input-area {
+        display: flex;
+        align-items: flex-end;
+        gap: 10px;
+
+        padding: 16px;
+
+        border-top: 1px solid #e5e7eb;
+
+        background: white;
+    }
+
+    #messageInput {
+        flex: 1;
+
+        min-height: 48px;
+        max-height: 130px;
+
+        resize: none;
+
+        padding: 13px 15px;
+
+        border: 1px solid #d1d5db;
+
+        border-radius: 13px;
+
+        outline: none;
+
+        font-family: inherit;
+        font-size: 14px;
+
+        color: #111827;
+
+        box-sizing: border-box;
+    }
+
+    #messageInput:focus {
+        border-color: #6366f1;
+
+        box-shadow:
+                0 0 0 3px rgba(99, 102, 241, 0.10);
+    }
+
+    #sendButton {
+        width: 50px;
+        height: 48px;
+
+        border: none;
+
+        border-radius: 13px;
+
+        background: #4f46e5;
+
+        color: white;
+
+        font-size: 19px;
+
+        cursor: pointer;
+
+        transition: 0.2s;
+    }
+
+    #sendButton:hover {
+        background: #4338ca;
+        transform: translateY(-1px);
+    }
+
+    #sendButton:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+
+    /* ================= TYPING ================= */
+
+    .typing {
+        display: none;
+
+        margin-bottom: 18px;
+    }
+
+    .typing-bubble {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+
+        padding: 13px 16px;
+
+        background: white;
+
+        border: 1px solid #e5e7eb;
+
+        border-radius: 16px;
+        border-bottom-left-radius: 5px;
+    }
+
+    .typing-dot {
+        width: 6px;
+        height: 6px;
+
+        border-radius: 50%;
+
+        background: #9ca3af;
+
+        animation: typingAnimation 1.2s infinite;
+    }
+
+    .typing-dot:nth-child(2) {
+        animation-delay: 0.15s;
+    }
+
+    .typing-dot:nth-child(3) {
+        animation-delay: 0.30s;
+    }
+
+    @keyframes typingAnimation {
+
+        0%, 60%, 100% {
+            transform: translateY(0);
+        }
+
+        30% {
+            transform: translateY(-4px);
+        }
+    }
+
+
+    /* ================= MOBILE ================= */
+
+    @media (max-width: 700px) {
+
+        .ai-page {
+            padding: 20px 12px 35px;
+        }
+
+        .ai-header {
+            align-items: flex-start;
+        }
+
+        .ai-title h1 {
+            font-size: 24px;
+        }
+
+        .dashboard-btn {
+            display: none;
+        }
+
+        .chat-body {
+            height: 55vh;
+            padding: 16px;
+        }
+
+        .message-bubble {
+            max-width: 88%;
+        }
+
+        .quick-buttons {
+            overflow-x: auto;
+            flex-wrap: nowrap;
+            padding-bottom: 3px;
+        }
+
+        .quick-btn {
+            white-space: nowrap;
+        }
+    }
+
+</style>
+
+
+<div class="ai-page">
+
+    <!-- ================= PAGE HEADER ================= -->
+
+    <div class="ai-header">
+
+        <div class="ai-title">
+
+            <div class="ai-icon">
+                🤖
+            </div>
+
+            <div>
+
+                <h1>AI Communication</h1>
+
+                <p>
+                    Practice communication and placement questions with your AI assistant.
+                </p>
+
+            </div>
+
+        </div>
+
+        <a href="/dashboard" class="dashboard-btn">
+            ← Dashboard
+        </a>
+
+    </div>
+
+
+    <!-- ================= CHAT ================= -->
+
+    <div class="chat-card">
+
+        <!-- Chat Header -->
+
+        <div class="chat-header">
+
+            <div class="assistant-info">
+
+                <div class="assistant-avatar">
+                    🤖
+                </div>
+
+                <div>
+
+                    <div class="assistant-name">
+                        Placement AI Assistant
+                    </div>
+
+                    <div class="assistant-status">
+
+                        <span class="online-dot"></span>
+
+                        Online
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Chat Messages -->
+
+        <div
+                class="chat-body"
+                id="chatBody"
+        >
+
+            <div class="message ai">
+
+                <div class="message-bubble">
+
+                    👋 Hi! I'm your AI Communication Assistant.
+
+                    Ask me anything about:
+
+                    • Interview preparation
+                    • English communication
+                    • Self-introduction
+                    • HR questions
+                    • Placement preparation
+                    • Resume and interview answers
+
+                    How can I help you today?
+
+                </div>
+
+            </div>
+
+
+            <!-- Typing Indicator -->
+
+            <div
+                    class="typing"
+                    id="typingIndicator"
+            >
+
+                <div class="typing-bubble">
+
+                    <span class="typing-dot"></span>
+                    <span class="typing-dot"></span>
+                    <span class="typing-dot"></span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ================= QUICK QUESTIONS ================= -->
+
+        <div class="quick-section">
+
+            <div class="quick-title">
+                Quick questions
+            </div>
+
+            <div class="quick-buttons">
+
+                <button
+                        type="button"
+                        class="quick-btn"
+                        data-question="Give me a good self introduction for a software developer interview."
+                >
+                    🎤 Self Introduction
+                </button>
+
+                <button
+                        type="button"
+                        class="quick-btn"
+                        data-question="How can I improve my English communication for placements?"
+                >
+                    🗣️ Improve English
+                </button>
+
+                <button
+                        type="button"
+                        class="quick-btn"
+                        data-question="Give me common HR interview questions with good answers."
+                >
+                    💼 HR Questions
+                </button>
+
+                <button
+                        type="button"
+                        class="quick-btn"
+                        data-question="Conduct a mock interview with me."
+                >
+                    🎯 Mock Interview
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- ================= INPUT ================= -->
+
+        <div class="chat-input-area">
+
+            <textarea
+                    id="messageInput"
+                    placeholder="Ask your AI communication assistant..."
+                    rows="1"
+            ></textarea>
+
+            <button
+                    type="button"
+                    id="sendButton"
+                    title="Send"
+            >
+                ➤
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    const chatBody = document.getElementById("chatBody");
+    const messageInput = document.getElementById("messageInput");
+    const sendButton = document.getElementById("sendButton");
+    const typingIndicator = document.getElementById("typingIndicator");
+
+    let conversationHistory = [];
+
+
+    /* ================= ADD MESSAGE ================= */
+
+    function addMessage(text, type) {
+
+        const message = document.createElement("div");
+
+        message.className = `message ${type}`;
+
+        const bubble = document.createElement("div");
+
+        bubble.className = "message-bubble";
+
+        bubble.textContent = text;
+
+        message.appendChild(bubble);
+
+        chatBody.insertBefore(
+            message,
+            typingIndicator
+        );
+
+        chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+
+    /* ================= SEND MESSAGE ================= */
+
+    async function sendMessage() {
+
+        const message = messageInput.value.trim();
+
+        if (!message) {
+            return;
+        }
+
+        addMessage(message, "user");
+
+        messageInput.value = "";
+
+        sendButton.disabled = true;
+
+        typingIndicator.style.display = "block";
+
+        chatBody.scrollTop = chatBody.scrollHeight;
+
+
+        try {
+
+            const response = await fetch(
+                "/api/ai/communication",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        message: message,
+                        history: conversationHistory
+                    })
+                }
+            );
+
+
+            const data = await response.json();
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    data.error || "Unable to get AI response."
+                );
+
+            }
+
+
+            const answer =
+                data.answer ||
+                data.response ||
+                data.message ||
+                "Sorry, I couldn't generate a response.";
+
+
+            addMessage(
+                answer,
+                "ai"
+            );
+
+
+            conversationHistory.push({
+                role: "user",
+                content: message
+            });
+
+            conversationHistory.push({
+                role: "assistant",
+                content: answer
+            });
+
+
+        } catch (error) {
+
+            console.error(error);
+
+            addMessage(
+                "⚠️ Sorry, something went wrong. Please try again.",
+                "ai"
+            );
+
+        } finally {
+
+            typingIndicator.style.display = "none";
+
+            sendButton.disabled = false;
+
+            messageInput.focus();
+
+            chatBody.scrollTop = chatBody.scrollHeight;
+
+        }
+
+    }
+
+
+    /* ================= SEND BUTTON ================= */
+
+    sendButton.addEventListener(
+        "click",
+        sendMessage
+    );
+
+
+    /* ================= ENTER KEY ================= */
+
+    messageInput.addEventListener(
+        "keydown",
+        function(event) {
+
+            if (
+                event.key === "Enter" &&
+                !event.shiftKey
+            ) {
+
+                event.preventDefault();
+
+                sendMessage();
+
+            }
+
+        }
+    );
+
+
+    /* ================= QUICK QUESTIONS ================= */
+
+    document.querySelectorAll(
+        ".quick-btn"
+    ).forEach(
+        function(button) {
+
+            button.addEventListener(
+                "click",
+                function() {
+
+                    messageInput.value =
+                        this.dataset.question;
+
+                    messageInput.focus();
+
+                }
+            );
+
+        }
+    );
+
+
+    /* ================= TEXTAREA AUTO RESIZE ================= */
+
+    messageInput.addEventListener(
+        "input",
+        function() {
+
+            this.style.height = "auto";
+
+            this.style.height =
+                Math.min(
+                    this.scrollHeight,
+                    130
+                ) + "px";
+
+        }
+    );
+
+</script>
+
+{% endblock %}

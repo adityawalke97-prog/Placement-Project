@@ -6435,6 +6435,193 @@ def results():
         if conn:
             conn.close()
 
+@app.route("/ai_communication")
+@login_required
+def ai_communication():
+    return render_template("ai_communication.html")
+
+@app.route("/api/ai/communication", methods=["POST"])
+@login_required
+def ai_communication_api():
+
+    try:
+
+        data = request.get_json(silent=True) or {}
+
+        message = (data.get("message") or "").strip()
+
+        history = data.get("history") or []
+
+        if not message:
+            return jsonify({
+                "error": "Please enter a question."
+            }), 400
+
+
+        api_key = os.getenv("OPENAI_API_KEY")
+
+        if not api_key:
+
+            return jsonify({
+                "error": "AI service is not configured on the server."
+            }), 500
+
+
+        model = os.getenv(
+            "OPENAI_MODEL",
+            "gpt-5.6-luna"
+        )
+
+
+        # Keep only recent conversation
+        history = history[-10:]
+
+
+        conversation = []
+
+        for item in history:
+
+            role = item.get("role")
+            content = item.get("content")
+
+            if role in ["user", "assistant"] and content:
+
+                conversation.append({
+                    "role": role,
+                    "content": content
+                })
+
+
+        conversation.append({
+            "role": "user",
+            "content": message
+        })
+
+
+        payload = {
+
+            "model": model,
+
+            "instructions": """
+You are the AI Communication Assistant inside a placement training portal.
+
+Your main purpose is to help students with:
+
+- English communication
+- Interview preparation
+- HR interview questions
+- Technical interview communication
+- Self introductions
+- Resume-related interview questions
+- Mock interviews
+- Professional speaking
+- Grammar and sentence improvement
+- Placement preparation
+
+Give practical, student-friendly answers.
+
+When the student asks for an interview answer,
+give a natural answer that a college student can actually speak.
+
+Do not make answers unnecessarily complicated.
+
+If the student writes incorrect English,
+you may politely provide a corrected version and explain it briefly.
+
+Be supportive, professional and concise.
+""",
+
+            "input": conversation
+        }
+
+
+        response = requests.post(
+
+            "https://api.openai.com/v1/responses",
+
+            headers={
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json"
+            },
+
+            json=payload,
+
+            timeout=60
+        )
+
+
+        if not response.ok:
+
+            print(
+                "OPENAI API ERROR:",
+                response.status_code,
+                response.text
+            )
+
+            return jsonify({
+                "error": "AI service temporarily unavailable."
+            }), 502
+
+
+        result = response.json()
+
+
+        answer = result.get(
+            "output_text",
+            ""
+        ).strip()
+
+
+        if not answer:
+
+            # Fallback parser
+            output = result.get("output", [])
+
+            texts = []
+
+            for item in output:
+
+                for content in item.get("content", []):
+
+                    if content.get("type") == "output_text":
+
+                        text = content.get("text")
+
+                        if text:
+                            texts.append(text)
+
+
+            answer = "\n".join(texts).strip()
+
+
+        if not answer:
+
+            answer = "Sorry, I couldn't generate an answer right now."
+
+
+        return jsonify({
+            "success": True,
+            "answer": answer
+        })
+
+
+    except requests.Timeout:
+
+        return jsonify({
+            "error": "AI service took too long to respond. Please try again."
+        }), 504
+
+
+    except Exception as e:
+
+        print(
+            "AI COMMUNICATION ERROR:",
+            str(e)
+        )
+
+        return jsonify({
+            "error": "Something went wrong while processing your question."
+        }), 500
 
 if __name__ == "__main__":
 
@@ -6448,6 +6635,8 @@ if __name__ == "__main__":
             5000
         )
     )
+
+
 
     host = os.getenv(
         "HOST",
