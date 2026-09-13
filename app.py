@@ -6110,13 +6110,14 @@ def course(course_name):
         conn = get_db_connection()
         cursor = conn.cursor(pymysql.cursors.DictCursor)
 
-        # -----------------------------
-        # Get Course Details
-        # -----------------------------
+        # =============================
+        # COURSE DETAILS
+        # =============================
+
         cursor.execute("""
             SELECT *
             FROM courses
-            WHERE course_name = %s
+            WHERE LOWER(course_name) = LOWER(%s)
             LIMIT 1
         """, (course_name,))
 
@@ -6126,9 +6127,10 @@ def course(course_name):
             flash("Course not found.", "danger")
             return redirect(url_for("courses"))
 
-        # -----------------------------
-        # Get Lessons
-        # -----------------------------
+        # =============================
+        # LESSONS
+        # =============================
+
         cursor.execute("""
             SELECT
                 id,
@@ -6138,20 +6140,22 @@ def course(course_name):
                 code_snippet,
                 practice_task
             FROM course_lessons
-            WHERE course_name = %s
-            ORDER BY day_number
+            WHERE LOWER(course_name) = LOWER(%s)
+            ORDER BY day_number ASC
         """, (course_name,))
 
         lessons = cursor.fetchall()
 
-        # -----------------------------
-        # User Progress
-        # -----------------------------
+        # =============================
+        # USER PROGRESS
+        # =============================
+
         cursor.execute("""
             SELECT completed_day
             FROM user_course_progress
             WHERE user_id = %s
-            AND course_name = %s
+            AND LOWER(course_name) = LOWER(%s)
+            ORDER BY completed_day ASC
         """, (
             session["user_id"],
             course_name
@@ -6162,9 +6166,23 @@ def course(course_name):
             for row in cursor.fetchall()
         ]
 
+        # =============================
+        # PROGRESS CALCULATION
+        # =============================
+
         total_days = len(lessons)
+
         progress = len(completed_days)
-        percentage = int((progress * 100) / total_days) if total_days else 0
+
+        percentage = (
+            int((progress * 100) / total_days)
+            if total_days > 0
+            else 0
+        )
+
+        # =============================
+        # COURSE DATA
+        # =============================
 
         course_data = {
             "name": course["course_title"],
@@ -6184,16 +6202,20 @@ def course(course_name):
         )
 
     except Exception as e:
+
         app.logger.exception(e)
+
         flash("Unable to load course.", "danger")
+
         return redirect(url_for("courses"))
 
     finally:
+
         if cursor:
             cursor.close()
+
         if conn:
             conn.close()
-            
 @app.route("/course/<course_name>/<int:day>")
 @login_required
 def course_day(course_name,day):

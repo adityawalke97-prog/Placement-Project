@@ -6,9 +6,452 @@
 
 {% block content %}
 
+<style>
+    * {
+        box-sizing: border-box;
+    }
+    .day-container {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 35px 20px 60px;
+    }
+    /* =========================
+       HERO HEADER
+    ========================= */
+    .lesson-header {
+        position: relative;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 30px;
+        padding: 42px;
+        margin-bottom: 28px;
+        border-radius: 26px;
+        overflow: hidden;
+        background:
+                linear-gradient(135deg, #111827 0%, #1e293b 55%, #312e81 100%);
+        color: white;
+        box-shadow: 0 18px 45px rgba(15, 23, 42, 0.18);
+    }
+
+    .lesson-header::before {
+        content: "";
+        position: absolute;
+        width: 260px;
+        height: 260px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.06);
+        right: 100px;
+        top: -130px;
+    }
+
+    .lesson-header::after {
+        content: "";
+        position: absolute;
+        width: 180px;
+        height: 180px;
+        border-radius: 50%;
+        background: rgba(99,102,241,0.12);
+        right: -60px;
+        bottom: -70px;
+    }
+
+    .lesson-header > div {
+        position: relative;
+        z-index: 2;
+    }
+
+    .badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 7px 14px;
+        border-radius: 999px;
+        background: rgba(255,255,255,0.12);
+        border: 1px solid rgba(255,255,255,0.15);
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        margin-bottom: 15px;
+    }
+
+    .lesson-header h1 {
+        margin: 0 0 12px;
+        font-size: clamp(28px, 4vw, 44px);
+        line-height: 1.15;
+        font-weight: 800;
+        letter-spacing: -1px;
+    }
+
+    .lesson-header p {
+        margin: 0;
+        max-width: 650px;
+        color: #cbd5e1;
+        font-size: 16px;
+        line-height: 1.7;
+    }
+
+    /* =========================
+       DAY CIRCLE
+    ========================= */
+
+    .progress-box {
+        min-width: 145px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .progress-circle {
+        width: 125px;
+        height: 125px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+
+        background: rgba(255,255,255,0.08);
+        border: 8px solid rgba(255,255,255,0.18);
+        box-shadow:
+                0 0 0 8px rgba(255,255,255,0.04),
+                0 15px 35px rgba(0,0,0,0.2);
+
+        color: white;
+        font-size: 38px;
+        font-weight: 800;
+    }
+
+    .progress-circle::after {
+        content: "DAY";
+        display: block;
+        font-size: 10px;
+        letter-spacing: 2px;
+        color: #cbd5e1;
+        margin-top: -4px;
+    }
+
+    /* =========================
+       CARDS
+    ========================= */
+
+    .card {
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 22px;
+        padding: 30px;
+        margin-bottom: 24px;
+        box-shadow: 0 8px 28px rgba(15,23,42,0.06);
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 14px 35px rgba(15,23,42,0.09);
+    }
+
+    .card h2 {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 0 0 22px;
+        font-size: 21px;
+        color: #111827;
+        font-weight: 800;
+    }
+
+    /* =========================
+       NOTES
+    ========================= */
+
+    .notes {
+        color: #374151;
+        font-size: 16px;
+        line-height: 1.85;
+    }
+
+    .notes h1,
+    .notes h2,
+    .notes h3,
+    .notes h4 {
+        color: #111827;
+        margin-top: 25px;
+        margin-bottom: 10px;
+    }
+
+    .notes p {
+        margin: 0 0 15px;
+    }
+
+    .notes ul,
+    .notes ol {
+        padding-left: 25px;
+        margin: 15px 0;
+    }
+
+    .notes li {
+        margin-bottom: 8px;
+    }
+
+    .notes strong {
+        color: #111827;
+    }
+
+    .notes code {
+        padding: 3px 7px;
+        border-radius: 6px;
+        background: #f1f5f9;
+        color: #4f46e5;
+        font-family: Consolas, monospace;
+    }
+
+    /* =========================
+       CODE BLOCK
+    ========================= */
+
+    pre {
+        position: relative;
+        margin: 0;
+        padding: 25px;
+        overflow-x: auto;
+        border-radius: 16px;
+        background: #0f172a;
+        border: 1px solid #1e293b;
+        box-shadow: inset 0 1px rgba(255,255,255,0.03);
+    }
+
+    pre::before {
+        content: "JAVA";
+        display: block;
+        color: #94a3b8;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 2px;
+        margin-bottom: 15px;
+    }
+
+    pre code {
+        color: #e2e8f0;
+        font-family: "Consolas", "Courier New", monospace;
+        font-size: 14px;
+        line-height: 1.75;
+        white-space: pre;
+    }
+
+    /* =========================
+       PRACTICE
+    ========================= */
+
+    .practice {
+        padding: 20px;
+        border-radius: 14px;
+        background: #f8fafc;
+        border-left: 4px solid #6366f1;
+        color: #374151;
+        line-height: 1.75;
+        font-size: 15px;
+    }
+
+    .practice p {
+        margin-top: 0;
+    }
+
+    .practice ul,
+    .practice ol {
+        padding-left: 22px;
+    }
+
+    /* =========================
+       NAVIGATION
+    ========================= */
+
+    .lesson-navigation {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        margin-top: 35px;
+        padding: 20px;
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 20px;
+        box-shadow: 0 8px 25px rgba(15,23,42,0.05);
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 48px;
+        padding: 0 22px;
+        border-radius: 12px;
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 700;
+        transition: all 0.2s ease;
+        font-family: inherit;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+    }
+
+    .btn-primary {
+        color: white;
+        background: #4f46e5;
+        box-shadow: 0 7px 18px rgba(79,70,229,0.25);
+    }
+    .btn-primary:hover {
+        background: #4338ca;
+    }
+    .btn-secondary {
+        color: #334155;
+        background: #f1f5f9;
+        border: 1px solid #e2e8f0;
+    }
+    .btn-secondary:hover {
+        background: #e2e8f0;
+    }
+    .btn-success {
+        color: white;
+        background: #059669;
+        box-shadow: 0 7px 18px rgba(5,150,105,0.22);
+    }
+    .btn-success:hover {
+        background: #047857;
+    }
+    /* =========================
+       MOBILE
+    ========================= */
+    @media (max-width: 768px) {
+        .day-container {
+            padding: 20px 14px 45px;
+        }
+        .lesson-header {
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 28px 23px;
+            border-radius: 20px;
+        }
+        .progress-box {
+            width: 100%;
+            justify-content: flex-start;
+        }
+        .progress-circle {
+            width: 90px;
+            height: 90px;
+            font-size: 27px;
+            border-width: 6px;
+        }
+        .lesson-header h1 {
+            font-size: 29px;
+        }
+        .lesson-header p {
+            font-size: 14px;
+        }
+        .card {
+            padding: 21px;
+            border-radius: 18px;
+        }
+        .card h2 {
+            font-size: 18px;
+        }
+        pre {
+            padding: 18px;
+            border-radius: 13px;
+        }
+
+        pre code {
+            font-size: 12px;
+        }
+
+        .lesson-navigation {
+            flex-direction: column;
+            padding: 15px;
+        }
+
+        .lesson-navigation .btn {
+            width: 100%;
+        }
+    }
+
+    @media (max-width: 420px) {
+
+        .lesson-header h1 {
+            font-size: 25px;
+        }
+
+        .card {
+            padding: 17px;
+        }
+
+        .notes {
+            font-size: 14px;
+        }
+
+        .practice {
+            font-size: 14px;
+            padding: 15px;
+        }
+    }
+
+    /* =========================
+       DARK MODE SUPPORT
+    ========================= */
+
+    @media (prefers-color-scheme: dark) {
+
+        .card,
+        .lesson-navigation {
+            background: #111827;
+            border-color: #1f2937;
+        }
+
+        .card h2 {
+            color: #f8fafc;
+        }
+
+        .notes {
+            color: #cbd5e1;
+        }
+
+        .notes h1,
+        .notes h2,
+        .notes h3,
+        .notes h4,
+        .notes strong {
+            color: #f8fafc;
+        }
+
+        .notes code {
+            background: #1e293b;
+        }
+
+        .practice {
+            background: #172033;
+            color: #cbd5e1;
+        }
+
+        .btn-secondary {
+            background: #1e293b;
+            color: #e2e8f0;
+            border-color: #334155;
+        }
+
+        .btn-secondary:hover {
+            background: #334155;
+        }
+    }
+</style>
+
+
 <div class="day-container">
 
-    <!-- Header -->
+    <!-- =========================
+         LESSON HEADER
+    ========================== -->
 
     <div class="lesson-header">
 
@@ -31,9 +474,7 @@
         <div class="progress-box">
 
             <div class="progress-circle">
-
                 {{ day }}
-
             </div>
 
         </div>
@@ -41,12 +482,14 @@
     </div>
 
 
-    <!-- Lesson Notes -->
+    <!-- =========================
+         NOTES
+    ========================== -->
 
     <div class="card">
 
         <h2>
-            📘 Notes
+            📘 Lesson Notes
         </h2>
 
         <div class="notes">
@@ -58,16 +501,16 @@
     </div>
 
 
-    <!-- Code -->
+    <!-- =========================
+         PROGRAM
+    ========================== -->
 
     {% if code_snippet %}
 
     <div class="card">
 
         <h2>
-
-            💻 Program
-
+            💻 Practice Program
         </h2>
 
         <pre><code>{{ code_snippet }}</code></pre>
@@ -77,16 +520,16 @@
     {% endif %}
 
 
-    <!-- Practice -->
+    <!-- =========================
+         PRACTICE TASK
+    ========================== -->
 
     {% if practice_task %}
 
     <div class="card">
 
         <h2>
-
-            📝 Practice Task
-
+            📝 Today's Practice Task
         </h2>
 
         <div class="practice">
@@ -100,42 +543,46 @@
     {% endif %}
 
 
-    <!-- Navigation -->
+    <!-- =========================
+         NAVIGATION
+    ========================== -->
 
     <div class="lesson-navigation">
 
         {% if day > 1 %}
 
         <a
-            class="btn btn-secondary"
-            href="{{ url_for('course_day',
-            course_name=course_name,
-            day=day-1) }}">
-
+                class="btn btn-secondary"
+                href="{{ url_for(
+                'course_day',
+                course_name=course_name,
+                day=day-1
+            ) }}"
+        >
             ← Previous Day
-
         </a>
 
         {% endif %}
 
 
         <button
-            class="btn btn-success"
-            onclick="completeLesson()">
-
+                type="button"
+                class="btn btn-success"
+                onclick="completeLesson()"
+        >
             ✅ Mark Complete
-
         </button>
 
 
         <a
-            class="btn btn-primary"
-            href="{{ url_for('course_day',
-            course_name=course_name,
-            day=day+1) }}">
-
+                class="btn btn-primary"
+                href="{{ url_for(
+                'course_day',
+                course_name=course_name,
+                day=day+1
+            ) }}"
+        >
             Next Day →
-
         </a>
 
     </div>
@@ -145,33 +592,65 @@
 
 <script>
 
-function completeLesson(){
+    async function completeLesson() {
 
-fetch("/complete_day/{{course_name}}/{{day}}",{
+        const button = document.querySelector(".btn-success");
 
-method:"POST"
+        if (!button) return;
 
-})
+        const originalText = button.innerHTML;
 
-.then(res=>res.json())
+        button.disabled = true;
+        button.innerHTML = "⏳ Saving...";
 
-.then(data=>{
+        try {
 
-if(data.success){
+            const response = await fetch(
+                "/complete_day/{{ course_name }}/{{ day }}",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-Requested-With": "XMLHttpRequest"
+                    }
+                }
+            );
 
-alert("Lesson Completed!");
+            const data = await response.json();
 
-location.reload();
+            if (data.success) {
 
-}else{
+                button.innerHTML = "✅ Completed";
 
-alert("Unable to save progress.");
+                button.style.opacity = "0.85";
 
-}
+                setTimeout(function () {
+                    location.reload();
+                }, 700);
 
-});
+            } else {
 
-}
+                alert(
+                    data.message ||
+                    "Unable to save progress."
+                );
+
+                button.disabled = false;
+                button.innerHTML = originalText;
+            }
+
+        } catch (error) {
+
+            console.error("Progress Error:", error);
+
+            alert(
+                "Something went wrong while saving your progress."
+            );
+
+            button.disabled = false;
+            button.innerHTML = originalText;
+        }
+    }
 
 </script>
 

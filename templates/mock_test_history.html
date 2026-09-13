@@ -274,41 +274,41 @@
         </table>
 
     </div>
-<div class="pagination">
-
-{% if page > 1 %}
-
-<a href="{{ url_for('mock_test_history',
+    <div class="pagination">
+    </div>
+    <div class="pagination">
+        {% if page|default(1) > 1 %}
+        <a href="{{ url_for('mock_test_history',
 page=page-1,
 search=search,
 subject=subject) }}">
 
-⬅ Previous
+            ⬅ Previous
 
-</a>
+        </a>
 
-{% endif %}
+        {% endif %}
 
-<span>
+        <span>
 
 Page {{ page }} of {{ total_pages }}
 
 </span>
 
-{% if page < total_pages %}
+        {% if page < total_pages %}
 
-<a href="{{ url_for('mock_test_history',
+        <a href="{{ url_for('mock_test_history',
 page=page+1,
 search=search,
 subject=subject) }}">
 
-Next ➡
+            Next ➡
 
-</a>
+        </a>
 
-{% endif %}
+        {% endif %}
 
-</div>
+    </div>
 </div>
 
 <script src="{{ url_for('static',
