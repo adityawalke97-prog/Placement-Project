@@ -957,22 +957,13 @@
 
                 <!-- CONTINUE -->
 
-                {% if lessons %}
-
                 {% set continue_day = lessons[0].day_number %}
-
                 {% for item in lessons %}
-
                 {% if item.day_number not in completed_days %}
-
                 {% set continue_day = item.day_number %}
-
                 {% break %}
-
                 {% endif %}
-
                 {% endfor %}
-
                 <div class="continue-section">
 
                     <div class="continue-text">
