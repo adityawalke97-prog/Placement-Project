@@ -8,7 +8,8 @@
 
 <div class="history-page">
 
-    <!-- Header -->
+    <!-- ================= HEADER ================= -->
+
     <div class="history-header">
 
         <div>
@@ -30,10 +31,12 @@
 
     </div>
 
-    <!-- Statistics Cards -->
+
+    <!-- ================= STATISTICS ================= -->
 
     <div class="stats-grid">
 
+        <!-- Total Tests -->
         <div class="stat-card">
 
             <div class="stat-icon">
@@ -41,15 +44,14 @@
             </div>
 
             <div>
-
-                <h2>{{ total_tests }}</h2>
-
+                <h2>{{ total_tests or 0 }}</h2>
                 <p>Total Tests</p>
-
             </div>
 
         </div>
 
+
+        <!-- Passed -->
         <div class="stat-card">
 
             <div class="stat-icon">
@@ -57,15 +59,14 @@
             </div>
 
             <div>
-
-                <h2>{{ passed_tests }}</h2>
-
+                <h2>{{ passed_tests or 0 }}</h2>
                 <p>Passed</p>
-
             </div>
 
         </div>
 
+
+        <!-- Failed -->
         <div class="stat-card">
 
             <div class="stat-icon">
@@ -73,15 +74,14 @@
             </div>
 
             <div>
-
-                <h2>{{ failed_tests }}</h2>
-
+                <h2>{{ failed_tests or 0 }}</h2>
                 <p>Failed</p>
-
             </div>
 
         </div>
 
+
+        <!-- Average -->
         <div class="stat-card">
 
             <div class="stat-icon">
@@ -89,15 +89,16 @@
             </div>
 
             <div>
-
-                <h2>{{ "%.1f"|format(avg_percentage or 0) }}%</h2>
-
+                <h2>
+                    {{ "%.1f"|format(avg_percentage or 0) }}%
+                </h2>
                 <p>Average Score</p>
-
             </div>
 
         </div>
 
+
+        <!-- Highest -->
         <div class="stat-card">
 
             <div class="stat-icon">
@@ -105,56 +106,75 @@
             </div>
 
             <div>
-
-                <h2>{{ highest_score }}</h2>
-
+                <h2>
+                    {{ highest_score or 0 }}
+                </h2>
                 <p>Highest Score</p>
-
             </div>
 
         </div>
 
     </div>
 
-    <!-- Search & Filter -->
+
+    <!-- ================= SEARCH & FILTER ================= -->
 
     <div class="toolbar">
 
         <div class="search-box">
 
             <input
-                type="text"
-                id="searchInput"
-                placeholder="🔍 Search Subject..."
+                    type="text"
+                    id="searchInput"
+                    placeholder="🔍 Search Subject..."
+                    value="{{ search|default('') }}"
             >
 
         </div>
+
 
         <div class="filter-box">
 
             <select id="sortSelect">
 
-                <option value="">Sort By</option>
+                <option value="">
+                    Sort By
+                </option>
 
-                <option value="latest">Latest</option>
+                <option value="latest">
+                    Latest
+                </option>
 
-                <option value="highest">Highest Score</option>
+                <option value="highest">
+                    Highest Score
+                </option>
 
-                <option value="lowest">Lowest Score</option>
+                <option value="lowest">
+                    Lowest Score
+                </option>
 
-                <option value="percentage">Percentage</option>
+                <option value="percentage">
+                    Percentage
+                </option>
 
             </select>
 
         </div>
 
+
         <div class="toolbar-buttons">
 
-            <button id="exportCSV">
+            <button
+                    type="button"
+                    id="exportCSV"
+            >
                 📥 Export CSV
             </button>
 
-            <button id="printHistory">
+            <button
+                    type="button"
+                    id="printHistory"
+            >
                 🖨 Print
             </button>
 
@@ -162,7 +182,8 @@
 
     </div>
 
-    <!-- History Table -->
+
+    <!-- ================= HISTORY TABLE ================= -->
 
     <div class="history-table-card">
 
@@ -170,102 +191,134 @@
 
             <thead>
 
-                <tr>
+            <tr>
 
-                    <th>#</th>
+                <th>#</th>
 
-                    <th>Subject</th>
+                <th>Subject</th>
 
-                    <th>Score</th>
+                <th>Score</th>
 
-                    <th>Percentage</th>
+                <th>Percentage</th>
 
-                    <th>Status</th>
+                <th>Status</th>
 
-                    <th>Date</th>
+                <th>Date</th>
 
-                    <th>Action</th>
+                <th>Action</th>
 
-                </tr>
+            </tr>
 
             </thead>
+
 
             <tbody>
 
             {% if history %}
 
-                {% for test in history %}
+            {% for test in history %}
 
-                <tr>
+            <tr>
 
-                    <td>{{ loop.index }}</td>
+                <!-- Number -->
+                <td>
+                    {{ loop.index }}
+                </td>
 
-                  <td>
-    <span class="subject-badge">
-        General
-    </span>
-</td>
-                    <td>
 
-                        {{ test.score }}/{{ test.total_questions }}
+                <!-- Subject -->
+                <td>
 
-                    </td>
+                            <span class="subject-badge">
+                                General
+                            </span>
 
-                    <td>
+                </td>
 
-                        {{ "%.2f"|format(test.percentage) }}%
 
-                    </td>
+                <!-- Score -->
+                <td>
 
-                    <td>
+                    {{ test.score }}/{{ test.total_questions }}
 
-                        {% if test.percentage >= 40 %}
+                </td>
 
-                        <span class="status pass">
 
-                            ✅ Pass
+                <!-- Percentage -->
+                <td>
 
-                        </span>
+                    {{ "%.2f"|format(test.percentage or 0) }}%
 
-                        {% else %}
+                </td>
 
-                        <span class="status fail">
 
-                            ❌ Fail
+                <!-- Status -->
+                <td>
 
-                        </span>
+                    {% if test.percentage >= 40 %}
 
-                        {% endif %}
+                    <span class="status pass">
+                                    ✅ Pass
+                                </span>
 
-                    </td>
+                    {% else %}
 
-                    <td>
+                    <span class="status fail">
+                                    ❌ Fail
+                                </span>
 
-                        {{ test.attempt_date }}
+                    {% endif %}
 
-                    </td>
+                </td>
 
-                    <td>
 
-                      V
+                <!-- Date -->
+                <td>
 
-                    </td>
+                    {{ test.attempt_date }}
 
-                </tr>
+                </td>
 
-                {% endfor %}
+
+                <!-- Action -->
+                <td>
+
+                    {% if test.id is defined %}
+
+                    <a
+                            href="{{ url_for('mock_test_result', test_id=test.id) }}"
+                            class="view-btn"
+                    >
+                        👁 View
+                    </a>
+
+                    {% else %}
+
+                    <span class="view-btn disabled">
+                                    View
+                                </span>
+
+                    {% endif %}
+
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
 
             {% else %}
 
-                <tr>
+            <tr>
 
-                    <td colspan="7" class="no-data">
+                <td
+                        colspan="7"
+                        class="no-data"
+                >
+                    🚫 No Mock Test History Found
+                </td>
 
-                        🚫 No Mock Test History Found
-
-                    </td>
-
-                </tr>
+            </tr>
 
             {% endif %}
 
@@ -274,44 +327,90 @@
         </table>
 
     </div>
-    <div class="pagination">
-    </div>
-    <div class="pagination">
-        {% if page|default(1) > 1 %}
-        <a href="{{ url_for('mock_test_history',
-page=page-1,
-search=search,
-subject=subject) }}">
 
+
+    <!-- ================= PAGINATION ================= -->
+
+    {% set current_page = page|default(1) %}
+    {% set current_total_pages = total_pages|default(1) %}
+
+    {% if current_total_pages > 1 %}
+
+    <div class="pagination">
+
+        <!-- Previous -->
+
+        {% if current_page > 1 %}
+
+        <a
+                href="{{ url_for(
+                    'mock_test_history',
+                    page=current_page-1,
+                    search=search|default(''),
+                    subject=subject|default('')
+                ) }}"
+                class="pagination-btn"
+        >
             ⬅ Previous
-
         </a>
+
+        {% else %}
+
+        <span class="pagination-btn disabled">
+                ⬅ Previous
+            </span>
 
         {% endif %}
 
-        <span>
 
-Page {{ page }} of {{ total_pages }}
+        <!-- Current Page -->
 
-</span>
+        <span class="pagination-info">
 
-        {% if page < total_pages %}
+            Page
+            <strong>{{ current_page }}</strong>
+            of
+            <strong>{{ current_total_pages }}</strong>
 
-        <a href="{{ url_for('mock_test_history',
-page=page+1,
-search=search,
-subject=subject) }}">
+        </span>
 
+
+        <!-- Next -->
+
+        {% if current_page < current_total_pages %}
+
+        <a
+                href="{{ url_for(
+                    'mock_test_history',
+                    page=current_page+1,
+                    search=search|default(''),
+                    subject=subject|default('')
+                ) }}"
+                class="pagination-btn"
+        >
             Next ➡
-
         </a>
+
+        {% else %}
+
+        <span class="pagination-btn disabled">
+                Next ➡
+            </span>
 
         {% endif %}
 
     </div>
+
+    {% endif %}
+
 </div>
 
-<script src="{{ url_for('static',
-filename='js/mock_test_history.js') }}"></script>
+
+<!-- ================= JAVASCRIPT ================= -->
+
+<script src="{{ url_for(
+    'static',
+    filename='js/mock_test_history.js'
+) }}"></script>
 
 {% endblock %}
