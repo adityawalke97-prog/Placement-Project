@@ -752,151 +752,166 @@ def mock_test():
             conn.close()
 
 @app.route("/submit_mock_test", methods=["POST"])
+@login_required
 def submit_mock_test():
-
-    if "user_id" not in session:
-        return jsonify({
-            "success": False,
-            "message": "Please login first."
-        }), 401
-
-    conn = None
-    cursor = None
-
     try:
+        user_id = session.get("user_id")
 
-        data = request.get_json()
+        if not user_id:
+            return redirect(url_for("login"))
 
-        answers = data.get("answers", {})
+        # -------------------------------------------------
+        # SUPPORT BOTH JSON AND NORMAL HTML FORM REQUESTS
+        # -------------------------------------------------
+        if request.is_json:
+            data = request.get_json(silent=True) or {}
+        else:
+            data = request.form.to_dict()
 
-        question_ids = session.get("mock_question_ids", [])
+        print("===== MOCK TEST SUBMISSION =====")
+        print("USER ID:", user_id)
+        print("CONTENT TYPE:", request.content_type)
+        print("DATA:", data)
 
-        user_id = session["user_id"]
+        # -------------------------------------------------
+        # GET TEST INFORMATION
+        # -------------------------------------------------
+        category = data.get("category", "").strip()
 
-        if not question_ids:
-            return jsonify({
-                "success": False,
-                "message": "No questions found."
-            }), 400
+        if not category:
+            category = session.get("mock_category", "")
 
-        conn = get_db_connection()
-        cursor = conn.cursor(pymysql.cursors.DictCursor)
+        # -------------------------------------------------
+        # GET QUESTIONS
+        # -------------------------------------------------
+        questions = session.get("mock_questions", [])
 
-        placeholders = ",".join(["%s"] * len(question_ids))
+        if not questions:
+            return redirect(
+                url_for(
+                    "mock_categories",
+                    error="Test session expired. Please start the test again."
+                )
+            )
 
-        cursor.execute(f"""
-            SELECT
-                id,
-                answer
-            FROM mock_questions
-            WHERE id IN ({placeholders})
-        """, tuple(question_ids))
-
-        db_questions = cursor.fetchall()
-
-        correct_map = {
-            str(row["id"]): str(row["answer"]).strip().lower()
-            for row in db_questions
-        }
-
+        # -------------------------------------------------
+        # CALCULATE SCORE
+        # -------------------------------------------------
         score = 0
+        total = len(questions)
 
-        total_questions = len(question_ids)
+        answers = {}
 
-        for qid in question_ids:
+        # ---------------------------------------------
+        # JSON submission
+        # ---------------------------------------------
+        if request.is_json:
 
-            user_answer = str(
-                answers.get(str(qid), "")
-            ).strip().lower()
+            submitted_answers = data.get("answers", {})
 
-            correct_answer = correct_map.get(
-                str(qid),
-                ""
+            if isinstance(submitted_answers, dict):
+                answers = submitted_answers
+
+        # ---------------------------------------------
+        # HTML FORM submission
+        # ---------------------------------------------
+        else:
+
+            for key, value in data.items():
+
+                if key.startswith("question_"):
+                    answers[key] = value
+
+                elif key.startswith("answer_"):
+                    answers[key] = value
+
+        # -------------------------------------------------
+        # CHECK ANSWERS
+        # -------------------------------------------------
+        for index, question in enumerate(questions):
+
+            # Possible question structures
+            question_id = question.get("id", index)
+
+            correct_answer = (
+                question.get("answer")
+                or question.get("correct_answer")
+                or question.get("correct_option")
             )
 
-            if user_answer == correct_answer:
-                score += 1
-
-        percentage = round(
-            (score / total_questions) * 100,
-            2
-        ) if total_questions else 0
-
-        category = session.get(
-            "mock_category",
-            "General"
-        )
-
-        subject = category
-
-        cursor.execute("""
-            INSERT INTO results
-            (
-                user_id,
-                score,
-                total_questions,
-                percentage,
-                category,
-                subject
+            user_answer = (
+                answers.get(f"question_{question_id}")
+                or answers.get(f"answer_{question_id}")
+                or answers.get(str(question_id))
             )
-            VALUES
-            (
-                %s,
-                %s,
-                %s,
-                %s,
-                %s,
-                %s
+
+            if user_answer is not None and correct_answer is not None:
+
+                if str(user_answer).strip().lower() == str(correct_answer).strip().lower():
+                    score += 1
+
+        # -------------------------------------------------
+        # PERCENTAGE
+        # -------------------------------------------------
+        percentage = 0
+
+        if total > 0:
+            percentage = round((score / total) * 100, 2)
+
+        # -------------------------------------------------
+        # SAVE RESULT
+        # -------------------------------------------------
+        try:
+
+            conn = get_db_connection()
+            cursor = conn.cursor()
+
+            cursor.execute(
+                """
+                INSERT INTO results
+                (user_id, test_type, category, score, total_questions, percentage)
+                VALUES (%s, %s, %s, %s, %s, %s)
+                """,
+                (
+                    user_id,
+                    "Mock Test",
+                    category,
+                    score,
+                    total,
+                    percentage
+                )
             )
-        """, (
-            user_id,
-            score,
-            total_questions,
-            percentage,
-            category,
-            subject
-        ))
-
-        conn.commit()
-
-        session.pop(
-            "mock_question_ids",
-            None
-        )
-
-        session.pop(
-            "mock_category",
-            None
-        )
-
-        return jsonify({
-            "success": True,
-            "message": "Mock test submitted successfully.",
-            "score": score,
-            "total_questions": total_questions,
-            "percentage": percentage
-        })
-
-    except Exception as e:
-
-        if conn:
-            conn.rollback()
-
-        app.logger.exception(e)
-
-        return jsonify({
-            "success": False,
-            "message": str(e)
-        }), 500
-
-    finally:
-
-        if cursor:
+            conn.commit()
             cursor.close()
-
-        if conn:
             conn.close()
 
+        except Exception as db_error:
+
+            print("RESULT SAVE ERROR:", db_error)
+
+        # -------------------------------------------------
+        # STORE RESULT IN SESSION
+        # -------------------------------------------------
+        session["mock_result"] = {
+            "score": score,
+            "total": total,
+            "percentage": percentage,
+            "category": category
+        }
+        print("===== MOCK TEST RESULT =====")
+        print("SCORE:", score)
+        print("TOTAL:", total)
+        print("PERCENTAGE:", percentage)
+        # -------------------------------------------------
+        # REDIRECT TO RESULT PAGE
+        # -------------------------------------------------
+        return redirect(url_for("mock_result"))
+    except Exception as e:
+        print("===== MOCK TEST SUBMISSION ERROR =====")
+        print(str(e))
+        import traceback
+        traceback.print_exc()
+        return "Mock test submission failed. Please try again.", 500
 # =========================================================
 # MOCK TEST RESULT
 # =========================================================
