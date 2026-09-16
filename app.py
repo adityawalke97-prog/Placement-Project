@@ -141,19 +141,32 @@ def google_callback():
     cur = None
 
     try:
+        print("========================================")
         print("===== GOOGLE CALLBACK STARTED =====")
+        print("========================================")
 
+        # Get Google OAuth token
         token = google.authorize_access_token()
 
         print("GOOGLE TOKEN RECEIVED")
+        print("TOKEN KEYS:", list(token.keys()))
 
+        # Get Google user information
         userinfo = token.get("userinfo")
 
         if not userinfo:
+            print("USERINFO NOT IN TOKEN - REQUESTING USERINFO")
+
             response = google.get(
                 "https://openidconnect.googleapis.com/v1/userinfo"
             )
+
+            response.raise_for_status()
+
             userinfo = response.json()
+
+        print("GOOGLE USERINFO RECEIVED")
+        print("USERINFO:", userinfo)
 
         name = userinfo.get("name")
         email = userinfo.get("email")
@@ -161,14 +174,26 @@ def google_callback():
         google_id = userinfo.get("sub")
         verified = userinfo.get("email_verified", False)
 
-        print("GOOGLE USER:", email)
+        print("GOOGLE NAME:", name)
+        print("GOOGLE EMAIL:", email)
+        print("GOOGLE ID:", google_id)
+        print("EMAIL VERIFIED:", verified)
 
-        if not email or not google_id:
-            raise Exception("Google did not return email or Google ID")
+        if not email:
+            raise Exception("Google did not return email")
+
+        if not google_id:
+            raise Exception("Google did not return Google ID")
+
+        # Connect database
+        print("CONNECTING TO DATABASE...")
 
         conn = get_db_connection()
         cur = conn.cursor()
 
+        print("DATABASE CONNECTED")
+
+        # Check existing user
         cur.execute(
             "SELECT * FROM users WHERE email=%s",
             (email,)
@@ -177,6 +202,8 @@ def google_callback():
         user = cur.fetchone()
 
         if user:
+
+            print("EXISTING USER FOUND:", user["id"])
 
             cur.execute("""
                 UPDATE users
@@ -189,15 +216,18 @@ def google_callback():
             """, (
                 google_id,
                 picture,
-                verified,
+                1 if verified else 0,
                 email
             ))
 
             user_id = user["id"]
 
-            print("EXISTING USER LOGIN:", user_id)
+            print("EXISTING USER UPDATED")
+            print("USER ID:", user_id)
 
         else:
+
+            print("NEW GOOGLE USER")
 
             random_password = secrets.token_hex(16)
 
@@ -219,47 +249,66 @@ def google_callback():
                 VALUES
                 (%s,%s,%s,%s,%s,%s,'google')
             """, (
-                name,
+                name or "Google User",
                 email,
                 hashed_password,
                 google_id,
                 picture,
-                verified
+                1 if verified else 0
             ))
 
             user_id = cur.lastrowid
 
-            print("NEW GOOGLE USER CREATED:", user_id)
+            print("NEW GOOGLE USER CREATED")
+            print("USER ID:", user_id)
 
+        # Save database changes
         conn.commit()
 
+        print("DATABASE COMMIT SUCCESS")
+
+        # Create application session
         session.clear()
+
         session.permanent = True
 
         session["user_id"] = user_id
-        session["name"] = name
+        session["name"] = name or "Google User"
         session["email"] = email
         session["profile_pic"] = picture
         session["login_provider"] = "google"
 
+        print("SESSION CREATED")
+        print("SESSION USER ID:", session.get("user_id"))
+
+        print("========================================")
         print("GOOGLE LOGIN SUCCESS")
         print("REDIRECTING TO DASHBOARD")
+        print("========================================")
 
         return redirect(url_for("dashboard"))
 
     except Exception as e:
 
-        print("================================")
-        print("GOOGLE LOGIN ERROR:", repr(e))
-        print("================================")
+        print("========================================")
+        print("!!!!! GOOGLE LOGIN FAILED !!!!!")
+        print("ERROR TYPE:", type(e).__name__)
+        print("ERROR:", repr(e))
+        print("========================================")
 
         if conn:
             try:
                 conn.rollback()
-            except Exception:
-                pass
+            except Exception as rollback_error:
+                print(
+                    "ROLLBACK ERROR:",
+                    repr(rollback_error)
+                )
 
-        flash("Google Login Failed", "danger")
+        flash(
+            f"Google Login Failed: {type(e).__name__}",
+            "danger"
+        )
 
         return redirect(url_for("login"))
 
@@ -268,14 +317,21 @@ def google_callback():
         if cur:
             try:
                 cur.close()
-            except Exception:
-                pass
+            except Exception as close_error:
+                print(
+                    "CURSOR CLOSE ERROR:",
+                    repr(close_error)
+                )
 
         if conn:
             try:
                 conn.close()
-            except Exception:
-                pass
+            except Exception as close_error:
+                print(
+                    "DATABASE CLOSE ERROR:",
+                    repr(close_error)
+                )
+
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
     if request.method == "POST":
@@ -390,28 +446,21 @@ def logout():
         "Logged out successfully.",
         "success"
     )
-
     return redirect(url_for("login"))
 @app.route("/dashboard")
 def dashboard():
-
     if "user_id" not in session:
         return redirect(url_for("login"))
-
     user_id = session["user_id"]
-
     conn = get_db_connection()
     cursor = conn.cursor(pymysql.cursors.DictCursor)
-
     try:
-
         # ================= USER =================
         cursor.execute(
             "SELECT * FROM users WHERE id=%s",
             (user_id,)
         )
         user = cursor.fetchone()
-
         # ================= MOCK TEST STATS =================
         cursor.execute("""
             SELECT
@@ -422,7 +471,6 @@ def dashboard():
             WHERE user_id=%s
         """, (user_id,))
         stats = cursor.fetchone()
-
         # ================= RECENT TESTS =================
         cursor.execute("""
             SELECT
@@ -754,57 +802,59 @@ def mock_test():
 @app.route("/submit_mock_test", methods=["POST"])
 @login_required
 def submit_mock_test():
+    conn = None
+    cursor = None
+
     try:
         user_id = session.get("user_id")
 
         if not user_id:
             return redirect(url_for("login"))
 
-        # -------------------------------------------------
-        # SUPPORT BOTH JSON AND NORMAL HTML FORM REQUESTS
-        # -------------------------------------------------
+        # =====================================================
+        # GET SUBMITTED DATA
+        # Supports both JSON and normal HTML form
+        # =====================================================
         if request.is_json:
             data = request.get_json(silent=True) or {}
         else:
             data = request.form.to_dict()
 
-        print("===== MOCK TEST SUBMISSION =====")
-        print("USER ID:", user_id)
-        print("CONTENT TYPE:", request.content_type)
-        print("DATA:", data)
+        app.logger.info("===== MOCK TEST SUBMISSION =====")
+        app.logger.info("USER ID: %s", user_id)
+        app.logger.info("CONTENT TYPE: %s", request.content_type)
+        app.logger.info("DATA: %s", data)
 
-        # -------------------------------------------------
-        # GET TEST INFORMATION
-        # -------------------------------------------------
+        # =====================================================
+        # GET TEST INFORMATION FROM SESSION
+        # =====================================================
         category = data.get("category", "").strip()
 
         if not category:
             category = session.get("mock_category", "")
 
-        # -------------------------------------------------
-        # GET QUESTIONS
-        # -------------------------------------------------
-        questions = session.get("mock_questions", [])
+        level = session.get("mock_level", "")
 
-        if not questions:
-            return redirect(
-                url_for(
-                    "mock_categories",
-                    error="Test session expired. Please start the test again."
-                )
+        # =====================================================
+        # GET QUESTION IDs SAVED WHEN TEST STARTED
+        # =====================================================
+        question_ids = session.get("mock_question_ids", [])
+
+        # Correct answers saved when test started
+        correct_answers = session.get("correct_answers", {})
+
+        if not question_ids:
+            flash(
+                "Test session expired. Please start the mock test again.",
+                "warning"
             )
+            return redirect(url_for("mock_categories"))
 
-        # -------------------------------------------------
-        # CALCULATE SCORE
-        # -------------------------------------------------
-        score = 0
-        total = len(questions)
-
+        # =====================================================
+        # GET USER ANSWERS
+        # =====================================================
         answers = {}
 
-        # ---------------------------------------------
-        # JSON submission
-        # ---------------------------------------------
         if request.is_json:
 
             submitted_answers = data.get("answers", {})
@@ -812,106 +862,139 @@ def submit_mock_test():
             if isinstance(submitted_answers, dict):
                 answers = submitted_answers
 
-        # ---------------------------------------------
-        # HTML FORM submission
-        # ---------------------------------------------
         else:
 
+            # Normal HTML form submission
             for key, value in data.items():
 
-                if key.startswith("question_"):
+                if (
+                    key.startswith("question_")
+                    or key.startswith("answer_")
+                ):
                     answers[key] = value
 
-                elif key.startswith("answer_"):
-                    answers[key] = value
+        # =====================================================
+        # CALCULATE SCORE
+        # =====================================================
+        score = 0
+        total = len(question_ids)
 
-        # -------------------------------------------------
-        # CHECK ANSWERS
-        # -------------------------------------------------
-        for index, question in enumerate(questions):
+        for question_id in question_ids:
 
-            # Possible question structures
-            question_id = question.get("id", index)
-
-            correct_answer = (
-                question.get("answer")
-                or question.get("correct_answer")
-                or question.get("correct_option")
-            )
+            question_id_str = str(question_id)
 
             user_answer = (
                 answers.get(f"question_{question_id}")
                 or answers.get(f"answer_{question_id}")
-                or answers.get(str(question_id))
+                or answers.get(question_id_str)
             )
 
-            if user_answer is not None and correct_answer is not None:
+            correct_answer = correct_answers.get(question_id_str)
 
-                if str(user_answer).strip().lower() == str(correct_answer).strip().lower():
-                    score += 1
+            if (
+                user_answer is not None
+                and correct_answer is not None
+                and str(user_answer).strip().lower()
+                == str(correct_answer).strip().lower()
+            ):
+                score += 1
 
-        # -------------------------------------------------
-        # PERCENTAGE
-        # -------------------------------------------------
+        # =====================================================
+        # CALCULATE PERCENTAGE
+        # =====================================================
         percentage = 0
 
         if total > 0:
             percentage = round((score / total) * 100, 2)
 
-        # -------------------------------------------------
-        # SAVE RESULT
-        # -------------------------------------------------
-        try:
+        # =====================================================
+        # SAVE RESULT TO DATABASE
+        # =====================================================
+        conn = get_db_connection()
+        cursor = conn.cursor()
 
-            conn = get_db_connection()
-            cursor = conn.cursor()
-
-            cursor.execute(
-                """
-                INSERT INTO results
-                (user_id, test_type, category, score, total_questions, percentage)
-                VALUES (%s, %s, %s, %s, %s, %s)
-                """,
-                (
-                    user_id,
-                    "Mock Test",
-                    category,
-                    score,
-                    total,
-                    percentage
-                )
+        cursor.execute(
+            """
+            INSERT INTO results
+            (
+                user_id,
+                test_type,
+                category,
+                score,
+                total_questions,
+                percentage
             )
-            conn.commit()
-            cursor.close()
-            conn.close()
+            VALUES (%s, %s, %s, %s, %s, %s)
+            """,
+            (
+                user_id,
+                "Mock Test",
+                category,
+                score,
+                total,
+                percentage
+            )
+        )
 
-        except Exception as db_error:
+        conn.commit()
 
-            print("RESULT SAVE ERROR:", db_error)
+        # =====================================================
+        # GET NEW RESULT ID
+        # =====================================================
+        result_id = cursor.lastrowid
 
-        # -------------------------------------------------
-        # STORE RESULT IN SESSION
-        # -------------------------------------------------
-        session["mock_result"] = {
-            "score": score,
-            "total": total,
-            "percentage": percentage,
-            "category": category
-        }
-        print("===== MOCK TEST RESULT =====")
-        print("SCORE:", score)
-        print("TOTAL:", total)
-        print("PERCENTAGE:", percentage)
-        # -------------------------------------------------
-        # REDIRECT TO RESULT PAGE
-        # -------------------------------------------------
-        return redirect(url_for("mock_result"))
+        app.logger.info("===== MOCK TEST RESULT =====")
+        app.logger.info("RESULT ID: %s", result_id)
+        app.logger.info("CATEGORY: %s", category)
+        app.logger.info("LEVEL: %s", level)
+        app.logger.info("SCORE: %s", score)
+        app.logger.info("TOTAL: %s", total)
+        app.logger.info("PERCENTAGE: %s", percentage)
+
+        # =====================================================
+        # CLEAN OLD TEST SESSION DATA
+        # =====================================================
+        session.pop("mock_question_ids", None)
+        session.pop("correct_answers", None)
+        session.pop("mock_category", None)
+        session.pop("mock_level", None)
+        session.pop("mock_answers", None)
+        session.pop("mock_score", None)
+
+        # =====================================================
+        # REDIRECT TO RESULT PAGE WITH RESULT ID
+        # =====================================================
+        return redirect(
+            url_for(
+                "mock_result",
+                result_id=result_id
+            )
+        )
+
     except Exception as e:
-        print("===== MOCK TEST SUBMISSION ERROR =====")
-        print(str(e))
-        import traceback
-        traceback.print_exc()
-        return "Mock test submission failed. Please try again.", 500
+
+        if conn:
+            conn.rollback()
+
+        app.logger.exception(
+            "MOCK TEST SUBMISSION ERROR: %s",
+            e
+        )
+
+        flash(
+            "Unable to submit mock test. Please try again.",
+            "danger"
+        )
+
+        return redirect(url_for("mock_test"))
+
+    finally:
+
+        if cursor:
+            cursor.close()
+
+        if conn:
+            conn.close()
 # =========================================================
 # MOCK TEST RESULT
 # =========================================================
@@ -5007,7 +5090,7 @@ that were not provided.
     "/api/ai/communication",
     methods=["POST"]
 )
-def ai_communication():
+def ai_communications():
 
     if "user_id" not in session:
 
@@ -6462,6 +6545,7 @@ def ai_communication_api():
     try:
 
         data = request.get_json(silent=True) or {}
+
 
         message = (data.get("message") or "").strip()
 
