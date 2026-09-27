@@ -17,7 +17,7 @@ from dotenv import load_dotenv
 from werkzeug.middleware.proxy_fix import ProxyFix
 from werkzeug.utils import secure_filename
 from datetime import timedelta
-
+from functools import wraps
 import pymysql
 import secrets
 import math
@@ -43,54 +43,73 @@ app.wsgi_app = ProxyFix(
     x_proto=1,
     x_host=1
 )
-
 app.config.update(
     SECRET_KEY=SECRET_KEY,
-
     SESSION_COOKIE_SECURE=True,
     SESSION_COOKIE_HTTPONLY=True,
     SESSION_COOKIE_SAMESITE="Lax",
-
     PERMANENT_SESSION_LIFETIME=timedelta(days=7),
-
     PREFERRED_URL_SCHEME="https"
 )
-
 bcrypt = Bcrypt(app)
 
 
-# --------------------------------------------------
-# DATABASE
-# --------------------------------------------------
+# =========================================================
+# DATABASE CONNECTION — LOCAL + RENDER
+# =========================================================
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DEFAULT_CA = os.path.join(BASE_DIR, "ca.pem")
+
+IS_RENDER = bool(os.getenv("RENDER"))
+
 
 def get_db_connection():
+
+    ca_path = os.getenv("DB_CA", DEFAULT_CA)
+
+    # If DB_CA is a relative path, make it relative to project folder
+    if not os.path.isabs(ca_path):
+        ca_path = os.path.join(BASE_DIR, ca_path)
+
     return pymysql.connect(
         host=os.getenv("DB_HOST"),
+        port=int(os.getenv("DB_PORT", "4000")),
         user=os.getenv("DB_USER"),
         password=os.getenv("DB_PASSWORD"),
         database=os.getenv("DB_NAME"),
-        port=int(os.getenv("DB_PORT", "4000")),
-        ssl={
-            "ca": "/etc/ssl/certs/ca-certificates.crt"
-        },
-        connect_timeout=30,
+
         cursorclass=pymysql.cursors.DictCursor,
+
+        # TiDB Cloud requires secure TLS connection
+        ssl={
+            "ca": ca_path
+        },
+
+        connect_timeout=30,
+        read_timeout=30,
+        write_timeout=30,
+
         autocommit=False
     )
-from functools import wraps
-from flask import session, redirect, url_for
 
-def login_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
 
-        if "user_id" not in session:
-            return redirect(url_for("login"))
+# =========================================================
+# SESSION CONFIGURATION
+# =========================================================
 
-        return f(*args, **kwargs)
+app.config.update(
+    SESSION_COOKIE_SECURE=IS_RENDER,
+    SESSION_COOKIE_HTTPONLY=True,
+    SESSION_COOKIE_SAMESITE="Lax",
+    PERMANENT_SESSION_LIFETIME=timedelta(days=7),
+    PREFERRED_URL_SCHEME="https" if IS_RENDER else "http"
+)
 
-    return decorated_function
-from authlib.integrations.flask_client import OAuth
+
+# =========================================================
+# GOOGLE OAUTH
+# =========================================================
 
 oauth = OAuth(app)
 
@@ -98,10 +117,12 @@ google = oauth.register(
     name="google",
 
     client_id=os.getenv("GOOGLE_CLIENT_ID"),
+
     client_secret=os.getenv("GOOGLE_CLIENT_SECRET"),
 
     server_metadata_url=(
-        "https://accounts.google.com/.well-known/openid-configuration"
+        "https://accounts.google.com/"
+        ".well-known/openid-configuration"
     ),
 
     client_kwargs={
@@ -110,30 +131,88 @@ google = oauth.register(
 )
 
 
+# =========================================================
+# LOGIN REQUIRED
+# =========================================================
 
+def login_required(f):
+
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+
+        if "user_id" not in session:
+
+            flash(
+                "Please login first.",
+                "warning"
+            )
+
+            return redirect(
+                url_for("login")
+            )
+
+        return f(*args, **kwargs)
+
+    return decorated_function
+
+
+# =========================================================
+# HOME
+# =========================================================
 
 @app.route("/")
 def home():
-    return redirect(url_for("login"))
+
+    return redirect(
+        url_for("login")
+    )
 
 
+# =========================================================
+# GOOGLE REDIRECT URI
+# =========================================================
+
+def get_google_redirect_uri():
+
+    # Render production
+    if IS_RENDER:
+        return (
+            "https://placement-project-iimz.onrender.com"
+            "/login/google/callback"
+        )
+
+    # Local development
+    # IMPORTANT: Never use 192.168.x.x for Google OAuth
+    return (
+        "http://localhost:5000"
+        "/login/google/callback"
+    )
+
+# =========================================================
+# GOOGLE LOGIN
+# =========================================================
 
 @app.route("/login/google")
 def google_login():
 
     session.permanent = True
 
-    redirect_uri = url_for(
-        "google_callback",
-        _external=True,
-        _scheme="https"
-    )
+    redirect_uri = get_google_redirect_uri()
 
-    print("GOOGLE REDIRECT URI:", redirect_uri)
+    print(
+        "GOOGLE REDIRECT URI:",
+        redirect_uri
+    )
 
     return google.authorize_redirect(
         redirect_uri
     )
+
+
+# =========================================================
+# GOOGLE CALLBACK
+# =========================================================
+
 @app.route("/login/google/callback")
 def google_callback():
 
@@ -141,71 +220,106 @@ def google_callback():
     cur = None
 
     try:
-        print("========================================")
-        print("===== GOOGLE CALLBACK STARTED =====")
-        print("========================================")
 
-        # Get Google OAuth token
+        # -------------------------------------------------
+        # Exchange Google authorization code for token
+        # -------------------------------------------------
+
         token = google.authorize_access_token()
 
-        print("GOOGLE TOKEN RECEIVED")
-        print("TOKEN KEYS:", list(token.keys()))
+        print(
+            "GOOGLE TOKEN RECEIVED"
+        )
 
+
+        # -------------------------------------------------
         # Get Google user information
-        userinfo = token.get("userinfo")
+        # -------------------------------------------------
+
+        userinfo = token.get(
+            "userinfo"
+        )
 
         if not userinfo:
-            print("USERINFO NOT IN TOKEN - REQUESTING USERINFO")
 
-            response = google.get(
+            resp = google.get(
                 "https://openidconnect.googleapis.com/v1/userinfo"
             )
 
-            response.raise_for_status()
+            resp.raise_for_status()
 
-            userinfo = response.json()
+            userinfo = resp.json()
 
-        print("GOOGLE USERINFO RECEIVED")
-        print("USERINFO:", userinfo)
+
+        print(
+            "GOOGLE USERINFO:",
+            userinfo
+        )
+
+
+        # -------------------------------------------------
+        # Extract Google information
+        # -------------------------------------------------
 
         name = userinfo.get("name")
+
         email = userinfo.get("email")
-        picture = userinfo.get("picture")
+
         google_id = userinfo.get("sub")
-        verified = userinfo.get("email_verified", False)
 
-        print("GOOGLE NAME:", name)
-        print("GOOGLE EMAIL:", email)
-        print("GOOGLE ID:", google_id)
-        print("EMAIL VERIFIED:", verified)
+        picture = userinfo.get("picture")
 
-        if not email:
-            raise Exception("Google did not return email")
+        verified = userinfo.get(
+            "email_verified",
+            False
+        )
 
-        if not google_id:
-            raise Exception("Google did not return Google ID")
 
-        # Connect database
-        print("CONNECTING TO DATABASE...")
+        # -------------------------------------------------
+        # Validate Google information
+        # -------------------------------------------------
+
+        if not email or not google_id:
+
+            raise Exception(
+                "Google account information incomplete"
+            )
+
+
+        # -------------------------------------------------
+        # Database connection
+        # -------------------------------------------------
 
         conn = get_db_connection()
+
         cur = conn.cursor()
 
-        print("DATABASE CONNECTED")
 
+        # -------------------------------------------------
         # Check existing user
+        # -------------------------------------------------
+
         cur.execute(
-            "SELECT * FROM users WHERE email=%s",
+            """
+            SELECT *
+            FROM users
+            WHERE email=%s
+            LIMIT 1
+            """,
             (email,)
         )
 
         user = cur.fetchone()
 
+
+        # =================================================
+        # EXISTING USER
+        # =================================================
+
         if user:
 
-            print("EXISTING USER FOUND:", user["id"])
-
-            cur.execute("""
+            cur.execute(
+                """
                 UPDATE users
                 SET
                     google_id=%s,
@@ -213,29 +327,40 @@ def google_callback():
                     email_verified=%s,
                     login_provider='google'
                 WHERE email=%s
-            """, (
-                google_id,
-                picture,
-                1 if verified else 0,
-                email
-            ))
+                """,
+                (
+                    google_id,
+                    picture,
+                    1 if verified else 0,
+                    email
+                )
+            )
+
+            conn.commit()
 
             user_id = user["id"]
+            user_name = user["name"]
 
-            print("EXISTING USER UPDATED")
-            print("USER ID:", user_id)
+
+        # =================================================
+        # NEW GOOGLE USER
+        # =================================================
 
         else:
 
-            print("NEW GOOGLE USER")
+            random_password = secrets.token_hex(32)
 
-            random_password = secrets.token_hex(16)
+            hashed_password = (
+                bcrypt
+                .generate_password_hash(
+                    random_password
+                )
+                .decode("utf-8")
+            )
 
-            hashed_password = bcrypt.generate_password_hash(
-                random_password
-            ).decode("utf-8")
 
-            cur.execute("""
+            cur.execute(
+                """
                 INSERT INTO users
                 (
                     name,
@@ -247,91 +372,130 @@ def google_callback():
                     login_provider
                 )
                 VALUES
-                (%s,%s,%s,%s,%s,%s,'google')
-            """, (
-                name or "Google User",
-                email,
-                hashed_password,
-                google_id,
-                picture,
-                1 if verified else 0
-            ))
+                (
+                    %s,
+                    %s,
+                    %s,
+                    %s,
+                    %s,
+                    %s,
+                    'google'
+                )
+                """,
+                (
+                    name,
+                    email,
+                    hashed_password,
+                    google_id,
+                    picture,
+                    1 if verified else 0
+                )
+            )
+
+            conn.commit()
 
             user_id = cur.lastrowid
+            user_name = name
 
-            print("NEW GOOGLE USER CREATED")
-            print("USER ID:", user_id)
 
-        # Save database changes
-        conn.commit()
+        # -------------------------------------------------
+        # Clear old session
+        # -------------------------------------------------
 
-        print("DATABASE COMMIT SUCCESS")
-
-        # Create application session
         session.clear()
+
+
+        # -------------------------------------------------
+        # Create login session
+        # -------------------------------------------------
 
         session.permanent = True
 
         session["user_id"] = user_id
-        session["name"] = name or "Google User"
+
+        session["name"] = user_name
+
         session["email"] = email
+
         session["profile_pic"] = picture
+
         session["login_provider"] = "google"
 
-        print("SESSION CREATED")
-        print("SESSION USER ID:", session.get("user_id"))
 
-        print("========================================")
-        print("GOOGLE LOGIN SUCCESS")
-        print("REDIRECTING TO DASHBOARD")
-        print("========================================")
+        print(
+            "GOOGLE LOGIN SUCCESS:",
+            email
+        )
 
-        return redirect(url_for("dashboard"))
+
+        # -------------------------------------------------
+        # Redirect to dashboard
+        # -------------------------------------------------
+
+        return redirect(
+            url_for("dashboard")
+        )
+
+    except Exception as e:
+        import traceback
+
+        print("================================")
+        print("GOOGLE LOGIN ERROR:", repr(e))
+        traceback.print_exc()
+        print("================================")
+
+        return redirect(url_for("login"))
 
     except Exception as e:
 
-        print("========================================")
-        print("!!!!! GOOGLE LOGIN FAILED !!!!!")
-        print("ERROR TYPE:", type(e).__name__)
-        print("ERROR:", repr(e))
-        print("========================================")
+        print(
+            "================================"
+        )
+
+        print(
+            "GOOGLE LOGIN ERROR:",
+            repr(e)
+        )
+
+        print(
+            "================================"
+        )
+
 
         if conn:
+
             try:
                 conn.rollback()
-            except Exception as rollback_error:
-                print(
-                    "ROLLBACK ERROR:",
-                    repr(rollback_error)
-                )
+            except Exception:
+                pass
+
 
         flash(
-            f"Google Login Failed: {type(e).__name__}",
+            "Google Login Failed. Please try again.",
             "danger"
         )
 
-        return redirect(url_for("login"))
+        return redirect(
+            url_for("login")
+        )
+
 
     finally:
 
         if cur:
+
             try:
                 cur.close()
-            except Exception as close_error:
-                print(
-                    "CURSOR CLOSE ERROR:",
-                    repr(close_error)
-                )
+            except Exception:
+                pass
+
 
         if conn:
+
             try:
                 conn.close()
-            except Exception as close_error:
-                print(
-                    "DATABASE CLOSE ERROR:",
-                    repr(close_error)
-                )
-
+            except Exception:
+                pass
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
     if request.method == "POST":
@@ -446,6 +610,7 @@ def logout():
         "Logged out successfully.",
         "success"
     )
+
     return redirect(url_for("login"))
 @app.route("/dashboard")
 def dashboard():
@@ -1139,22 +1304,28 @@ def mock_test_history():
             # =========================================================
 # PART 4 — INTERVIEW QUESTIONS
 # =========================================================
-
 @app.route("/interview")
 @app.route("/interview_questions")
 def interview_questions():
 
+    # =====================================================
+    # LOGIN CHECK
+    # =====================================================
     if "user_id" not in session:
         flash("Please login first.", "warning")
         return redirect(url_for("login"))
 
-    # -----------------------------------------------------
+    # =====================================================
     # QUERY PARAMETERS
-    # -----------------------------------------------------
+    # =====================================================
     category = request.args.get("category", "").strip()
     level = request.args.get("level", "").strip()
+    company = request.args.get("company", "").strip()
     search = request.args.get("search", "").strip()
 
+    # =====================================================
+    # PAGINATION
+    # =====================================================
     try:
         page = int(request.args.get("page", 1))
     except (ValueError, TypeError):
@@ -1171,134 +1342,244 @@ def interview_questions():
 
     try:
 
+        # =================================================
+        # DATABASE CONNECTION
+        # =================================================
         conn = get_db_connection()
-        cursor = conn.cursor(pymysql.cursors.DictCursor)
 
-        # -------------------------------------------------
-        # BUILD FILTER
-        # -------------------------------------------------
+        cursor = conn.cursor(
+            pymysql.cursors.DictCursor
+        )
+
+        # =================================================
+        # BUILD FILTER CONDITIONS
+        # =================================================
         conditions = []
         params = []
 
+        # CATEGORY
         if category:
-            conditions.append("category = %s")
+            conditions.append(
+                "category = %s"
+            )
             params.append(category)
 
+        # LEVEL
         if level:
-            conditions.append("level = %s")
+            conditions.append(
+                "level = %s"
+            )
             params.append(level)
 
+        # COMPANY
+        if company:
+            conditions.append(
+                "company = %s"
+            )
+            params.append(company)
+
+        # SEARCH
         if search:
+
             conditions.append("""
                 (
                     question LIKE %s
                     OR answer LIKE %s
+                    OR category LIKE %s
+                    OR company LIKE %s
+                    OR topic LIKE %s
                 )
             """)
 
             search_value = f"%{search}%"
 
-            params.append(search_value)
-            params.append(search_value)
+            params.extend([
+                search_value,
+                search_value,
+                search_value,
+                search_value,
+                search_value
+            ])
 
+        # =================================================
+        # WHERE CLAUSE
+        # =================================================
         where_clause = ""
 
         if conditions:
-            where_clause = "WHERE " + " AND ".join(conditions)
+            where_clause = (
+                "WHERE " +
+                " AND ".join(conditions)
+            )
 
-        # -------------------------------------------------
+        # =================================================
         # TOTAL QUESTIONS
-        # -------------------------------------------------
-        cursor.execute(
-            f"""
+        # =================================================
+        count_query = f"""
             SELECT COUNT(*) AS total
             FROM interview_questions
             {where_clause}
-            """,
+        """
+
+        cursor.execute(
+            count_query,
             tuple(params)
         )
 
         count_result = cursor.fetchone()
 
-        total_questions = (
-            count_result["total"]
-            if count_result
-            else 0
-        )
+        total_questions = 0
 
-        # -------------------------------------------------
+        if count_result:
+            total_questions = int(
+                count_result.get("total", 0)
+            )
+
+        # =================================================
         # TOTAL PAGES
-        # -------------------------------------------------
+        # =================================================
         total_pages = (
             (total_questions + per_page - 1)
             // per_page
         )
 
-        # -------------------------------------------------
-        # QUESTIONS
-        # -------------------------------------------------
-        cursor.execute(
-            f"""
+        # Make sure page does not exceed total pages
+        if total_pages > 0 and page > total_pages:
+            page = total_pages
+            offset = (page - 1) * per_page
+
+        # =================================================
+        # FETCH QUESTIONS
+        # =================================================
+        questions_query = f"""
             SELECT
                 id,
                 question,
                 answer,
                 category,
-                level
+                level,
+                company,
+                topic,
+                expected_time,
+                explanation,
+                followup_question,
+                tips
             FROM interview_questions
             {where_clause}
             ORDER BY id DESC
             LIMIT %s OFFSET %s
-            """,
-            tuple(params) + (
-                per_page,
-                offset
-            )
+        """
+
+        question_params = tuple(params) + (
+            per_page,
+            offset
+        )
+
+        cursor.execute(
+            questions_query,
+            question_params
         )
 
         questions = cursor.fetchall()
 
-        # -------------------------------------------------
+        # =================================================
         # CATEGORIES
-        # -------------------------------------------------
+        # =================================================
         cursor.execute("""
             SELECT DISTINCT category
             FROM interview_questions
             WHERE category IS NOT NULL
               AND category != ''
-            ORDER BY category
+            ORDER BY category ASC
         """)
 
-        categories = cursor.fetchall()
+        category_rows = cursor.fetchall()
 
-        # -------------------------------------------------
+        categories = [
+            row["category"]
+            for row in category_rows
+            if row.get("category")
+        ]
+
+        # =================================================
         # LEVELS
-        # -------------------------------------------------
+        # =================================================
         cursor.execute("""
             SELECT DISTINCT level
             FROM interview_questions
             WHERE level IS NOT NULL
               AND level != ''
-            ORDER BY level
+            ORDER BY level ASC
         """)
 
-        levels = cursor.fetchall()
+        level_rows = cursor.fetchall()
 
+        levels = [
+            row["level"]
+            for row in level_rows
+            if row.get("level")
+        ]
+
+        # =================================================
+        # COMPANIES
+        # =================================================
+        cursor.execute("""
+            SELECT DISTINCT company
+            FROM interview_questions
+            WHERE company IS NOT NULL
+              AND company != ''
+            ORDER BY company ASC
+        """)
+
+        company_rows = cursor.fetchall()
+
+        companies = [
+            row["company"]
+            for row in company_rows
+            if row.get("company")
+        ]
+
+        # =================================================
+        # STATISTICS
+        # =================================================
+        total_categories = len(categories)
+        total_companies = len(companies)
+
+        # =================================================
+        # RENDER TEMPLATE
+        # =================================================
         return render_template(
             "interview_questions.html",
+
+            # Questions
             questions=questions,
+
+            # Filters
             categories=categories,
             levels=levels,
+            companies=companies,
+
+            # Selected filters
             category=category,
             level=level,
+            company=company,
             search=search,
+
+            # Pagination
             page=page,
             per_page=per_page,
             total_questions=total_questions,
-            total_pages=total_pages
+            total_pages=total_pages,
+
+            # Statistics
+            total_categories=total_categories,
+            total_companies=total_companies
         )
 
-    except Exception:
+    # =====================================================
+    # ERROR HANDLING
+    # =====================================================
+    except Exception as e:
 
         app.logger.exception(
             "Interview questions loading error"
@@ -1309,16 +1590,26 @@ def interview_questions():
             "danger"
         )
 
-        return redirect(url_for("dashboard"))
+        return redirect(
+            url_for("dashboard")
+        )
 
+    # =====================================================
+    # CLEANUP
+    # =====================================================
     finally:
 
         if cursor:
-            cursor.close()
+            try:
+                cursor.close()
+            except Exception:
+                pass
 
         if conn:
-            conn.close()
-
+            try:
+                conn.close()
+            except Exception:
+                pass
 
 # =========================================================
 # RANDOM INTERVIEW QUESTION
@@ -6532,110 +6823,134 @@ def results():
             cursor.close()
         if conn:
             conn.close()
+# ================= AI COMMUNICATION =================
+
+import os
+import requests
+from flask import request, jsonify, render_template
+from flask_login import login_required
+
 
 @app.route("/ai_communication")
 @login_required
 def ai_communication():
     return render_template("ai_communication.html")
 
+
 @app.route("/api/ai/communication", methods=["POST"])
 @login_required
 def ai_communication_api():
 
     try:
-
+        # -----------------------------------------
+        # GET REQUEST DATA
+        # -----------------------------------------
         data = request.get_json(silent=True) or {}
 
-
-        message = (data.get("message") or "").strip()
-
+        message = str(data.get("message") or "").strip()
         history = data.get("history") or []
 
         if not message:
             return jsonify({
+                "success": False,
                 "error": "Please enter a question."
             }), 400
 
+        # -----------------------------------------
+        # LIMIT MESSAGE SIZE
+        # -----------------------------------------
+        if len(message) > 4000:
+            return jsonify({
+                "success": False,
+                "error": "Message is too long. Please keep it under 4000 characters."
+            }), 400
 
+        # -----------------------------------------
+        # OPENAI API KEY
+        # -----------------------------------------
         api_key = os.getenv("OPENAI_API_KEY")
 
         if not api_key:
+            print("ERROR: OPENAI_API_KEY is missing")
 
             return jsonify({
+                "success": False,
                 "error": "AI service is not configured on the server."
             }), 500
 
-
+        # -----------------------------------------
+        # MODEL
+        # -----------------------------------------
         model = os.getenv(
             "OPENAI_MODEL",
             "gpt-5.6-luna"
         )
 
-
-        # Keep only recent conversation
-        history = history[-10:]
-
-
+        # -----------------------------------------
+        # CLEAN HISTORY
+        # -----------------------------------------
         conversation = []
 
-        for item in history:
+        if isinstance(history, list):
 
-            role = item.get("role")
-            content = item.get("content")
+            for item in history[-10:]:
 
-            if role in ["user", "assistant"] and content:
+                if not isinstance(item, dict):
+                    continue
 
-                conversation.append({
-                    "role": role,
-                    "content": content
-                })
+                role = item.get("role")
+                content = item.get("content")
 
+                if role in ["user", "assistant"] and content:
 
+                    conversation.append({
+                        "role": role,
+                        "content": str(content)[:4000]
+                    })
+
+        # Add current message
         conversation.append({
             "role": "user",
             "content": message
         })
 
-
+        # -----------------------------------------
+        # OPENAI RESPONSES API
+        # -----------------------------------------
         payload = {
-
             "model": model,
 
-            "instructions": """
-You are the AI Communication Assistant inside a placement training portal.
+            "instructions": (
+                "You are the AI Communication Assistant inside a "
+                "placement training portal.\n\n"
 
-Your main purpose is to help students with:
+                "Help students with:\n"
+                "- English communication\n"
+                "- Interview preparation\n"
+                "- HR interview questions\n"
+                "- Technical interview communication\n"
+                "- Self introduction\n"
+                "- Resume interview questions\n"
+                "- Mock interviews\n"
+                "- Professional speaking\n"
+                "- Grammar correction\n"
+                "- Placement preparation\n\n"
 
-- English communication
-- Interview preparation
-- HR interview questions
-- Technical interview communication
-- Self introductions
-- Resume-related interview questions
-- Mock interviews
-- Professional speaking
-- Grammar and sentence improvement
-- Placement preparation
-
-Give practical, student-friendly answers.
-
-When the student asks for an interview answer,
-give a natural answer that a college student can actually speak.
-
-Do not make answers unnecessarily complicated.
-
-If the student writes incorrect English,
-you may politely provide a corrected version and explain it briefly.
-
-Be supportive, professional and concise.
-""",
+                "Give practical and student-friendly answers.\n"
+                "Keep answers concise and easy to speak.\n"
+                "For interview answers, provide natural answers "
+                "that a college student can actually speak.\n"
+                "If the student's English is incorrect, politely "
+                "give a corrected version and brief explanation.\n"
+                "Be supportive, professional and clear."
+            ),
 
             "input": conversation
         }
 
+        print("AI REQUEST MODEL:", model)
 
         response = requests.post(
-
             "https://api.openai.com/v1/responses",
 
             headers={
@@ -6648,8 +6963,10 @@ Be supportive, professional and concise.
             timeout=60
         )
 
-
-        if not response.ok:
+        # -----------------------------------------
+        # OPENAI ERROR
+        # -----------------------------------------
+        if response.status_code >= 400:
 
             print(
                 "OPENAI API ERROR:",
@@ -6657,71 +6974,134 @@ Be supportive, professional and concise.
                 response.text
             )
 
+            try:
+                error_data = response.json()
+
+                error_message = (
+                    error_data
+                    .get("error", {})
+                    .get("message")
+                )
+
+            except Exception:
+                error_message = None
+
             return jsonify({
-                "error": "AI service temporarily unavailable."
+                "success": False,
+                "error": error_message
+                or "AI service temporarily unavailable."
             }), 502
 
-
+        # -----------------------------------------
+        # PARSE RESPONSE
+        # -----------------------------------------
         result = response.json()
 
+        answer = ""
 
-        answer = result.get(
-            "output_text",
-            ""
-        ).strip()
+        # Normal Responses API output_text
+        if isinstance(result.get("output_text"), str):
 
+            answer = result["output_text"].strip()
 
+        # Fallback parser
         if not answer:
 
-            # Fallback parser
             output = result.get("output", [])
 
-            texts = []
+            if isinstance(output, list):
 
-            for item in output:
+                for item in output:
 
-                for content in item.get("content", []):
+                    if not isinstance(item, dict):
+                        continue
 
-                    if content.get("type") == "output_text":
+                    content_list = item.get("content", [])
 
-                        text = content.get("text")
+                    if not isinstance(content_list, list):
+                        continue
 
-                        if text:
-                            texts.append(text)
+                    for content in content_list:
 
+                        if not isinstance(content, dict):
+                            continue
 
-            answer = "\n".join(texts).strip()
+                        if content.get("type") == "output_text":
 
+                            text = content.get("text")
 
+                            if text:
+                                answer += str(text)
+
+            answer = answer.strip()
+
+        # -----------------------------------------
+        # EMPTY RESPONSE
+        # -----------------------------------------
         if not answer:
 
-            answer = "Sorry, I couldn't generate an answer right now."
+            print("OPENAI EMPTY RESPONSE:")
+            print(result)
 
+            return jsonify({
+                "success": False,
+                "error": "AI returned an empty response."
+            }), 502
 
+        # -----------------------------------------
+        # SUCCESS
+        # -----------------------------------------
         return jsonify({
             "success": True,
             "answer": answer
-        })
-
-
+        }), 200
+    # -----------------------------------------
+    # TIMEOUT
+    # -----------------------------------------
     except requests.Timeout:
 
+        print("OPENAI TIMEOUT")
+
         return jsonify({
+            "success": False,
             "error": "AI service took too long to respond. Please try again."
         }), 504
 
+    # -----------------------------------------
+    # CONNECTION ERROR
+    # -----------------------------------------
+    except requests.RequestException as e:
 
+        print(
+            "OPENAI CONNECTION ERROR:",
+            repr(e)
+        )
+
+        return jsonify({
+            "success": False,
+            "error": "Could not connect to AI service."
+        }), 502
+
+    # -----------------------------------------
+    # OTHER ERROR
+    # -----------------------------------------
     except Exception as e:
 
         print(
             "AI COMMUNICATION ERROR:",
-            str(e)
+            repr(e)
         )
 
         return jsonify({
+            "success": False,
             "error": "Something went wrong while processing your question."
         }), 500
+@app.route("/profile")
+def profile():
+    if "email" not in session:
+        return redirect(url_for("login"))
 
+    return render_template("profile.html")
 if __name__ == "__main__":
 
     # -----------------------------------------------------
@@ -6734,8 +7114,6 @@ if __name__ == "__main__":
             5000
         )
     )
-
-
 
     host = os.getenv(
         "HOST",

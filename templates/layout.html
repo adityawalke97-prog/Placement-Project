@@ -4,6 +4,7 @@
 <head>
 
     <meta charset="UTF-8">
+
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
 
@@ -22,6 +23,8 @@
     <link rel="icon"
           href="{{ url_for('static', filename='images/favicon.ico') }}">
 
+    <!-- ================= CSS ================= -->
+
     <link rel="stylesheet"
           href="{{ url_for('static', filename='css/layout.css') }}">
 
@@ -34,6 +37,8 @@
     {% block css %}
     {% endblock %}
 
+    <!-- ================= GOOGLE FONTS ================= -->
+
     <link rel="preconnect"
           href="https://fonts.googleapis.com">
 
@@ -44,14 +49,644 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
           rel="stylesheet">
 
+    <!-- ================= FONT AWESOME ================= -->
+
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
+    <!-- ================= ADVANCED NAV CSS ================= -->
+
+    <style>
+
+        /* =====================================================
+           ADVANCED NAVBAR
+        ===================================================== */
+
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 9999;
+
+            min-height: 72px;
+
+            display: flex;
+            align-items: center;
+
+            padding: 10px 28px;
+
+            background: rgba(255,255,255,.92);
+
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+
+            border-bottom: 1px solid rgba(0,0,0,.08);
+
+            box-shadow: 0 8px 30px rgba(0,0,0,.06);
+        }
+
+
+        /* ================= LOGO ================= */
+
+        .nav-left {
+            flex-shrink: 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .logo > i {
+            width: 44px;
+            height: 44px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 13px;
+
+            background: linear-gradient(
+                    135deg,
+                    #2563eb,
+                    #7c3aed
+            );
+
+            color: white;
+
+            font-size: 21px;
+
+            box-shadow: 0 8px 20px rgba(37,99,235,.25);
+        }
+
+        .logo h2 {
+            margin: 0;
+
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .logo span {
+            display: block;
+
+            margin-top: 1px;
+
+            font-size: 10px;
+
+            opacity: .6;
+
+            letter-spacing: .3px;
+        }
+
+
+        /* ================= SEARCH ================= */
+
+        .nav-search {
+            position: relative;
+
+            width: min(330px, 25vw);
+
+            margin-left: auto;
+            margin-right: 22px;
+        }
+
+        .nav-search i {
+            position: absolute;
+
+            left: 14px;
+            top: 50%;
+
+            transform: translateY(-50%);
+
+            opacity: .5;
+        }
+
+        .nav-search input {
+            width: 100%;
+
+            box-sizing: border-box;
+
+            padding: 11px 15px 11px 42px;
+
+            border: 1px solid rgba(0,0,0,.1);
+
+            border-radius: 14px;
+
+            outline: none;
+
+            background: rgba(255,255,255,.7);
+
+            font-family: inherit;
+
+            transition: .25s;
+        }
+
+        .nav-search input:focus {
+            border-color: #2563eb;
+
+            box-shadow:
+                    0 0 0 4px rgba(37,99,235,.1);
+        }
+
+
+        /* ================= NAV LINKS ================= */
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+
+            gap: 4px;
+
+            margin: 0;
+            padding: 0;
+
+            list-style: none;
+        }
+
+        .nav-links > li {
+            position: relative;
+        }
+
+        .nav-links > li > a {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+
+            padding: 10px 11px;
+
+            border-radius: 11px;
+
+            text-decoration: none;
+
+            color: inherit;
+
+            font-size: 13px;
+            font-weight: 500;
+
+            white-space: nowrap;
+
+            transition: .2s;
+        }
+
+        .nav-links > li > a:hover {
+            background: rgba(37,99,235,.08);
+
+            color: #2563eb;
+        }
+
+
+        /* ================= PROFILE ================= */
+
+        .profile-dropdown {
+            margin-left: 8px;
+        }
+
+        .profile-btn {
+            border: none;
+
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            padding: 5px 9px 5px 5px;
+
+            border-radius: 30px;
+
+            background: rgba(37,99,235,.07);
+
+            cursor: pointer;
+
+            font-family: inherit;
+
+            font-size: 13px;
+            font-weight: 600;
+
+            color: inherit;
+
+            transition: .25s;
+        }
+
+        .profile-btn:hover {
+            background: rgba(37,99,235,.13);
+        }
+
+        .nav-profile-image,
+        .nav-profile-placeholder {
+            width: 36px;
+            height: 36px;
+
+            border-radius: 50%;
+
+            flex-shrink: 0;
+        }
+
+        .nav-profile-image {
+            display: block;
+
+            object-fit: cover;
+
+            border: 2px solid rgba(255,255,255,.9);
+
+            box-shadow: 0 3px 10px rgba(0,0,0,.15);
+        }
+
+        .nav-profile-placeholder {
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            background: linear-gradient(
+                    135deg,
+                    #2563eb,
+                    #7c3aed
+            );
+
+            color: white;
+
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .nav-profile-name {
+            max-width: 110px;
+
+            overflow: hidden;
+
+            text-overflow: ellipsis;
+
+            white-space: nowrap;
+        }
+
+        .profile-btn > .fa-chevron-down {
+            font-size: 10px;
+
+            opacity: .55;
+        }
+
+
+        /* ================= DROPDOWN ================= */
+
+        .dropdown-menu {
+            position: absolute;
+
+            top: calc(100% + 12px);
+
+            right: 0;
+
+            width: 245px;
+
+            padding: 9px;
+
+            background: rgba(255,255,255,.97);
+
+            backdrop-filter: blur(20px);
+
+            border: 1px solid rgba(0,0,0,.08);
+
+            border-radius: 18px;
+
+            box-shadow:
+                    0 20px 50px rgba(0,0,0,.15);
+
+            opacity: 0;
+
+            visibility: hidden;
+
+            transform:
+                    translateY(-8px)
+                    scale(.98);
+
+            transition: .2s;
+
+            z-index: 10000;
+        }
+
+        .profile-dropdown:hover .dropdown-menu,
+        .profile-dropdown:focus-within .dropdown-menu {
+            opacity: 1;
+
+            visibility: visible;
+
+            transform:
+                    translateY(0)
+                    scale(1);
+        }
+
+
+        /* PROFILE HEADER */
+
+        .dropdown-profile {
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+
+            padding: 12px;
+
+            margin-bottom: 7px;
+
+            border-radius: 13px;
+
+            background: rgba(37,99,235,.06);
+        }
+
+        .dropdown-profile img,
+        .dropdown-profile-placeholder {
+            width: 42px;
+            height: 42px;
+
+            border-radius: 50%;
+
+            object-fit: cover;
+
+            flex-shrink: 0;
+        }
+
+        .dropdown-profile-placeholder {
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            background: linear-gradient(
+                    135deg,
+                    #2563eb,
+                    #7c3aed
+            );
+
+            color: white;
+
+            font-weight: 700;
+        }
+
+        .dropdown-user-info {
+            min-width: 0;
+        }
+
+        .dropdown-user-name {
+            font-weight: 700;
+
+            font-size: 14px;
+
+            white-space: nowrap;
+
+            overflow: hidden;
+
+            text-overflow: ellipsis;
+        }
+
+        .dropdown-user-email {
+            margin-top: 2px;
+
+            font-size: 11px;
+
+            opacity: .6;
+
+            white-space: nowrap;
+
+            overflow: hidden;
+
+            text-overflow: ellipsis;
+        }
+
+
+        /* DROPDOWN LINKS */
+
+        .dropdown-menu a {
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+
+            padding: 11px 12px;
+
+            border-radius: 11px;
+
+            color: inherit;
+
+            text-decoration: none;
+
+            font-size: 13px;
+
+            transition: .2s;
+        }
+
+        .dropdown-menu a i {
+            width: 20px;
+
+            text-align: center;
+
+            opacity: .7;
+        }
+
+        .dropdown-menu a:hover {
+            background: rgba(37,99,235,.08);
+
+            color: #2563eb;
+        }
+
+        .dropdown-divider {
+            height: 1px;
+
+            margin: 7px 4px;
+
+            background: rgba(0,0,0,.08);
+        }
+
+        .dropdown-menu a.logout {
+            color: #dc2626;
+        }
+
+        .dropdown-menu a.logout:hover {
+            background: rgba(220,38,38,.08);
+
+            color: #dc2626;
+        }
+
+
+        /* ================= MOBILE MENU ================= */
+
+        .menu-toggle {
+            display: none;
+
+            width: 42px;
+            height: 42px;
+
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 12px;
+
+            cursor: pointer;
+
+            background: rgba(37,99,235,.08);
+
+            color: #2563eb;
+        }
+
+
+        /* ================= MOBILE ================= */
+
+        @media (max-width: 1250px) {
+
+            .navbar {
+                padding: 10px 18px;
+            }
+
+            .nav-links > li > a {
+                padding: 9px 7px;
+
+                font-size: 12px;
+            }
+
+            .nav-search {
+                width: 210px;
+            }
+
+            .nav-profile-name {
+                max-width: 80px;
+            }
+        }
+
+
+        @media (max-width: 1050px) {
+
+            .nav-search {
+                display: none;
+            }
+
+            .menu-toggle {
+                display: flex;
+
+                margin-left: auto;
+            }
+
+            .nav-links {
+                position: absolute;
+
+                top: 100%;
+
+                left: 15px;
+                right: 15px;
+
+                display: none;
+
+                flex-direction: column;
+
+                align-items: stretch;
+
+                gap: 4px;
+
+                padding: 12px;
+
+                background: rgba(255,255,255,.98);
+
+                backdrop-filter: blur(20px);
+
+                border: 1px solid rgba(0,0,0,.08);
+
+                border-radius: 18px;
+
+                box-shadow:
+                        0 20px 50px rgba(0,0,0,.14);
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .nav-links > li > a {
+                padding: 12px 14px;
+            }
+
+            .profile-dropdown {
+                margin-left: 0;
+            }
+
+            .profile-btn {
+                width: 100%;
+
+                justify-content: flex-start;
+
+                padding: 6px 10px;
+            }
+
+            .nav-profile-name {
+                max-width: none;
+            }
+
+            .dropdown-menu {
+                position: static;
+
+                width: auto;
+
+                margin-top: 7px;
+
+                display: none;
+
+                opacity: 1;
+
+                visibility: visible;
+
+                transform: none;
+
+                box-shadow: none;
+            }
+
+            .profile-dropdown:hover .dropdown-menu {
+                display: block;
+            }
+        }
+
+
+        @media (max-width: 600px) {
+
+            .navbar {
+                padding: 9px 12px;
+            }
+
+            .logo h2 {
+                font-size: 16px;
+            }
+
+            .logo span {
+                font-size: 8px;
+            }
+
+            .logo > i {
+                width: 40px;
+                height: 40px;
+            }
+        }
+
+
+        /* ================= FLASH ================= */
+
+        .flash {
+            transition: opacity .5s ease;
+        }
+
+    </style>
+
 </head>
+
 
 <body>
 
-<div class="page-loader" id="pageLoader">
+
+<!-- =====================================================
+     PAGE LOADER
+===================================================== -->
+
+<div class="page-loader"
+     id="pageLoader">
 
     <div class="loader-box">
 
@@ -65,7 +700,15 @@
 
 </div>
 
+
+<!-- =====================================================
+     NAVBAR
+===================================================== -->
+
 <nav class="navbar">
+
+
+    <!-- LOGO -->
 
     <div class="nav-left">
 
@@ -78,7 +721,9 @@
 
                 <h2>Placement Portal</h2>
 
-                <span>Train • Practice • Get Placed</span>
+                <span>
+                    Train • Practice • Get Placed
+                </span>
 
             </div>
 
@@ -86,18 +731,27 @@
 
     </div>
 
+
+    <!-- SEARCH -->
+
     {% if session.get("user_id") %}
 
     <div class="nav-search">
 
         <i class="fas fa-search"></i>
 
-        <input type="text"
-               placeholder="Search Courses, Mock Tests...">
+        <input
+                type="text"
+                placeholder="Search Courses, Mock Tests..."
+                id="globalSearch"
+                autocomplete="off">
 
     </div>
 
     {% endif %}
+
+
+    <!-- MOBILE MENU BUTTON -->
 
     <div class="menu-toggle"
          id="menu-toggle">
@@ -106,8 +760,14 @@
 
     </div>
 
+
+    <!-- NAVIGATION -->
+
     <ul class="nav-links"
         id="nav-links">
+
+
+        <!-- HOME -->
 
         <li>
 
@@ -121,7 +781,11 @@
 
         </li>
 
+
         {% if session.get("user_id") %}
+
+
+        <!-- DASHBOARD -->
 
         <li>
 
@@ -135,6 +799,9 @@
 
         </li>
 
+
+        <!-- COURSES -->
+
         <li>
 
             <a href="/courses">
@@ -146,6 +813,9 @@
             </a>
 
         </li>
+
+
+        <!-- MOCK TEST -->
 
         <li>
 
@@ -159,6 +829,9 @@
 
         </li>
 
+
+        <!-- INTERVIEW -->
+
         <li>
 
             <a href="/interview_questions">
@@ -170,6 +843,9 @@
             </a>
 
         </li>
+
+
+        <!-- COMMUNICATION -->
 
         <li>
 
@@ -183,6 +859,9 @@
 
         </li>
 
+
+        <!-- RESUME -->
+
         <li>
 
             <a href="/resume_builder">
@@ -194,6 +873,9 @@
             </a>
 
         </li>
+
+
+        <!-- LEADERBOARD -->
 
         <li>
 
@@ -207,19 +889,103 @@
 
         </li>
 
+
+        <!-- =================================================
+             PROFILE DROPDOWN
+        ================================================= -->
+
         <li class="profile-dropdown">
 
-            <button class="profile-btn">
 
-                <i class="fas fa-user-circle"></i>
+            <button
+                    type="button"
+                    class="profile-btn"
+                    aria-label="Open profile menu">
 
-                {{ session.get("name","Student") }}
+
+                {% if session.get("picture") %}
+
+                <img
+                        src="{{ session.get('picture') }}"
+                        alt="{{ session.get('name', 'Student') }}"
+                        class="nav-profile-image"
+                        referrerpolicy="no-referrer">
+
+                {% else %}
+
+                <span class="nav-profile-placeholder">
+
+                        {{ session.get("name", "Student")[0]|upper }}
+
+                    </span>
+
+                {% endif %}
+
+
+                <span class="nav-profile-name">
+
+                    {{ session.get("name", "Student") }}
+
+                </span>
+
 
                 <i class="fas fa-chevron-down"></i>
 
+
             </button>
 
+
+            <!-- DROPDOWN -->
+
             <div class="dropdown-menu">
+
+
+                <!-- USER INFORMATION -->
+
+                <div class="dropdown-profile">
+
+
+                    {% if session.get("picture") %}
+
+                    <img
+                            src="{{ session.get('picture') }}"
+                            alt="{{ session.get('name', 'Student') }}"
+                            referrerpolicy="no-referrer">
+
+                    {% else %}
+
+                    <div class="dropdown-profile-placeholder">
+
+                        {{ session.get("name", "Student")[0]|upper }}
+
+                    </div>
+
+                    {% endif %}
+
+
+                    <div class="dropdown-user-info">
+
+                        <div class="dropdown-user-name">
+
+                            {{ session.get("name", "Student") }}
+
+                        </div>
+
+                        <div class="dropdown-user-email">
+
+                            {{ session.get("email", "No email available") }}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="dropdown-divider"></div>
+
+
+                <!-- DASHBOARD -->
 
                 <a href="/dashboard">
 
@@ -229,13 +995,19 @@
 
                 </a>
 
+
+                <!-- PROFILE -->
+
                 <a href="/profile">
 
                     <i class="fas fa-user"></i>
 
-                    Profile
+                    My Profile
 
                 </a>
+
+
+                <!-- SETTINGS -->
 
                 <a href="/settings">
 
@@ -244,6 +1016,12 @@
                     Settings
 
                 </a>
+
+
+                <div class="dropdown-divider"></div>
+
+
+                <!-- LOGOUT -->
 
                 <a href="/logout"
                    class="logout">
@@ -254,11 +1032,16 @@
 
                 </a>
 
+
             </div>
 
         </li>
 
+
         {% else %}
+
+
+        <!-- LOGIN -->
 
         <li>
 
@@ -271,6 +1054,9 @@
             </a>
 
         </li>
+
+
+        <!-- SIGNUP -->
 
         <li>
 
@@ -285,27 +1071,41 @@
 
         </li>
 
+
         {% endif %}
+
 
     </ul>
 
 </nav>
 
-    <header class="hero">
+
+<!-- =====================================================
+     HERO
+===================================================== -->
+
+<header class="hero">
+</header>
 
 
+<!-- =====================================================
+     MAIN CONTENT
+===================================================== -->
 
 <main class="main-container">
 
+
+    <!-- FLASH MESSAGES -->
+
     {% with messages = get_flashed_messages(with_categories=true) %}
 
-        {% if messages %}
+    {% if messages %}
 
-            <div class="flash-wrapper">
+    <div class="flash-wrapper">
 
-                {% for category, message in messages %}
+        {% for category, message in messages %}
 
-                    <div class="flash flash-{{ category }}">
+        <div class="flash flash-{{ category }}">
 
                         <span>
 
@@ -329,23 +1129,33 @@
 
                         </span>
 
-                        <p>{{ message }}</p>
 
-                        <button class="flash-close">
+            <p>
+                {{ message }}
+            </p>
 
-                            <i class="fas fa-times"></i>
 
-                        </button>
+            <button
+                    class="flash-close"
+                    type="button"
+                    aria-label="Close">
 
-                    </div>
+                <i class="fas fa-times"></i>
 
-                {% endfor %}
+            </button>
 
-            </div>
+        </div>
 
-        {% endif %}
+        {% endfor %}
+
+    </div>
+
+    {% endif %}
 
     {% endwith %}
+
+
+    <!-- PAGE CONTENT -->
 
     <div class="container">
 
@@ -354,12 +1164,24 @@
 
     </div>
 
+
 </main>
+
+
+<!-- =====================================================
+     FOOTER
+===================================================== -->
+
 <footer class="footer">
+
 
     <div class="footer-container">
 
+
+        <!-- ABOUT -->
+
         <div class="footer-column">
+
 
             <div class="footer-logo">
 
@@ -369,101 +1191,193 @@
 
             </div>
 
+
             <p>
 
-                A complete Placement Preparation Portal built with Flask & MySQL.
-                Practice Mock Tests, prepare for Interviews, build Resume,
-                improve Communication Skills and track your learning journey.
+                A complete Placement Preparation Portal built with Flask
+                & MySQL. Practice Mock Tests, prepare for Interviews,
+                build Resume, improve Communication Skills and track
+                your learning journey.
 
             </p>
 
+
             <div class="social-icons">
 
-                <a href="#" title="GitHub">
+
+                <a href="#"
+                   title="GitHub">
+
                     <i class="fab fa-github"></i>
+
                 </a>
 
-                <a href="#" title="LinkedIn">
+
+                <a href="#"
+                   title="LinkedIn">
+
                     <i class="fab fa-linkedin"></i>
+
                 </a>
 
-                <a href="#" title="Instagram">
+
+                <a href="#"
+                   title="Instagram">
+
                     <i class="fab fa-instagram"></i>
+
                 </a>
 
-                <a href="#" title="YouTube">
+
+                <a href="#"
+                   title="YouTube">
+
                     <i class="fab fa-youtube"></i>
+
                 </a>
+
 
             </div>
 
+
         </div>
+
+
+        <!-- QUICK LINKS -->
 
         <div class="footer-column">
 
-            <h3>Quick Links</h3>
+
+            <h3>
+                Quick Links
+            </h3>
+
 
             <ul>
 
+                <li>
+                    <a href="/dashboard">
+                        Home
+                    </a>
+                </li>
 
-                <li><a href="/dashboard">Home</a></li>
+                <li>
+                    <a href="/courses">
+                        Courses
+                    </a>
+                </li>
 
-                <li><a href="/courses">Courses</a></li>
+                <li>
+                    <a href="/mock_test">
+                        Mock Test
+                    </a>
+                </li>
 
-                <li><a href="/mock_test">Mock Test</a></li>
+                <li>
+                    <a href="/resume_builder">
+                        Resume Builder
+                    </a>
+                </li>
 
-                <li><a href="/resume_builder">Resume Builder</a></li>
-
-                <li><a href="/leaderboard">Leaderboard</a></li>
+                <li>
+                    <a href="/leaderboard">
+                        Leaderboard
+                    </a>
+                </li>
 
             </ul>
 
+
         </div>
+
+
+        <!-- RESOURCES -->
 
         <div class="footer-column">
 
-            <h3>Resources</h3>
+
+            <h3>
+                Resources
+            </h3>
+
 
             <ul>
 
-                <li><a href="/communication">Communication</a></li>
+                <li>
+                    <a href="/communication">
+                        Communication
+                    </a>
+                </li>
 
-                <li><a href="/interview_questions">Interview Questions</a></li>
+                <li>
+                    <a href="/interview_questions">
+                        Interview Questions
+                    </a>
+                </li>
 
-                <li><a href="/contact">Contact</a></li>
+                <li>
+                    <a href="/contact">
+                        Contact
+                    </a>
+                </li>
 
-                <li><a href="/about">About</a></li>
+                <li>
+                    <a href="/about">
+                        About
+                    </a>
+                </li>
 
-                <li><a href="/privacy">Privacy Policy</a></li>
+                <li>
+                    <a href="/privacy">
+                        Privacy Policy
+                    </a>
+                </li>
 
-                <li><a href="/terms">Terms & Conditions</a></li>
+                <li>
+                    <a href="/terms">
+                        Terms & Conditions
+                    </a>
+                </li>
 
             </ul>
 
+
         </div>
+
+
+        <!-- CONTACT -->
 
         <div class="footer-column">
 
-            <h3>Contact</h3>
+
+            <h3>
+                Contact
+            </h3>
+
 
             <p>
                 <i class="fas fa-envelope"></i>
                 support@placementportal.com
             </p>
 
+
             <p>
                 <i class="fas fa-phone"></i>
                 +91 XXXXX XXXXX
             </p>
+
 
             <p>
                 <i class="fas fa-location-dot"></i>
                 Pune, Maharashtra
             </p>
 
+
         </div>
 
+
     </div>
+
 
     <div class="footer-bottom">
 
@@ -476,107 +1390,249 @@
 
     </div>
 
+
 </footer>
 
-<button id="scrollTop"
-        class="scroll-top">
+
+<!-- =====================================================
+     SCROLL TOP
+===================================================== -->
+
+<button
+        id="scrollTop"
+        class="scroll-top"
+        type="button"
+        aria-label="Scroll to top">
 
     <i class="fas fa-arrow-up"></i>
 
 </button>
 
+
+<!-- =====================================================
+     PAGE JAVASCRIPT BLOCK
+===================================================== -->
+
 {% block js %}
 {% endblock %}
 
+
+<!-- =====================================================
+     GLOBAL JAVASCRIPT
+===================================================== -->
+
 <script>
 
-const menuToggle = document.getElementById("menu-toggle");
-const navLinks = document.getElementById("nav-links");
 
-if(menuToggle){
+    /* ================= MOBILE MENU ================= */
 
-    menuToggle.addEventListener("click",()=>{
+    const menuToggle =
+        document.getElementById("menu-toggle");
 
-        navLinks.classList.toggle("active");
+    const navLinks =
+        document.getElementById("nav-links");
 
-    });
 
-}
+    if (menuToggle && navLinks) {
 
-document.querySelectorAll(".flash-close").forEach(btn=>{
+        menuToggle.addEventListener("click", function () {
 
-    btn.onclick=function(){
+            navLinks.classList.toggle("active");
 
-        this.parentElement.remove();
+            const icon =
+                menuToggle.querySelector("i");
 
-    }
+            if (navLinks.classList.contains("active")) {
 
-});
+                icon.classList.remove("fa-bars");
 
-setTimeout(()=>{
+                icon.classList.add("fa-xmark");
 
-    document.querySelectorAll(".flash").forEach(item=>{
+            } else {
 
-        item.style.opacity="0";
+                icon.classList.remove("fa-xmark");
 
-        setTimeout(()=>{
+                icon.classList.add("fa-bars");
 
-            item.remove();
+            }
 
-        },500);
-
-    });
-
-},4000);
-
-const loader=document.getElementById("pageLoader");
-
-window.addEventListener("load",()=>{
-
-    if(loader){
-
-        loader.style.opacity="0";
-
-        setTimeout(()=>{
-
-            loader.style.display="none";
-
-        },500);
+        });
 
     }
 
-});
 
-const topBtn=document.getElementById("scrollTop");
+    /* ================= CLOSE MOBILE MENU ================= */
 
-window.addEventListener("scroll",()=>{
+    document.querySelectorAll(
+        "#nav-links a"
+    ).forEach(function (link) {
 
-    if(window.scrollY>300){
+        link.addEventListener("click", function () {
 
-        topBtn.classList.add("show");
+            if (window.innerWidth <= 1050) {
 
-    }else{
+                navLinks.classList.remove("active");
 
-        topBtn.classList.remove("show");
+                const icon =
+                    menuToggle.querySelector("i");
 
-    }
+                icon.classList.remove("fa-xmark");
 
-});
+                icon.classList.add("fa-bars");
 
-topBtn.onclick=function(){
+            }
 
-    window.scrollTo({
-
-        top:0,
-
-        behavior:"smooth"
+        });
 
     });
 
-};
 
+    /* ================= FLASH CLOSE ================= */
+
+    document.querySelectorAll(
+        ".flash-close"
+    ).forEach(function (btn) {
+
+        btn.addEventListener("click", function () {
+
+            const flash =
+                this.closest(".flash");
+
+            if (flash) {
+
+                flash.style.opacity = "0";
+
+                setTimeout(function () {
+
+                    flash.remove();
+
+                }, 300);
+
+            }
+
+        });
+
+    });
+
+
+    /* ================= AUTO HIDE FLASH ================= */
+
+    setTimeout(function () {
+
+        document.querySelectorAll(
+            ".flash"
+        ).forEach(function (item) {
+
+            item.style.opacity = "0";
+
+            setTimeout(function () {
+
+                item.remove();
+
+            }, 500);
+
+        });
+
+    }, 4000);
+
+
+    /* ================= PAGE LOADER ================= */
+
+    const loader =
+        document.getElementById("pageLoader");
+
+
+    window.addEventListener("load", function () {
+
+        if (loader) {
+
+            loader.style.opacity = "0";
+
+            setTimeout(function () {
+
+                loader.style.display = "none";
+
+            }, 500);
+
+        }
+
+    });
+
+
+    /* ================= SCROLL TOP ================= */
+
+    const topBtn =
+        document.getElementById("scrollTop");
+
+
+    window.addEventListener("scroll", function () {
+
+        if (!topBtn) return;
+
+        if (window.scrollY > 300) {
+
+            topBtn.classList.add("show");
+
+        } else {
+
+            topBtn.classList.remove("show");
+
+        }
+
+    });
+
+
+    if (topBtn) {
+
+        topBtn.addEventListener(
+            "click",
+            function () {
+
+                window.scrollTo({
+
+                    top: 0,
+
+                    behavior: "smooth"
+
+                });
+
+            }
+        );
+
+    }
+
+
+    /* ================= PROFILE IMAGE ERROR ================= */
+
+    document.querySelectorAll(
+        ".nav-profile-image, .dropdown-profile img"
+    ).forEach(function (image) {
+        image.addEventListener(
+            "error",
+            function () {
+                this.style.display = "none";
+            }
+        );
+    });
+    /* ================= GLOBAL SEARCH ================= */
+    const globalSearch =
+        document.getElementById("globalSearch");
+    if (globalSearch) {
+        globalSearch.addEventListener(
+            "keydown",
+            function (event) {
+                if (event.key === "Enter") {
+                    const query =
+                        this.value.trim();
+                    if (query.length > 0) {
+                        window.location.href =
+                            "/courses?search=" +
+                            encodeURIComponent(query);
+                    }
+                }
+            }
+        );
+    }
 </script>
-
 </body>
-
 </html>

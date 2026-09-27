@@ -1,0 +1,243 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Google Account | Placement Training Portal
+{% endblock %}
+
+{% block content %}
+
+<div class="google-profile-page">
+
+    <!-- PROFILE CARD -->
+    <div class="google-account-card">
+
+        <!-- Google Header -->
+        <div class="google-account-header">
+
+            <div class="google-logo">
+                <i class="fab fa-google"></i>
+            </div>
+
+            <h1>Google Account</h1>
+
+            <p>
+                Manage your Google account used for Placement Portal
+            </p>
+
+        </div>
+
+
+        <!-- CURRENT ACCOUNT -->
+        <div class="current-google-account">
+
+            {% if session.get("picture") %}
+
+            <img
+                    src="{{ session.get('picture') }}"
+                    alt="{{ session.get('name', 'Student') }}"
+                    class="google-account-photo"
+                    referrerpolicy="no-referrer"
+            >
+
+            {% else %}
+
+            <div class="google-account-placeholder">
+                {{ session.get("name", "Student")[0]|upper }}
+            </div>
+
+            {% endif %}
+
+
+            <div class="google-account-details">
+
+                <h2>
+                    {{ session.get("name", "Student") }}
+                </h2>
+
+                <p>
+                    {{ session.get("email", "") }}
+                </p>
+
+                {% if session.get("email_verified") %}
+
+                <span class="verified-account">
+                    <i class="fas fa-circle-check"></i>
+                    Verified Google Account
+                </span>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+        <!-- ACCOUNT OPTIONS -->
+        <div class="google-account-options">
+
+            <a
+                    href="https://myaccount.google.com/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="google-option"
+            >
+
+                <div class="google-option-icon">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+
+                <div>
+                    <strong>Manage your Google Account</strong>
+                    <span>
+                        Open your Google account settings
+                    </span>
+                </div>
+
+                <i class="fas fa-chevron-right"></i>
+
+            </a>
+
+
+            <!-- SWITCH ACCOUNT -->
+
+            <a
+                    href="https://accounts.google.com/AccountChooser"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="google-option"
+            >
+
+                <div class="google-option-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+
+                <div>
+                    <strong>Switch account</strong>
+                    <span>
+                        Choose another Google account
+                    </span>
+                </div>
+
+                <i class="fas fa-chevron-right"></i>
+
+            </a>
+
+
+            <!-- ADD ACCOUNT -->
+
+            <a
+                    href="https://accounts.google.com/AccountChooser"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="google-option"
+            >
+
+                <div class="google-option-icon">
+                    <i class="fas fa-user-plus"></i>
+                </div>
+
+                <div>
+                    <strong>Add another account</strong>
+                    <span>
+                        Sign in with another Google account
+                    </span>
+                </div>
+
+                <i class="fas fa-chevron-right"></i>
+
+            </a>
+
+
+            <!-- GMAIL -->
+
+            <a
+                    href="https://mail.google.com/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="google-option"
+            >
+
+                <div class="google-option-icon">
+                    <i class="fas fa-envelope"></i>
+                </div>
+
+                <div>
+                    <strong>Gmail</strong>
+                    <span>
+                        Open your Gmail inbox
+                    </span>
+                </div>
+
+                <i class="fas fa-chevron-right"></i>
+
+            </a>
+
+        </div>
+
+
+        <!-- PORTAL INFORMATION -->
+
+        <div class="portal-account-info">
+
+            <div class="portal-info-title">
+
+                <i class="fas fa-graduation-cap"></i>
+
+                <strong>
+                    Placement Portal Account
+                </strong>
+
+            </div>
+
+            <div class="portal-info-row">
+
+                <span>Account Type</span>
+
+                <strong>
+                    {{ session.get("role", "Student")|title }}
+                </strong>
+
+            </div>
+
+            <div class="portal-info-row">
+
+                <span>Subscription</span>
+
+                <strong>
+                    {{ session.get(
+                    "subscription_status",
+                    "inactive"
+                    )|title }}
+                </strong>
+
+            </div>
+
+            <div class="portal-info-row">
+
+                <span>Login Method</span>
+
+                <strong>
+                    <i class="fab fa-google"></i>
+                    Google
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <!-- BACK BUTTON -->
+
+        <a href="/dashboard" class="back-dashboard">
+
+            <i class="fas fa-arrow-left"></i>
+
+            Back to Dashboard
+
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}
