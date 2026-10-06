@@ -5939,7 +5939,47 @@ html{
     transform:translateY(-3px);
 
 }
+/* =========================================================
+   FIX - SUBMIT NOW BUTTON IN SUBMIT MODAL
+   ========================================================= */
 
+.modal-actions .submit-btn {
+    min-width: 190px !important;
+    min-height: 42px !important;
+
+    padding: 9px 16px !important;
+
+    border: none !important;
+    border-radius: 10px !important;
+
+    background: linear-gradient(
+            135deg,
+            #6366f1,
+            #8b5cf6
+    ) !important;
+
+    color: #ffffff !important;
+
+    font-size: 12px !important;
+    font-weight: 800 !important;
+
+    cursor: pointer !important;
+
+    box-shadow:
+            0 8px 20px rgba(99,102,241,.25) !important;
+}
+
+.modal-actions .submit-btn:hover {
+    background: linear-gradient(
+            135deg,
+            #4f46e5,
+            #7c3aed
+    ) !important;
+
+    color: #ffffff !important;
+
+    transform: translateY(-2px);
+}
 /*==========================
         END OF CSS
 ==========================*/

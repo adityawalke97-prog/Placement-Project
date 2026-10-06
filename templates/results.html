@@ -1,7 +1,561 @@
-{% for result in results %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<a href="{{ url_for('mock_result', result_id=result.id) }}">
-    View Result
-</a>
+    <title>Mock Test Result | PlacementPro</title>
 
-{% endfor %}
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Inter, Arial, sans-serif;
+            background: #f5f7fb;
+            color: #1f2937;
+            min-height: 100vh;
+        }
+
+        /* HEADER */
+        .header {
+            height: 70px;
+            background: #ffffff;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 35px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 800;
+            color: #2563eb;
+        }
+
+        .logo span {
+            color: #111827;
+        }
+
+        .header-title {
+            font-size: 15px;
+            color: #6b7280;
+        }
+
+        /* MAIN */
+        .container {
+            width: 92%;
+            max-width: 1100px;
+            margin: 40px auto;
+        }
+
+        .result-card {
+            background: #ffffff;
+            border-radius: 22px;
+            box-shadow: 0 10px 35px rgba(15, 23, 42, 0.08);
+            overflow: hidden;
+        }
+
+        /* TOP */
+        .result-top {
+            padding: 42px 30px;
+            text-align: center;
+            background: linear-gradient(135deg, #eff6ff, #ffffff);
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .success-icon {
+            width: 78px;
+            height: 78px;
+            margin: 0 auto 18px;
+            border-radius: 50%;
+            background: #2563eb;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            font-weight: bold;
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.25);
+        }
+
+        .result-top h1 {
+            font-size: 32px;
+            color: #111827;
+            margin-bottom: 8px;
+        }
+
+        .result-top p {
+            color: #6b7280;
+            font-size: 15px;
+        }
+
+        /* SCORE */
+        .score-section {
+            padding: 35px 30px;
+        }
+
+        .score-circle {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            margin: 0 auto 30px;
+            background: #ffffff;
+            border: 14px solid #2563eb;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.12);
+        }
+
+        .percentage {
+            font-size: 42px;
+            font-weight: 800;
+            color: #111827;
+        }
+
+        .score-label {
+            font-size: 13px;
+            color: #6b7280;
+            margin-top: 3px;
+        }
+
+        /* INFO */
+        .test-info {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            margin-bottom: 30px;
+        }
+
+        .info-box {
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .info-title {
+            font-size: 13px;
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+
+        .info-value {
+            font-size: 19px;
+            font-weight: 700;
+            color: #111827;
+        }
+
+        /* STATS */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+
+        .stat {
+            border-radius: 14px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid #e5e7eb;
+        }
+
+        .stat-number {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .stat.correct {
+            background: #ecfdf5;
+        }
+
+        .stat.correct .stat-number {
+            color: #059669;
+        }
+
+        .stat.wrong {
+            background: #fef2f2;
+        }
+
+        .stat.wrong .stat-number {
+            color: #dc2626;
+        }
+
+        .stat.skipped {
+            background: #fffbeb;
+        }
+
+        .stat.skipped .stat-number {
+            color: #d97706;
+        }
+
+        .stat.total {
+            background: #eff6ff;
+        }
+
+        .stat.total .stat-number {
+            color: #2563eb;
+        }
+
+        /* MESSAGE */
+        .performance {
+            margin-top: 30px;
+            padding: 22px;
+            border-radius: 15px;
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+        }
+
+        .performance h2 {
+            font-size: 18px;
+            margin-bottom: 8px;
+            color: #111827;
+        }
+
+        .performance p {
+            color: #6b7280;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        /* BUTTONS */
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 14px;
+            padding: 0 30px 35px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            text-decoration: none;
+            border: none;
+            padding: 13px 25px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s ease;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: #eef2ff;
+            color: #3730a3;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e7ff;
+        }
+
+        /* FOOTER */
+        .footer {
+            text-align: center;
+            color: #9ca3af;
+            font-size: 12px;
+            margin: 25px 0 35px;
+        }
+
+        /* MOBILE */
+        @media (max-width: 768px) {
+
+            .header {
+                padding: 0 18px;
+            }
+
+            .header-title {
+                display: none;
+            }
+
+            .container {
+                width: 95%;
+                margin: 25px auto;
+            }
+
+            .result-top {
+                padding: 32px 20px;
+            }
+
+            .result-top h1 {
+                font-size: 26px;
+            }
+
+            .score-section {
+                padding: 28px 18px;
+            }
+
+            .test-info {
+                grid-template-columns: 1fr;
+            }
+
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .actions {
+                padding: 0 18px 28px;
+            }
+
+            .btn {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<header class="header">
+
+    <div class="logo">
+        Placement<span>Pro</span>
+    </div>
+
+    <div class="header-title">
+        Mock Test Result
+    </div>
+
+</header>
+
+
+<!-- MAIN -->
+<main class="container">
+
+    <div class="result-card">
+
+        <!-- RESULT HEADER -->
+        <section class="result-top">
+
+            <div class="success-icon">
+                ✓
+            </div>
+
+            <h1>Mock Test Completed!</h1>
+
+            <p>
+                Your test has been submitted successfully.
+            </p>
+
+        </section>
+
+
+        <!-- SCORE -->
+        <section class="score-section">
+
+            <div class="score-circle">
+
+                <div class="percentage">
+                    {{ result.percentage or 0 }}%
+                </div>
+
+                <div class="score-label">
+                    Overall Score
+                </div>
+
+            </div>
+
+
+            <!-- TEST INFORMATION -->
+            <div class="test-info">
+
+                <div class="info-box">
+
+                    <div class="info-title">
+                        Test Type
+                    </div>
+
+                    <div class="info-value">
+                        {{ result.test_type or "Mock Test" }}
+                    </div>
+
+                </div>
+
+
+                <div class="info-box">
+
+                    <div class="info-title">
+                        Category
+                    </div>
+
+                    <div class="info-value">
+                        {{ result.category or "General" }}
+                    </div>
+
+                </div>
+
+
+                <div class="info-box">
+
+                    <div class="info-title">
+                        Level
+                    </div>
+
+                    <div class="info-value">
+                        {{ level or "All Levels" }}
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- STATISTICS -->
+            <div class="stats">
+
+                <div class="stat correct">
+
+                    <div class="stat-number">
+                        {{ result.score or 0 }}
+                    </div>
+
+                    <div class="stat-label">
+                        Correct
+                    </div>
+
+                </div>
+
+
+                <div class="stat wrong">
+
+                    <div class="stat-number">
+                        {{ wrong or 0 }}
+                    </div>
+
+                    <div class="stat-label">
+                        Wrong
+                    </div>
+
+                </div>
+
+
+                <div class="stat skipped">
+
+                    <div class="stat-number">
+                        {{ skipped or 0 }}
+                    </div>
+
+                    <div class="stat-label">
+                        Skipped
+                    </div>
+
+                </div>
+
+
+                <div class="stat total">
+
+                    <div class="stat-number">
+                        {{ result.total_questions or 0 }}
+                    </div>
+
+                    <div class="stat-label">
+                        Total Questions
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- PERFORMANCE MESSAGE -->
+            <div class="performance">
+
+                <h2>
+                    Performance Summary
+                </h2>
+
+                {% set percentage = result.percentage or 0 %}
+
+                {% if percentage >= 80 %}
+
+                <p>
+                    Excellent performance! 🎉
+                    You have demonstrated strong preparation.
+                    Keep practicing to maintain this level.
+                </p>
+
+                {% elif percentage >= 60 %}
+
+                <p>
+                    Good performance! 👍
+                    You have a solid understanding of the concepts.
+                    Continue practicing to improve your score further.
+                </p>
+
+                {% elif percentage >= 40 %}
+
+                <p>
+                    You are making progress.
+                    Focus on the questions you got wrong and
+                    practice the important concepts again.
+                </p>
+
+                {% else %}
+
+                <p>
+                    Keep practicing! 💪
+                    Review the concepts covered in this test
+                    and attempt another mock test to improve your score.
+                </p>
+
+                {% endif %}
+
+            </div>
+
+        </section>
+
+
+        <!-- ACTION BUTTONS -->
+        <div class="actions">
+
+            <a
+                    href="{{ url_for('mock_categories') }}"
+                    class="btn btn-primary">
+                Take Another Mock Test
+            </a>
+
+            <a
+                    href="{{ url_for('mock_categories') }}"
+                    class="btn btn-secondary">
+                Back to Mock Tests
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <div class="footer">
+        PlacementPro © 2026 — Placement Preparation Platform
+    </div>
+
+</main>
+
+</body>
+</html>

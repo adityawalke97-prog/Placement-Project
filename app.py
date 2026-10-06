@@ -496,122 +496,163 @@ def google_callback():
                 conn.close()
             except Exception:
                 pass
-@app.route("/signup", methods=["GET", "POST"])
+# =========================================================
+# SIGNUP
+# =========================================================
+
+@app.route('/signup', methods=['GET', 'POST'])
 def signup():
-    if request.method == "POST":
-        name = request.form.get("name", "").strip()
-        email = request.form.get("email", "").strip().lower()
-        password = request.form.get("password", "")
 
-        conn = get_db_connection()
-        cur = conn.cursor()
+    if request.method == 'POST':
 
-        cur.execute(
-            "SELECT id FROM users WHERE email=%s",
-            (email,)
-        )
+        name = request.form.get('name', '').strip()
+        email = request.form.get('email', '').strip().lower()
+        password = request.form.get('password', '')
+        confirm_password = request.form.get('confirm_password', '')
 
-        if cur.fetchone():
+        # Basic validation
+        if not name or not email or not password or not confirm_password:
+            flash("Please fill all fields.")
+            return redirect(url_for('signup'))
 
-            cur.close()
-            conn.close()
+        # Password match
+        if password != confirm_password:
+            flash("Passwords do not match!")
+            return redirect(url_for('signup'))
 
-            flash("Email already exists.", "danger")
-            return redirect(url_for("signup"))
-        hashed = bcrypt.generate_password_hash(
-            password
-        ).decode("utf-8")
+        conn = None
+        cursor = None
 
-        cur.execute("""
-            INSERT INTO users
-            (
-                name,
-                email,
-                password
+        try:
+            conn = get_db_connection()
+            cursor = conn.cursor()
+
+            # Check existing email
+            cursor.execute(
+                "SELECT id, name, email, password FROM users WHERE email = %s",
+                (email,)
             )
-            VALUES
-            (%s,%s,%s)
-        """, (
-            name,
-            email,
-            hashed
-        ))
 
-        conn.commit()
+            existing_user = cursor.fetchone()
 
-        cur.close()
-        conn.close()
+            if existing_user:
+                flash("Email already registered. Please login.")
+                return redirect(url_for('login'))
 
-        flash("Account created successfully.", "success")
+            # Hash password
+            hashed_password = generate_password_hash(password)
 
-        return redirect(url_for("login"))
+            # Insert new user
+            cursor.execute(
+                """
+                INSERT INTO users (name, email, password)
+                VALUES (%s, %s, %s)
+                """,
+                (name, email, hashed_password)
+            )
 
-    return render_template("signup.html")
+            conn.commit()
 
-@app.route("/login", methods=["GET", "POST"])
+            flash("Account created successfully! Please login.", "success")
+            return redirect(url_for('login'))
+
+        except pymysql.err.IntegrityError:
+            if conn:
+                conn.rollback()
+
+            flash("Email already registered. Please login.")
+            return redirect(url_for('login'))
+
+        except Exception as e:
+            if conn:
+                conn.rollback()
+
+            print("SIGNUP ERROR:", e)
+            flash("Something went wrong. Please try again.")
+            return redirect(url_for('signup'))
+
+        finally:
+            if cursor:
+                cursor.close()
+
+            if conn:
+                conn.close()
+
+    return render_template('signup.html')
+
+
+# =========================================================
+# LOGIN
+# =========================================================
+
+@app.route('/login', methods=['GET', 'POST'])
 def login():
 
-    if request.method == "POST":
+    if request.method == 'POST':
 
-        email = request.form.get(
-            "email",
-            ""
-        ).strip().lower()
+        email = request.form.get('email', '').strip().lower()
+        password = request.form.get('password', '')
 
-        password = request.form.get(
-            "password",
-            ""
-        )
+        if not email or not password:
+            flash("Please enter email and password.")
+            return redirect(url_for('login'))
 
-        conn = get_db_connection()
-        cur = conn.cursor()
+        conn = None
+        cursor = None
 
-        cur.execute(
-            "SELECT * FROM users WHERE email=%s",
-            (email,)
-        )
+        try:
+            conn = get_db_connection()
+            cursor = conn.cursor()
 
-        user = cur.fetchone()
+            # Find user
+            cursor.execute(
+                """
+                SELECT id, name, email, password
+                FROM users
+                WHERE email = %s
+                """,
+                (email,)
+            )
 
-        cur.close()
-        conn.close()
+            user = cursor.fetchone()
 
-        if user and bcrypt.check_password_hash(
-            user["password"],
-            password
-        ):
+            if user and user.get('password'):
 
-            session.permanent = True
+                # Check hashed password
+                if check_password_hash(user['password'], password):
 
-            session["user_id"] = user["id"]
-            session["name"] = user["name"]
-            session["email"] = user["email"]
-            session["profile_pic"] = user.get("profile_pic")
+                    session.clear()
 
-            return redirect(url_for("dashboard"))
+                    session['user_id'] = user['id']
+                    session['user_name'] = user['name']
+                    session['user_email'] = user['email']
 
-        flash(
-            "Invalid Email or Password",
-            "danger"
-        )
+                    return redirect(url_for('dashboard'))
 
-    return render_template("login.html")
+            flash("Invalid email or password.")
+            return redirect(url_for('login'))
 
-# --------------------------------------------------
-# LOGOUT
-# --------------------------------------------------
+        except Exception as e:
 
-@app.route("/logout")
+            print("LOGIN ERROR:", e)
+
+            flash("Something went wrong. Please try again.")
+            return redirect(url_for('login'))
+
+        finally:
+
+            if cursor:
+                cursor.close()
+
+            if conn:
+                conn.close()
+
+    return render_template('login.html')
+@app.route('/logout')
 def logout():
-
     session.clear()
-
-    flash(
-        "Logged out successfully.",
-        "success"
-    )
-
-    return redirect(url_for("login"))
+    flash("Logged out successfully.", "success")
+    return redirect(url_for('login'))
 @app.route("/dashboard")
 def dashboard():
     if "user_id" not in session:
@@ -815,55 +856,7 @@ def dashboard():
     finally:
         cursor.close()
         conn.close()
-@app.route("/mock_categories")
-def mock_categories():
-
-    if "user_id" not in session:
-        flash("Please login first.", "warning")
-        return redirect(url_for("login"))
-
-    conn = None
-    cursor = None
-
-    try:
-
-        conn = get_db_connection()
-        cursor = conn.cursor(pymysql.cursors.DictCursor)
-
-        cursor.execute("""
-            SELECT
-                category,
-                COUNT(*) AS total_questions
-            FROM mock_questions
-            GROUP BY category
-            ORDER BY category
-        """)
-
-        categories = cursor.fetchall()
-
-        return render_template(
-            "mock_categories.html",
-            categories=categories
         )
-
-    except Exception:
-
-        app.logger.exception("Unable to load mock categories")
-
-        flash(
-            "Unable to load mock test categories.",
-            "danger"
-        )
-
-        return redirect(url_for("dashboard"))
-
-    finally:
-
-        if cursor:
-            cursor.close()
-
-        if conn:
-            conn.close()
 
 @app.route("/mock_test")
 def mock_test():
@@ -964,6 +957,7 @@ def mock_test():
         if conn:
             conn.close()
 
+
 @app.route("/submit_mock_test", methods=["POST"])
 @login_required
 def submit_mock_test():
@@ -1033,15 +1027,15 @@ def submit_mock_test():
             for key, value in data.items():
 
                 if (
-                    key.startswith("question_")
+                    key.startswith("q")
+                    or key.startswith("question_")
                     or key.startswith("answer_")
                 ):
                     answers[key] = value
-
-        # =====================================================
-        # CALCULATE SCORE
-        # =====================================================
         score = 0
+        wrong = 0
+        skipped = 0
+
         total = len(question_ids)
 
         for question_id in question_ids:
@@ -1051,30 +1045,32 @@ def submit_mock_test():
             user_answer = (
                 answers.get(f"question_{question_id}")
                 or answers.get(f"answer_{question_id}")
+                or answers.get(f"q{question_id}")
                 or answers.get(question_id_str)
             )
 
             correct_answer = correct_answers.get(question_id_str)
 
-            if (
-                user_answer is not None
-                and correct_answer is not None
+            if user_answer is None or not str(user_answer).strip():
+
+                skipped += 1
+
+            elif (
+                correct_answer is not None
                 and str(user_answer).strip().lower()
                 == str(correct_answer).strip().lower()
             ):
+
                 score += 1
 
-        # =====================================================
-        # CALCULATE PERCENTAGE
-        # =====================================================
+            else:
+
+                wrong += 1
+
         percentage = 0
 
         if total > 0:
             percentage = round((score / total) * 100, 2)
-
-        # =====================================================
-        # SAVE RESULT TO DATABASE
-        # =====================================================
         conn = get_db_connection()
         cursor = conn.cursor()
 
@@ -1103,9 +1099,6 @@ def submit_mock_test():
 
         conn.commit()
 
-        # =====================================================
-        # GET NEW RESULT ID
-        # =====================================================
         result_id = cursor.lastrowid
 
         app.logger.info("===== MOCK TEST RESULT =====")
@@ -1115,6 +1108,24 @@ def submit_mock_test():
         app.logger.info("SCORE: %s", score)
         app.logger.info("TOTAL: %s", total)
         app.logger.info("PERCENTAGE: %s", percentage)
+        app.logger.info("WRONG: %s", wrong)
+        app.logger.info("SKIPPED: %s", skipped)
+
+
+        # =====================================================
+        # SAVE RESULT DATA FOR RESULT PAGE
+        # =====================================================
+        session["last_mock_result"] = {
+            "result_id": result_id,
+            "score": score,
+            "wrong": wrong,
+            "skipped": skipped,
+            "total": total,
+            "percentage": percentage,
+            "category": category,
+            "level": level
+        }
+
 
         # =====================================================
         # CLEAN OLD TEST SESSION DATA
@@ -1126,8 +1137,9 @@ def submit_mock_test():
         session.pop("mock_answers", None)
         session.pop("mock_score", None)
 
+
         # =====================================================
-        # REDIRECT TO RESULT PAGE WITH RESULT ID
+        # GO TO RESULT PAGE
         # =====================================================
         return redirect(
             url_for(
@@ -1164,19 +1176,19 @@ def submit_mock_test():
 # MOCK TEST RESULT
 # =========================================================
 
+
 @app.route("/mock_result/<int:result_id>")
+@login_required
 def mock_result(result_id):
-
-    if "user_id" not in session:
-        flash("Please login first.", "warning")
-        return redirect(url_for("login"))
-
-    user_id = session["user_id"]
 
     conn = None
     cursor = None
 
     try:
+        user_id = session.get("user_id")
+
+        if not user_id:
+            return redirect(url_for("login"))
 
         conn = get_db_connection()
         cursor = conn.cursor(pymysql.cursors.DictCursor)
@@ -1184,51 +1196,64 @@ def mock_result(result_id):
         cursor.execute("""
             SELECT
                 id,
+                user_id,
+                test_type,
+                category,
                 score,
                 total_questions,
-                percentage,
-                test_date
+                percentage
             FROM results
             WHERE id = %s
               AND user_id = %s
             LIMIT 1
-        """, (
-            result_id,
-            user_id
-        ))
+        """, (result_id, user_id))
 
         result = cursor.fetchone()
 
         if not result:
+            flash("Mock test result not found.", "warning")
+            return redirect(url_for("mock_categories"))
 
-            flash(
-                "Result not found.",
-                "warning"
-            )
+        # Calculate wrong answers
+        wrong = max(
+            0,
+            (result["total_questions"] or 0)
+            - (result["score"] or 0)
+        )
 
-            return redirect(
-                url_for("mock_test_history")
-            )
+        # Default values
+        skipped = 0
+        level = ""
+
+        # Read session safely
+        last_result = session.get("last_mock_result")
+
+        if isinstance(last_result, dict):
+            wrong = last_result.get("wrong", wrong)
+            skipped = last_result.get("skipped", 0)
+            level = last_result.get("level", "")
 
         return render_template(
             "mock_result.html",
-            result=result
+            result=result,
+            wrong=wrong,
+            skipped=skipped,
+            level=level
         )
 
-    except Exception:
+    except Exception as e:
 
         app.logger.exception(
-            "Mock result loading error"
+            "MOCK RESULT ERROR: %s",
+            e
         )
 
         flash(
-            "Unable to load result.",
+            "Unable to load mock test result.",
             "danger"
         )
 
-        return redirect(
-            url_for("dashboard")
-        )
+        return redirect(url_for("mock_categories"))
 
     finally:
 
@@ -1237,12 +1262,6 @@ def mock_result(result_id):
 
         if conn:
             conn.close()
-
-
-# =========================================================
-# MOCK TEST HISTORY
-# =========================================================
-
 @app.route("/mock_test_history")
 def mock_test_history():
 
@@ -7127,11 +7146,6 @@ if __name__ == "__main__":
         ).lower()
         == "true"
     )
-
-    # -----------------------------------------------------
-    # START FLASK
-    # -----------------------------------------------------
-
     app.run(
         host=host,
         port=port,

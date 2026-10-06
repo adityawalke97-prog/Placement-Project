@@ -1,3 +1,4 @@
+
 {% extends "layout.html" %}
 
 {% block title %}Placement Mock Test{% endblock %}
@@ -1880,16 +1881,16 @@
             </a>
 
             <button
-                type="button"
-                class="icon-btn"
-                onclick="showInstruction()">
+                    type="button"
+                    class="icon-btn"
+                    onclick="showInstruction()">
                 ℹ Instructions
             </button>
 
             <button
-                type="button"
-                class="icon-btn"
-                onclick="toggleFullscreen()">
+                    type="button"
+                    class="icon-btn"
+                    onclick="toggleFullscreen()">
                 ⛶ Full Screen
             </button>
 
@@ -1910,10 +1911,10 @@
                 {% for q in questions %}
 
                 <button
-                    type="button"
-                    id="palette-{{ loop.index }}"
-                    class="palette-btn not-visited"
-                    onclick="openQuestion({{ loop.index }})">
+                        type="button"
+                        id="palette-{{ loop.index }}"
+                        class="palette-btn not-visited"
+                        onclick="openQuestion({{ loop.index }})">
 
                     {{ loop.index }}
 
@@ -1954,18 +1955,18 @@
         <main class="question-area">
 
             <form
-                id="mockTestForm"
-                method="POST"
-                action="{{ url_for('submit_mock_test') }}">
+                    id="mockTestForm"
+                    method="POST"
+                    action="{{ url_for('submit_mock_test') }}">
 
                 {% for q in questions %}
 
                 <div
-                    class="question-card"
-                    id="question-{{ loop.index }}"
-                    {% if not loop.first %}
-                    style="display:none;"
-                    {% endif %}>
+                        class="question-card"
+                        id="question-{{ loop.index }}"
+                        {% if not loop.first %}
+                        style="display:none;"
+                        {% endif %}>
 
                     <div class="question-header">
 
@@ -1992,10 +1993,10 @@
                         {% if q.option1 %}
                         <label class="option-item">
                             <input
-                                type="radio"
-                                name="q{{ q.id }}"
-                                value="{{ q.option1 }}"
-                                onclick="answerSelected({{ loop.index }})">
+                                    type="radio"
+                                    name="question_{{ q.id }}"
+                                    value="{{ q.option1 }}"
+                                    onclick="answerSelected({{ loop.index }})">
 
                             <span>{{ q.option1 }}</span>
                         </label>
@@ -2004,10 +2005,10 @@
                         {% if q.option2 %}
                         <label class="option-item">
                             <input
-                                type="radio"
-                                name="q{{ q.id }}"
-                                value="{{ q.option2 }}"
-                                onclick="answerSelected({{ loop.index }})">
+                                    type="radio"
+                                    name="question_{{ q.id }}"
+                                    value="{{ q.option2 }}"
+                                    onclick="answerSelected({{ loop.index }})">
 
                             <span>{{ q.option2 }}</span>
                         </label>
@@ -2016,10 +2017,10 @@
                         {% if q.option3 %}
                         <label class="option-item">
                             <input
-                                type="radio"
-                                name="q{{ q.id }}"
-                                value="{{ q.option3 }}"
-                                onclick="answerSelected({{ loop.index }})">
+                                    type="radio"
+                                    name="question_{{ q.id }}"
+                                    value="{{ q.option3 }}"
+                                    onclick="answerSelected({{ loop.index }})">
 
                             <span>{{ q.option3 }}</span>
                         </label>
@@ -2028,10 +2029,10 @@
                         {% if q.option4 %}
                         <label class="option-item">
                             <input
-                                type="radio"
-                                name="q{{ q.id }}"
-                                value="{{ q.option4 }}"
-                                onclick="answerSelected({{ loop.index }})">
+                                    type="radio"
+                                    name="question_{{ q.id }}"
+                                    value="{{ q.option4 }}"
+                                    onclick="answerSelected({{ loop.index }})">
 
                             <span>{{ q.option4 }}</span>
                         </label>
@@ -2042,18 +2043,18 @@
                     <div class="question-actions">
 
                         <button
-                            type="button"
-                            class="clear-btn"
-                            onclick="clearAnswer({{ loop.index }})">
+                                type="button"
+                                class="clear-btn"
+                                onclick="clearAnswer({{ loop.index }})">
 
                             ❌ Clear Answer
 
                         </button>
 
                         <button
-                            type="button"
-                            class="review-btn"
-                            onclick="markQuestion({{ loop.index }})">
+                                type="button"
+                                class="review-btn"
+                                onclick="markQuestion({{ loop.index }})">
 
                             ⭐ Mark for Review
 
@@ -2062,25 +2063,25 @@
                     </div>
 
                 </div>
-                                {% endfor %}
+                {% endfor %}
 
                 <!-- ================= NAVIGATION ================= -->
 
                 <div class="navigation">
 
                     <button
-                        type="button"
-                        class="nav-btn"
-                        onclick="previousQuestion()">
+                            type="button"
+                            class="nav-btn"
+                            onclick="previousQuestion()">
 
                         ⬅ Previous
 
                     </button>
 
                     <button
-                        type="button"
-                        class="nav-btn"
-                        onclick="nextQuestion()">
+                            type="button"
+                            class="nav-btn"
+                            onclick="nextQuestion()">
 
                         Next ➜
 
@@ -2093,11 +2094,11 @@
                 <div class="submit-area">
 
                     <button
-                        type="button"
-                        class="submit-btn"
-                        onclick="openSubmitModal()">
+                            type="button"
+                            class="submit-btn"
+                            onclick="finalSubmit()">
 
-                        ✅ Submit Test
+                        Submit Now
 
                     </button>
 
@@ -2145,8 +2146,8 @@
                 <div class="progress-bg">
 
                     <div
-                        id="progressFill"
-                        class="progress-fill">
+                            id="progressFill"
+                            class="progress-fill">
                     </div>
 
                 </div>
@@ -2168,14 +2169,14 @@
 <!-- ================= INSTRUCTION MODAL ================= -->
 
 <div
-    class="modal"
-    id="instructionModal">
+        class="modal"
+        id="instructionModal">
 
     <div class="modal-box">
 
         <button
-            class="close-modal"
-            onclick="closeInstruction()">
+                class="close-modal"
+                onclick="closeInstruction()">
 
             ✖
 
@@ -2205,8 +2206,8 @@
         </ul>
 
         <button
-            class="modal-btn"
-            onclick="closeInstruction()">
+                class="modal-btn"
+                onclick="closeInstruction()">
 
             🚀 Start Test
 
@@ -2219,8 +2220,8 @@
 <!-- ================= SUBMIT MODAL ================= -->
 
 <div
-    class="modal"
-    id="submitModal">
+        class="modal"
+        id="submitModal">
 
     <div class="modal-box">
 
@@ -2264,17 +2265,17 @@
         <div class="modal-actions">
 
             <button
-                type="button"
-                onclick="closeSubmitModal()">
+                    type="button"
+                    onclick="closeSubmitModal()">
 
                 Cancel
 
             </button>
 
             <button
-                type="button"
-                class="submit-btn"
-                onclick="finalSubmit()">
+                    type="button"
+                    class="submit-btn"
+                    onclick="finalSubmit()">
 
                 Submit Now
 
@@ -2298,9 +2299,9 @@
         </p>
 
         <button
-            type="button"
-            class="modal-btn"
-            onclick="closeTimeModal()">
+                type="button"
+                class="modal-btn"
+                onclick="closeTimeModal()">
 
             Continue Test
 
@@ -2325,17 +2326,17 @@
         <div class="modal-actions">
 
             <button
-                type="button"
-                onclick="closeExitModal()">
+                    type="button"
+                    onclick="closeExitModal()">
 
                 Stay
 
             </button>
 
             <button
-                type="button"
-                class="clear-btn"
-                onclick="exitTest()">
+                    type="button"
+                    class="clear-btn"
+                    onclick="exitTest()">
 
                 Exit Test
 
@@ -2350,8 +2351,8 @@
 <!-- ================= AUTO SAVE ================= -->
 
 <div
-    class="autosave-box"
-    id="autosaveBox">
+        class="autosave-box"
+        id="autosaveBox">
 
     💾 Progress Saved
 
@@ -2360,8 +2361,8 @@
 <!-- ================= BOOKMARK PANEL ================= -->
 
 <div
-    class="bookmark-panel"
-    id="bookmarkPanel">
+        class="bookmark-panel"
+        id="bookmarkPanel">
 
     <h3>⭐ Bookmarked Questions</h3>
 
@@ -2376,9 +2377,9 @@
 <!-- ================= RESULT PREVIEW ================= -->
 
 <section
-    class="result-preview"
-    id="resultPreview"
-    style="display:none;">
+        class="result-preview"
+        id="resultPreview"
+        style="display:none;">
 
     <div class="result-card">
 
@@ -2463,8 +2464,8 @@
         </div>
 
         <button
-            type="button"
-            class="modal-btn">
+                type="button"
+                class="modal-btn">
 
             Generate Practice Plan
 
@@ -2479,24 +2480,24 @@
 <div class="mobile-navigation">
 
     <button
-        type="button"
-        onclick="previousQuestion()">
+            type="button"
+            onclick="previousQuestion()">
 
         ⬅
 
     </button>
 
     <button
-        type="button"
-        onclick="openPaletteMobile()">
+            type="button"
+            onclick="openPaletteMobile()">
 
         ☰
 
     </button>
 
     <button
-        type="button"
-        onclick="nextQuestion()">
+            type="button"
+            onclick="nextQuestion()">
 
         ➡
 
@@ -2525,71 +2526,60 @@
 
 <script>
 
-function showInstruction() {
-    document.getElementById("instructionModal").style.display = "flex";
-}
+    function showInstruction() {
+        document.getElementById("instructionModal").style.display = "flex";
+    }
 
-function closeInstruction() {
-    document.getElementById("instructionModal").style.display = "none";
-}
+    function closeInstruction() {
+        document.getElementById("instructionModal").style.display = "none";
+    }
 
-function openSubmitModal() {
+    function openSubmitModal() {
 
-    document.getElementById("submitModal").style.display = "flex";
+        document.getElementById("submitModal").style.display = "flex";
 
-    document.getElementById("submitAnswered").innerText =
-        document.getElementById("answeredCount").innerText;
+        document.getElementById("submitAnswered").innerText =
+            document.getElementById("answeredCount").innerText;
 
-    document.getElementById("submitMarked").innerText =
-        document.getElementById("markedCount").innerText;
+        document.getElementById("submitMarked").innerText =
+            document.getElementById("markedCount").innerText;
 
-    document.getElementById("submitNotAnswered").innerText =
-        document.getElementById("remainingCount").innerText;
+        document.getElementById("submitNotAnswered").innerText =
+            document.getElementById("remainingCount").innerText;
 
-}
+    }
 
-function closeSubmitModal() {
-    document.getElementById("submitModal").style.display = "none";
-}
+    function closeSubmitModal() {
+        document.getElementById("submitModal").style.display = "none";
+    }
 
-function finalSubmit() {
-    document.getElementById("mockTestForm").submit();
-}
+    function finalSubmit() {
+        document.getElementById("mockTestForm").submit();
+    }
 
-function closeTimeModal() {
-    document.getElementById("timeModal").style.display = "none";
-}
+    function closeTimeModal() {
+        document.getElementById("timeModal").style.display = "none";
+    }
 
-function closeExitModal() {
-    document.getElementById("exitModal").style.display = "none";
-}
+    function closeExitModal() {
+        document.getElementById("exitModal").style.display = "none";
+    }
 
-function exitTest() {
-    window.location.href = "/dashboard";
-}
+    function exitTest() {
+        window.location.href = "/dashboard";
+    }
 
 </script>
-
 <!-- ================= DATA FOR JS ================= -->
-
 <script>
-
-window.totalQuestions = {{ questions|length }};
-
-window.questionIds = [
-
-{% for q in questions %}
-"{{ q.id }}"{% if not loop.last %},{% endif %}
-{% endfor %}
-
-];
-
-window.currentQuestion = 1;
-
+    window.totalQuestions = {{ questions|length }};
+    window.questionIds = [
+        {% for q in questions %}
+    "{{ q.id }}"{% if not loop.last %},{% endif %}
+    {% endfor %}
+    ];
+    window.currentQuestion = 1;
 </script>
-
 <!-- ================= EXTERNAL JAVASCRIPT ================= -->
-
 <script src="{{ url_for('static', filename='js/mock_test.js') }}"></script>
-
 {% endblock %}

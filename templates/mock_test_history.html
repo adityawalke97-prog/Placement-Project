@@ -111,28 +111,18 @@
                 </h2>
                 <p>Highest Score</p>
             </div>
-
         </div>
-
     </div>
-
-
     <!-- ================= SEARCH & FILTER ================= -->
-
     <div class="toolbar">
-
         <div class="search-box">
-
             <input
                     type="text"
                     id="searchInput"
                     placeholder="🔍 Search Subject..."
                     value="{{ search|default('') }}"
             >
-
         </div>
-
-
         <div class="filter-box">
 
             <select id="sortSelect">
@@ -230,8 +220,8 @@
                 <td>
 
                             <span class="subject-badge">
-                                General
-                            </span>
+    {{ test.category or "General" }}
+</span>
 
                 </td>
 
@@ -286,7 +276,7 @@
                     {% if test.id is defined %}
 
                     <a
-                            href="{{ url_for('mock_test_result', test_id=test.id) }}"
+                            href="{{ url_for('mock_result', result_id=test.id) }}"
                             class="view-btn"
                     >
                         👁 View
