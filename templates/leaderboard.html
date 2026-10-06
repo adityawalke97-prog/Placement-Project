@@ -1,33 +1,1356 @@
+{% extends "layout.html" %}
 
-{% extends 'layout.html' %}
-
-{% block title %}Leaderboard{% endblock %}
+{% block title %}Placement Leaderboard{% endblock %}
 
 {% block content %}
 
-<h1 style="text-align:center;margin-bottom:30px;">
-    🏆 Leaderboard
-</h1>
+<div class="leaderboard-page">
 
-<div class="card">
+    ```
+    <!-- ================= HEADER ================= -->
 
-<table>
-    <tr>
-        <th>Rank</th>
-        <th>Student Name</th>
-        <th>Best Score</th>
-    </tr>
+    <div class="leaderboard-header">
 
-    {% for leader in leaders %}
-    <tr>
-        <td>{{ loop.index }}</td>
-        <td>{{ leader[0] }}</td>
-        <td>{{ leader[1] }}</td>
-    </tr>
-    {% endfor %}
-</table>
+        <div class="header-icon">
+            🏆
+        </div>
+
+        <div>
+            <span class="eyebrow">PLACEMENT TRAINING</span>
+
+            <h1>Placement Leaderboard</h1>
+
+            <p>
+                Compete, improve your skills and become
+                placement ready.
+            </p>
+        </div>
+
+    </div>
+
+
+    <!-- ================= MY RANK ================= -->
+
+    <div class="my-rank-card">
+
+        <div class="my-profile">
+
+            <div class="avatar">
+                {{ user.name[0]|upper if user and user.name else "A" }}
+            </div>
+
+            <div>
+
+            <span class="small-label">
+                YOUR CURRENT RANK
+            </span>
+
+                <h2>
+                    #{{ my_rank or 12 }}
+                </h2>
+
+                <p>
+                    Keep practicing to reach the Top 10 🚀
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="rank-stats">
+
+            <div>
+                <strong>{{ my_xp or 1240 }}</strong>
+                <span>XP</span>
+            </div>
+
+            <div>
+                <strong>{{ my_score or 78 }}%</strong>
+                <span>Avg Score</span>
+            </div>
+
+            <div>
+                <strong>{{ my_streak or 7 }}</strong>
+                <span>Day Streak</span>
+            </div>
+
+            <div>
+                <strong>{{ my_badges or 8 }}</strong>
+                <span>Badges</span>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================= FILTERS ================= -->
+
+    <div class="filter-card">
+
+        <div class="filter-title">
+            <span>🔎</span>
+
+            <div>
+                <h3>Leaderboard Filters</h3>
+                <p>Compare placement performance.</p>
+            </div>
+        </div>
+
+        <div class="filters">
+
+            <button class="filter active">
+                🏆 Overall
+            </button>
+
+            <button class="filter">
+                💻 Technical
+            </button>
+
+            <button class="filter">
+                🧠 Aptitude
+            </button>
+
+            <button class="filter">
+                🗣️ Communication
+            </button>
+
+            <button class="filter">
+                🎤 Interview
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================= PODIUM ================= -->
+
+    <div class="podium-section">
+
+        <div class="section-title">
+
+            <span>🔥</span>
+
+            <div>
+                <h2>Top Performers</h2>
+                <p>This week's placement champions.</p>
+            </div>
+
+        </div>
+
+
+        <div class="podium">
+
+
+            <!-- SECOND -->
+
+            <div class="podium-user second">
+
+                <div class="podium-avatar">
+                    RS
+                </div>
+
+                <div class="crown">
+                    🥈
+                </div>
+
+                <h3>Rahul Sharma</h3>
+
+                <span>
+                Full Stack Developer
+            </span>
+
+                <strong>
+                    1860 XP
+                </strong>
+
+                <div class="podium-block">
+                    #2
+                </div>
+
+            </div>
+
+
+            <!-- FIRST -->
+
+            <div class="podium-user first">
+
+                <div class="podium-avatar">
+                    AP
+                </div>
+
+                <div class="crown">
+                    👑
+                </div>
+
+                <h3>Akash Patil</h3>
+
+                <span>
+                Java Developer
+            </span>
+
+                <strong>
+                    2150 XP
+                </strong>
+
+                <div class="podium-block">
+                    #1
+                </div>
+
+            </div>
+
+
+            <!-- THIRD -->
+
+            <div class="podium-user third">
+
+                <div class="podium-avatar">
+                    PS
+                </div>
+
+                <div class="crown">
+                    🥉
+                </div>
+
+                <h3>Priya Shah</h3>
+
+                <span>
+                Python Developer
+            </span>
+
+                <strong>
+                    1740 XP
+                </strong>
+
+                <div class="podium-block">
+                    #3
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================= LEADERBOARD TABLE ================= -->
+
+    <div class="leaderboard-card">
+
+        <div class="table-header">
+
+            <div>
+
+            <span class="eyebrow">
+                TOP CANDIDATES
+            </span>
+
+                <h2>Placement Rankings</h2>
+
+            </div>
+
+            <span class="updated">
+            🟢 Updated Today
+        </span>
+
+        </div>
+
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                <tr>
+
+                    <th>Rank</th>
+
+                    <th>Candidate</th>
+
+                    <th>XP</th>
+
+                    <th>Mock Score</th>
+
+                    <th>Technical</th>
+
+                    <th>Communication</th>
+
+                    <th>Interview</th>
+
+                    <th>Streak</th>
+
+                    <th>Readiness</th>
+
+                </tr>
+
+                </thead>
+
+
+                <tbody>
+
+
+                <!-- 1 -->
+
+                <tr class="top-row">
+
+                    <td>
+                        <span class="rank gold">1</span>
+                    </td>
+
+                    <td>
+
+                        <div class="candidate">
+
+                            <div class="table-avatar">
+                                AP
+                            </div>
+
+                            <div>
+                                <strong>Akash Patil</strong>
+                                <small>Java Developer</small>
+                            </div>
+
+                        </div>
+
+                    </td>
+
+                    <td>
+                        <strong>2150</strong>
+                    </td>
+
+                    <td>
+                        <strong>94%</strong>
+                    </td>
+
+                    <td>92%</td>
+
+                    <td>91%</td>
+
+                    <td>95%</td>
+
+                    <td>
+                        🔥 18
+                    </td>
+
+                    <td>
+                        <span class="ready excellent">
+                            94%
+                        </span>
+                    </td>
+
+                </tr>
+
+
+                <!-- 2 -->
+
+                <tr>
+
+                    <td>
+                        <span class="rank silver">2</span>
+                    </td>
+
+                    <td>
+
+                        <div class="candidate">
+
+                            <div class="table-avatar">
+                                RS
+                            </div>
+
+                            <div>
+                                <strong>Rahul Sharma</strong>
+                                <small>Full Stack Developer</small>
+                            </div>
+
+                        </div>
+
+                    </td>
+
+                    <td>1860</td>
+
+                    <td>89%</td>
+
+                    <td>90%</td>
+
+                    <td>86%</td>
+
+                    <td>88%</td>
+
+                    <td>🔥 14</td>
+
+                    <td>
+                        <span class="ready excellent">
+                            89%
+                        </span>
+                    </td>
+
+                </tr>
+
+
+                <!-- 3 -->
+
+                <tr>
+
+                    <td>
+                        <span class="rank bronze">3</span>
+                    </td>
+
+                    <td>
+
+                        <div class="candidate">
+
+                            <div class="table-avatar">
+                                PS
+                            </div>
+
+                            <div>
+                                <strong>Priya Shah</strong>
+                                <small>Python Developer</small>
+                            </div>
+
+                        </div>
+
+                    </td>
+
+                    <td>1740</td>
+
+                    <td>86%</td>
+
+                    <td>87%</td>
+
+                    <td>84%</td>
+
+                    <td>85%</td>
+
+                    <td>🔥 12</td>
+
+                    <td>
+                        <span class="ready good">
+                            86%
+                        </span>
+                    </td>
+
+                </tr>
+
+
+                <!-- 4 -->
+
+                <tr>
+
+                    <td>
+                        <span class="rank">
+                            4
+                        </span>
+                    </td>
+
+                    <td>
+
+                        <div class="candidate">
+
+                            <div class="table-avatar">
+                                VK
+                            </div>
+
+                            <div>
+                                <strong>Vikas Kumar</strong>
+                                <small>Backend Developer</small>
+                            </div>
+
+                        </div>
+
+                    </td>
+
+                    <td>1680</td>
+
+                    <td>84%</td>
+
+                    <td>85%</td>
+
+                    <td>79%</td>
+
+                    <td>82%</td>
+
+                    <td>🔥 10</td>
+
+                    <td>
+                        <span class="ready good">
+                            83%
+                        </span>
+                    </td>
+
+                </tr>
+
+
+                <!-- 5 -->
+
+                <tr>
+
+                    <td>
+                        <span class="rank">
+                            5
+                        </span>
+                    </td>
+
+                    <td>
+
+                        <div class="candidate">
+
+                            <div class="table-avatar">
+                                NM
+                            </div>
+
+                            <div>
+                                <strong>Neha More</strong>
+                                <small>Frontend Developer</small>
+                            </div>
+
+                        </div>
+
+                    </td>
+
+                    <td>1590</td>
+
+                    <td>81%</td>
+
+                    <td>82%</td>
+
+                    <td>85%</td>
+
+                    <td>78%</td>
+
+                    <td>🔥 9</td>
+
+                    <td>
+                        <span class="ready good">
+                            81%
+                        </span>
+                    </td>
+
+                </tr>
+
+
+                <!-- 6 -->
+
+                <tr>
+
+                    <td>
+                        <span class="rank">
+                            6
+                        </span>
+                    </td>
+
+                    <td>
+
+                        <div class="candidate">
+
+                            <div class="table-avatar">
+                                AD
+                            </div>
+
+                            <div>
+                                <strong>Aditya Deshmukh</strong>
+                                <small>Software Developer</small>
+                            </div>
+
+                        </div>
+
+                    </td>
+
+                    <td>1510</td>
+
+                    <td>79%</td>
+
+                    <td>80%</td>
+
+                    <td>77%</td>
+
+                    <td>75%</td>
+
+                    <td>🔥 8</td>
+
+                    <td>
+                        <span class="ready average">
+                            78%
+                        </span>
+                    </td>
+
+                </tr>
+
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================= PERFORMANCE BREAKDOWN ================= -->
+
+    <div class="performance-grid">
+
+
+        <div class="performance-card">
+
+            <div class="performance-header">
+
+                <div>
+                <span class="eyebrow">
+                    YOUR PERFORMANCE
+                </span>
+
+                    <h2>Skill Analysis</h2>
+                </div>
+
+                <span class="performance-score">
+                78%
+            </span>
+
+            </div>
+
+
+            <div class="skill-progress">
+
+                <div class="skill-name">
+                    <span>💻 Technical Skills</span>
+                    <strong>82%</strong>
+                </div>
+
+                <div class="bar">
+                    <div style="width:82%"></div>
+                </div>
+
+            </div>
+
+
+            <div class="skill-progress">
+
+                <div class="skill-name">
+                    <span>🧠 Aptitude</span>
+                    <strong>76%</strong>
+                </div>
+
+                <div class="bar">
+                    <div style="width:76%"></div>
+                </div>
+
+            </div>
+
+
+            <div class="skill-progress">
+
+                <div class="skill-name">
+                    <span>🗣️ Communication</span>
+                    <strong>74%</strong>
+                </div>
+
+                <div class="bar">
+                    <div style="width:74%"></div>
+                </div>
+
+            </div>
+
+
+            <div class="skill-progress">
+
+                <div class="skill-name">
+                    <span>🎤 Interview</span>
+                    <strong>79%</strong>
+                </div>
+
+                <div class="bar">
+                    <div style="width:79%"></div>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- PLACEMENT READINESS -->
+
+        <div class="readiness-card">
+
+        <span class="eyebrow">
+            PLACEMENT READINESS
+        </span>
+
+            <h2>
+                You're Almost Ready 🚀
+            </h2>
+
+            <div class="readiness-circle">
+                82%
+            </div>
+
+            <p>
+                Improve your communication and interview skills
+                to reach the top placement level.
+            </p>
+
+            <div class="recommendation">
+
+                💡 <strong>Recommended:</strong>
+
+                Practice 2 mock tests and complete
+                today's communication challenge.
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================= MOTIVATION ================= -->
+
+    <div class="motivation">
+
+        <div>
+            <span>💪 KEEP GOING</span>
+
+            <h2>
+                Every practice session moves you
+                closer to your dream job.
+            </h2>
+
+            <p>
+                Compete with your peers, improve your score
+                and become placement ready.
+            </p>
+        </div>
+
+        <div class="motivation-icon">
+            🚀
+        </div>
+
+    </div>
+    ```
 
 </div>
 
 {% endblock %}
 
+{% block css %}
+
+<style>
+
+    .leaderboard-page{
+        max-width:1400px;
+        margin:auto;
+        padding:20px;
+    }
+
+
+    /* HEADER */
+
+    .leaderboard-header{
+        display:flex;
+        align-items:center;
+        gap:22px;
+        margin-bottom:30px;
+    }
+
+    .header-icon{
+        width:75px;
+        height:75px;
+        border-radius:22px;
+        background:#fef3c7;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        font-size:40px;
+    }
+
+    .eyebrow{
+        font-size:11px;
+        letter-spacing:2px;
+        color:#64748b;
+        font-weight:700;
+    }
+
+    .leaderboard-header h1{
+        margin:6px 0;
+        font-size:36px;
+        color:#0f172a;
+    }
+
+    .leaderboard-header p{
+        margin:0;
+        color:#64748b;
+    }
+
+
+    /* MY RANK */
+
+    .my-rank-card{
+        background:linear-gradient(135deg,#0f172a,#1e293b);
+        color:white;
+        padding:28px;
+        border-radius:24px;
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        margin-bottom:25px;
+    }
+
+    .my-profile{
+        display:flex;
+        align-items:center;
+        gap:18px;
+    }
+
+    .avatar{
+        width:65px;
+        height:65px;
+        border-radius:20px;
+        background:#2563eb;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        font-size:25px;
+        font-weight:bold;
+    }
+
+    .small-label{
+        font-size:11px;
+        letter-spacing:1.5px;
+        opacity:.7;
+    }
+
+    .my-profile h2{
+        font-size:32px;
+        margin:3px 0;
+    }
+
+    .my-profile p{
+        margin:0;
+        color:#cbd5e1;
+    }
+
+    .rank-stats{
+        display:flex;
+        gap:35px;
+    }
+
+    .rank-stats div{
+        text-align:center;
+    }
+
+    .rank-stats strong{
+        display:block;
+        font-size:24px;
+    }
+
+    .rank-stats span{
+        color:#94a3b8;
+        font-size:12px;
+    }
+
+
+    /* FILTER */
+
+    .filter-card{
+        background:white;
+        padding:22px;
+        border-radius:20px;
+        box-shadow:0 5px 20px rgba(0,0,0,.06);
+        margin-bottom:30px;
+    }
+
+    .filter-title{
+        display:flex;
+        align-items:center;
+        gap:12px;
+        margin-bottom:18px;
+    }
+
+    .filter-title > span{
+        font-size:25px;
+    }
+
+    .filter-title h3{
+        margin:0;
+    }
+
+    .filter-title p{
+        margin:3px 0;
+        color:#64748b;
+        font-size:13px;
+    }
+
+    .filters{
+        display:flex;
+        gap:10px;
+        flex-wrap:wrap;
+    }
+
+    .filter{
+        border:1px solid #e2e8f0;
+        background:#f8fafc;
+        padding:10px 18px;
+        border-radius:10px;
+        cursor:pointer;
+        font-weight:600;
+    }
+
+    .filter.active{
+        background:#2563eb;
+        color:white;
+        border-color:#2563eb;
+    }
+
+
+    /* SECTION */
+
+    .section-title{
+        display:flex;
+        gap:12px;
+        align-items:center;
+        margin-bottom:20px;
+    }
+
+    .section-title > span{
+        font-size:30px;
+    }
+
+    .section-title h2{
+        margin:0;
+    }
+
+    .section-title p{
+        margin:4px 0;
+        color:#64748b;
+    }
+
+
+    /* PODIUM */
+
+    .podium-section{
+        background:white;
+        padding:30px;
+        border-radius:24px;
+        box-shadow:0 5px 20px rgba(0,0,0,.06);
+        margin-bottom:30px;
+    }
+
+    .podium{
+        display:flex;
+        justify-content:center;
+        align-items:flex-end;
+        gap:20px;
+    }
+
+    .podium-user{
+        text-align:center;
+        width:200px;
+    }
+
+    .podium-avatar{
+        width:70px;
+        height:70px;
+        margin:auto;
+        border-radius:50%;
+        background:#e2e8f0;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        font-weight:bold;
+        font-size:22px;
+    }
+
+    .first .podium-avatar{
+        width:90px;
+        height:90px;
+        background:#fef3c7;
+        border:5px solid #f59e0b;
+    }
+
+    .crown{
+        font-size:30px;
+        margin:5px;
+    }
+
+    .podium-user h3{
+        margin:5px 0;
+    }
+
+    .podium-user span{
+        color:#64748b;
+        font-size:12px;
+    }
+
+    .podium-user strong{
+        display:block;
+        margin:8px;
+    }
+
+    .podium-block{
+        height:100px;
+        background:#e2e8f0;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        font-size:28px;
+        font-weight:bold;
+        border-radius:15px 15px 0 0;
+    }
+
+    .first .podium-block{
+        height:145px;
+        background:#fef3c7;
+    }
+
+    .second .podium-block{
+        height:115px;
+    }
+
+
+    /* TABLE */
+
+    .leaderboard-card{
+        background:white;
+        border-radius:24px;
+        padding:28px;
+        box-shadow:0 5px 20px rgba(0,0,0,.06);
+        margin-bottom:30px;
+    }
+
+    .table-header{
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        margin-bottom:25px;
+    }
+
+    .table-header h2{
+        margin:5px 0;
+    }
+
+    .updated{
+        padding:8px 14px;
+        background:#ecfdf5;
+        color:#047857;
+        border-radius:20px;
+        font-size:12px;
+        font-weight:bold;
+    }
+
+    .table-wrapper{
+        overflow-x:auto;
+    }
+
+    table{
+        width:100%;
+        border-collapse:collapse;
+        min-width:1000px;
+    }
+
+    th{
+        text-align:left;
+        padding:14px;
+        background:#f8fafc;
+        color:#64748b;
+        font-size:11px;
+        text-transform:uppercase;
+    }
+
+    td{
+        padding:17px 14px;
+        border-bottom:1px solid #f1f5f9;
+        color:#334155;
+    }
+
+    .top-row{
+        background:#fffbeb;
+    }
+
+    .rank{
+        width:32px;
+        height:32px;
+        display:inline-flex;
+        justify-content:center;
+        align-items:center;
+        border-radius:9px;
+        background:#f1f5f9;
+        font-weight:bold;
+    }
+
+    .gold{
+        background:#fef3c7;
+        color:#b45309;
+    }
+
+    .silver{
+        background:#f1f5f9;
+        color:#475569;
+    }
+
+    .bronze{
+        background:#ffedd5;
+        color:#c2410c;
+    }
+
+    .candidate{
+        display:flex;
+        align-items:center;
+        gap:12px;
+    }
+
+    .table-avatar{
+        width:42px;
+        height:42px;
+        border-radius:12px;
+        background:#dbeafe;
+        color:#2563eb;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        font-weight:bold;
+    }
+
+    .candidate strong{
+        display:block;
+    }
+
+    .candidate small{
+        color:#64748b;
+    }
+
+    .ready{
+        padding:6px 10px;
+        border-radius:8px;
+        font-weight:bold;
+        font-size:12px;
+    }
+
+    .excellent{
+        background:#dcfce7;
+        color:#15803d;
+    }
+
+    .good{
+        background:#dbeafe;
+        color:#1d4ed8;
+    }
+
+    .average{
+        background:#fef3c7;
+        color:#a16207;
+    }
+
+
+    /* PERFORMANCE */
+
+    .performance-grid{
+        display:grid;
+        grid-template-columns:1.4fr 1fr;
+        gap:25px;
+        margin-bottom:30px;
+    }
+
+    .performance-card,
+    .readiness-card{
+        background:white;
+        padding:30px;
+        border-radius:24px;
+        box-shadow:0 5px 20px rgba(0,0,0,.06);
+    }
+
+    .performance-header{
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        margin-bottom:25px;
+    }
+
+    .performance-header h2{
+        margin:5px 0;
+    }
+
+    .performance-score{
+        font-size:32px;
+        font-weight:bold;
+        color:#2563eb;
+    }
+
+    .skill-progress{
+        margin-bottom:20px;
+    }
+
+    .skill-name{
+        display:flex;
+        justify-content:space-between;
+        margin-bottom:8px;
+    }
+
+    .bar{
+        height:10px;
+        background:#e2e8f0;
+        border-radius:20px;
+        overflow:hidden;
+    }
+
+    .bar div{
+        height:100%;
+        background:#2563eb;
+        border-radius:20px;
+    }
+
+    .readiness-card{
+        text-align:center;
+    }
+
+    .readiness-card h2{
+        margin:8px 0 20px;
+    }
+
+    .readiness-circle{
+        width:150px;
+        height:150px;
+        margin:auto;
+        border-radius:50%;
+        border:12px solid #dbeafe;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        font-size:35px;
+        font-weight:bold;
+        color:#2563eb;
+    }
+
+    .readiness-card p{
+        color:#64748b;
+        line-height:1.6;
+    }
+
+    .recommendation{
+        text-align:left;
+        padding:15px;
+        background:#eff6ff;
+        border-radius:12px;
+        color:#1e40af;
+        font-size:13px;
+    }
+
+
+    /* MOTIVATION */
+
+    .motivation{
+        background:linear-gradient(135deg,#2563eb,#4f46e5);
+        color:white;
+        padding:35px;
+        border-radius:24px;
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+    }
+
+    .motivation span{
+        font-size:11px;
+        letter-spacing:2px;
+        opacity:.8;
+    }
+
+    .motivation h2{
+        max-width:700px;
+        margin:10px 0;
+    }
+
+    .motivation p{
+        opacity:.85;
+    }
+
+    .motivation-icon{
+        font-size:80px;
+    }
+
+
+    /* MOBILE */
+
+    @media(max-width:1000px){
+
+        .my-rank-card{
+            flex-direction:column;
+            align-items:flex-start;
+            gap:25px;
+        }
+
+        .rank-stats{
+            width:100%;
+            justify-content:space-between;
+        }
+
+        .performance-grid{
+            grid-template-columns:1fr;
+        }
+
+    }
+
+    @media(max-width:700px){
+
+        .leaderboard-header h1{
+            font-size:28px;
+        }
+
+        .leaderboard-header{
+            align-items:flex-start;
+        }
+
+        .podium{
+            gap:5px;
+        }
+
+        .podium-user{
+            width:32%;
+        }
+
+        .podium-user h3{
+            font-size:13px;
+        }
+
+        .podium-user span{
+            display:none;
+        }
+
+        .podium-avatar{
+            width:55px;
+            height:55px;
+            font-size:16px;
+        }
+
+        .first .podium-avatar{
+            width:70px;
+            height:70px;
+        }
+
+        .rank-stats{
+            gap:10px;
+        }
+
+        .rank-stats strong{
+            font-size:18px;
+        }
+
+        .rank-stats span{
+            font-size:10px;
+        }
+
+        .motivation{
+            text-align:center;
+            flex-direction:column;
+        }
+
+        .motivation-icon{
+            font-size:55px;
+        }
+
+    }
+
+</style>
+
+{% endblock %}

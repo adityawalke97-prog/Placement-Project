@@ -849,15 +849,71 @@ def dashboard():
         )
 
     except Exception as e:
-        app.logger.exception(e)
-        flash("Dashboard loading failed.", "danger")
-        return redirect(url_for("home"))
-
-    finally:
-        cursor.close()
-        conn.close()
+        app.logger.exception(
+            "DASHBOARD ERROR: %s",
+            e
         )
 
+        flash(
+            "Dashboard loading failed.",
+            "danger"
+        )
+
+        return redirect(
+            url_for("login")
+        )
+# =========================================================
+# MOCK TEST CATEGORIES
+# =========================================================
+
+@app.route("/mock-categories")
+@login_required
+def mock_categories():
+
+    conn = None
+    cursor = None
+
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(pymysql.cursors.DictCursor)
+
+        cursor.execute("""
+            SELECT
+                category,
+                COUNT(*) AS total_questions
+            FROM mock_questions
+            GROUP BY category
+            ORDER BY category
+        """)
+
+        categories = cursor.fetchall()
+
+        return render_template(
+            "mock_categories.html",
+            categories=categories
+        )
+
+    except Exception as e:
+
+        app.logger.exception(
+            "MOCK CATEGORIES ERROR: %s",
+            e
+        )
+
+        flash(
+            "Unable to load mock test categories.",
+            "danger"
+        )
+
+        return redirect(url_for("dashboard"))
+
+    finally:
+
+        if cursor:
+            cursor.close()
+
+        if conn:
+            conn.close()
 @app.route("/mock_test")
 def mock_test():
     if "user_id" not in session:
@@ -957,10 +1013,10 @@ def mock_test():
         if conn:
             conn.close()
 
-
 @app.route("/submit_mock_test", methods=["POST"])
 @login_required
 def submit_mock_test():
+
     conn = None
     cursor = None
 
@@ -970,112 +1026,66 @@ def submit_mock_test():
         if not user_id:
             return redirect(url_for("login"))
 
-        # =====================================================
-        # GET SUBMITTED DATA
-        # Supports both JSON and normal HTML form
-        # =====================================================
-        if request.is_json:
-            data = request.get_json(silent=True) or {}
-        else:
-            data = request.form.to_dict()
-
-        app.logger.info("===== MOCK TEST SUBMISSION =====")
-        app.logger.info("USER ID: %s", user_id)
-        app.logger.info("CONTENT TYPE: %s", request.content_type)
-        app.logger.info("DATA: %s", data)
-
-        # =====================================================
-        # GET TEST INFORMATION FROM SESSION
-        # =====================================================
-        category = data.get("category", "").strip()
-
-        if not category:
-            category = session.get("mock_category", "")
-
+        category = session.get("mock_category", "General")
         level = session.get("mock_level", "")
 
-        # =====================================================
-        # GET QUESTION IDs SAVED WHEN TEST STARTED
-        # =====================================================
         question_ids = session.get("mock_question_ids", [])
-
-        # Correct answers saved when test started
         correct_answers = session.get("correct_answers", {})
 
         if not question_ids:
-            flash(
-                "Test session expired. Please start the mock test again.",
-                "warning"
-            )
+            flash("Mock test session expired. Please start the test again.", "warning")
             return redirect(url_for("mock_categories"))
 
-        # =====================================================
-        # GET USER ANSWERS
-        # =====================================================
-        answers = {}
-
-        if request.is_json:
-
-            submitted_answers = data.get("answers", {})
-
-            if isinstance(submitted_answers, dict):
-                answers = submitted_answers
-
-        else:
-
-            # Normal HTML form submission
-            for key, value in data.items():
-
-                if (
-                    key.startswith("q")
-                    or key.startswith("question_")
-                    or key.startswith("answer_")
-                ):
-                    answers[key] = value
         score = 0
         wrong = 0
         skipped = 0
 
-        total = len(question_ids)
+        for qid in question_ids:
 
-        for question_id in question_ids:
+            submitted = request.form.get(f"question_{qid}")
 
-            question_id_str = str(question_id)
+            # Correct answer get karo
+            correct = None
 
-            user_answer = (
-                answers.get(f"question_{question_id}")
-                or answers.get(f"answer_{question_id}")
-                or answers.get(f"q{question_id}")
-                or answers.get(question_id_str)
-            )
+            if isinstance(correct_answers, dict):
 
-            correct_answer = correct_answers.get(question_id_str)
+                correct = correct_answers.get(str(qid))
 
-            if user_answer is None or not str(user_answer).strip():
+                if correct is None:
+                    correct = correct_answers.get(qid)
 
+            elif isinstance(correct_answers, list):
+
+                try:
+                    index = question_ids.index(qid)
+                    correct = correct_answers[index]
+                except:
+                    correct = None
+
+            # Answer checking
+            if submitted is None or str(submitted).strip() == "":
                 skipped += 1
 
-            elif (
-                correct_answer is not None
-                and str(user_answer).strip().lower()
-                == str(correct_answer).strip().lower()
-            ):
+            elif correct is not None and \
+                    str(submitted).strip() == str(correct).strip():
 
                 score += 1
 
             else:
-
                 wrong += 1
 
-        percentage = 0
+        total = len(question_ids)
 
-        if total > 0:
-            percentage = round((score / total) * 100, 2)
+        percentage = round(
+            (score / total) * 100, 2
+        ) if total > 0 else 0
+
+        # ================= DATABASE =================
+
         conn = get_db_connection()
-        cursor = conn.cursor()
+        cursor = conn.cursor(pymysql.cursors.DictCursor)
 
-        cursor.execute(
-            """
+        cursor.execute("""
             INSERT INTO results
             (
                 user_id,
@@ -1085,62 +1095,44 @@ def submit_mock_test():
                 total_questions,
                 percentage
             )
-            VALUES (%s, %s, %s, %s, %s, %s)
-            """,
+            VALUES
             (
-                user_id,
-                "Mock Test",
-                category,
-                score,
-                total,
-                percentage
+                %s,
+                %s,
+                %s,
+                %s,
+                %s,
+                %s
             )
-        )
+        """, (
+            user_id,
+            "Mock Test",
+            category,
+            score,
+            total,
+            percentage
+        ))
 
         conn.commit()
 
         result_id = cursor.lastrowid
 
-        app.logger.info("===== MOCK TEST RESULT =====")
-        app.logger.info("RESULT ID: %s", result_id)
-        app.logger.info("CATEGORY: %s", category)
-        app.logger.info("LEVEL: %s", level)
-        app.logger.info("SCORE: %s", score)
-        app.logger.info("TOTAL: %s", total)
-        app.logger.info("PERCENTAGE: %s", percentage)
-        app.logger.info("WRONG: %s", wrong)
-        app.logger.info("SKIPPED: %s", skipped)
+        # ================= SAVE RESULT IN SESSION =================
 
-
-        # =====================================================
-        # SAVE RESULT DATA FOR RESULT PAGE
-        # =====================================================
         session["last_mock_result"] = {
             "result_id": result_id,
-            "score": score,
             "wrong": wrong,
             "skipped": skipped,
-            "total": total,
-            "percentage": percentage,
-            "category": category,
             "level": level
         }
 
+        # ================= CLEAR TEST SESSION =================
 
-        # =====================================================
-        # CLEAN OLD TEST SESSION DATA
-        # =====================================================
         session.pop("mock_question_ids", None)
         session.pop("correct_answers", None)
-        session.pop("mock_category", None)
-        session.pop("mock_level", None)
-        session.pop("mock_answers", None)
-        session.pop("mock_score", None)
 
+        # ================= SHOW RESULT =================
 
-        # =====================================================
-        # GO TO RESULT PAGE
-        # =====================================================
         return redirect(
             url_for(
                 "mock_result",
@@ -1154,16 +1146,18 @@ def submit_mock_test():
             conn.rollback()
 
         app.logger.exception(
-            "MOCK TEST SUBMISSION ERROR: %s",
+            "SUBMIT MOCK TEST ERROR: %s",
             e
         )
 
         flash(
-            "Unable to submit mock test. Please try again.",
+            "Mock test submit failed.",
             "danger"
         )
 
-        return redirect(url_for("mock_test"))
+        return redirect(
+            url_for("mock_test")
+        )
 
     finally:
 
@@ -1172,11 +1166,6 @@ def submit_mock_test():
 
         if conn:
             conn.close()
-# =========================================================
-# MOCK TEST RESULT
-# =========================================================
-
-
 @app.route("/mock_result/<int:result_id>")
 @login_required
 def mock_result(result_id):
@@ -1185,6 +1174,7 @@ def mock_result(result_id):
     cursor = None
 
     try:
+
         user_id = session.get("user_id")
 
         if not user_id:
@@ -1204,34 +1194,65 @@ def mock_result(result_id):
                 percentage
             FROM results
             WHERE id = %s
-              AND user_id = %s
+            AND user_id = %s
             LIMIT 1
-        """, (result_id, user_id))
+        """, (
+            result_id,
+            user_id
+        ))
 
         result = cursor.fetchone()
 
         if not result:
-            flash("Mock test result not found.", "warning")
-            return redirect(url_for("mock_categories"))
 
-        # Calculate wrong answers
-        wrong = max(
-            0,
-            (result["total_questions"] or 0)
-            - (result["score"] or 0)
+            flash(
+                "Mock test result not found.",
+                "warning"
+            )
+
+            return redirect(
+                url_for("mock_categories")
+            )
+
+        # Session result
+        last_result = session.get(
+            "last_mock_result",
+            {}
         )
 
-        # Default values
-        skipped = 0
-        level = ""
-
-        # Read session safely
-        last_result = session.get("last_mock_result")
-
         if isinstance(last_result, dict):
-            wrong = last_result.get("wrong", wrong)
-            skipped = last_result.get("skipped", 0)
-            level = last_result.get("level", "")
+
+            wrong = last_result.get(
+                "wrong",
+                max(
+                    0,
+                    (result["total_questions"] or 0)
+                    -
+                    (result["score"] or 0)
+                )
+            )
+
+            skipped = last_result.get(
+                "skipped",
+                0
+            )
+
+            level = last_result.get(
+                "level",
+                ""
+            )
+
+        else:
+
+            wrong = max(
+                0,
+                (result["total_questions"] or 0)
+                -
+                (result["score"] or 0)
+            )
+
+            skipped = 0
+            level = ""
 
         return render_template(
             "mock_result.html",
@@ -1253,7 +1274,9 @@ def mock_result(result_id):
             "danger"
         )
 
-        return redirect(url_for("mock_categories"))
+        return redirect(
+            url_for("mock_categories")
+        )
 
     finally:
 

@@ -1,0 +1,430 @@
+{% extends "layout.html" %}
+
+{% block title %}Mock Test Result{% endblock %}
+
+{% block content %}
+
+<div class="result-page">
+
+    <div class="result-card">
+
+        <!-- Header -->
+        <div class="result-header">
+
+            <div class="success-icon">
+                🎉
+            </div>
+
+            <h1>Mock Test Completed!</h1>
+
+            <p>
+                Great job! Your test has been submitted successfully.
+            </p>
+
+        </div>
+
+
+        <!-- Category -->
+        <div class="category-box">
+
+            📚 Category:
+
+            <strong>
+                {{ result.category or "General" }}
+            </strong>
+
+        </div>
+
+
+        <!-- Percentage -->
+        <div class="score-section">
+
+            <div class="score-circle">
+
+                {{ "%.0f"|format(result.percentage or 0) }}%
+
+            </div>
+
+            <h2>
+                Your Score
+            </h2>
+
+            <h3>
+
+                {{ result.score or 0 }}
+
+                /
+
+                {{ result.total_questions or 0 }}
+
+            </h3>
+
+        </div>
+
+
+        <!-- Statistics -->
+        <div class="stats-grid">
+
+            <div class="stat correct">
+
+                <div class="stat-icon">
+                    ✅
+                </div>
+
+                <h2>
+                    {{ result.score or 0 }}
+                </h2>
+
+                <p>
+                    Correct
+                </p>
+
+            </div>
+
+
+            <div class="stat wrong">
+
+                <div class="stat-icon">
+                    ❌
+                </div>
+
+                <h2>
+                    {{ wrong or 0 }}
+                </h2>
+
+                <p>
+                    Wrong
+                </p>
+
+            </div>
+
+
+            <div class="stat skipped">
+
+                <div class="stat-icon">
+                    ⏭️
+                </div>
+
+                <h2>
+                    {{ skipped or 0 }}
+                </h2>
+
+                <p>
+                    Skipped
+                </p>
+
+            </div>
+
+
+            <div class="stat accuracy">
+
+                <div class="stat-icon">
+                    🎯
+                </div>
+
+                <h2>
+                    {{ "%.2f"|format(result.percentage or 0) }}%
+                </h2>
+
+                <p>
+                    Accuracy
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- Performance -->
+        <div class="performance">
+
+            {% set percentage = result.percentage or 0 %}
+
+            {% if percentage >= 80 %}
+
+            <div class="performance-icon">
+                🏆
+            </div>
+
+            <h2>
+                Excellent Performance!
+            </h2>
+
+            <p>
+                Outstanding! Keep up the excellent work.
+            </p>
+
+            {% elif percentage >= 60 %}
+
+            <div class="performance-icon">
+                👍
+            </div>
+
+            <h2>
+                Good Performance!
+            </h2>
+
+            <p>
+                Good job! Keep practicing to improve further.
+            </p>
+
+            {% elif percentage >= 40 %}
+
+            <div class="performance-icon">
+                📚
+            </div>
+
+            <h2>
+                Keep Practicing!
+            </h2>
+
+            <p>
+                You are improving. Practice more mock tests.
+            </p>
+
+            {% else %}
+
+            <div class="performance-icon">
+                💪
+            </div>
+
+            <h2>
+                More Practice Needed
+            </h2>
+
+            <p>
+                Don't give up. Practice regularly and improve your score.
+            </p>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- Buttons -->
+        <div class="result-actions">
+
+            <a
+                    href="{{ url_for('dashboard') }}"
+                    class="btn dashboard-btn"
+            >
+                🏠 Dashboard
+            </a>
+
+
+            <a
+                    href="{{ url_for('mock_categories') }}"
+                    class="btn test-btn"
+            >
+                🔄 Take Another Test
+            </a>
+
+
+            <a
+                    href="{{ url_for('mock_test_history') }}"
+                    class="btn history-btn"
+            >
+                📊 Test History
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<style>
+
+    .result-page {
+        min-height: 80vh;
+        padding: 40px 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .result-card {
+        width: 100%;
+        max-width: 950px;
+        background: #ffffff;
+        border-radius: 24px;
+        padding: 45px;
+        box-shadow: 0 15px 50px rgba(0,0,0,0.10);
+        text-align: center;
+    }
+
+    .result-header {
+        margin-bottom: 25px;
+    }
+
+    .success-icon {
+        font-size: 60px;
+        margin-bottom: 10px;
+    }
+
+    .result-header h1 {
+        font-size: 32px;
+        margin: 0 0 8px;
+    }
+
+    .result-header p {
+        color: #64748b;
+        margin: 0;
+    }
+
+    .category-box {
+        display: inline-block;
+        padding: 12px 22px;
+        background: #f1f5f9;
+        border-radius: 30px;
+        margin: 20px 0;
+        color: #334155;
+    }
+
+    .score-section {
+        margin: 25px 0 35px;
+    }
+
+    .score-circle {
+        width: 170px;
+        height: 170px;
+        border-radius: 50%;
+        margin: auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 42px;
+        font-weight: 800;
+        background: #eef2ff;
+        color: #4f46e5;
+        border: 10px solid #c7d2fe;
+    }
+
+    .score-section h2 {
+        margin: 20px 0 5px;
+    }
+
+    .score-section h3 {
+        font-size: 28px;
+        margin: 0;
+        color: #475569;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 18px;
+        margin: 30px 0;
+    }
+
+    .stat {
+        padding: 25px 15px;
+        border-radius: 18px;
+        background: #f8fafc;
+    }
+
+    .stat-icon {
+        font-size: 30px;
+    }
+
+    .stat h2 {
+        margin: 8px 0 3px;
+        font-size: 28px;
+    }
+
+    .stat p {
+        margin: 0;
+        color: #64748b;
+    }
+
+    .performance {
+        margin: 30px 0;
+        padding: 25px;
+        border-radius: 18px;
+        background: #f8fafc;
+    }
+
+    .performance-icon {
+        font-size: 40px;
+    }
+
+    .performance h2 {
+        margin: 8px 0;
+    }
+
+    .performance p {
+        margin: 0;
+        color: #64748b;
+    }
+
+    .result-actions {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 30px;
+    }
+
+    .btn {
+        padding: 13px 22px;
+        border-radius: 12px;
+        text-decoration: none;
+        color: white;
+        font-weight: 600;
+        transition: 0.2s;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+    }
+
+    .dashboard-btn {
+        background: #2563eb;
+    }
+
+    .test-btn {
+        background: #16a34a;
+    }
+
+    .history-btn {
+        background: #7c3aed;
+    }
+
+
+    /* Mobile */
+
+    @media (max-width: 700px) {
+
+        .result-card {
+            padding: 25px 15px;
+        }
+
+        .result-header h1 {
+            font-size: 25px;
+        }
+
+        .score-circle {
+            width: 140px;
+            height: 140px;
+            font-size: 34px;
+        }
+
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .result-actions {
+            flex-direction: column;
+        }
+
+        .btn {
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+    }
+
+</style>
+
+{% endblock %}
