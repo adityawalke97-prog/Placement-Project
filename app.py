@@ -609,13 +609,36 @@ def login():
 
             user = cursor.fetchone()
 
+                        user = cursor.fetchone()
+
             if user and user.get('password'):
+                stored_password = user['password']
 
-                # Check hashed password
-                if user and user.get('password'):
+                if isinstance(stored_password, bytes):
+                    stored_password = stored_password.decode("utf-8")
 
-    stored_password = user['password']
+                if stored_password.startswith(("$2a$", "$2b$", "$2y$")):
+                    password_valid = bcrypt.check_password_hash(
+                        stored_password, password
+                    )
+                else:
+                    password_valid = check_password_hash(
+                        stored_password, password
+                    )
 
+                if password_valid:
+                    session.clear()
+                    session['user_id'] = user['id']
+                    session['user_name'] = user['name']
+                    session['user_email'] = user['email']
+
+                    return redirect(url_for('dashboard'))
+                else:
+                    flash("Invalid email or password.")
+                    return redirect(url_for('login'))
+            else:
+                flash("Invalid email or password.")
+                return redirect(url_for('login'))
     if isinstance(stored_password, bytes):
         stored_password = stored_password.decode("utf-8")
 
