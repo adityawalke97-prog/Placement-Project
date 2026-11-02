@@ -533,7 +533,7 @@ def signup():
                 return redirect(url_for('login'))
 
             # Hash password
-            hashed_password = generate_password_hash(password)
+            hashed_password = bcrypt.generate_password_hash(password).decode("utf-8")
 
             # Insert new user
             cursor.execute(
@@ -578,6 +578,10 @@ def signup():
 # LOGIN
 # =========================================================
 
+# =========================================================
+# LOGIN
+# =========================================================
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
 
@@ -609,70 +613,53 @@ def login():
 
             user = cursor.fetchone()
 
-                        user = cursor.fetchone()
-
+            # Verify password
             if user and user.get('password'):
+
                 stored_password = user['password']
 
                 if isinstance(stored_password, bytes):
                     stored_password = stored_password.decode("utf-8")
 
+                # Check bcrypt password
                 if stored_password.startswith(("$2a$", "$2b$", "$2y$")):
+
                     password_valid = bcrypt.check_password_hash(
-                        stored_password, password
-                    )
-                else:
-                    password_valid = check_password_hash(
-                        stored_password, password
+                        stored_password,
+                        password
                     )
 
+                # Check Werkzeug password
+                else:
+
+                    password_valid = check_password_hash(
+                        stored_password,
+                        password
+                    )
+
+                # Login successful
                 if password_valid:
+
                     session.clear()
+
                     session['user_id'] = user['id']
                     session['user_name'] = user['name']
                     session['user_email'] = user['email']
 
                     return redirect(url_for('dashboard'))
+
                 else:
                     flash("Invalid email or password.")
                     return redirect(url_for('login'))
+
             else:
                 flash("Invalid email or password.")
                 return redirect(url_for('login'))
-    if isinstance(stored_password, bytes):
-        stored_password = stored_password.decode("utf-8")
-
-    if stored_password.startswith(("$2a$", "$2b$", "$2y$")):
-        password_valid = bcrypt.check_password_hash(
-            stored_password,
-            password
-        )
-    else:
-        password_valid = check_password_hash(
-            stored_password,
-            password
-        )
-
-    if password_valid:
-        session.clear()
-        session['user_id'] = user['id']
-        session['user_name'] = user['name']
-        session['user_email'] = user['email']
-
-        return redirect(url_for('dashboard'))
-
-                    session.clear()
-
-                    session['user_id'] = user['id']
-                    session['user_name'] = user['name']
-                    session['user_email'] = user['email']
-
-                    return redirect(url_for('dashboard'))
-
-            flash("Invalid email or password.")
-            return redirect(url_for('login'))
 
         except Exception as e:
+
+            if conn:
+                conn.rollback()
 
             print("LOGIN ERROR:", e)
 
@@ -687,8 +674,7 @@ def login():
             if conn:
                 conn.close()
 
-    return render_template('login.html')
-    
+    return render_template('login.html')    
 @app.route('/logout')
 def logout():
     session.clear()
