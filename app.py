@@ -15,6 +15,7 @@ from authlib.integrations.flask_client import OAuth
 from flask_bcrypt import Bcrypt
 from dotenv import load_dotenv
 from werkzeug.middleware.proxy_fix import ProxyFix
+from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from datetime import timedelta
 from functools import wraps
@@ -171,23 +172,18 @@ def home():
 # =========================================================
 # GOOGLE REDIRECT URI
 # =========================================================
-
 def get_google_redirect_uri():
 
-    # Render production
     if IS_RENDER:
         return (
-            "https://placement-project-iimz.onrender.com"
+            "https://placement-projectadityaw.onrender.com"
             "/login/google/callback"
         )
 
-    # Local development
-    # IMPORTANT: Never use 192.168.x.x for Google OAuth
     return (
         "http://localhost:5000"
         "/login/google/callback"
     )
-
 # =========================================================
 # GOOGLE LOGIN
 # =========================================================
@@ -351,12 +347,9 @@ def google_callback():
             random_password = secrets.token_hex(32)
 
             hashed_password = (
-                bcrypt
-                .generate_password_hash(
-                    random_password
-                )
-                .decode("utf-8")
-            )
+    bcrypt.generate_password_hash(password)
+    .decode("utf-8")
+)
 
 
             cur.execute(
@@ -619,7 +612,31 @@ def login():
             if user and user.get('password'):
 
                 # Check hashed password
-                if check_password_hash(user['password'], password):
+                if user and user.get('password'):
+
+    stored_password = user['password']
+
+    if isinstance(stored_password, bytes):
+        stored_password = stored_password.decode("utf-8")
+
+    if stored_password.startswith(("$2a$", "$2b$", "$2y$")):
+        password_valid = bcrypt.check_password_hash(
+            stored_password,
+            password
+        )
+    else:
+        password_valid = check_password_hash(
+            stored_password,
+            password
+        )
+
+    if password_valid:
+        session.clear()
+        session['user_id'] = user['id']
+        session['user_name'] = user['name']
+        session['user_email'] = user['email']
+
+        return redirect(url_for('dashboard'))
 
                     session.clear()
 
@@ -648,6 +665,7 @@ def login():
                 conn.close()
 
     return render_template('login.html')
+    
 @app.route('/logout')
 def logout():
     session.clear()
