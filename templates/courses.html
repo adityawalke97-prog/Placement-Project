@@ -1,222 +1,1732 @@
 {% extends "layout.html" %}
 
-{% block title %}Courses{% endblock %}
+{% block title %}Explore Courses & SPPU PYQs | Placement Portal{% endblock %}
 
 {% block content %}
 
-<div class="container py-5">
+<style>
+    :root {
+        --course-primary: #635bff;
+        --course-secondary: #8b5cf6;
+        --course-dark: #111827;
+        --course-muted: #64748b;
+        --course-bg: #f5f7ff;
+        --course-border: #edf0f7;
+    }
 
-    <!-- Heading -->
-    <div class="text-center mb-5">
-        <h1 class="display-4 fw-bold">
-            📚 Explore Our Courses
-        </h1>
+    .courses-page {
+        background: var(--course-bg);
+        min-height: 100vh;
+        padding: 35px 0 70px;
+    }
 
-        <p class="text-muted fs-5">
-            Learn In-Demand Skills & Get Placement Ready
-        </p>
-    </div>
+    /* =========================
+       HERO
+    ========================= */
 
-    <div class="row g-4">
+    .course-hero {
+        position: relative;
+        overflow: hidden;
+        border-radius: 28px;
+        padding: 55px 45px;
+        color: white;
+        background: linear-gradient(120deg,#171c4b,#5145cd,#8b5cf6);
+        box-shadow: 0 20px 50px rgba(79,70,229,.20);
+    }
 
-        {% if courses %}
+    .course-hero::before {
+        content: "";
+        position: absolute;
+        width: 320px;
+        height: 320px;
+        right: -80px;
+        top: -130px;
+        border-radius: 50%;
+        background: rgba(255,255,255,.10);
+    }
 
-            {% for course in courses %}
+    .course-hero::after {
+        content: "";
+        position: absolute;
+        width: 200px;
+        height: 200px;
+        right: 180px;
+        bottom: -130px;
+        border-radius: 50%;
+        background: rgba(255,255,255,.08);
+    }
 
-            <div class="col-lg-4 col-md-6">
+    .hero-content {
+        position: relative;
+        z-index: 2;
+    }
 
-                <div class="course-card h-100">
+    .hero-label {
+        display: inline-block;
+        padding: 8px 15px;
+        border-radius: 30px;
+        background: rgba(255,255,255,.15);
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        margin-bottom: 18px;
+    }
 
-                    <div class="course-top">
+    .course-hero h1 {
+        color: white;
+        font-size: clamp(30px,4vw,46px);
+        font-weight: 800;
+        letter-spacing: -1.5px;
+        margin-bottom: 15px;
+    }
+
+    .course-hero p {
+        max-width: 650px;
+        color: rgba(255,255,255,.82);
+        font-size: 16px;
+        line-height: 1.8;
+    }
+
+    .hero-btn {
+        display: inline-block;
+        background: white;
+        color: #5145cd;
+        text-decoration: none;
+        padding: 12px 22px;
+        border-radius: 12px;
+        font-weight: 700;
+        margin-top: 12px;
+        transition: .3s;
+    }
+
+    .hero-btn:hover {
+        transform: translateY(-3px);
+        color: #312e81;
+        box-shadow: 0 10px 25px rgba(0,0,0,.15);
+    }
+
+    /* =========================
+       STATS
+    ========================= */
+
+    .course-stats {
+        display: grid;
+        grid-template-columns: repeat(3,1fr);
+        gap: 18px;
+        margin: 28px 0 38px;
+    }
+
+    .stat-box {
+        background: white;
+        padding: 22px;
+        border-radius: 18px;
+        border: 1px solid var(--course-border);
+        box-shadow: 0 6px 22px rgba(15,23,42,.035);
+        transition: .3s;
+    }
+
+    .stat-box:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 30px rgba(15,23,42,.08);
+    }
+
+    .stat-icon {
+        width: 46px;
+        height: 46px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 13px;
+        background: #eeedff;
+        font-size: 22px;
+        margin-bottom: 13px;
+    }
+
+    .stat-box h3 {
+        font-size: 27px;
+        font-weight: 800;
+        color: var(--course-dark);
+        margin: 0;
+    }
+
+    .stat-box p {
+        color: var(--course-muted);
+        font-size: 13px;
+        margin: 5px 0 0;
+    }
+
+    /* =========================
+       SECTION HEADINGS
+    ========================= */
+
+    .section-heading {
+        margin-bottom: 22px;
+    }
+
+    .section-heading h2 {
+        font-size: 27px;
+        font-weight: 800;
+        color: var(--course-dark);
+    }
+
+    .section-heading p {
+        color: var(--course-muted);
+        margin: 5px 0 0;
+    }
+
+    /* =========================
+       COURSE SEARCH
+    ========================= */
+
+    .course-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        flex-wrap: wrap;
+        margin-bottom: 25px;
+    }
+
+    .course-search {
+        position: relative;
+        flex: 1;
+        min-width: 240px;
+    }
+
+    .course-search input {
+        width: 100%;
+        height: 52px;
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        background: white;
+        padding: 0 18px 0 48px;
+        outline: none;
+        font-size: 14px;
+        transition: .3s;
+    }
+
+    .course-search input:focus {
+        border-color: var(--course-primary);
+        box-shadow: 0 0 0 4px rgba(99,91,255,.10);
+    }
+
+    .search-symbol {
+        position: absolute;
+        left: 17px;
+        top: 14px;
+        font-size: 19px;
+    }
+
+    .course-filters {
+        display: flex;
+        gap: 9px;
+        flex-wrap: wrap;
+    }
+
+    .filter-btn {
+        border: 1px solid #e5e7eb;
+        background: white;
+        padding: 11px 17px;
+        border-radius: 12px;
+        color: #475569;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: .25s;
+    }
+
+    .filter-btn:hover,
+    .filter-btn.active {
+        background: var(--course-primary);
+        color: white;
+        border-color: var(--course-primary);
+    }
+
+    /* =========================
+       COURSE GRID
+    ========================= */
+
+    .course-grid {
+        display: grid;
+        grid-template-columns: repeat(3,minmax(0,1fr));
+        gap: 23px;
+    }
+
+    .course-card {
+        background: white;
+        border: 1px solid var(--course-border);
+        border-radius: 21px;
+        overflow: hidden;
+        transition: .35s ease;
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+    }
+
+    .course-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(40,40,90,.11);
+        border-color: #dcd9ff;
+    }
+
+    .card-top {
+        padding: 23px 23px 18px;
+        background: linear-gradient(145deg,#f8f7ff,#f1f3ff);
+        position: relative;
+    }
+
+    .course-icon {
+        width: 65px;
+        height: 65px;
+        border-radius: 18px;
+        background: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 32px;
+        box-shadow: 0 5px 15px rgba(0,0,0,.05);
+    }
+
+    .level-badge {
+        position: absolute;
+        top: 24px;
+        right: 22px;
+        border-radius: 30px;
+        padding: 6px 11px;
+        font-size: 10px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: .5px;
+        background: #e0e7ff;
+        color: #4338ca;
+    }
+
+    .level-intermediate {
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+    .level-advanced {
+        background: #fee2e2;
+        color: #b91c1c;
+    }
+
+    .card-body-custom {
+        padding: 22px;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+    }
+
+    .course-title {
+        font-size: 19px;
+        font-weight: 800;
+        color: #172033;
+        margin: 0 0 10px;
+    }
+
+    .course-description {
+        color: #64748b;
+        font-size: 13px;
+        line-height: 1.7;
+        min-height: 45px;
+        margin-bottom: 18px;
+    }
+
+    .course-meta {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+        padding: 13px 0;
+        border-top: 1px solid #f0f1f5;
+        border-bottom: 1px solid #f0f1f5;
+        margin-bottom: 17px;
+    }
+
+    .meta-item {
+        color: #64748b;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .progress-heading {
+        display: flex;
+        justify-content: space-between;
+        font-size: 12px;
+        font-weight: 700;
+        margin-bottom: 8px;
+        color: #475569;
+    }
+
+    .progress-track {
+        width: 100%;
+        height: 8px;
+        background: #edf0f7;
+        border-radius: 20px;
+        overflow: hidden;
+        margin-bottom: 20px;
+    }
+
+    .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg,#635bff,#a78bfa);
+        border-radius: 20px;
+        transition: width .6s ease;
+    }
+
+    .start-course-btn {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 9px;
+        width: 100%;
+        padding: 13px;
+        border-radius: 12px;
+        background: linear-gradient(100deg,#635bff,#8065ef);
+        color: white;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 800;
+        transition: .3s;
+        margin-top: auto;
+    }
+
+    .start-course-btn:hover {
+        color: white;
+        background: linear-gradient(100deg,#5145cd,#6d4ce6);
+        box-shadow: 0 8px 18px rgba(99,91,255,.25);
+    }
+
+    /* EMPTY STATES */
+
+    .no-results {
+        display: none;
+        text-align: center;
+        padding: 55px 20px;
+        background: white;
+        border-radius: 20px;
+        border: 1px dashed #cbd5e1;
+    }
+
+    .no-results .empty-icon {
+        font-size: 45px;
+        margin-bottom: 12px;
+    }
+
+    .no-results h3 {
+        font-weight: 800;
+        color: #1e293b;
+    }
+
+    .no-results p {
+        color: #64748b;
+    }
+
+    /* =========================
+       SPPU PYQ SECTION
+    ========================= */
+
+    .pyq-section {
+        margin-top: 65px;
+        scroll-margin-top: 90px;
+    }
+
+    .pyq-hero {
+        background: linear-gradient(120deg,#151a43,#3730a3,#6d5ce7);
+        padding: 38px;
+        border-radius: 24px;
+        color: white;
+        margin-bottom: 25px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .pyq-hero::after {
+        content: "PYQ";
+        position: absolute;
+        right: 20px;
+        top: -30px;
+        font-size: 125px;
+        font-weight: 900;
+        color: rgba(255,255,255,.07);
+        pointer-events: none;
+    }
+
+    .pyq-hero-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    .pyq-badge {
+        display: inline-block;
+        background: rgba(255,255,255,.15);
+        padding: 7px 13px;
+        border-radius: 30px;
+        font-size: 11px;
+        font-weight: 800;
+        margin-bottom: 14px;
+    }
+
+    .pyq-hero h2 {
+        color: white;
+        font-size: clamp(24px,3vw,32px);
+        font-weight: 800;
+        margin-bottom: 10px;
+    }
+
+    .pyq-hero p {
+        max-width: 700px;
+        color: #e0e3ff;
+        margin: 0;
+        line-height: 1.8;
+    }
+
+    .pyq-controls {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr 1fr;
+        gap: 13px;
+        margin: 25px 0 20px;
+    }
+
+    .pyq-controls input,
+    .pyq-controls select {
+        height: 49px;
+        width: 100%;
+        min-width: 0;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        background: white;
+        padding: 0 13px;
+        outline: none;
+        color: #334155;
+        font-size: 13px;
+    }
+
+    .pyq-controls input:focus,
+    .pyq-controls select:focus {
+        border-color: #635bff;
+        box-shadow: 0 0 0 3px #635bff15;
+    }
+
+    .pyq-year-tabs {
+        display: flex;
+        gap: 9px;
+        flex-wrap: wrap;
+        margin-bottom: 24px;
+    }
+
+    .pyq-year-btn {
+        border: 1px solid #e5e7eb;
+        background: white;
+        color: #475569;
+        padding: 10px 16px;
+        border-radius: 10px;
+        font-size: 12px;
+        font-weight: 800;
+        cursor: pointer;
+        transition: .2s;
+    }
+
+    .pyq-year-btn.active,
+    .pyq-year-btn:hover {
+        background: #635bff;
+        color: white;
+        border-color: #635bff;
+    }
+
+    .pyq-count {
+        color: #64748b;
+        font-size: 13px;
+        margin-bottom: 15px;
+    }
+
+    .pyq-grid {
+        display: grid;
+        grid-template-columns: repeat(3,minmax(0,1fr));
+        gap: 20px;
+    }
+
+    .pyq-card {
+        background: white;
+        border: 1px solid #edf0f7;
+        border-radius: 18px;
+        padding: 21px;
+        transition: .3s;
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+    }
+
+    .pyq-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 15px 35px #25255012;
+        border-color: #d9d5ff;
+    }
+
+    .pyq-card-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 17px;
+    }
+
+    .pyq-icon {
+        width: 48px;
+        height: 48px;
+        background: #f0efff;
+        display: grid;
+        place-items: center;
+        border-radius: 13px;
+        font-size: 23px;
+    }
+
+    .pyq-year {
+        background: #e9f9f1;
+        color: #16845b;
+        padding: 7px 12px;
+        border-radius: 30px;
+        font-size: 11px;
+        font-weight: 800;
+    }
+
+    .pyq-card h3 {
+        color: #172033;
+        font-size: 17px;
+        font-weight: 800;
+        margin-bottom: 9px;
+    }
+
+    .pyq-course-name {
+        font-size: 12px;
+        color: #64748b;
+        margin-bottom: 15px;
+    }
+
+    .pyq-meta {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 18px;
+    }
+
+    .pyq-meta span {
+        background: #f4f6fb;
+        color: #526078;
+        padding: 6px 9px;
+        border-radius: 7px;
+        font-size: 10px;
+        font-weight: 700;
+    }
+
+    .pyq-actions {
+        display: flex;
+        gap: 9px;
+        margin-top: auto;
+    }
+
+    .pyq-actions a {
+        flex: 1;
+        text-align: center;
+        text-decoration: none;
+        border-radius: 10px;
+        padding: 11px 8px;
+        font-size: 11px;
+        font-weight: 800;
+        transition: .2s;
+    }
+
+    .pyq-view {
+        background: #f0efff;
+        color: #635bff;
+    }
+
+    .pyq-download {
+        background: linear-gradient(100deg,#635bff,#8065ef);
+        color: white;
+    }
+
+    .pyq-view:hover,
+    .pyq-download:hover {
+        opacity: .85;
+        transform: translateY(-2px);
+    }
+
+    .pyq-empty {
+        display: none;
+        background: white;
+        border: 1px dashed #cbd5e1;
+        border-radius: 18px;
+        padding: 45px 20px;
+        text-align: center;
+        grid-column: 1/-1;
+    }
+
+    .pyq-empty h3 {
+        font-weight: 800;
+        color: #1e293b;
+    }
+
+    .pyq-empty p {
+        color: #64748b;
+        margin: 8px 0 0;
+    }
+
+    /* =========================
+       STUDY MATERIALS SECTION
+    ========================= */
+
+    .study-materials-section {
+        margin-top: 65px;
+        scroll-margin-top: 90px;
+    }
+
+    .materials-hero {
+        padding: 38px;
+        border-radius: 24px;
+        color: white;
+        background: linear-gradient(120deg,#102044,#3156bd,#7659e8);
+        margin-bottom: 25px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .materials-hero::after {
+        content: "PDF";
+        position: absolute;
+        right: 20px;
+        top: -30px;
+        font-size: 125px;
+        font-weight: 900;
+        color: rgba(255,255,255,.07);
+        pointer-events: none;
+    }
+
+    .materials-hero-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    .materials-hero h2 {
+        color: white;
+        font-size: clamp(24px,3vw,32px);
+        font-weight: 800;
+        margin-bottom: 10px;
+    }
+
+    .materials-hero p {
+        max-width: 700px;
+        color: rgba(255,255,255,.82);
+        margin: 0;
+        line-height: 1.8;
+    }
+
+    .materials-count {
+        color: #64748b;
+        font-size: 13px;
+        margin-bottom: 16px;
+    }
+
+    .materials-grid {
+        display: grid;
+        grid-template-columns: repeat(3,minmax(0,1fr));
+        gap: 20px;
+    }
+
+    .material-card {
+        background: white;
+        border: 1px solid #edf0f7;
+        border-radius: 18px;
+        padding: 22px;
+        transition: .3s;
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+    }
+
+    .material-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 15px 35px rgba(37,37,80,.09);
+        border-color: #d9d5ff;
+    }
+
+    .material-icon {
+        width: 52px;
+        height: 52px;
+        display: grid;
+        place-items: center;
+        border-radius: 14px;
+        background: #f0efff;
+        font-size: 25px;
+        margin-bottom: 15px;
+    }
+
+    .material-badge {
+        display: inline-block;
+        width: fit-content;
+        background: #e9f9f1;
+        color: #16845b;
+        padding: 6px 10px;
+        border-radius: 20px;
+        font-size: 10px;
+        font-weight: 800;
+        margin-bottom: 13px;
+    }
+
+    .material-card h3 {
+        font-size: 16px;
+        font-weight: 800;
+        color: #172033;
+        overflow-wrap: anywhere;
+        margin-bottom: 10px;
+    }
+
+    .material-card p {
+        color: #64748b;
+        font-size: 12px;
+        line-height: 1.7;
+        margin-bottom: 17px;
+    }
+
+    .material-actions {
+        display: flex;
+        gap: 9px;
+        margin-top: auto;
+    }
+
+    .material-actions a {
+        flex: 1;
+        text-align: center;
+        text-decoration: none;
+        border-radius: 10px;
+        padding: 11px 8px;
+        font-size: 11px;
+        font-weight: 800;
+        transition: .2s;
+    }
+
+    .material-view {
+        background: #f0efff;
+        color: #635bff;
+    }
+
+    .material-download {
+        background: linear-gradient(100deg,#635bff,#8065ef);
+        color: white;
+    }
+
+    .material-actions a:hover {
+        opacity: .85;
+        transform: translateY(-2px);
+    }
+
+    .material-empty {
+        grid-column: 1/-1;
+        background: white;
+        border: 1px dashed #cbd5e1;
+        border-radius: 18px;
+        padding: 45px 20px;
+        text-align: center;
+    }
+
+    .material-empty h3 {
+        color: #1e293b;
+        font-weight: 800;
+    }
+
+    .material-empty p {
+        color: #64748b;
+        margin-top: 8px;
+    }
+
+    /* =========================
+       BOTTOM CTA
+    ========================= */
+
+    .course-cta {
+        margin-top: 45px;
+        padding: 30px;
+        border-radius: 22px;
+        background: linear-gradient(110deg,#171c4b,#5145cd);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+    }
+
+    .course-cta h3 {
+        color: white;
+        font-weight: 800;
+        margin-bottom: 8px;
+    }
+
+    .course-cta p {
+        color: rgba(255,255,255,.75);
+        margin: 0;
+        font-size: 14px;
+    }
+
+    .cta-tag {
+        background: white;
+        color: #5145cd;
+        text-decoration: none;
+        font-weight: 800;
+        padding: 13px 20px;
+        border-radius: 12px;
+        white-space: nowrap;
+        transition: .3s;
+    }
+
+    .cta-tag:hover {
+        color: #312e81;
+        transform: translateY(-3px);
+    }
+
+    /* =========================
+       RESPONSIVE
+    ========================= */
+
+    @media(max-width:992px) {
+        .course-grid,
+        .pyq-grid,
+        .materials-grid {
+            grid-template-columns: repeat(2,minmax(0,1fr));
+        }
+
+        .pyq-controls {
+            grid-template-columns: repeat(2,minmax(0,1fr));
+        }
+    }
+
+    @media(max-width:650px) {
+        .courses-page {
+            padding: 20px 0 45px;
+        }
+
+        .course-hero {
+            padding: 35px 24px;
+            border-radius: 20px;
+        }
+
+        .course-stats {
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        .stat-box {
+            padding: 17px;
+        }
+
+        .course-grid,
+        .pyq-grid,
+        .materials-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .course-toolbar {
+            align-items: stretch;
+        }
+
+        .course-filters {
+            overflow-x: auto;
+            flex-wrap: nowrap;
+            padding-bottom: 5px;
+        }
+
+        .filter-btn {
+            white-space: nowrap;
+        }
+
+        .pyq-controls {
+            grid-template-columns: 1fr;
+        }
+
+        .pyq-hero,
+        .materials-hero {
+            padding: 27px 21px;
+        }
+
+        .pyq-hero::after,
+        .materials-hero::after {
+            font-size: 80px;
+        }
+
+        .course-cta {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .cta-tag {
+            width: 100%;
+            text-align: center;
+        }
+
+        .hero-btn {
+            margin-left: 0 !important;
+            margin-right: 5px;
+        }
+    }
+</style>
+
+
+<div class="courses-page">
+    <div class="container">
+
+        <!-- MAIN HERO -->
+
+        <section class="course-hero">
+            <div class="hero-content">
+
+            <span class="hero-label">
+                🚀 YOUR LEARNING JOURNEY STARTS HERE
+            </span>
+
+                <h1>
+                    Upgrade Your Skills.<br>
+                    Build Your Future.
+                </h1>
+
+                <p>
+                    Explore industry-focused courses, learn practical skills,
+                    complete lessons and prepare yourself for your dream placement.
+                </p>
+
+                <a href="#allCourses" class="hero-btn">
+                    Explore Courses →
+                </a>
+
+                <a href="#studyMaterials" class="hero-btn">
+                    📚 Explore Study Materials →
+                </a>
+
+            </div>
+        </section>
+
+
+        <!-- COURSE STATISTICS -->
+
+        <section class="course-stats">
+
+            <div class="stat-box">
+                <div class="stat-icon">📚</div>
+                <h3>{{ courses|length }}</h3>
+                <p>Available Courses</p>
+            </div>
+
+            <div class="stat-box">
+                <div class="stat-icon">🎯</div>
+                <h3>
+                    {{ courses
+                    |selectattr('progress_percent','defined')
+                    |selectattr('progress_percent','gt',0)
+                    |list|length }}
+                </h3>
+                <p>Courses Started</p>
+            </div>
+
+            <div class="stat-box">
+                <div class="stat-icon">🏆</div>
+                <h3>
+                    {{ courses
+                    |selectattr('progress_percent','defined')
+                    |selectattr('progress_percent','equalto',100)
+                    |list|length }}
+                </h3>
+                <p>Courses Completed</p>
+            </div>
+
+        </section>
+
+
+        <!-- ALL COURSES -->
+
+        <section id="allCourses">
+
+            <div class="section-heading">
+                <h2>Explore Our Courses</h2>
+                <p>Choose your learning path and start building your skills.</p>
+            </div>
+
+            <div class="course-toolbar">
+
+                <div class="course-search">
+                    <span class="search-symbol">🔍</span>
+
+                    <input
+                            type="text"
+                            id="courseSearch"
+                            placeholder="Search courses, skills..."
+                            autocomplete="off">
+                </div>
+
+                <div class="course-filters">
+
+                    <button class="filter-btn active" data-filter="all">
+                        All Courses
+                    </button>
+
+                    <button class="filter-btn" data-filter="beginner">
+                        Beginner
+                    </button>
+
+                    <button class="filter-btn" data-filter="intermediate">
+                        Intermediate
+                    </button>
+
+                    <button class="filter-btn" data-filter="advanced">
+                        Advanced
+                    </button>
+
+                </div>
+            </div>
+
+
+            <!-- COURSE CARDS -->
+
+            <div class="course-grid" id="courseGrid">
+
+                {% for course in courses %}
+
+                {% set level = course.level|default('Beginner',true)|lower %}
+                {% set progress = course.progress_percent|default(0,true)|int %}
+                {% set total_days = course.total_days|default(0,true)|int %}
+
+                <article
+                        class="course-card"
+                        data-title="{{ course.course_title|default('',true)|lower }}"
+                        data-name="{{ course.course_name|default('',true)|lower }}"
+                        data-description="{{ course.description|default('',true)|lower }}"
+                        data-level="{{ level }}">
+
+                    <div class="card-top">
 
                         <div class="course-icon">
+
+                            {% if 'java' in course.course_name|lower %}
+                            ☕
+                            {% elif 'python' in course.course_name|lower %}
+                            🐍
+                            {% elif 'web' in course.course_name|lower or 'html' in course.course_name|lower %}
+                            🌐
+                            {% elif 'data' in course.course_name|lower %}
+                            📊
+                            {% elif 'sql' in course.course_name|lower or 'database' in course.course_name|lower %}
+                            🗄️
+                            {% elif 'javascript' in course.course_name|lower %}
+                            ⚡
+                            {% else %}
                             📘
+                            {% endif %}
+
                         </div>
 
-                        <span class="badge bg-success">
-                            Beginner
+                        <span class="level-badge
+                        {% if 'intermediate' in level %}level-intermediate
+                        {% elif 'advanced' in level %}level-advanced
+                        {% endif %}">
+                        {{ course.level|default('Beginner',true) }}
+                    </span>
+
+                    </div>
+
+                    <div class="card-body-custom">
+
+                        <h3 class="course-title">
+                            {{ course.course_title|default(course.course_name,true) }}
+                        </h3>
+
+                        <p class="course-description">
+                            {{ course.description|default(
+                            'Develop practical skills and improve your technical knowledge with this course.',
+                            true) }}
+                        </p>
+
+                        <div class="course-meta">
+
+                        <span class="meta-item">
+                            📖 {{ total_days }} Lessons
                         </span>
 
-                    </div>
+                            <span class="meta-item">
+                            🎓 Learning Path
+                        </span>
 
-                    <h3>
-                        {{ course.course_title }}
-                    </h3>
+                        </div>
+
+                        <div class="progress-heading">
+                            <span>Your Progress</span>
+                            <span>{{ progress }}%</span>
+                        </div>
+
+                        <div class="progress-track">
+                            <div
+                                    class="progress-fill"
+                                    style="width:{{ [progress,100]|min }}%;">
+                            </div>
+                        </div>
+
+                        <a
+                                href="{{ url_for('course',course_name=course.course_name) }}"
+                                class="start-course-btn">
+
+                            {% if progress >= 100 %}
+                            Review Course →
+                            {% elif progress > 0 %}
+                            Continue Learning →
+                            {% else %}
+                            Start Learning →
+                            {% endif %}
+
+                        </a>
+
+                    </div>
+                </article>
+
+                {% else %}
+
+                <div class="no-results"
+                     style="display:block;grid-column:1/-1;">
+
+                    <div class="empty-icon">📚</div>
+                    <h3>No Courses Available Yet</h3>
+                    <p>Courses will appear here once they are added.</p>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+            <div class="no-results" id="noCourseResults">
+                <div class="empty-icon">🔎</div>
+                <h3>No Courses Found</h3>
+                <p>Try searching with another course name or skill.</p>
+            </div>
+
+        </section>
+
+
+        <!-- SPPU PYQ SECTION -->
+
+        <section class="pyq-section" id="sppu-pyq">
+
+            <div class="pyq-hero">
+                <div class="pyq-hero-content">
+
+                <span class="pyq-badge">
+                    🎓 SAVITRIBAI PHULE PUNE UNIVERSITY
+                </span>
+
+                    <h2>Previous Year Question Papers</h2>
 
                     <p>
-                        {{ course.description }}
+                        Prepare smarter with previous 4–6 years of SPPU
+                        examination papers. Find question papers course-wise,
+                        subject-wise and semester-wise in one place.
                     </p>
 
-                    <div class="course-info">
+                </div>
+            </div>
 
-                        <div>
-                            📖 Notes
-                        </div>
 
-                        <div>
-                            💻 Coding
-                        </div>
+            <!-- PYQ FILTERS -->
 
-                        <div>
-                            📝 Quiz
-                        </div>
+            <div class="pyq-controls">
+
+                <input
+                        type="text"
+                        id="pyqSearch"
+                        placeholder="🔍 Search course or subject..."
+                        autocomplete="off">
+
+                <select id="pyqCourse">
+                    <option value="all">All Courses</option>
+
+                    {% for paper in pyq_papers|default([],true) %}
+                    <option value="{{ paper.course_name|lower }}">
+                        {{ paper.course_name }}
+                    </option>
+                    {% endfor %}
+                </select>
+
+                <select id="pyqSemester">
+                    <option value="all">All Semesters</option>
+
+                    {% for semester in pyq_semesters|default([],true) %}
+                    <option value="{{ semester }}">
+                        Semester {{ semester }}
+                    </option>
+                    {% endfor %}
+                </select>
+
+                <select id="pyqYear">
+                    <option value="all">All Years</option>
+
+                    {% for year in pyq_years|default([],true) %}
+                    <option value="{{ year }}">{{ year }}</option>
+                    {% endfor %}
+                </select>
+
+            </div>
+
+
+            <div class="pyq-year-tabs">
+
+                <button class="pyq-year-btn active"
+                        data-years="all"
+                        type="button">
+                    All Papers
+                </button>
+
+                <button class="pyq-year-btn"
+                        data-years="4"
+                        type="button">
+                    Last 4 Years
+                </button>
+
+                <button class="pyq-year-btn"
+                        data-years="6"
+                        type="button">
+                    Last 6 Years
+                </button>
+
+            </div>
+
+
+            <div class="section-heading">
+                <h2>📄 Available Question Papers</h2>
+                <p>Browse examination papers for your courses and subjects.</p>
+            </div>
+
+            <div class="pyq-count" id="pyqCount">
+                {{ pyq_papers|default([],true)|length }} papers available
+            </div>
+
+
+            <div class="pyq-grid" id="pyqGrid">
+
+                {% for paper in pyq_papers|default([],true) %}
+
+                <article
+                        class="pyq-card"
+                        data-course="{{ paper.course_name|default('',true)|lower }}"
+                        data-subject="{{ paper.subject_name|default('',true)|lower }}"
+                        data-year="{{ paper.exam_year|default(0,true) }}"
+                        data-semester="{{ paper.semester|default('',true) }}">
+
+                    <div class="pyq-card-top">
+
+                        <div class="pyq-icon">📄</div>
+
+                        <span class="pyq-year">
+                        {{ paper.exam_year }}
+                    </span>
 
                     </div>
 
-                    <a href="{{ url_for('course', course_name=course.course_name) }}"
-                       class="btn start-btn mt-4">
+                    <h3>{{ paper.subject_name }}</h3>
 
-                        🚀 Start Learning
+                    <p class="pyq-course-name">
+                        {{ paper.course_name }}
+                    </p>
 
-                    </a>
+                    <div class="pyq-meta">
+
+                        <span>Semester {{ paper.semester }}</span>
+
+                        <span>
+                        {{ paper.exam_session|default('University Exam',true) }}
+                    </span>
+
+                        <span>
+                        {{ paper.paper_pattern|default('SPPU Pattern',true) }}
+                    </span>
+
+                    </div>
+
+                    {% if paper.pdf_url %}
+
+                    <div class="pyq-actions">
+
+                        <a
+                                href="{{ paper.pdf_url }}"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="pyq-view">
+                            👁 View Paper
+                        </a>
+
+                        <a
+                                href="{{ paper.pdf_url }}"
+                                download
+                                class="pyq-download">
+                            ⬇ Download
+                        </a>
+
+                    </div>
+
+                    {% else %}
+
+                    <div class="pyq-actions">
+                    <span class="pyq-view"
+                          style="text-align:center;flex:1;padding:11px;border-radius:10px;font-size:11px;">
+                        PDF Not Uploaded
+                    </span>
+                    </div>
+
+                    {% endif %}
+
+                </article>
+
+                {% endfor %}
+
+                <div class="pyq-empty" id="pyqEmpty">
+                    <div style="font-size:40px;margin-bottom:12px;">📚</div>
+                    <h3>No Question Papers Available</h3>
+                    <p>
+                        Question papers will appear here after they are
+                        added to the PYQ library.
+                    </p>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             STUDY MATERIALS SECTION
+        ========================== -->
+
+        <section class="study-materials-section" id="studyMaterials">
+
+            <div class="materials-hero">
+
+                <div class="materials-hero-content">
+
+                <span class="pyq-badge">
+                    📚 STUDENT RESOURCE LIBRARY
+                </span>
+
+                    <h2>Study Materials & Learning Resources</h2>
+
+                    <p>
+                        Access uploaded SPPU question papers, notes and
+                        study documents. View documents online or download
+                        them for offline examination preparation.
+                    </p>
 
                 </div>
 
             </div>
 
-            {% endfor %}
 
-        {% else %}
+            <div class="section-heading">
+                <h2>📂 Available Study Materials</h2>
+                <p>
+                    Browse and download the study documents uploaded for students.
+                </p>
+            </div>
 
-        <div class="col-12">
 
-            <div class="alert alert-warning text-center">
+            <div class="materials-count">
+                {{ study_materials|default([],true)|length }}
+                study materials available
+            </div>
 
-                No Courses Available.
+
+            <div class="materials-grid">
+
+                {% for material in study_materials|default([],true) %}
+
+                <article class="material-card">
+
+                    <div class="material-icon">
+
+                        {% if material.extension == 'PDF' %}
+                        📕
+                        {% elif material.extension in ['DOC', 'DOCX'] %}
+                        📝
+                        {% else %}
+                        📄
+                        {% endif %}
+
+                    </div>
+
+                    <span class="material-badge">
+                    {{ material.extension|default('DOCUMENT') }}
+                </span>
+
+                    <h3>{{ material.title }}</h3>
+
+                    <p>
+                        📦 File size: {{ material.size }} KB
+                        <br>
+                        🎓 SPPU Study Resource
+                    </p>
+
+                    <div class="material-actions">
+
+                        <a
+                                href="{{ url_for('open_study_material', filename=material.filename) }}"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="material-view">
+                            👁 View
+                        </a>
+
+                        <a
+                                href="{{ url_for('open_study_material', filename=material.filename, download=1) }}"
+                                class="material-download">
+                            ⬇ Download
+                        </a>
+
+                    </div>
+
+                </article>
+
+                {% else %}
+
+                <div class="material-empty">
+
+                    <div style="font-size:40px;margin-bottom:12px;">
+                        📚
+                    </div>
+
+                    <h3>No Study Materials Available</h3>
+
+                    <p>
+                        Uploaded study documents will appear here.
+                    </p>
+
+                </div>
+
+                {% endfor %}
 
             </div>
 
-        </div>
+        </section>
 
-        {% endif %}
+
+        <!-- BOTTOM CTA -->
+
+        <section class="course-cta">
+
+            <div>
+
+                <h3>💡 Every Expert Was Once a Beginner.</h3>
+
+                <p>
+                    Start learning today. Practice consistently and move
+                    closer to your career goals.
+                </p>
+
+            </div>
+
+            <a href="#allCourses" class="cta-tag">
+                Start Your Journey →
+            </a>
+
+        </section>
 
     </div>
-
 </div>
 
-<style>
 
-body{
-    background:#f4f7fc;
-}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
 
-.course-card{
+        /* =========================
+           COURSE SEARCH AND FILTER
+        ========================== */
 
-    background:#fff;
-    border-radius:20px;
-    padding:30px;
-    box-shadow:0 12px 35px rgba(0,0,0,.08);
+        const courseSearch = document.getElementById("courseSearch");
+        const courseButtons = document.querySelectorAll(".filter-btn");
+        const courseCards = document.querySelectorAll(".course-card");
+        const noCourseResults = document.getElementById("noCourseResults");
 
-    transition:.35s;
+        let activeCourseFilter = "all";
 
-    height:100%;
-}
+        function filterCourses() {
 
-.course-card:hover{
+            const searchValue = courseSearch.value.toLowerCase().trim();
 
-    transform:translateY(-10px);
-    box-shadow:0 20px 45px rgba(0,0,0,.15);
+            let visibleCount = 0;
 
-}
+            courseCards.forEach(function(card) {
 
-.course-top{
+                const title = card.dataset.title || "";
+                const name = card.dataset.name || "";
+                const description = card.dataset.description || "";
+                const level = card.dataset.level || "";
 
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:20px;
+                const matchesSearch =
+                    title.includes(searchValue) ||
+                    name.includes(searchValue) ||
+                    description.includes(searchValue);
 
-}
+                const matchesFilter =
+                    activeCourseFilter === "all" ||
+                    level.includes(activeCourseFilter);
 
-.course-icon{
+                const show = matchesSearch && matchesFilter;
 
-    width:70px;
-    height:70px;
+                card.style.display = show ? "flex" : "none";
 
-    border-radius:18px;
+                if (show) visibleCount++;
 
-    background:linear-gradient(135deg,#4f46e5,#2563eb);
+            });
 
-    display:flex;
-    justify-content:center;
-    align-items:center;
+            if (noCourseResults) {
+                noCourseResults.style.display =
+                    visibleCount === 0 ? "block" : "none";
+            }
 
-    color:white;
-    font-size:30px;
+        }
 
-}
+        if (courseSearch) {
+            courseSearch.addEventListener("input", filterCourses);
+        }
 
-.course-card h3{
+        courseButtons.forEach(function(button) {
 
-    font-weight:700;
-    margin-bottom:15px;
+            button.addEventListener("click", function() {
 
-}
+                courseButtons.forEach(function(btn) {
+                    btn.classList.remove("active");
+                });
 
-.course-card p{
+                button.classList.add("active");
 
-    color:#666;
-    min-height:80px;
+                activeCourseFilter = button.dataset.filter;
 
-}
+                filterCourses();
 
-.course-info{
+            });
 
-    display:flex;
-    justify-content:space-between;
-    margin-top:20px;
-    color:#555;
-    font-weight:600;
+        });
 
-}
 
-.start-btn{
+        /* =========================
+           PYQ SEARCH AND FILTER
+        ========================== */
 
-    width:100%;
+        const pyqSearch = document.getElementById("pyqSearch");
+        const pyqCourse = document.getElementById("pyqCourse");
+        const pyqSemester = document.getElementById("pyqSemester");
+        const pyqYear = document.getElementById("pyqYear");
 
-    padding:13px;
+        const pyqCards = document.querySelectorAll(".pyq-card");
+        const pyqEmpty = document.getElementById("pyqEmpty");
+        const pyqCount = document.getElementById("pyqCount");
 
-    border:none;
+        const yearButtons = document.querySelectorAll(".pyq-year-btn");
 
-    border-radius:12px;
+        let selectedYearRange = "all";
 
-    background:linear-gradient(135deg,#2563eb,#4f46e5);
+        function filterPapers() {
 
-    color:white;
+            const query = pyqSearch.value.toLowerCase().trim();
+            const selectedCourse = pyqCourse.value.toLowerCase();
+            const selectedSemester = pyqSemester.value;
+            const selectedYear = pyqYear.value;
 
-    font-weight:700;
+            const currentYear = new Date().getFullYear();
 
-    transition:.3s;
+            let visibleCount = 0;
 
-}
+            pyqCards.forEach(function(card) {
 
-.start-btn:hover{
+                const cardCourse = card.dataset.course || "";
+                const cardSubject = card.dataset.subject || "";
+                const cardYear = Number(card.dataset.year);
+                const cardSemester = card.dataset.semester || "";
 
-    transform:scale(1.03);
+                const matchesSearch =
+                    cardCourse.includes(query) ||
+                    cardSubject.includes(query);
 
-    color:white;
+                const matchesCourse =
+                    selectedCourse === "all" ||
+                    cardCourse === selectedCourse;
 
-    box-shadow:0 10px 25px rgba(37,99,235,.4);
+                const matchesSemester =
+                    selectedSemester === "all" ||
+                    cardSemester === selectedSemester;
 
-}
+                const matchesYear =
+                    selectedYear === "all" ||
+                    String(cardYear) === selectedYear;
 
-@media(max-width:768px){
+                let matchesYearRange = true;
 
-.course-card{
+                if (selectedYearRange !== "all") {
 
-padding:22px;
+                    const numberOfYears = Number(selectedYearRange);
 
-}
+                    matchesYearRange =
+                        cardYear >= currentYear - numberOfYears + 1 &&
+                        cardYear <= currentYear;
 
-.course-info{
+                }
 
-flex-direction:column;
-gap:10px;
+                const show =
+                    matchesSearch &&
+                    matchesCourse &&
+                    matchesSemester &&
+                    matchesYear &&
+                    matchesYearRange;
 
-}
+                card.style.display = show ? "flex" : "none";
 
-}
+                if (show) visibleCount++;
 
-</style>
+            });
+
+            if (pyqEmpty) {
+                pyqEmpty.style.display =
+                    visibleCount === 0 ? "block" : "none";
+            }
+
+            if (pyqCount) {
+                pyqCount.textContent =
+                    visibleCount + " papers available";
+            }
+
+        }
+
+        [pyqSearch, pyqCourse, pyqSemester, pyqYear].forEach(function(element) {
+
+            if (!element) return;
+
+            element.addEventListener("input", filterPapers);
+            element.addEventListener("change", filterPapers);
+
+        });
+
+        yearButtons.forEach(function(button) {
+
+            button.addEventListener("click", function() {
+
+                yearButtons.forEach(function(btn) {
+                    btn.classList.remove("active");
+                });
+
+                button.classList.add("active");
+
+                selectedYearRange = button.dataset.years;
+
+                pyqYear.value = "all";
+
+                filterPapers();
+
+            });
+
+        });
+
+        filterPapers();
+
+    });
+</script>
 
 {% endblock %}

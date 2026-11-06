@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+
+    <title>Login | Placement Training Portal</title>
 
     <!-- Font Awesome -->
     <link rel="stylesheet"
@@ -18,19 +20,18 @@
 
 <div class="login-page">
 
-    <!-- Left Section -->
+    <!-- LEFT SECTION -->
+
     <div class="login-left">
 
         <div class="brand">
-            <div class="brand-logo">
-                🎓
-            </div>
+
+            <div class="brand-logo">🎓</div>
 
             <h1>Placement Training Portal</h1>
 
-            <p>
-                Learn • Practice • Crack Your Dream Job
-            </p>
+            <p>Learn • Practice • Crack Your Dream Job</p>
+
         </div>
 
         <div class="feature-list">
@@ -64,7 +65,9 @@
 
     </div>
 
-    <!-- Right Section -->
+
+    <!-- RIGHT SECTION -->
+
     <div class="login-right">
 
         <div class="login-card">
@@ -75,77 +78,151 @@
                 Login to continue your placement journey
             </p>
 
+
+            <!-- FLASH MESSAGES -->
+
             {% with messages = get_flashed_messages() %}
-                {% if messages %}
-                    {% for message in messages %}
-                        <div class="flash-message">
-                            {{ message }}
-                        </div>
-                    {% endfor %}
-                {% endif %}
+            {% if messages %}
+            {% for message in messages %}
+            <div class="flash-message">
+                {{ message }}
+            </div>
+            {% endfor %}
+            {% endif %}
             {% endwith %}
 
-            <!-- Google Login -->
-            <a href="{{ url_for('google_login') }}" class="google-btn">
 
-                <img src="https://developers.google.com/identity/images/g-logo.png">
+            <!-- GOOGLE LOGIN -->
+
+            <a href="{{ url_for('google_login') }}"
+               class="google-btn">
+
+                <img
+                        src="https://developers.google.com/identity/images/g-logo.png"
+                        alt="Google Logo">
 
                 Continue with Google
 
             </a>
 
+
             <div class="divider">
                 <span>OR</span>
             </div>
 
-            <!-- Email Login -->
-            <form action="/login" method="POST">
+
+            <!-- LOGIN FORM -->
+
+            <form action="{{ url_for('login') }}"
+                  method="POST">
+
+                <!-- ROLE SELECTION -->
 
                 <div class="input-group">
 
-                    <label>Email Address</label>
+                    <label for="role">
+                        Login As
+                    </label>
+
+                    <div class="input-box">
+
+                        <i class="fas fa-user-shield"></i>
+
+                        <select
+                                id="role"
+                                name="role"
+                                required>
+
+                            <option value="" disabled selected>
+                                Select Account Type
+                            </option>
+
+                            <option value="student">
+                                Student
+                            </option>
+
+                            <option value="admin">
+                                Admin
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+                <!-- EMAIL -->
+
+                <div class="input-group">
+
+                    <label for="email">
+                        Email Address
+                    </label>
 
                     <div class="input-box">
 
                         <i class="fas fa-envelope"></i>
 
                         <input
-                            type="email"
-                            name="email"
-                            placeholder="Enter your email"
-                            required>
+                                type="email"
+                                id="email"
+                                name="email"
+                                placeholder="Enter your email"
+                                autocomplete="email"
+                                required>
 
                     </div>
 
                 </div>
 
+
+                <!-- PASSWORD -->
+
                 <div class="input-group">
 
-                    <label>Password</label>
+                    <label for="password">
+                        Password
+                    </label>
 
                     <div class="input-box">
 
                         <i class="fas fa-lock"></i>
 
                         <input
-                            type="password"
-                            id="password"
-                            name="password"
-                            placeholder="Enter password"
-                            required>
+                                type="password"
+                                id="password"
+                                name="password"
+                                placeholder="Enter password"
+                                autocomplete="current-password"
+                                required>
 
-                        <i class="fas fa-eye toggle-password"
-                           onclick="togglePassword()"></i>
+                        <i
+                                class="fas fa-eye toggle-password"
+                                onclick="togglePassword()"
+                                title="Show or hide password"
+                                role="button"
+                                tabindex="0">
+                        </i>
 
                     </div>
 
                 </div>
 
+
+                <!-- LOGIN OPTIONS -->
+
                 <div class="login-options">
 
                     <label class="remember">
-                        <input type="checkbox">
+
+                        <input
+                                type="checkbox"
+                                name="remember"
+                                value="on">
+
                         Remember Me
+
                     </label>
 
                     <a href="/forgot_password">
@@ -154,17 +231,28 @@
 
                 </div>
 
-                <button class="login-btn">
+
+                <!-- LOGIN BUTTON -->
+
+                <button type="submit"
+                        class="login-btn">
+
+                    <i class="fas fa-sign-in-alt"></i>
+
                     Login
+
                 </button>
 
             </form>
+
+
+            <!-- SIGNUP -->
 
             <div class="bottom-links">
 
                 Don't have an account?
 
-                <a href="/signup">
+                <a href="{{ url_for('signup') }}">
                     Create Account
                 </a>
 
@@ -175,6 +263,7 @@
     </div>
 
 </div>
+
 
 <script src="{{ url_for('static', filename='js/login.js') }}"></script>
 

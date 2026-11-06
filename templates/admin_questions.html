@@ -1,0 +1,134 @@
+{% extends "layout.html" %}
+
+{% block title %}Mock Questions | Admin{% endblock %}
+
+{% block content %}
+<style>
+    .aq-page{max-width:1380px;margin:0 auto;padding:24px 12px 48px;color:#172033}
+    .aq-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap;margin-bottom:22px}
+    .aq-kicker{font-size:.76rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#635bff}
+    .aq-title{font-size:clamp(1.65rem,3vw,2.2rem);font-weight:800;margin:5px 0}.aq-sub{color:#64748b;margin:0}
+    .aq-card{background:#fff;border:1px solid #e8eaf2;border-radius:18px;box-shadow:0 8px 28px rgba(22,34,60,.055);padding:20px;margin-bottom:18px}
+    .aq-btn{border:0;border-radius:10px;padding:10px 15px;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
+    .aq-primary{background:#635bff;color:#fff}.aq-light{background:#eef0ff;color:#5148e5}.aq-danger{background:#fff0f0;color:#c62828}
+    .aq-label{font-size:.82rem;font-weight:700;color:#475569;margin-bottom:6px}.aq-control{width:100%;min-height:42px;border:1px solid #dfe3ed;border-radius:10px;padding:9px 12px;background:#fff}
+    .aq-item{border:1px solid #e9edf4;border-radius:14px;padding:16px;margin-bottom:12px;background:#fff}
+    .aq-question{font-weight:750;font-size:1rem;margin-bottom:12px;white-space:pre-wrap}
+    .aq-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:12px}
+    .aq-option{background:#f8f9fc;border-radius:9px;padding:9px 11px;font-size:.9rem;color:#475569}
+    .aq-answer{font-size:.85rem;color:#15803d;font-weight:750}.aq-meta{font-size:.82rem;color:#94a3b8}
+    @media(max-width:640px){.aq-page{padding:16px 8px 32px}.aq-options{grid-template-columns:1fr}.aq-card{padding:15px}}
+</style>
+
+<div class="aq-page">
+    <div class="aq-head">
+        <div>
+            <div class="aq-kicker">Question Bank</div>
+            <h1 class="aq-title">Mock Test Questions</h1>
+            <p class="aq-sub">Add and manage multiple-choice questions used in mock tests.</p>
+        </div>
+        <a href="{{ url_for('admin_dashboard') }}" class="aq-btn aq-light">← Back to Dashboard</a>
+    </div>
+
+    <section class="aq-card">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+            <div>
+                <h2 class="h5 fw-bold mb-1">Add a question</h2>
+                <p class="small text-secondary mb-0">Enter four options and choose the correct answer.</p>
+            </div>
+            <span class="badge rounded-pill text-bg-light">{{ total_questions }} questions</span>
+        </div>
+        <form method="POST" action="{{ url_for('admin_add_mock_question') }}" id="mockQuestionForm">
+            <div class="mb-3">
+                <label class="aq-label" for="mockQuestion">Question</label>
+                <textarea class="aq-control" id="mockQuestion" name="question" rows="3" required placeholder="Enter the question"></textarea>
+            </div>
+            <div class="row g-3">
+                <div class="col-12 col-md-6"><label class="aq-label" for="mockOption1">Option 1</label><input class="aq-control mock-option" id="mockOption1" name="option1" required></div>
+                <div class="col-12 col-md-6"><label class="aq-label" for="mockOption2">Option 2</label><input class="aq-control mock-option" id="mockOption2" name="option2" required></div>
+                <div class="col-12 col-md-6"><label class="aq-label" for="mockOption3">Option 3</label><input class="aq-control mock-option" id="mockOption3" name="option3" required></div>
+                <div class="col-12 col-md-6"><label class="aq-label" for="mockOption4">Option 4</label><input class="aq-control mock-option" id="mockOption4" name="option4" required></div>
+                <div class="col-12 col-md-6">
+                    <label class="aq-label" for="mockAnswer">Correct answer</label>
+                    <select class="aq-control" id="mockAnswer" name="answer" required>
+                        <option value="">First enter all options</option>
+                    </select>
+                    <div class="form-text">The saved answer will match the exact option text.</div>
+                </div>
+                <div class="col-12 d-flex justify-content-end"><button type="submit" class="aq-btn aq-primary">＋ Add Question</button></div>
+            </div>
+        </form>
+    </section>
+
+    <section class="aq-card">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+            <h2 class="h5 fw-bold mb-0">Existing questions</h2>
+            <span class="small text-secondary">{{ total_questions }} total</span>
+        </div>
+        {% for question in questions %}
+        <article class="aq-item">
+            <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap">
+                <div class="aq-question">{{ loop.index }}. {{ question.question }}</div>
+                <form method="POST" action="{{ url_for('admin_delete_mock_question') }}"
+                      onsubmit="return confirm('Delete this mock question?');">
+                    <input type="hidden" name="question_id" value="{{ question.id }}">
+                    <button type="submit" class="aq-btn aq-danger">Delete</button>
+                </form>
+            </div>
+            <div class="aq-options">
+                <div class="aq-option">A. {{ question.option1 }}</div>
+                <div class="aq-option">B. {{ question.option2 }}</div>
+                <div class="aq-option">C. {{ question.option3 }}</div>
+                <div class="aq-option">D. {{ question.option4 }}</div>
+            </div>
+            <div class="aq-answer">Correct answer: {{ question.answer }}</div>
+            <div class="aq-meta mt-2">Question ID: {{ question.id }}</div>
+        </article>
+        {% else %}
+        <div class="text-center text-secondary py-5">No mock questions have been added yet.</div>
+        {% endfor %}
+    </section>
+</div>
+
+<script>
+    (function () {
+        const optionInputs = Array.from(document.querySelectorAll('.mock-option'));
+        const answerSelect = document.getElementById('mockAnswer');
+
+        function refreshAnswerOptions() {
+            const previousValue = answerSelect.value;
+            answerSelect.innerHTML = '';
+            const filledOptions = optionInputs
+                .map(input => input.value.trim())
+                .filter(value => value.length > 0);
+
+            if (filledOptions.length !== 4) {
+                const placeholder = document.createElement('option');
+                placeholder.value = '';
+                placeholder.textContent = 'Enter all four options first';
+                answerSelect.appendChild(placeholder);
+                return;
+            }
+
+            const placeholder = document.createElement('option');
+            placeholder.value = '';
+            placeholder.textContent = 'Select the correct option';
+            answerSelect.appendChild(placeholder);
+
+            filledOptions.forEach((value, index) => {
+                const option = document.createElement('option');
+                option.value = value;
+                option.textContent = String.fromCharCode(65 + index) + '. ' + value;
+                answerSelect.appendChild(option);
+            });
+
+            if (filledOptions.includes(previousValue)) {
+                answerSelect.value = previousValue;
+            }
+        }
+
+        optionInputs.forEach(input => input.addEventListener('input', refreshAnswerOptions));
+        refreshAnswerOptions();
+    })();
+</script>
+{% endblock %}

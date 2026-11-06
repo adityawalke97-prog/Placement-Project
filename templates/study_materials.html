@@ -1,0 +1,208 @@
+{% extends "layout.html" %}
+
+{% block title %}SPPU Study Materials | Placement Portal{% endblock %}
+
+{% block content %}
+
+<style>
+    .study-page {
+        min-height: 80vh;
+        padding: 45px 0 70px;
+        background: #f8faff;
+    }
+
+    .study-hero {
+        background: linear-gradient(120deg, #312e81, #635bff, #8b5cf6);
+        color: white;
+        padding: 48px 35px;
+        border-radius: 24px;
+        margin-bottom: 35px;
+        box-shadow: 0 15px 40px rgba(79,70,229,.18);
+    }
+
+    .study-hero h1 {
+        font-size: clamp(27px, 4vw, 40px);
+        font-weight: 800;
+    }
+
+    .study-hero p {
+        color: #e0e7ff;
+        margin-bottom: 0;
+    }
+
+    .study-count {
+        background: rgba(255,255,255,.16);
+        padding: 15px 22px;
+        border-radius: 15px;
+        display: inline-block;
+        margin-top: 20px;
+    }
+
+    .material-card {
+        background: white;
+        border: 1px solid #e8eaf3;
+        border-radius: 19px;
+        padding: 23px;
+        height: 100%;
+        transition: .25s ease;
+        box-shadow: 0 5px 20px rgba(15,23,42,.04);
+    }
+
+    .material-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 14px 35px rgba(15,23,42,.10);
+        border-color: #a5b4fc;
+    }
+
+    .file-icon {
+        width: 55px;
+        height: 55px;
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #eef2ff;
+        font-size: 26px;
+        margin-bottom: 18px;
+    }
+
+    .material-card h5 {
+        font-weight: 750;
+        font-size: 16px;
+        line-height: 1.5;
+        overflow-wrap: anywhere;
+        color: #172033;
+    }
+
+    .file-meta {
+        color: #64748b;
+        font-size: 13px;
+        margin: 13px 0 19px;
+    }
+
+    .material-btn {
+        display: inline-block;
+        padding: 9px 14px;
+        border-radius: 9px;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 700;
+        margin: 3px;
+    }
+
+    .view-btn {
+        background: #eef2ff;
+        color: #4338ca;
+    }
+
+    .download-btn {
+        background: #4338ca;
+        color: white;
+    }
+
+    .material-btn:hover {
+        opacity: .85;
+    }
+
+    .empty-materials {
+        background: white;
+        border: 1px dashed #cbd5e1;
+        padding: 55px 20px;
+        border-radius: 20px;
+        text-align: center;
+    }
+</style>
+
+<div class="study-page">
+    <div class="container">
+
+        <div class="study-hero">
+            <h1>📚 SPPU Study Materials</h1>
+
+            <p>
+                Previous Year Question Papers and academic resources
+                for your semester examination preparation.
+            </p>
+
+            <div class="study-count">
+                📄 <strong>{{ materials|length }}</strong>
+                Available Study Materials
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h3 class="fw-bold mb-1">Available Papers</h3>
+                <p class="text-muted mb-0">
+                    Select a paper to view or download.
+                </p>
+            </div>
+        </div>
+
+        {% if materials %}
+
+        <div class="row g-4">
+
+            {% for material in materials %}
+
+            <div class="col-sm-6 col-lg-4">
+
+                <div class="material-card">
+
+                    <div class="file-icon">
+                        {% if material.extension == "PDF" %}
+                        📕
+                        {% else %}
+                        📘
+                        {% endif %}
+                    </div>
+
+                    <h5>{{ material.title }}</h5>
+
+                    <div class="file-meta">
+                        <span>{{ material.extension }} File</span>
+                        <span class="mx-2">•</span>
+                        <span>{{ material.size }} KB</span>
+                    </div>
+
+                    <div>
+                        {% if material.extension == "PDF" %}
+
+                        <a class="material-btn view-btn"
+                           href="{{ url_for('open_study_material', filename=material.filename) }}"
+                           target="_blank">
+                            👁 View Paper
+                        </a>
+
+                        {% endif %}
+
+                        <a class="material-btn download-btn"
+                           href="{{ url_for('open_study_material', filename=material.filename, download=1) }}">
+                            ⬇ Download
+                        </a>
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        {% else %}
+
+        <div class="empty-materials">
+            <div style="font-size:45px;">📂</div>
+            <h4 class="fw-bold mt-3">No Materials Available</h4>
+            <p class="text-muted">
+                Study materials will appear here once uploaded.
+            </p>
+        </div>
+
+        {% endif %}
+
+    </div>
+</div>
+
+{% endblock %}

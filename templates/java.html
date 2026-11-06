@@ -1,1130 +1,832 @@
 {% extends "layout.html" %}
 
-{% block title %}
-{{ course.name }} - Placement Training
-{% endblock %}
+{% block title %}Java Masterclass | Placement Portal{% endblock %}
 
 {% block content %}
 
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+
 <style>
-    /* =========================================================
-       JAVA COURSE OVERVIEW
-       ========================================================= */
-
-    .java-course-page {
-        width: 100%;
-        max-width: 1500px;
-        margin: 0 auto;
-        padding: 28px 24px 60px;
-        color: #172033;
+    :root {
+        --primary: #6558e8;
+        --primary-light: #f0efff;
+        --dark: #172033;
+        --muted: #788399;
+        --border: #e8ecf4;
+        --background: #f6f8fc;
+        --white: #ffffff;
     }
 
-    .java-course-page,
-    .java-course-page * {
-        box-sizing: border-box;
+    .java-page {
+        background: var(--background);
+        min-height: 100vh;
+        padding: 28px 0 60px;
+        font-family: 'Inter', sans-serif;
+        color: var(--dark);
     }
 
-    /* =========================================================
-       HERO
-       ========================================================= */
+    .java-container {
+        width: 96%;
+        max-width: 1450px;
+        margin: auto;
+    }
+
+    /* HERO */
 
     .java-hero {
         position: relative;
         overflow: hidden;
-        border-radius: 26px;
-        padding: 38px;
-        margin-bottom: 24px;
-        background: linear-gradient(135deg, #1e2a78, #4f46e5 50%, #7c3aed);
+        padding: 40px;
+        border-radius: 25px;
         color: white;
-        box-shadow: 0 18px 45px rgba(55, 48, 163, .22);
+        background: linear-gradient(120deg, #171b3b, #40358e, #7165ef);
+        box-shadow: 0 18px 45px rgba(63, 53, 142, .16);
     }
 
-    .java-hero::before,
     .java-hero::after {
-        content: "";
+        content: "JAVA";
         position: absolute;
-        border-radius: 50%;
+        right: 25px;
+        top: -25px;
+        font-size: 160px;
+        font-weight: 800;
+        color: rgba(255,255,255,.06);
         pointer-events: none;
     }
 
-    .java-hero::before {
-        width: 360px;
-        height: 360px;
-        right: -130px;
-        top: -190px;
-        background: rgba(255,255,255,.10);
-    }
-
-    .java-hero::after {
-        width: 250px;
-        height: 250px;
-        right: 25%;
-        bottom: -190px;
-        background: rgba(255,255,255,.07);
-    }
-
-    .java-hero-content {
+    .hero-content {
         position: relative;
         z-index: 2;
+        max-width: 800px;
     }
 
-    .java-course-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 7px;
-        padding: 8px 14px;
-        border-radius: 50px;
-        background: rgba(255,255,255,.13);
-        border: 1px solid rgba(255,255,255,.20);
+    .hero-badge {
+        display: inline-block;
+        background: rgba(255,255,255,.15);
+        border: 1px solid rgba(255,255,255,.25);
+        border-radius: 30px;
+        padding: 8px 15px;
         font-size: 12px;
-        font-weight: 800;
-        letter-spacing: .8px;
-        margin-bottom: 15px;
+        font-weight: 700;
     }
 
     .java-hero h1 {
-        margin: 0 0 10px;
-        font-size: clamp(30px, 4vw, 48px);
-        line-height: 1.1;
-        font-weight: 850;
-        letter-spacing: -1px;
+        color: white;
+        font-family: 'Plus Jakarta Sans';
+        font-size: clamp(28px, 4vw, 43px);
+        font-weight: 800;
+        margin: 20px 0 12px;
     }
 
-    .java-hero-description {
-        max-width: 760px;
-        margin: 0;
-        color: #e0e7ff;
+    .java-hero p {
+        color: #e0e3ff;
+        line-height: 1.8;
         font-size: 15px;
-        line-height: 1.7;
     }
 
-    /* =========================================================
-       STATS
-       ========================================================= */
-
-    .java-stats {
-        display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
+    .hero-stats {
+        display: flex;
+        flex-wrap: wrap;
         gap: 13px;
-        margin-top: 28px;
+        margin-top: 25px;
     }
 
-    .java-stat {
-        padding: 17px;
-        border-radius: 16px;
-        background: rgba(255,255,255,.10);
-        border: 1px solid rgba(255,255,255,.14);
-        backdrop-filter: blur(8px);
+    .hero-stat {
+        background: rgba(255,255,255,.13);
+        border: 1px solid rgba(255,255,255,.2);
+        padding: 13px 18px;
+        border-radius: 13px;
+        min-width: 120px;
     }
 
-    .java-stat-value {
+    .hero-stat strong {
         display: block;
-        margin-bottom: 3px;
-        font-size: 24px;
-        font-weight: 850;
+        color: white;
+        font-size: 22px;
     }
 
-    .java-stat-label {
-        color: #dbe4ff;
-        font-size: 12px;
-        font-weight: 600;
+    .hero-stat span {
+        font-size: 11px;
+        color: #dcdcff;
     }
 
-    /* =========================================================
-       MAIN LAYOUT
-       ========================================================= */
+    /* PROGRESS */
 
-    .java-layout {
-        display: grid;
-        grid-template-columns: 290px minmax(0, 1fr);
-        gap: 22px;
-        align-items: start;
+    .progress-area {
+        margin-top: 25px;
+        max-width: 550px;
     }
 
-    /* =========================================================
-       SIDEBAR
-       ========================================================= */
-
-    .lesson-sidebar {
-        position: sticky;
-        top: 90px;
-        min-width: 0;
-        max-height: calc(100vh - 110px);
-        overflow: hidden;
-        padding: 20px;
-        background: #fff;
-        border: 1px solid #e5e7eb;
-        border-radius: 22px;
-        box-shadow: 0 10px 30px rgba(15,23,42,.06);
-    }
-
-    .sidebar-header {
-        margin-bottom: 18px;
-    }
-
-    .sidebar-header h2 {
-        margin: 0 0 5px;
-        color: #111827;
-        font-size: 18px;
-        font-weight: 850;
-    }
-
-    .sidebar-header p {
-        margin: 0;
-        color: #64748b;
-        font-size: 12px;
-    }
-
-    /* Progress */
-
-    .sidebar-progress {
-        padding: 15px;
-        margin-bottom: 18px;
-        border-radius: 15px;
-        background: #f8fafc;
-        border: 1px solid #edf2f7;
-    }
-
-    .sidebar-progress-top {
+    .progress-info {
         display: flex;
         justify-content: space-between;
-        align-items: center;
-        margin-bottom: 9px;
-    }
-
-    .sidebar-progress-top span {
-        color: #475569;
+        margin-bottom: 8px;
+        color: white;
         font-size: 12px;
-        font-weight: 700;
-    }
-
-    .sidebar-progress-top strong {
-        color: #4f46e5;
-        font-size: 14px;
     }
 
     .progress-track {
-        width: 100%;
-        height: 8px;
+        background: rgba(255,255,255,.25);
+        height: 9px;
+        border-radius: 20px;
         overflow: hidden;
-        border-radius: 50px;
-        background: #e2e8f0;
     }
 
     .progress-fill {
-        width: {{ percentage|default(0) }}%;
+        width: {{ percentage|default(0)|int }}%;
         height: 100%;
-        border-radius: inherit;
-        background: linear-gradient(90deg, #4f46e5, #7c3aed);
-        transition: width .4s ease;
-    }
-
-    .progress-count {
-        margin-top: 8px;
-        color: #64748b;
-        font-size: 11px;
-    }
-
-    /* Lesson list */
-
-    .lesson-list {
-        max-height: calc(100vh - 355px);
-        overflow-y: auto;
-        padding-right: 4px;
-    }
-
-    .lesson-list::-webkit-scrollbar {
-        width: 5px;
-    }
-
-    .lesson-list::-webkit-scrollbar-thumb {
-        background: #cbd5e1;
+        background: linear-gradient(90deg,#79e6bb,#ffffff);
         border-radius: 20px;
     }
 
-    .lesson-item {
-        display: flex;
-        align-items: center;
-        gap: 11px;
-        width: 100%;
-        padding: 11px 10px;
-        margin-bottom: 5px;
-        border-radius: 13px;
-        text-decoration: none;
-        color: #334155;
-        transition: all .2s ease;
-    }
+    /* MAIN LAYOUT */
 
-    .lesson-item:hover {
-        background: #f1f5f9;
-        color: #111827;
-        transform: translateX(2px);
-    }
-
-    .lesson-item.completed {
-        background: #f0fdf4;
-    }
-
-    .lesson-number {
-        flex: 0 0 34px;
-        width: 34px;
-        height: 34px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 10px;
-        background: #eef2ff;
-        color: #4f46e5;
-        font-size: 11px;
-        font-weight: 850;
-    }
-
-    .lesson-item.completed .lesson-number {
-        background: #dcfce7;
-        color: #15803d;
-    }
-
-    .lesson-details {
-        flex: 1;
-        min-width: 0;
-    }
-
-    .lesson-day {
-        display: block;
-        margin-bottom: 2px;
-        color: #94a3b8;
-        font-size: 10px;
-        font-weight: 700;
-    }
-
-    .lesson-title {
-        display: block;
-        overflow: hidden;
-        color: inherit;
-        font-size: 12px;
-        font-weight: 700;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-
-    .lesson-status {
-        color: #64748b;
-        font-size: 13px;
-        font-weight: 800;
-    }
-
-    /* =========================================================
-       MAIN
-       ========================================================= */
-
-    .course-main {
-        min-width: 0;
-    }
-
-    /* =========================================================
-       OVERVIEW
-       ========================================================= */
-
-    .overview-card {
-        padding: 27px;
-        margin-bottom: 25px;
-        background: #fff;
-        border: 1px solid #e5e7eb;
-        border-radius: 22px;
-        box-shadow: 0 10px 30px rgba(15,23,42,.05);
-    }
-
-    .overview-header {
-        margin-bottom: 22px;
-    }
-
-    .overview-header h2 {
-        margin: 0 0 6px;
-        color: #111827;
-        font-size: 23px;
-        font-weight: 850;
-    }
-
-    .overview-header p {
-        margin: 0;
-        color: #64748b;
-        font-size: 13px;
-    }
-
-    /* Big progress */
-
-    .progress-panel {
-        padding: 20px;
-        border-radius: 17px;
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
-    }
-
-    .progress-panel-top {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 11px;
-    }
-
-    .progress-panel-top span {
-        color: #475569;
-        font-size: 13px;
-        font-weight: 700;
-    }
-
-    .progress-panel-top strong {
-        color: #4f46e5;
-        font-size: 20px;
-    }
-
-    /* Continue */
-
-    .continue-section {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 18px;
-        padding: 18px;
-        margin-top: 20px;
-        border-radius: 16px;
-        background: #eef2ff;
-        border: 1px solid #e0e7ff;
-    }
-
-    .continue-text strong {
-        display: block;
-        margin-bottom: 4px;
-        color: #312e81;
-        font-size: 14px;
-    }
-
-    .continue-text span {
-        color: #6366f1;
-        font-size: 12px;
-    }
-
-    .continue-btn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        padding: 11px 19px;
-        border-radius: 11px;
-        background: #4f46e5;
-        color: #fff;
-        text-decoration: none;
-        font-size: 12px;
-        font-weight: 800;
-        white-space: nowrap;
-        transition: all .2s ease;
-    }
-
-    .continue-btn:hover {
-        background: #4338ca;
-        color: #fff;
-        transform: translateY(-2px);
-        box-shadow: 0 8px 18px rgba(79,70,229,.22);
-    }
-
-    /* =========================================================
-       SECTION TITLE
-       ========================================================= */
-
-    .section-title {
-        margin: 28px 0 15px;
-    }
-
-    .section-title h2 {
-        margin: 0;
-        color: #111827;
-        font-size: 22px;
-        font-weight: 850;
-    }
-
-    .section-title p {
-        margin: 5px 0 0;
-        color: #64748b;
-        font-size: 13px;
-    }
-
-    /* =========================================================
-       LESSON CARDS
-       ========================================================= */
-
-    .lessons-grid {
+    .java-layout {
         display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 16px;
+        grid-template-columns: 290px minmax(0,1fr);
+        gap: 23px;
+        margin-top: 25px;
+        align-items: start;
+    }
+
+    /* SIDEBAR */
+
+    .java-sidebar {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 20px 14px;
+        position: sticky;
+        top: 90px;
+        max-height: calc(100vh - 110px);
+        overflow-y: auto;
+    }
+
+    .sidebar-heading {
+        padding: 5px 10px 17px;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 12px;
+    }
+
+    .sidebar-heading h3 {
+        font-size: 15px;
+        font-weight: 800;
+        margin: 0 0 5px;
+    }
+
+    .sidebar-heading p {
+        font-size: 11px;
+        color: var(--muted);
+        margin: 0;
+    }
+
+    .lesson-link {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 12px 10px;
+        margin-bottom: 5px;
+        border-radius: 12px;
+        text-decoration: none !important;
+        color: #34405a;
+        transition: .2s;
+    }
+
+    .lesson-link:hover,
+    .lesson-link.active {
+        background: var(--primary-light);
+        color: var(--primary);
+    }
+
+    .day-number {
+        width: 35px;
+        height: 35px;
+        flex-shrink: 0;
+        display: grid;
+        place-items: center;
+        background: #f0f2f7;
+        border-radius: 11px;
+        font-weight: 800;
+        font-size: 12px;
+    }
+
+    .lesson-link.active .day-number {
+        background: var(--primary);
+        color: white;
+    }
+
+    .lesson-name {
+        font-size: 12px;
+        font-weight: 700;
+        line-height: 1.6;
+        padding-top: 4px;
+    }
+
+    /* CONTENT */
+
+    .java-content {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: clamp(20px,3vw,38px);
+        min-width: 0;
     }
 
     .lesson-card {
-        min-width: 0;
-        padding: 20px;
-        background: #fff;
-        border: 1px solid #e5e7eb;
-        border-radius: 18px;
-        box-shadow: 0 7px 24px rgba(15,23,42,.045);
-        transition: all .25s ease;
+        scroll-margin-top: 100px;
+        padding-bottom: 35px;
+        margin-bottom: 35px;
+        border-bottom: 1px solid var(--border);
     }
 
-    .lesson-card:hover {
-        border-color: #c7d2fe;
-        transform: translateY(-4px);
-        box-shadow: 0 14px 32px rgba(15,23,42,.09);
+    .lesson-card:last-child {
+        border-bottom: 0;
     }
 
-    .lesson-card.completed {
-        border-color: #bbf7d0;
+    .lesson-header {
+        margin-bottom: 25px;
     }
 
-    .lesson-card-top {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-        margin-bottom: 16px;
-    }
-
-    .lesson-card-number {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 43px;
-        height: 43px;
-        border-radius: 13px;
-        background: #eef2ff;
-        color: #4f46e5;
-        font-size: 13px;
-        font-weight: 850;
-    }
-
-    .lesson-card.completed .lesson-card-number {
-        background: #dcfce7;
-        color: #15803d;
-    }
-
-    .completed-badge {
-        padding: 5px 9px;
-        border-radius: 50px;
-        background: #dcfce7;
-        color: #15803d;
-        font-size: 10px;
+    .lesson-day {
+        color: var(--primary);
+        font-size: 11px;
         font-weight: 800;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
     }
 
-    .lesson-card h3 {
-        margin: 0 0 8px;
-        color: #111827;
-        font-size: 17px;
+    .lesson-header h2 {
+        font-family: 'Plus Jakarta Sans';
+        font-size: clamp(22px,3vw,30px);
+        font-weight: 800;
+        margin: 8px 0;
+        line-height: 1.35;
+    }
+
+    .lesson-label {
+        display: inline-block;
+        background: #edfaf4;
+        color: #13865c;
+        padding: 7px 12px;
+        border-radius: 30px;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    /* MARKDOWN NOTES */
+
+    .notes-content {
+        font-size: 15px;
+        line-height: 1.9;
+        color: #354158;
+        overflow-wrap: anywhere;
+    }
+
+    .notes-content h1,
+    .notes-content h2,
+    .notes-content h3,
+    .notes-content h4 {
+        font-family: 'Plus Jakarta Sans';
+        color: #202944;
         font-weight: 800;
         line-height: 1.4;
+        margin-top: 30px;
+        margin-bottom: 13px;
     }
 
-    .lesson-card p {
-        min-height: 40px;
-        margin: 0;
-        color: #64748b;
-        font-size: 12px;
-        line-height: 1.65;
+    .notes-content h1 {
+        font-size: 27px;
     }
 
-    .lesson-open-btn {
-        display: flex;
-        align-items: center;
-        justify-content: center;
+    .notes-content h2 {
+        font-size: 21px;
+        border-bottom: 1px solid var(--border);
+        padding-bottom: 10px;
+    }
+
+    .notes-content h3 {
+        font-size: 17px;
+    }
+
+    .notes-content p {
+        margin: 12px 0 17px;
+    }
+
+    .notes-content ul,
+    .notes-content ol {
+        padding-left: 25px;
+        margin: 12px 0 20px;
+    }
+
+    .notes-content li {
+        padding-left: 5px;
+        margin: 7px 0;
+    }
+
+    .notes-content strong {
+        color: #202944;
+    }
+
+    .notes-content blockquote {
+        background: #f5f4ff;
+        border-left: 4px solid var(--primary);
+        padding: 15px 18px;
+        border-radius: 0 12px 12px 0;
+        margin: 20px 0;
+    }
+
+    .notes-content table {
+        display: block;
         width: 100%;
-        padding: 11px 14px;
-        margin-top: 18px;
-        border-radius: 10px;
-        background: #f1f5f9;
-        color: #334155;
-        text-decoration: none;
-        font-size: 12px;
-        font-weight: 800;
-        transition: all .2s ease;
-    }
-
-    .lesson-open-btn:hover {
-        background: #4f46e5;
-        color: #fff;
-    }
-
-    .lesson-card.completed .lesson-open-btn {
-        background: #f0fdf4;
-        color: #15803d;
-    }
-
-    .lesson-card.completed .lesson-open-btn:hover {
-        background: #16a34a;
-        color: #fff;
-    }
-
-    /* =========================================================
-       EMPTY STATE
-       ========================================================= */
-
-    .empty-lessons {
-        padding: 55px 20px;
-        text-align: center;
-        background: #fff;
-        border: 1px solid #e5e7eb;
-        border-radius: 20px;
-    }
-
-    .empty-lessons-icon {
-        margin-bottom: 12px;
-        font-size: 42px;
-    }
-
-    .empty-lessons h3 {
-        margin: 0 0 6px;
-        color: #111827;
-        font-size: 19px;
-    }
-
-    .empty-lessons p {
-        margin: 0;
-        color: #64748b;
+        overflow-x: auto;
+        border-collapse: collapse;
+        margin: 20px 0;
         font-size: 13px;
     }
 
-    /* =========================================================
-       RESPONSIVE
-       ========================================================= */
-
-    @media (max-width: 1100px) {
-
-        .java-layout {
-            grid-template-columns: 250px minmax(0, 1fr);
-        }
-
-        .java-stats {
-            grid-template-columns: repeat(2, 1fr);
-        }
+    .notes-content th,
+    .notes-content td {
+        border: 1px solid var(--border);
+        padding: 11px 14px;
+        text-align: left;
+        min-width: 110px;
     }
 
-    @media (max-width: 850px) {
+    .notes-content th {
+        background: #f3f4fb;
+        font-weight: 800;
+    }
 
-        .java-course-page {
-            padding: 20px 15px 45px;
-        }
+    .notes-content :not(pre) > code {
+        background: #f0efff;
+        color: #594bd4;
+        padding: 3px 7px;
+        border-radius: 6px;
+        font-size: 13px;
+    }
 
+    /* CODE */
+
+    .code-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #202b3d;
+        color: #dce5f5;
+        padding: 11px 15px;
+        border-radius: 12px 12px 0 0;
+        font-size: 11px;
+        font-weight: 800;
+        margin-top: 23px;
+    }
+
+    .copy-code {
+        background: #39465e;
+        color: white;
+        border: 1px solid #63718a;
+        border-radius: 7px;
+        padding: 6px 12px;
+        cursor: pointer;
+        font-size: 11px;
+    }
+
+    pre {
+        background: #111827 !important;
+        border-radius: 0 0 12px 12px !important;
+        padding: 20px !important;
+        overflow-x: auto;
+        margin: 0 0 22px !important;
+    }
+
+    pre code {
+        font-family: Consolas, monospace !important;
+        font-size: 13px !important;
+        line-height: 1.8 !important;
+    }
+
+    /* PRACTICE */
+
+    .practice-box {
+        background: linear-gradient(120deg,#effbf5,#f7fffb);
+        border: 1px solid #d8efe4;
+        border-radius: 15px;
+        padding: 21px;
+        margin-top: 25px;
+    }
+
+    .practice-box h3 {
+        font-size: 16px;
+        color: #13734f;
+        margin: 0 0 12px;
+        font-weight: 800;
+    }
+
+    .practice-box p {
+        color: #315c49;
+        white-space: pre-line;
+        line-height: 1.8;
+        margin: 0;
+    }
+
+    /* FOOTER */
+
+    .java-footer {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
+        border-top: 1px solid var(--border);
+        padding-top: 22px;
+        margin-top: 20px;
+    }
+
+    .java-footer a {
+        text-decoration: none;
+        border: 1px solid var(--border);
+        color: #34405a;
+        border-radius: 10px;
+        padding: 11px 16px;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .java-footer a:hover {
+        color: var(--primary);
+        border-color: var(--primary);
+    }
+
+    /* RESPONSIVE */
+
+    @media(max-width:900px) {
         .java-layout {
             grid-template-columns: 1fr;
         }
 
-        .lesson-sidebar {
-            position: relative;
-            top: auto;
-            max-height: none;
-        }
-
-        .lesson-list {
-            max-height: 320px;
-        }
-
-        .lessons-grid {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
+        .java-sidebar {
+            position: static;
+            max-height: 350px;
         }
     }
 
-    @media (max-width: 600px) {
-
-        .java-course-page {
-            padding: 14px 10px 40px;
-        }
-
+    @media(max-width:550px) {
         .java-hero {
-            padding: 26px 20px;
-            border-radius: 20px;
+            padding: 25px 20px;
         }
 
-        .java-hero h1 {
-            font-size: 29px;
+        .java-hero::after {
+            font-size: 90px;
         }
 
-        .java-hero-description {
-            font-size: 13px;
+        .hero-stat {
+            flex: 1;
+            min-width: 100px;
         }
 
-        .java-stats {
-            grid-template-columns: repeat(2, 1fr);
-            gap: 8px;
-            margin-top: 22px;
-        }
-
-        .java-stat {
-            padding: 13px;
-        }
-
-        .java-stat-value {
-            font-size: 19px;
-        }
-
-        .java-stat-label {
-            font-size: 10px;
-        }
-
-        .overview-card {
-            padding: 19px;
-            border-radius: 18px;
-        }
-
-        .overview-header h2 {
-            font-size: 20px;
-        }
-
-        .continue-section {
-            align-items: stretch;
-            flex-direction: column;
-        }
-
-        .continue-btn {
-            width: 100%;
-        }
-
-        .lessons-grid {
-            grid-template-columns: 1fr;
-        }
-
-        .lesson-card {
+        .java-content {
             padding: 18px;
         }
 
-        .section-title h2 {
-            font-size: 20px;
+        .java-footer {
+            flex-direction: column;
         }
     }
 </style>
 
 
-<div class="java-course-page">
+<div class="java-page">
+    <div class="java-container">
 
-    <!-- =====================================================
-         HERO
-         ===================================================== -->
+        <!-- COURSE HERO -->
 
-    <section class="java-hero">
+        <section class="java-hero">
 
-        <div class="java-hero-content">
+            <div class="hero-content">
 
-            <div class="java-course-badge">
-                ☕ {{ course.name|upper }}
-            </div>
+            <span class="hero-badge">
+                ✦ PREMIUM LEARNING PATH
+            </span>
 
-            <h1>
-                {{ course.name }}
-            </h1>
-
-            <p class="java-hero-description">
-                {{ course.description }}
-            </p>
-
-            <div class="java-stats">
-
-                <div class="java-stat">
-                    <span class="java-stat-value">
-                        {{ percentage|default(0) }}%
-                    </span>
-
-                    <span class="java-stat-label">
-                        Course Progress
-                    </span>
-                </div>
-
-
-                <div class="java-stat">
-                    <span class="java-stat-value">
-                        {{ total_days|default(0) }}
-                    </span>
-
-                    <span class="java-stat-label">
-                        Total Lessons
-                    </span>
-                </div>
-
-
-                <div class="java-stat">
-                    <span class="java-stat-value">
-                        {{ progress|default(0) }}
-                    </span>
-
-                    <span class="java-stat-label">
-                        Completed
-                    </span>
-                </div>
-
-
-                <div class="java-stat">
-                    <span class="java-stat-value">
-                        {{ course.level }}
-                    </span>
-
-                    <span class="java-stat-label">
-                        Difficulty Level
-                    </span>
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- =====================================================
-         COURSE LAYOUT
-         ===================================================== -->
-
-    <div class="java-layout">
-
-
-        <!-- =================================================
-             SIDEBAR
-             ================================================= -->
-
-        <aside class="lesson-sidebar">
-
-            <div class="sidebar-header">
-
-                <h2>
-                    Course Roadmap
-                </h2>
+                <h1>
+                    {{ course.course_title or course.course_name|title }}
+                    Masterclass
+                </h1>
 
                 <p>
-                    Follow the lessons step by step
+                    {{ course.description or
+                    "Master Core Java from beginner to advanced level with complete theory, practical examples, coding exercises and real-world projects." }}
                 </p>
 
-            </div>
+                <div class="hero-stats">
 
-
-            <div class="sidebar-progress">
-
-                <div class="sidebar-progress-top">
-
-                    <span>
-                        Your Progress
-                    </span>
-
-                    <strong>
-                        {{ percentage|default(0) }}%
-                    </strong>
-
-                </div>
-
-                <div class="progress-track">
-
-                    <div class="progress-fill"></div>
-
-                </div>
-
-                <div class="progress-count">
-                    {{ progress|default(0) }}
-                    of
-                    {{ total_days|default(0) }}
-                    lessons completed
-                </div>
-
-            </div>
-
-
-            <div class="lesson-list">
-
-                {% if lessons %}
-
-                {% for lesson in lessons %}
-
-                {% set is_completed =
-                lesson.day_number in completed_days
-                %}
-
-                <a
-                        href="{{ url_for(
-                                'course_day',
-                                course_name=course.name,
-                                day=lesson.day_number
-                            ) }}"
-                        class="lesson-item
-                            {% if is_completed %}completed{% endif %}"
-                >
-
-                    <div class="lesson-number">
-
-                        {% if is_completed %}
-                        ✓
-                        {% else %}
-                        {{ lesson.day_number }}
-                        {% endif %}
-
+                    <div class="hero-stat">
+                        <strong>15</strong>
+                        <span>Learning Days</span>
                     </div>
 
-
-                    <div class="lesson-details">
-
-                                <span class="lesson-day">
-                                    DAY {{ lesson.day_number }}
-                                </span>
-
-                        <span class="lesson-title">
-                                    {{ lesson.title }}
-                                </span>
-
+                    <div class="hero-stat">
+                        <strong>{{ lessons|length }}</strong>
+                        <span>Available Lessons</span>
                     </div>
 
-
-                    <span class="lesson-status">
-
-                                {% if is_completed %}
-                                    ✓
-                                {% else %}
-                                    →
-                                {% endif %}
-
-                            </span>
-
-                </a>
-
-                {% endfor %}
-
-                {% else %}
-
-                <p style="
-                        font-size:12px;
-                        color:#64748b;
-                        padding:10px;
-                        margin:0;
-                    ">
-                    No lessons available.
-                </p>
-
-                {% endif %}
-
-            </div>
-
-        </aside>
-
-
-        <!-- =================================================
-             MAIN CONTENT
-             ================================================= -->
-
-        <main class="course-main">
-
-
-            <!-- COURSE OVERVIEW -->
-
-            <section class="overview-card">
-
-                <div class="overview-header">
-
-                    <h2>
-                        Course Overview
-                    </h2>
-
-                    <p>
-                        Build your Java skills step by step and become
-                        placement ready.
-                    </p>
+                    <div class="hero-stat">
+                        <strong>{{ completed_days|default(0) }}</strong>
+                        <span>Completed Days</span>
+                    </div>
 
                 </div>
 
+                <div class="progress-area">
 
-                <!-- PROGRESS -->
-
-                <div class="progress-panel">
-
-                    <div class="progress-panel-top">
-
-                        <span>
-                            Overall Course Progress
-                        </span>
-
-                        <strong>
-                            {{ percentage|default(0) }}%
-                        </strong>
-
+                    <div class="progress-info">
+                        <span>Your Course Progress</span>
+                        <strong>{{ percentage|default(0)|int }}%</strong>
                     </div>
 
                     <div class="progress-track">
-
                         <div class="progress-fill"></div>
-
                     </div>
 
                 </div>
-
-
-                <!-- CONTINUE -->
-
-                {% set continue_day = lessons[0].day_number %}
-                {% for item in lessons %}
-                {% if item.day_number not in completed_days %}
-                {% set continue_day = item.day_number %}
-                {% break %}
-                {% endif %}
-                {% endfor %}
-                <div class="continue-section">
-
-                    <div class="continue-text">
-
-                        <strong>
-                            🚀 Continue Learning
-                        </strong>
-
-                        <span>
-                                Start or continue your next lesson.
-                            </span>
-
-                    </div>
-
-                    <a
-                            href="{{ url_for(
-                                'course_day',
-                                course_name=course.name,
-                                day=continue_day
-                            ) }}"
-                            class="continue-btn"
-                    >
-                        Continue →
-                    </a>
-
-                </div>
-
-                {% endif %}
-
-            </section>
-
-
-            <!-- LESSON SECTION -->
-
-            <div class="section-title">
-
-                <h2>
-                    📚 Course Lessons
-                </h2>
-
-                <p>
-                    Complete each lesson to track your placement
-                    preparation progress.
-                </p>
 
             </div>
 
+        </section>
 
-            {% if lessons %}
 
-            <div class="lessons-grid">
+        <!-- COURSE LAYOUT -->
+
+        <div class="java-layout">
+
+            <!-- SIDEBAR -->
+
+            <aside class="java-sidebar">
+
+                <div class="sidebar-heading">
+
+                    <h3>📚 Java Curriculum</h3>
+
+                    <p>Complete 15-Day Learning Roadmap</p>
+
+                </div>
+
+                {% set ns = namespace(days=[]) %}
 
                 {% for lesson in lessons %}
 
-                {% set is_completed =
-                lesson.day_number in completed_days
-                %}
+                {% if lesson.day_number not in ns.days %}
 
-                <article
-                        class="lesson-card
-                            {% if is_completed %}completed{% endif %}"
-                >
+                {% set ns.days = ns.days + [lesson.day_number] %}
 
-                    <div class="lesson-card-top">
+                <a href="#lesson-{{ lesson.id }}"
+                   class="lesson-link"
+                   data-day="{{ lesson.day_number }}">
 
-                        <div class="lesson-card-number">
+                        <span class="day-number">
+                            {{ lesson.day_number }}
+                        </span>
 
-                            {% if is_completed %}
-                            ✓
-                            {% else %}
-                            {{ "%02d"|format(
-                            lesson.day_number
-                            ) }}
-                            {% endif %}
+                    <span class="lesson-name">
+                            {{ lesson.title }}
+                        </span>
 
+                </a>
+
+                {% endif %}
+
+                {% endfor %}
+
+            </aside>
+
+
+            <!-- NOTES CONTENT -->
+
+            <main class="java-content">
+
+                {% for lesson in lessons %}
+
+                <article class="lesson-card"
+                         id="lesson-{{ lesson.id }}">
+
+                    <div class="lesson-header">
+
+                        <div class="lesson-day">
+                            CORE JAVA • DAY {{ lesson.day_number }}
                         </div>
 
+                        <h2>{{ lesson.title }}</h2>
 
-                        {% if is_completed %}
-
-                        <span class="completed-badge">
-                                        ✓ COMPLETED
-                                    </span>
-
-                        {% endif %}
+                        <span class="lesson-label">
+                        ✦ Complete Study Notes
+                    </span>
 
                     </div>
 
 
-                    <h3>
-                        Day {{ lesson.day_number }}
-                        — {{ lesson.title }}
-                    </h3>
+                    <!-- DETAILED NOTES -->
+
+                    <div class="notes-content markdown-notes">
+
+                        {{ lesson.notes or "Notes coming soon..." }}
+
+                    </div>
 
 
-                    <p>
+                    <!-- CODE EXAMPLE -->
 
-                        {% if lesson.notes %}
+                    {% if lesson.code_snippet %}
 
-                        {{ lesson.notes
-                        |striptags
-                        |truncate(125, true, "...")
-                        }}
+                    <div class="code-heading">
 
-                        {% else %}
+                        <span>JAVA SOURCE CODE</span>
 
-                        Start this lesson and learn
-                        the concepts step by step.
+                        <button class="copy-code" type="button">
+                            Copy Code
+                        </button>
 
-                        {% endif %}
+                    </div>
 
-                    </p>
+                    <pre><code class="language-java">{{ lesson.code_snippet }}</code></pre>
+
+                    {% endif %}
 
 
-                    <a
-                            href="{{ url_for(
-                                    'course_day',
-                                    course_name=course.name,
-                                    day=lesson.day_number
-                                ) }}"
-                            class="lesson-open-btn"
-                    >
+                    <!-- PRACTICE TASK -->
 
-                        {% if is_completed %}
-                        Review Lesson →
-                        {% else %}
-                        Start Lesson →
-                        {% endif %}
+                    {% if lesson.practice_task %}
 
-                    </a>
+                    <div class="practice-box">
+
+                        <h3>✍️ Practical Assignment</h3>
+
+                        <p>{{ lesson.practice_task }}</p>
+
+                    </div>
+
+                    {% endif %}
 
                 </article>
 
-                {% endfor %}
+                {% else %}
 
-            </div>
+                <div style="text-align:center;padding:60px 20px">
 
-            {% else %}
+                    <h2>No lessons available</h2>
 
-            <div class="empty-lessons">
+                    <p>Please add Java lessons to your database.</p>
 
-                <div class="empty-lessons-icon">
-                    📚
                 </div>
 
-                <h3>
-                    No Lessons Available
-                </h3>
+                {% endfor %}
 
-                <p>
-                    Lessons for this course have not been added yet.
-                </p>
 
-            </div>
+                <div class="java-footer">
 
-            {% endif %}
+                    <a href="{{ url_for('courses') }}">
+                        ← Back to All Courses
+                    </a>
 
-        </main>
+                    <a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;">
+                        ↑ Back to Top
+                    </a>
+
+                </div>
+
+            </main>
+
+        </div>
 
     </div>
-
 </div>
+
+
+<!-- MARKDOWN + SANITIZATION -->
+
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
+
+<!-- CODE HIGHLIGHTING -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        /* MARKDOWN TO HTML */
+
+        document.querySelectorAll(".markdown-notes").forEach(function(element) {
+
+            const markdown = element.textContent.trim();
+
+            if (window.marked && window.DOMPurify) {
+
+                const rendered = marked.parse(markdown, {
+                    breaks: true,
+                    gfm: true
+                });
+
+                element.innerHTML = DOMPurify.sanitize(rendered);
+
+            }
+
+        });
+
+
+        /* JAVA SYNTAX HIGHLIGHTING */
+
+        if (window.hljs) {
+
+            document.querySelectorAll("pre code").forEach(function(block) {
+
+                hljs.highlightElement(block);
+
+            });
+
+        }
+
+
+        /* COPY CODE BUTTON */
+
+        document.querySelectorAll(".code-heading").forEach(function(header) {
+
+            const button = header.querySelector(".copy-code");
+
+            const code = header.nextElementSibling.querySelector("code");
+
+            button.addEventListener("click", async function() {
+
+                try {
+
+                    await navigator.clipboard.writeText(code.innerText);
+
+                    button.innerText = "Copied ✓";
+
+                    setTimeout(function() {
+
+                        button.innerText = "Copy Code";
+
+                    }, 1500);
+
+                } catch(error) {
+
+                    button.innerText = "Copy unavailable";
+
+                }
+
+            });
+
+        });
+
+
+        /* SIDEBAR ACTIVE LESSON */
+
+        const links = document.querySelectorAll(".lesson-link");
+
+        const sections = document.querySelectorAll(".lesson-card");
+
+        if ("IntersectionObserver" in window) {
+
+            const observer = new IntersectionObserver(function(entries) {
+
+                entries.forEach(function(entry) {
+
+                    if (entry.isIntersecting) {
+
+                        const id = entry.target.id;
+
+                        links.forEach(function(link) {
+
+                            link.classList.toggle(
+                                "active",
+                                link.getAttribute("href") === "#" + id
+                            );
+
+                        });
+
+                    }
+
+                });
+
+            }, {
+                rootMargin: "-20% 0px -65% 0px"
+            });
+
+            sections.forEach(function(section) {
+
+                observer.observe(section);
+
+            });
+
+        }
+
+    });
+
+</script>
 
 {% endblock %}

@@ -1,0 +1,85 @@
+{% extends "layout.html" %}
+
+{% block title %}Interview Questions | Admin{% endblock %}
+
+{% block content %}
+<style>
+    .aiq-page{max-width:1380px;margin:0 auto;padding:24px 12px 48px;color:#172033}
+    .aiq-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap;margin-bottom:22px}
+    .aiq-kicker{font-size:.76rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#635bff}
+    .aiq-title{font-size:clamp(1.65rem,3vw,2.2rem);font-weight:800;margin:5px 0}.aiq-sub{color:#64748b;margin:0}
+    .aiq-card{background:#fff;border:1px solid #e8eaf2;border-radius:18px;box-shadow:0 8px 28px rgba(22,34,60,.055);padding:20px;margin-bottom:18px}
+    .aiq-btn{border:0;border-radius:10px;padding:10px 15px;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
+    .aiq-primary{background:#635bff;color:#fff}.aiq-light{background:#eef0ff;color:#5148e5}.aiq-danger{background:#fff0f0;color:#c62828}
+    .aiq-label{font-size:.82rem;font-weight:700;color:#475569;margin-bottom:6px}.aiq-control{width:100%;min-height:42px;border:1px solid #dfe3ed;border-radius:10px;padding:9px 12px;background:#fff}
+    .aiq-item{border:1px solid #e9edf4;border-radius:14px;padding:16px;margin-bottom:12px}
+    .aiq-question{font-weight:750;font-size:1rem;margin-bottom:8px;white-space:pre-wrap}.aiq-answer{color:#475569;white-space:pre-wrap;font-size:.92rem}
+    .aiq-tags{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}.aiq-tag{background:#f1f3ff;color:#5148e5;border-radius:99px;padding:5px 10px;font-size:.75rem;font-weight:750}
+    @media(max-width:640px){.aiq-page{padding:16px 8px 32px}.aiq-card{padding:15px}}
+</style>
+
+<div class="aiq-page">
+    <div class="aiq-head">
+        <div>
+            <div class="aiq-kicker">Interview Preparation</div>
+            <h1 class="aiq-title">Interview Questions</h1>
+            <p class="aiq-sub">Create and maintain questions, answers, difficulty levels, and company tags.</p>
+        </div>
+        <a href="{{ url_for('admin_dashboard') }}" class="aiq-btn aiq-light">← Back to Dashboard</a>
+    </div>
+
+    <section class="aiq-card">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+            <div><h2 class="h5 fw-bold mb-1">Add interview question</h2><p class="small text-secondary mb-0">Question is required; other fields are optional.</p></div>
+            <span class="badge rounded-pill text-bg-light">{{ total_questions }} questions</span>
+        </div>
+        <form method="POST" action="{{ url_for('admin_add_interview_question') }}">
+            <div class="mb-3">
+                <label class="aiq-label" for="interviewQuestion">Question</label>
+                <textarea class="aiq-control" id="interviewQuestion" name="question" rows="3" required placeholder="Enter interview question"></textarea>
+            </div>
+            <div class="mb-3">
+                <label class="aiq-label" for="interviewAnswer">Answer / Explanation</label>
+                <textarea class="aiq-control" id="interviewAnswer" name="answer" rows="4" placeholder="Enter suggested answer or explanation"></textarea>
+            </div>
+            <div class="row g-3">
+                <div class="col-12 col-md-4"><label class="aiq-label" for="interviewCategory">Category</label><input class="aiq-control" id="interviewCategory" name="category" placeholder="Java, Python, DBMS"></div>
+                <div class="col-12 col-md-4"><label class="aiq-label" for="interviewLevel">Difficulty level</label>
+                    <select class="aiq-control" id="interviewLevel" name="level"><option value="Basic">Basic</option><option value="Intermediate">Intermediate</option><option value="Advanced">Advanced</option></select>
+                </div>
+                <div class="col-12 col-md-4"><label class="aiq-label" for="interviewCompany">Company</label><input class="aiq-control" id="interviewCompany" name="company" placeholder="Optional company name"></div>
+                <div class="col-12 col-md-4"><label class="aiq-label" for="interviewContainer">Container ID</label><input class="aiq-control" id="interviewContainer" name="container_id" type="number" min="1" placeholder="Optional numeric ID"></div>
+                <div class="col-12 d-flex justify-content-end"><button type="submit" class="aiq-btn aiq-primary">＋ Add Interview Question</button></div>
+            </div>
+        </form>
+    </section>
+
+    <section class="aiq-card">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+            <h2 class="h5 fw-bold mb-0">Existing questions</h2><span class="small text-secondary">{{ total_questions }} total</span>
+        </div>
+        {% for question in questions %}
+        <article class="aiq-item">
+            <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap">
+                <div class="aiq-question">{{ loop.index }}. {{ question.question }}</div>
+                <form method="POST" action="{{ url_for('admin_delete_interview_question') }}"
+                      onsubmit="return confirm('Delete this interview question?');">
+                    <input type="hidden" name="question_id" value="{{ question.id }}">
+                    <button type="submit" class="aiq-btn aiq-danger">Delete</button>
+                </form>
+            </div>
+            {% if question.answer %}<div class="aiq-answer">{{ question.answer }}</div>{% else %}<div class="small text-secondary">No answer added.</div>{% endif %}
+            <div class="aiq-tags">
+                {% if question.category %}<span class="aiq-tag">{{ question.category }}</span>{% endif %}
+                {% if question.level %}<span class="aiq-tag">{{ question.level }}</span>{% endif %}
+                {% if question.company %}<span class="aiq-tag">{{ question.company }}</span>{% endif %}
+                {% if question.container_id %}<span class="aiq-tag">Container #{{ question.container_id }}</span>{% endif %}
+                <span class="aiq-tag">ID #{{ question.id }}</span>
+            </div>
+        </article>
+        {% else %}
+        <div class="text-center text-secondary py-5">No interview questions have been added yet.</div>
+        {% endfor %}
+    </section>
+</div>
+{% endblock %}

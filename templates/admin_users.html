@@ -1,0 +1,115 @@
+{% extends "layout.html" %}
+
+{% block title %}Manage Users | Admin{% endblock %}
+
+{% block content %}
+<style>
+    .adm-page{max-width:1400px;margin:0 auto;padding:24px 12px 48px;color:#172033}
+    .adm-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+    .adm-eyebrow{font-size:.76rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#635bff}
+    .adm-title{font-size:clamp(1.65rem,3vw,2.25rem);font-weight:800;margin:5px 0}
+    .adm-subtitle{color:#64748b;margin:0}
+    .adm-card{background:#fff;border:1px solid #e8eaf2;border-radius:18px;box-shadow:0 8px 28px rgba(22,34,60,.055)}
+    .adm-toolbar{padding:18px;margin-bottom:18px}
+    .adm-label{font-size:.82rem;font-weight:700;color:#475569;margin-bottom:6px}
+    .adm-control{min-height:43px;border:1px solid #dfe3ed;border-radius:10px;padding:9px 12px;width:100%;background:#fff}
+    .adm-btn{border:0;border-radius:10px;padding:10px 15px;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:7px;cursor:pointer}
+    .adm-btn-primary{background:#635bff;color:#fff}.adm-btn-light{background:#eef0ff;color:#5148e5}.adm-btn-danger{background:#fff0f0;color:#c62828}.adm-btn-warning{background:#fff6df;color:#946200}
+    .adm-table-wrap{overflow-x:auto}.adm-table{width:100%;border-collapse:collapse;min-width:820px}
+    .adm-table th{font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;color:#64748b;background:#f8f9fc;padding:14px;text-align:left;white-space:nowrap}
+    .adm-table td{padding:14px;border-top:1px solid #edf0f5;vertical-align:middle}
+    .adm-name{font-weight:750}.adm-email{font-size:.86rem;color:#64748b;overflow-wrap:anywhere}
+    .adm-badge{display:inline-flex;padding:5px 10px;border-radius:99px;font-size:.75rem;font-weight:800;background:#eef0ff;color:#5148e5;text-transform:capitalize}
+    .adm-badge-admin{background:#f3e8ff;color:#7e22ce}.adm-badge-student{background:#e8f7ef;color:#15803d}
+    .adm-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.adm-actions form{margin:0}
+    .adm-muted{color:#94a3b8}.adm-empty{text-align:center;padding:42px 16px;color:#64748b}
+    @media(max-width:640px){.adm-page{padding:16px 8px 32px}.adm-toolbar{padding:14px}}
+</style>
+
+<div class="adm-page">
+    <div class="adm-heading">
+        <div>
+            <div class="adm-eyebrow">Administration</div>
+            <h1 class="adm-title">User Management</h1>
+            <p class="adm-subtitle">View registered accounts, search users, and manage access roles.</p>
+        </div>
+        <a href="{{ url_for('admin_dashboard') }}" class="adm-btn adm-btn-light">← Back to Dashboard</a>
+    </div>
+
+    <section class="adm-card adm-toolbar">
+        <form method="GET" action="{{ url_for('admin_users') }}" class="row g-3 align-items-end">
+            <div class="col-12 col-md-6">
+                <label class="adm-label" for="userSearch">Search users</label>
+                <input class="adm-control" id="userSearch" type="search" name="search"
+                       value="{{ search or '' }}" placeholder="Search by name or email">
+            </div>
+            <div class="col-12 col-md-3">
+                <label class="adm-label" for="roleFilter">Filter by role</label>
+                <select class="adm-control" id="roleFilter" name="role">
+                    <option value="">All roles</option>
+                    <option value="student" {% if role_filter == 'student' %}selected{% endif %}>Student</option>
+                    <option value="admin" {% if role_filter == 'admin' %}selected{% endif %}>Admin</option>
+                </select>
+            </div>
+            <div class="col-6 col-md-1">
+                <button class="adm-btn adm-btn-primary w-100" type="submit">Search</button>
+            </div>
+            <div class="col-6 col-md-2">
+                <a class="adm-btn adm-btn-light w-100" href="{{ url_for('admin_users') }}">Reset</a>
+            </div>
+        </form>
+    </section>
+
+    <section class="adm-card">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 p-3 p-md-4">
+            <div>
+                <h2 class="h5 fw-bold mb-1">Registered accounts</h2>
+                <div class="small text-secondary">{{ total_users }} account(s) shown for this search.</div>
+            </div>
+        </div>
+        <div class="adm-table-wrap">
+            <table class="adm-table">
+                <thead>
+                <tr>
+                    <th>User</th><th>User ID</th><th>Role</th><th>Subscription</th><th>Joined</th><th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for user in users %}
+                {% set current_role = (user.role or 'student')|lower %}
+                <tr>
+                    <td>
+                        <div class="adm-name">{{ user.name or 'Unnamed user' }}</div>
+                        <div class="adm-email">{{ user.email }}</div>
+                    </td>
+                    <td>#{{ user.id }}</td>
+                    <td><span class="adm-badge {% if current_role == 'admin' %}adm-badge-admin{% else %}adm-badge-student{% endif %}">{{ current_role }}</span></td>
+                    <td>{{ (user.subscription_status or 'inactive')|replace('_',' ')|title }}</td>
+                    <td>{{ user.created_at.strftime('%d %b %Y') if user.created_at else '—' }}</td>
+                    <td>
+                        <div class="adm-actions">
+                            <form method="POST" action="{{ url_for('admin_change_role') }}" class="d-flex gap-2">
+                                <input type="hidden" name="user_id" value="{{ user.id }}">
+                                <select class="adm-control" name="role" aria-label="Role for {{ user.name }}" style="min-width:112px;min-height:36px;padding:5px 8px">
+                                    <option value="student" {% if current_role == 'student' %}selected{% endif %}>Student</option>
+                                    <option value="admin" {% if current_role == 'admin' %}selected{% endif %}>Admin</option>
+                                </select>
+                                <button type="submit" class="adm-btn adm-btn-light">Save</button>
+                            </form>
+                            <form method="POST" action="{{ url_for('admin_delete_user') }}"
+                                  onsubmit="return confirm('Permanently delete this user and their test results?');">
+                                <input type="hidden" name="user_id" value="{{ user.id }}">
+                                <button type="submit" class="adm-btn adm-btn-danger">Delete</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="6"><div class="adm-empty">No users found. Try changing your search or filter.</div></td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+</div>
+{% endblock %}

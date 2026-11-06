@@ -10,7 +10,6 @@ from flask import (
     url_for,
     jsonify
 )
-
 from authlib.integrations.flask_client import OAuth
 from flask_bcrypt import Bcrypt
 from dotenv import load_dotenv
@@ -26,6 +25,7 @@ import os
 import json
 import csv
 import io
+from functools import wraps
 
 from reportlab.platypus import (
     SimpleDocTemplate,
@@ -111,31 +111,22 @@ app.config.update(
 # =========================================================
 # GOOGLE OAUTH
 # =========================================================
-
 oauth = OAuth(app)
-
 google = oauth.register(
     name="google",
-
     client_id=os.getenv("GOOGLE_CLIENT_ID"),
-
     client_secret=os.getenv("GOOGLE_CLIENT_SECRET"),
-
     server_metadata_url=(
         "https://accounts.google.com/"
         ".well-known/openid-configuration"
     ),
-
     client_kwargs={
         "scope": "openid email profile"
     }
 )
-
-
 # =========================================================
 # LOGIN REQUIRED
 # =========================================================
-
 def login_required(f):
 
     @wraps(f)
@@ -573,113 +564,244 @@ def signup():
 
     return render_template('signup.html')
 
-
 # =========================================================
-# LOGIN
-# =========================================================
-
-# =========================================================
-# LOGIN
+# LOGIN ROUTE - STUDENT & ADMIN ROLE AUTHENTICATION
 # =========================================================
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route("/login", methods=["GET", "POST"])
 def login():
 
-    if request.method == 'POST':
+    # -----------------------------------------------------
+    # 1. ALREADY LOGGED-IN USER
+    # -----------------------------------------------------
 
-        email = request.form.get('email', '').strip().lower()
-        password = request.form.get('password', '')
+    if session.get("user_id"):
+
+        current_role = str(
+            session.get("role", "student")
+        ).strip().lower()
+
+        if current_role == "admin":
+            return redirect(url_for("admin_dashboard"))
+
+        return redirect(url_for("dashboard"))
+
+    # -----------------------------------------------------
+    # 2. GET REQUEST - SHOW LOGIN PAGE
+    # -----------------------------------------------------
+
+    if request.method == "GET":
+        return render_template("login.html")
+
+    conn = None
+    cursor = None
+
+    try:
+
+        # -------------------------------------------------
+        # 3. GET FORM DATA
+        # -------------------------------------------------
+
+        email = request.form.get(
+            "email", ""
+        ).strip().lower()
+
+        password = request.form.get(
+            "password", ""
+        )
+
+        selected_role = request.form.get(
+            "role", ""
+        ).strip().lower()
+
+        remember = (
+            request.form.get("remember") == "on"
+        )
+
+        # -------------------------------------------------
+        # 4. VALIDATE INPUT
+        # -------------------------------------------------
 
         if not email or not password:
-            flash("Please enter email and password.")
-            return redirect(url_for('login'))
 
-        conn = None
-        cursor = None
-
-        try:
-            conn = get_db_connection()
-            cursor = conn.cursor()
-
-            # Find user
-            cursor.execute(
-                """
-                SELECT id, name, email, password
-                FROM users
-                WHERE email = %s
-                """,
-                (email,)
+            flash(
+                "Please enter email and password.",
+                "warning"
             )
 
-            user = cursor.fetchone()
+            return redirect(url_for("login"))
 
-            # Verify password
-            if user and user.get('password'):
+        # Validate selected role
+        if selected_role not in ("student", "admin"):
 
-                stored_password = user['password']
+            flash(
+                "Please select Student or Admin.",
+                "warning"
+            )
 
-                if isinstance(stored_password, bytes):
-                    stored_password = stored_password.decode("utf-8")
+            return redirect(url_for("login"))
 
-                # Check bcrypt password
-                if stored_password.startswith(("$2a$", "$2b$", "$2y$")):
+        # -------------------------------------------------
+        # 5. DATABASE CONNECTION
+        # -------------------------------------------------
 
-                    password_valid = bcrypt.check_password_hash(
-                        stored_password,
-                        password
-                    )
+        conn = get_db_connection()
 
-                # Check Werkzeug password
-                else:
+        cursor = conn.cursor(
+            pymysql.cursors.DictCursor
+        )
 
-                    password_valid = check_password_hash(
-                        stored_password,
-                        password
-                    )
+        # -------------------------------------------------
+        # 6. FETCH USER FROM DATABASE
+        # -------------------------------------------------
 
-                # Login successful
-                if password_valid:
+        cursor.execute("""
+            SELECT
+                id,
+                name,
+                email,
+                password,
+                role
 
-                    session.clear()
+            FROM users
 
-                    session['user_id'] = user['id']
-                    session['user_name'] = user['name']
-                    session['user_email'] = user['email']
+            WHERE LOWER(email) = %s
 
-                    return redirect(url_for('dashboard'))
+            LIMIT 1
+        """, (email,))
 
-                else:
-                    flash("Invalid email or password.")
-                    return redirect(url_for('login'))
+        user = cursor.fetchone()
 
-            else:
-                flash("Invalid email or password.")
-                return redirect(url_for('login'))
+        # -------------------------------------------------
+        # 7. CHECK USER EXISTS
+        # -------------------------------------------------
 
-        except Exception as e:
+        if not user:
 
-            if conn:
-                conn.rollback()
+            flash(
+                "Invalid email or password.",
+                "danger"
+            )
 
-            print("LOGIN ERROR:", e)
+            return redirect(url_for("login"))
 
-            flash("Something went wrong. Please try again.")
-            return redirect(url_for('login'))
+        # -------------------------------------------------
+        # 8. VERIFY PASSWORD
+        # -------------------------------------------------
 
-        finally:
+        if not bcrypt.check_password_hash(
+            user["password"],
+            password
+        ):
 
-            if cursor:
-                cursor.close()
+            flash(
+                "Invalid email or password.",
+                "danger"
+            )
 
-            if conn:
-                conn.close()
+            return redirect(url_for("login"))
 
-    return render_template('login.html')    
-@app.route('/logout')
-def logout():
-    session.clear()
-    flash("Logged out successfully.", "success")
-    return redirect(url_for('login'))
+        # -------------------------------------------------
+        # 9. GET ACTUAL ROLE FROM DATABASE
+        # -------------------------------------------------
+
+        user_role = str(
+            user.get("role") or "student"
+        ).strip().lower()
+
+        # Only student and admin roles are permitted
+        if user_role not in ("student", "admin"):
+
+            flash(
+                "Your account has an invalid role. Contact administrator.",
+                "danger"
+            )
+
+            return redirect(url_for("login"))
+
+        # -------------------------------------------------
+        # 10. VERIFY SELECTED ROLE
+        # -------------------------------------------------
+
+        if selected_role != user_role:
+
+            flash(
+                "Selected account type does not match your account.",
+                "danger"
+            )
+
+            return redirect(url_for("login"))
+
+        # -------------------------------------------------
+        # 11. CREATE SESSION
+        # -------------------------------------------------
+
+        session.clear()
+
+        session["user_id"] = user["id"]
+        session["user_name"] = user["name"]
+        session["user_email"] = user["email"]
+        session["role"] = user_role
+
+        # Remember Me
+        session.permanent = remember
+
+        # -------------------------------------------------
+        # 12. ADMIN LOGIN
+        # -------------------------------------------------
+
+        if user_role == "admin":
+
+            flash(
+                "Welcome Admin! Login successful.",
+                "success"
+            )
+
+            return redirect(
+                url_for("admin_dashboard")
+            )
+
+        # -------------------------------------------------
+        # 13. STUDENT LOGIN
+        # -------------------------------------------------
+
+        flash(
+            "Login successful. Welcome back!",
+            "success"
+        )
+
+        return redirect(
+            url_for("dashboard")
+        )
+
+    # -----------------------------------------------------
+    # 14. ERROR HANDLING
+    # -----------------------------------------------------
+
+    except Exception:
+
+        app.logger.exception(
+            "LOGIN ROUTE ERROR"
+        )
+
+        flash(
+            "Something went wrong during login. Please try again.",
+            "danger"
+        )
+
+        return redirect(url_for("login"))
+
+    # -----------------------------------------------------
+    # 15. CLOSE DATABASE CONNECTION
+    # -----------------------------------------------------
+
+    finally:
+
+        if cursor:
+            cursor.close()
+
+        if conn:
+            conn.close()
 @app.route("/dashboard")
 def dashboard():
     if "user_id" not in session:
@@ -3746,32 +3868,18 @@ def activity_api():
         if conn:
             conn.close()
 
-# =========================================================
-# PART 7 — ADMIN DASHBOARD + ADMIN MANAGEMENT
-# =========================================================
-
-
-# =========================================================
-# ADMIN ACCESS HELPER
-# =========================================================
-
-def admin_required():
-
-    if "user_id" not in session:
-        return False
-
-    role = session.get("role", "")
-
-    return role.lower() == "admin"
-
-
 
 
 # =========================================================
 # ADMIN — USERS
 # =========================================================
 
+# =====================================================
+# ADMIN USERS MANAGEMENT
+# =====================================================
+
 @app.route("/admin/users")
+@app.route("/admin/students")
 def admin_users():
 
     if not admin_required():
@@ -3782,92 +3890,78 @@ def admin_users():
     cursor = None
 
     try:
-
         conn = get_db_connection()
-        cursor = conn.cursor(
-            pymysql.cursors.DictCursor
-        )
+        cursor = conn.cursor(pymysql.cursors.DictCursor)
 
-        search = request.args.get(
-            "search",
-            ""
-        ).strip()
+        search = request.args.get("search", "").strip()
+        role_filter = request.args.get("role", "").strip().lower()
 
+        # Base query
+        query = """
+            SELECT
+                id,
+                name,
+                email,
+                role,
+                created_at,
+                subscription_status
+            FROM users
+            WHERE 1=1
+        """
+
+        params = []
+
+        # Search by name or email
         if search:
+            query += """
+                AND (
+                    name LIKE %s
+                    OR email LIKE %s
+                )
+            """
+            params.extend([
+                f"%{search}%",
+                f"%{search}%"
+            ])
 
-            search_value = f"%{search}%"
+        # Filter by role
+        if role_filter in ("student", "admin"):
+            query += " AND LOWER(COALESCE(role, 'student')) = %s"
+            params.append(role_filter)
 
-            cursor.execute("""
-                SELECT
-                    id,
-                    name,
-                    email,
-                    role
-                FROM users
-                WHERE name LIKE %s
-                   OR email LIKE %s
-                ORDER BY id DESC
-            """, (
-                search_value,
-                search_value
-            ))
+        query += " ORDER BY id DESC"
 
-        else:
-
-            cursor.execute("""
-                SELECT
-                    id,
-                    name,
-                    email,
-                    role
-                FROM users
-                ORDER BY id DESC
-            """)
+        cursor.execute(query, tuple(params))
 
         users = cursor.fetchall()
 
+        # Total users count
+        total_users = len(users)
+
         return render_template(
-            "admin/users.html",
+            "admin_users.html",
             users=users,
-            search=search
+            total_users=total_users,
+            search=search,
+            role_filter=role_filter
         )
 
     except Exception:
-
-        app.logger.exception(
-            "Admin users error"
-        )
-
-        flash(
-            "Unable to load users.",
-            "danger"
-        )
-
-        return redirect(
-            url_for("admin_dashboard")
-        )
+        app.logger.exception("ADMIN USERS ERROR")
+        flash("Unable to load users.", "danger")
+        return redirect(url_for("admin_dashboard"))
 
     finally:
-
         if cursor:
             cursor.close()
 
         if conn:
             conn.close()
-
-
-# =========================================================
-# ADMIN — CHANGE USER ROLE
-# =========================================================
-# =========================================================
-# ADMIN — DELETE USER
-# =========================================================
-# =========================================================
-# ADMIN — MOCK QUESTIONS
-# =========================================================
+# =====================================================
+# ADMIN - VIEW MOCK QUESTIONS
+# =====================================================
 
 @app.route("/admin/mock-questions")
-@app.route("/admin/mock_questions")
 def admin_mock_questions():
 
     if not admin_required():
@@ -3878,327 +3972,173 @@ def admin_mock_questions():
     cursor = None
 
     try:
-
         conn = get_db_connection()
-        cursor = conn.cursor(
-            pymysql.cursors.DictCursor
-        )
+        cursor = conn.cursor(pymysql.cursors.DictCursor)
 
-        category = request.args.get(
-            "category",
-            ""
-        ).strip()
-
-        search = request.args.get(
-            "search",
-            ""
-        ).strip()
-
-        conditions = []
-        params = []
-
-        if category:
-
-            conditions.append(
-                "category = %s"
-            )
-
-            params.append(category)
-
-        if search:
-
-            conditions.append("""
-                question LIKE %s
-            """)
-
-            params.append(
-                f"%{search}%"
-            )
-
-        where_clause = ""
-
-        if conditions:
-
-            where_clause = (
-                "WHERE "
-                + " AND ".join(conditions)
-            )
-
-        cursor.execute(
-            f"""
-            SELECT
-                id,
-                question,
-                option1,
-                option2,
-                option3,
-                option4,
-                answer,
-                category,
-                level
+        # Fetch all mock questions
+        cursor.execute("""
+            SELECT *
             FROM mock_questions
-            {where_clause}
             ORDER BY id DESC
-            LIMIT 200
-            """,
-            tuple(params)
-        )
+        """)
 
         questions = cursor.fetchall()
 
         return render_template(
-            "admin/mock_questions.html",
+            "admin_questions.html",
             questions=questions,
-            category=category,
-            search=search
+            total_questions=len(questions)
         )
 
     except Exception:
-
-        app.logger.exception(
-            "Admin mock questions error"
-        )
-
-        flash(
-            "Unable to load mock questions.",
-            "danger"
-        )
-
-        return redirect(
-            url_for("admin_dashboard")
-        )
+        app.logger.exception("ADMIN MOCK QUESTIONS ERROR")
+        flash("Unable to load mock questions.", "danger")
+        return redirect(url_for("admin_dashboard"))
 
     finally:
-
         if cursor:
             cursor.close()
 
         if conn:
             conn.close()
+# =====================================================
+# ADMIN - ADD MOCK QUESTION
+# =====================================================
 
-
-# =========================================================
-# ADMIN — ADD MOCK QUESTION
-# =========================================================
-
-@app.route(
-    "/admin/mock-questions/add",
-    methods=["POST"]
-)
+@app.route("/admin/mock-questions/add", methods=["POST"])
 def admin_add_mock_question():
 
     if not admin_required():
-
-        return jsonify({
-            "success": False,
-            "message": "Admin access required."
-        }), 403
-
-    data = request.get_json(
-        silent=True
-    )
-
-    if not data:
-        data = request.form.to_dict()
-
-    question = data.get(
-        "question",
-        ""
-    ).strip()
-
-    option1 = data.get(
-        "option1",
-        ""
-    ).strip()
-
-    option2 = data.get(
-        "option2",
-        ""
-    ).strip()
-
-    option3 = data.get(
-        "option3",
-        ""
-    ).strip()
-
-    option4 = data.get(
-        "option4",
-        ""
-    ).strip()
-
-    answer = data.get(
-        "answer",
-        ""
-    ).strip()
-
-    category = data.get(
-        "category",
-        ""
-    ).strip()
-
-    level = data.get(
-        "level",
-        "Basic"
-    ).strip()
-
-    if not question:
-
-        return jsonify({
-            "success": False,
-            "message": "Question is required."
-        }), 400
-
-    if not all([
-        option1,
-        option2,
-        option3,
-        option4
-    ]):
-
-        return jsonify({
-            "success": False,
-            "message": "All four options are required."
-        }), 400
-
-    if not answer:
-
-        return jsonify({
-            "success": False,
-            "message": "Correct answer is required."
-        }), 400
+        flash("Admin access required.", "danger")
+        return redirect(url_for("dashboard"))
 
     conn = None
     cursor = None
 
     try:
+        # Get form data
+        question = request.form.get("question", "").strip()
+        option1 = request.form.get("option1", "").strip()
+        option2 = request.form.get("option2", "").strip()
+        option3 = request.form.get("option3", "").strip()
+        option4 = request.form.get("option4", "").strip()
+        answer = request.form.get("answer", "").strip()
+
+        # Validate fields
+        if not all([
+            question,
+            option1,
+            option2,
+            option3,
+            option4,
+            answer
+        ]):
+            flash("Please fill in all question fields.", "warning")
+            return redirect(url_for("admin_mock_questions"))
+
+        # Validate correct answer
+        valid_answers = [option1, option2, option3, option4]
+
+        if answer not in valid_answers:
+            flash("Correct answer must match one of the options.", "warning")
+            return redirect(url_for("admin_mock_questions"))
 
         conn = get_db_connection()
         cursor = conn.cursor()
 
+        # Insert question
         cursor.execute("""
             INSERT INTO mock_questions
-            (
-                question,
-                option1,
-                option2,
-                option3,
-                option4,
-                answer,
-                category,
-                level
-            )
+                (question, option1, option2, option3, option4, answer)
             VALUES
-            (
-                %s, %s, %s, %s,
-                %s, %s, %s, %s
-            )
+                (%s, %s, %s, %s, %s, %s)
         """, (
             question,
             option1,
             option2,
             option3,
             option4,
-            answer,
-            category,
-            level
+            answer
         ))
 
         conn.commit()
 
-        return jsonify({
-            "success": True,
-            "message": "Mock question added successfully."
-        })
+        flash("Mock question added successfully.", "success")
+        return redirect(url_for("admin_mock_questions"))
 
     except Exception:
-
         if conn:
             conn.rollback()
 
-        app.logger.exception(
-            "Add mock question error"
-        )
+        app.logger.exception("ADMIN ADD MOCK QUESTION ERROR")
+        flash("Unable to add mock question. Check server logs.", "danger")
 
-        return jsonify({
-            "success": False,
-            "message": "Unable to add question."
-        }), 500
+        return redirect(url_for("admin_mock_questions"))
 
     finally:
-
         if cursor:
             cursor.close()
 
         if conn:
             conn.close()
+# =====================================================
+# ADMIN - DELETE MOCK QUESTION
+# =====================================================
 
-
-# =========================================================
-# ADMIN — DELETE MOCK QUESTION
-# =========================================================
-
-@app.route(
-    "/admin/mock-questions/<int:question_id>/delete",
-    methods=["POST", "DELETE"]
-)
-def admin_delete_mock_question(question_id):
+@app.route("/admin/mock-questions/delete", methods=["POST"])
+@app.route("/admin/mock-questions/delete/<int:question_id>", methods=["POST"])
+def admin_delete_mock_question(question_id=None):
 
     if not admin_required():
-
-        return jsonify({
-            "success": False,
-            "message": "Admin access required."
-        }), 403
+        flash("Admin access required.", "danger")
+        return redirect(url_for("dashboard"))
 
     conn = None
     cursor = None
 
     try:
+        # Get question ID
+        if question_id is None:
+            question_id = request.form.get("question_id", type=int)
+
+        if not question_id:
+            flash("Invalid question ID.", "warning")
+            return redirect(url_for("admin_mock_questions"))
 
         conn = get_db_connection()
         cursor = conn.cursor()
 
+        # Delete question
         cursor.execute("""
             DELETE FROM mock_questions
             WHERE id = %s
         """, (question_id,))
 
+        if cursor.rowcount == 0:
+            flash("Mock question not found.", "warning")
+            return redirect(url_for("admin_mock_questions"))
+
         conn.commit()
 
-        return jsonify({
-            "success": True,
-            "message": "Question deleted successfully."
-        })
+        flash("Mock question deleted successfully.", "success")
+        return redirect(url_for("admin_mock_questions"))
 
     except Exception:
-
         if conn:
             conn.rollback()
 
-        app.logger.exception(
-            "Delete mock question error"
-        )
-
-        return jsonify({
-            "success": False,
-            "message": "Unable to delete question."
-        }), 500
+        app.logger.exception("ADMIN DELETE MOCK QUESTION ERROR")
+        flash("Unable to delete mock question.", "danger")
+        return redirect(url_for("admin_mock_questions"))
 
     finally:
-
         if cursor:
             cursor.close()
 
         if conn:
             conn.close()
 
-
-# =========================================================
-# ADMIN — INTERVIEW QUESTIONS
-# =========================================================
-
 @app.route("/admin/interview-questions")
-@app.route("/admin/interview_questions")
 def admin_interview_questions():
 
     if not admin_required():
@@ -4209,128 +4149,64 @@ def admin_interview_questions():
     cursor = None
 
     try:
-
         conn = get_db_connection()
-        cursor = conn.cursor(
-            pymysql.cursors.DictCursor
-        )
+        cursor = conn.cursor(pymysql.cursors.DictCursor)
 
-        search = request.args.get(
-            "search",
-            ""
-        ).strip()
-
-        category = request.args.get(
-            "category",
-            ""
-        ).strip()
-
-        conditions = []
-        params = []
-
-        if search:
-
-            conditions.append("""
-                (
-                    question LIKE %s
-                    OR answer LIKE %s
-                )
-            """)
-
-            search_value = f"%{search}%"
-
-            params.extend([
-                search_value,
-                search_value
-            ])
-
-        if category:
-
-            conditions.append(
-                "category = %s"
-            )
-
-            params.append(category)
-
-        where_clause = ""
-
-        if conditions:
-
-            where_clause = (
-                "WHERE "
-                + " AND ".join(conditions)
-            )
-
-        cursor.execute(
-            f"""
+        # Fetch interview questions
+        cursor.execute("""
             SELECT
                 id,
                 question,
                 answer,
                 category,
-                level
+                container_id,
+                level,
+                company
             FROM interview_questions
-            {where_clause}
             ORDER BY id DESC
-            LIMIT 200
-            """,
-            tuple(params)
-        )
+        """)
 
         questions = cursor.fetchall()
 
         return render_template(
-            "admin/interview_questions.html",
+            "admin_interview_questions.html",
             questions=questions,
-            search=search,
-            category=category
+            total_questions=len(questions)
         )
 
     except Exception:
-
-        app.logger.exception(
-            "Admin interview questions error"
-        )
-
-        flash(
-            "Unable to load interview questions.",
-            "danger"
-        )
-
-        return redirect(
-            url_for("admin_dashboard")
-        )
+        app.logger.exception("ADMIN INTERVIEW QUESTIONS ERROR")
+        flash("Unable to load interview questions.", "danger")
+        return redirect(url_for("admin_dashboard"))
 
     finally:
-
         if cursor:
             cursor.close()
 
         if conn:
             conn.close()
-# =========================================================
-# ADMIN — ADD INTERVIEW QUESTION
-# =========================================================
-# =========================================================
-# ADMIN — DELETE INTERVIEW QUESTION
-# =========================================================
-# =========================================================
-# PART 7 — ADMIN DASHBOARD + ADMIN MANAGEMENT
-# =========================================================
-# =========================================================
-# ADMIN ACCESS HELPER
-# =========================================================
+# =====================================================
+# ADMIN ACCESS CHECK
+# =====================================================
+
 def admin_required():
-    if "user_id" not in session:
+
+    if not session.get("user_id"):
         return False
-    role = session.get("role", "")
-    return role.lower() == "admin"
-# =========================================================
+
+    user_role = str(session.get("role", "")).strip().lower()
+
+    return user_role == "admin"
+# =====================================================
 # ADMIN DASHBOARD
-# =========================================================
+# =====================================================
+# Add these imports if they are not already present:
+# from datetime import date, datetime, timedelta
+
 @app.route("/admin")
 @app.route("/admin/dashboard")
 def admin_dashboard():
+    from datetime import date, datetime, timedelta
 
     if not admin_required():
         flash("Admin access required.", "danger")
@@ -4340,267 +4216,339 @@ def admin_dashboard():
     cursor = None
 
     try:
-
         conn = get_db_connection()
-        cursor = conn.cursor(
-            pymysql.cursors.DictCursor
-        )
+        cursor = conn.cursor(pymysql.cursors.DictCursor)
 
-        # -------------------------------------------------
-        # TOTAL USERS
-        # -------------------------------------------------
-
+        # 1) User totals
         cursor.execute("""
-            SELECT COUNT(*) AS total
+            SELECT
+                COUNT(*) AS total_users,
+                COALESCE(SUM(CASE WHEN LOWER(COALESCE(role, 'student')) = 'student' THEN 1 ELSE 0 END), 0) AS total_students,
+                COALESCE(SUM(CASE WHEN LOWER(COALESCE(role, 'student')) = 'admin' THEN 1 ELSE 0 END), 0) AS total_admins
             FROM users
         """)
+        user_stats = cursor.fetchone() or {}
+        total_users = int(user_stats.get("total_users") or 0)
+        total_students = int(user_stats.get("total_students") or 0)
+        total_admins = int(user_stats.get("total_admins") or 0)
 
-        total_users = cursor.fetchone()["total"]
+        # 2) Question bank totals
+        cursor.execute("SELECT COUNT(*) AS total FROM mock_questions")
+        total_mock_questions = int((cursor.fetchone() or {}).get("total") or 0)
 
-        # -------------------------------------------------
-        # TOTAL MOCK QUESTIONS
-        # -------------------------------------------------
+        cursor.execute("SELECT COUNT(*) AS total FROM interview_questions")
+        total_interview_questions = int((cursor.fetchone() or {}).get("total") or 0)
 
+        # 3) Test-result totals and average score
         cursor.execute("""
-            SELECT COUNT(*) AS total
-            FROM mock_questions
-        """)
-
-        total_mock_questions = (
-            cursor.fetchone()["total"]
-        )
-
-        # -------------------------------------------------
-        # TOTAL INTERVIEW QUESTIONS
-        # -------------------------------------------------
-
-        cursor.execute("""
-            SELECT COUNT(*) AS total
-            FROM interview_questions
-        """)
-
-        total_interview_questions = (
-            cursor.fetchone()["total"]
-        )
-
-        # -------------------------------------------------
-        # TOTAL TEST ATTEMPTS
-        # -------------------------------------------------
-
-        cursor.execute("""
-            SELECT COUNT(*) AS total
+            SELECT COUNT(*) AS total_results,
+                   COALESCE(AVG(percentage), 0) AS average_score
             FROM results
         """)
+        result_stats = cursor.fetchone() or {}
+        total_results = int(result_stats.get("total_results") or 0)
+        average_score = round(float(result_stats.get("average_score") or 0), 2)
 
-        total_test_attempts = (
-            cursor.fetchone()["total"]
-        )
-
-        # -------------------------------------------------
-        # RECENT USERS
-        # -------------------------------------------------
-
+        # 4) Latest student registrations
         cursor.execute("""
-            SELECT
-                id,
-                name,
-                email,
-                role
+            SELECT id, name, email, role, created_at, subscription_status
             FROM users
-            ORDER BY id DESC
+            WHERE LOWER(COALESCE(role, 'student')) = 'student'
+            ORDER BY created_at DESC, id DESC
             LIMIT 10
         """)
+        recent_students = cursor.fetchall() or []
 
-        recent_users = cursor.fetchall()
+        # 5) Thirty-day registration chart
+        cursor.execute("""
+            SELECT DATE(created_at) AS registration_day, COUNT(*) AS total
+            FROM users
+            WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 29 DAY)
+            GROUP BY DATE(created_at)
+            ORDER BY registration_day
+        """)
+        registration_rows = cursor.fetchall() or []
+        registration_map = {
+            row["registration_day"].strftime("%Y-%m-%d"): int(row["total"] or 0)
+            for row in registration_rows
+            if row.get("registration_day")
+        }
 
-        # -------------------------------------------------
-        # RECENT RESULTS
-        # -------------------------------------------------
+        today = date.today()
+        registration_labels = []
+        registration_data = []
+        for offset in range(29, -1, -1):
+            day = today - timedelta(days=offset)
+            key = day.strftime("%Y-%m-%d")
+            registration_labels.append(day.strftime("%d %b"))
+            registration_data.append(registration_map.get(key, 0))
+
+        # 6) New registrations in last 30 days
+        cursor.execute("""
+            SELECT COUNT(*) AS total
+            FROM users
+            WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+        """)
+        new_users_30d = int((cursor.fetchone() or {}).get("total") or 0)
+
+        # 7) Average score by test category
+        cursor.execute("""
+            SELECT COALESCE(NULLIF(category, ''), 'General') AS category,
+                   COUNT(*) AS attempts,
+                   ROUND(AVG(percentage), 2) AS average_percentage
+            FROM results
+            GROUP BY COALESCE(NULLIF(category, ''), 'General')
+            ORDER BY attempts DESC
+            LIMIT 8
+        """)
+        category_rows = cursor.fetchall() or []
+        performance_labels = [str(row.get("category") or "General") for row in category_rows]
+        performance_data = [round(float(row.get("average_percentage") or 0), 2) for row in category_rows]
+
+        # 8) Real activity feed from existing tables:
+        #    user registrations + saved test submissions.
+        #    Login events are not available unless a login-audit table is added.
+        cursor.execute("""
+            SELECT name, email, created_at
+            FROM users
+            WHERE created_at IS NOT NULL
+            ORDER BY created_at DESC
+            LIMIT 8
+        """)
+        registration_events = cursor.fetchall() or []
 
         cursor.execute("""
-            SELECT
-                r.id,
-                r.score,
-                r.total_questions,
-                r.percentage,
-                r.test_date,
-                u.name,
-                u.email
+            SELECT u.name, u.email, r.category, r.percentage, r.test_date AS created_at
             FROM results r
-            LEFT JOIN users u
-                ON r.user_id = u.id
+            INNER JOIN users u ON u.id = r.user_id
+            WHERE r.test_date IS NOT NULL
             ORDER BY r.test_date DESC
             LIMIT 10
         """)
+        test_events = cursor.fetchall() or []
 
-        recent_results = cursor.fetchall()
+        recent_activity = []
+        for row in registration_events:
+            recent_activity.append({
+                "name": row.get("name") or "A user",
+                "action": "registered a new account",
+                "created_at": row.get("created_at"),
+                "icon": "fa-solid fa-user-plus"
+            })
+
+        for row in test_events:
+            category = row.get("category") or "General"
+            percentage = row.get("percentage")
+            score_text = f" with {float(percentage):.1f}% score" if percentage is not None else ""
+            recent_activity.append({
+                "name": row.get("name") or "A student",
+                "action": f"submitted a {category} test{score_text}",
+                "created_at": row.get("created_at"),
+                "icon": "fa-solid fa-clipboard-check"
+            })
+
+        def activity_time_key(item):
+            value = item.get("created_at")
+            if value is None:
+                return 0.0
+            if hasattr(value, "timestamp"):
+                try:
+                    return value.timestamp()
+                except (OSError, ValueError):
+                    return 0.0
+            try:
+                return datetime.fromisoformat(str(value)).timestamp()
+            except (TypeError, ValueError, OSError):
+                return 0.0
+
+        recent_activity.sort(key=activity_time_key, reverse=True)
+        recent_activity = recent_activity[:12]
 
         return render_template(
-            "admin/dashboard.html",
+            "admin.html",
             total_users=total_users,
+            total_students=total_students,
+            total_admins=total_admins,
             total_mock_questions=total_mock_questions,
             total_interview_questions=total_interview_questions,
-            total_test_attempts=total_test_attempts,
-            recent_users=recent_users,
-            recent_results=recent_results
+            total_results=total_results,
+            average_score=average_score,
+            recent_students=recent_students,
+            registration_labels=registration_labels,
+            registration_data=registration_data,
+            performance_labels=performance_labels,
+            performance_data=performance_data,
+            recent_activity=recent_activity,
+            new_users_30d=new_users_30d
         )
 
     except Exception:
-
-        app.logger.exception(
-            "Admin dashboard error"
-        )
-
-        flash(
-            "Unable to load admin dashboard.",
-            "danger"
-        )
-
-        return redirect(
-            url_for("dashboard")
-        )
+        if conn:
+            conn.rollback()
+        app.logger.exception("ADMIN DASHBOARD ERROR")
+        flash("Unable to load admin dashboard. Check server logs.", "danger")
+        return redirect(url_for("dashboard"))
 
     finally:
-
         if cursor:
             cursor.close()
-
         if conn:
             conn.close()
 
+# =====================================================
+# ADMIN - CHANGE USER ROLE
+# =====================================================
 
-
-@app.route(
-    "/admin/users/<int:user_id>/role",
-    methods=["POST"]
-)
-def admin_change_role(user_id):
+@app.route("/admin/change-role", methods=["POST"])
+@app.route("/admin/change-role/<int:user_id>", methods=["POST"])
+def admin_change_role(user_id=None):
 
     if not admin_required():
-
-        return jsonify({
-            "success": False,
-            "message": "Admin access required."
-        }), 403
-
-    current_user_id = session["user_id"]
-
-    # -----------------------------------------------------
-    # PREVENT SELF ROLE CHANGE
-    # -----------------------------------------------------
-
-    if user_id == current_user_id:
-
-        return jsonify({
-            "success": False,
-            "message": "You cannot change your own role."
-        }), 400
-
-    data = request.get_json(
-        silent=True
-    ) or {}
-
-    new_role = str(
-        data.get("role", "")
-    ).strip().lower()
-
-    allowed_roles = {
-        "user",
-        "admin"
-    }
-
-    if new_role not in allowed_roles:
-
-        return jsonify({
-            "success": False,
-            "message": "Invalid role."
-        }), 400
+        flash("Admin access required.", "danger")
+        return redirect(url_for("dashboard"))
 
     conn = None
     cursor = None
 
     try:
+        # Get user ID and new role
+        if user_id is None:
+            user_id = request.form.get("user_id", type=int)
+
+        new_role = (
+            request.form.get("role")
+            or request.form.get("new_role")
+            or ""
+        ).strip().lower()
+
+        if not user_id:
+            flash("Invalid user ID.", "danger")
+            return redirect(url_for("admin_users"))
+
+        if new_role not in ("student", "admin"):
+            flash("Invalid role selected.", "danger")
+            return redirect(url_for("admin_users"))
+
+        # Prevent changing your own role
+        if int(user_id) == int(session.get("user_id")):
+            flash("You cannot change your own admin role.", "warning")
+            return redirect(url_for("admin_users"))
 
         conn = get_db_connection()
-        cursor = conn.cursor()
+        cursor = conn.cursor(pymysql.cursors.DictCursor)
 
-        cursor.execute("""
-            UPDATE users
-            SET role = %s
-            WHERE id = %s
-        """, (
-            new_role,
-            user_id
-        ))
+        # Check whether user exists
+        cursor.execute(
+            "SELECT id, name, role FROM users WHERE id = %s",
+            (user_id,)
+        )
+
+        target_user = cursor.fetchone()
+
+        if not target_user:
+            flash("User not found.", "danger")
+            return redirect(url_for("admin_users"))
+
+        # Update role
+        cursor.execute(
+            "UPDATE users SET role = %s WHERE id = %s",
+            (new_role, user_id)
+        )
 
         conn.commit()
 
-        return jsonify({
-            "success": True,
-            "message": "User role updated."
-        })
+        flash(
+            f"Role updated successfully to {new_role}.",
+            "success"
+        )
+
+        return redirect(url_for("admin_users"))
 
     except Exception:
-
         if conn:
             conn.rollback()
 
-        app.logger.exception(
-            "Change user role error"
-        )
+        app.logger.exception("ADMIN CHANGE ROLE ERROR")
+        flash("Unable to update user role.", "danger")
 
-        return jsonify({
-            "success": False,
-            "message": "Unable to update role."
-        }), 500
+        return redirect(url_for("admin_users"))
 
     finally:
-
         if cursor:
             cursor.close()
 
         if conn:
             conn.close()
+# =====================================================
+# ADMIN - DELETE USER
+# =====================================================
 
-
-# =========================================================
-# ADMIN — DELETE USER
-# =========================================================
-
-@app.route(
-    "/admin/users/<int:user_id>/delete",
-    methods=["POST", "DELETE"]
-)
-def admin_delete_user(user_id):
+@app.route("/admin/delete-user", methods=["POST"])
+@app.route("/admin/delete-user/<int:user_id>", methods=["POST"])
+def admin_delete_user(user_id=None):
 
     if not admin_required():
-
-        return jsonify({
-            "success": False,
-            "message": "Admin access required."
-        }), 403
-
-    current_user_id = session["user_id"]
-
-    if user_id == current_user_id:
-
-        return jsonify({
-            "success": False,
-            "message": "You cannot delete your own account."
-        }), 400
+        flash("Admin access required.", "danger")
+        return redirect(url_for("dashboard"))
 
     conn = None
     cursor = None
 
     try:
+        # Get user ID
+        if user_id is None:
+            user_id = request.form.get("user_id", type=int)
+
+        if not user_id:
+            flash("Invalid user ID.", "danger")
+            return redirect(url_for("admin_users"))
+
+        # Prevent deleting your own account
+        if int(user_id) == int(session.get("user_id")):
+            flash("You cannot delete your own account.", "warning")
+            return redirect(url_for("admin_users"))
 
         conn = get_db_connection()
-        cursor = conn.cursor()
+        cursor = conn.cursor(pymysql.cursors.DictCursor)
 
-        # -------------------------------------------------
-        # DELETE USER
-        # -------------------------------------------------
+        # Check whether user exists
+        cursor.execute("""
+            SELECT id, name, email, role
+            FROM users
+            WHERE id = %s
+        """, (user_id,))
 
+        target_user = cursor.fetchone()
+
+        if not target_user:
+            flash("User not found.", "danger")
+            return redirect(url_for("admin_users"))
+
+        # Prevent deleting the last admin
+        if str(target_user.get("role") or "").strip().lower() == "admin":
+
+            cursor.execute("""
+                SELECT COUNT(*) AS admin_count
+                FROM users
+                WHERE LOWER(COALESCE(role, 'student')) = 'admin'
+            """)
+
+            admin_count = cursor.fetchone()["admin_count"]
+
+            if admin_count <= 1:
+                flash(
+                    "The last admin account cannot be deleted.",
+                    "warning"
+                )
+                return redirect(url_for("admin_users"))
+
+        # Delete the user's test results first
+        cursor.execute("""
+            DELETE FROM results
+            WHERE user_id = %s
+        """, (user_id,))
+
+        # Delete user account
         cursor.execute("""
             DELETE FROM users
             WHERE id = %s
@@ -4608,231 +4556,192 @@ def admin_delete_user(user_id):
 
         conn.commit()
 
-        return jsonify({
-            "success": True,
-            "message": "User deleted successfully."
-        })
+        flash(
+            f"User {target_user['name']} deleted successfully.",
+            "success"
+        )
+
+        return redirect(url_for("admin_users"))
 
     except Exception:
-
         if conn:
             conn.rollback()
 
-        app.logger.exception(
-            "Admin delete user error"
+        app.logger.exception("ADMIN DELETE USER ERROR")
+
+        flash(
+            "Unable to delete user. Check server logs.",
+            "danger"
         )
 
-        return jsonify({
-            "success": False,
-            "message": "Unable to delete user."
-        }), 500
+        return redirect(url_for("admin_users"))
 
     finally:
-
         if cursor:
             cursor.close()
 
         if conn:
             conn.close()
 
-
-# =========================================================
-# ADMIN — MOCK QUESTIONS
-# =========================================================
-
-# =========================================================
-# ADMIN — ADD MOCK QUESTION
-# =========================================================
-# =========================================================
-# ADMIN — DELETE MOCK QUESTION
-# =========================================================
-# =========================================================
-# ADMIN — INTERVIEW QUESTIONS
-# =========================================================
-
-
-# =========================================================
-# ADMIN — ADD INTERVIEW QUESTION
-# =========================================================
-
-@app.route(
-    "/admin/interview-questions/add",
-    methods=["POST"]
-)
+@app.route("/admin/interview-questions/add", methods=["POST"])
 def admin_add_interview_question():
 
     if not admin_required():
-
-        return jsonify({
-            "success": False,
-            "message": "Admin access required."
-        }), 403
-
-    data = request.get_json(
-        silent=True
-    )
-
-    if not data:
-        data = request.form.to_dict()
-
-    question = data.get(
-        "question",
-        ""
-    ).strip()
-
-    answer = data.get(
-        "answer",
-        ""
-    ).strip()
-
-    category = data.get(
-        "category",
-        ""
-    ).strip()
-
-    level = data.get(
-        "level",
-        "Basic"
-    ).strip()
-
-    if not question:
-
-        return jsonify({
-            "success": False,
-            "message": "Question is required."
-        }), 400
-
-    if not answer:
-
-        return jsonify({
-            "success": False,
-            "message": "Answer is required."
-        }), 400
+        flash("Admin access required.", "danger")
+        return redirect(url_for("dashboard"))
 
     conn = None
     cursor = None
 
     try:
+        # Get form data
+        question = request.form.get("question", "").strip()
+        answer = request.form.get("answer", "").strip()
+        category = request.form.get("category", "").strip()
+        container_id = request.form.get("container_id", "").strip()
+        level = request.form.get("level", "Basic").strip()
+        company = request.form.get("company", "").strip()
+
+        # Validate required field
+        if not question:
+            flash("Interview question is required.", "warning")
+            return redirect(url_for("admin_interview_questions"))
+
+        if not level:
+            level = "Basic"
+
+        # Convert container_id to integer or NULL
+        if container_id:
+            try:
+                container_id = int(container_id)
+            except ValueError:
+                flash("Invalid container ID.", "warning")
+                return redirect(url_for("admin_interview_questions"))
+        else:
+            container_id = None
 
         conn = get_db_connection()
         cursor = conn.cursor()
 
+        # Insert interview question
         cursor.execute("""
             INSERT INTO interview_questions
-            (
-                question,
-                answer,
-                category,
-                level
-            )
+                (
+                    question,
+                    answer,
+                    category,
+                    container_id,
+                    level,
+                    company
+                )
             VALUES
-            (
-                %s,
-                %s,
-                %s,
-                %s
-            )
+                (%s, %s, %s, %s, %s, %s)
         """, (
             question,
-            answer,
-            category,
-            level
+            answer or None,
+            category or None,
+            container_id,
+            level,
+            company or None
         ))
 
         conn.commit()
 
-        return jsonify({
-            "success": True,
-            "message": "Interview question added successfully."
-        })
+        flash(
+            "Interview question added successfully.",
+            "success"
+        )
+
+        return redirect(url_for("admin_interview_questions"))
 
     except Exception:
-
         if conn:
             conn.rollback()
 
-        app.logger.exception(
-            "Add interview question error"
+        app.logger.exception("ADMIN ADD INTERVIEW QUESTION ERROR")
+
+        flash(
+            "Unable to add interview question. Check server logs.",
+            "danger"
         )
 
-        return jsonify({
-            "success": False,
-            "message": "Unable to add interview question."
-        }), 500
+        return redirect(url_for("admin_interview_questions"))
 
     finally:
-
         if cursor:
             cursor.close()
 
         if conn:
-            conn.close()
-
-
-# =========================================================
+            conn.close()# =========================================================
 # ADMIN — DELETE INTERVIEW QUESTION
 # =========================================================
+# =====================================================
+# ADMIN - DELETE INTERVIEW QUESTION
+# =====================================================
 
-@app.route(
-    "/admin/interview-questions/<int:question_id>/delete",
-    methods=["POST", "DELETE"]
-)
-def admin_delete_interview_question(
-    question_id
-):
+@app.route("/admin/interview-questions/delete", methods=["POST"])
+@app.route("/admin/interview-questions/delete/<int:question_id>", methods=["POST"])
+def admin_delete_interview_question(question_id=None):
 
     if not admin_required():
-
-        return jsonify({
-            "success": False,
-            "message": "Admin access required."
-        }), 403
+        flash("Admin access required.", "danger")
+        return redirect(url_for("dashboard"))
 
     conn = None
     cursor = None
 
     try:
+        # Get question ID
+        if question_id is None:
+            question_id = request.form.get("question_id", type=int)
+
+        if not question_id:
+            flash("Invalid question ID.", "warning")
+            return redirect(url_for("admin_interview_questions"))
 
         conn = get_db_connection()
         cursor = conn.cursor()
 
+        # Delete interview question
         cursor.execute("""
             DELETE FROM interview_questions
             WHERE id = %s
         """, (question_id,))
 
+        if cursor.rowcount == 0:
+            flash("Interview question not found.", "warning")
+            return redirect(url_for("admin_interview_questions"))
+
         conn.commit()
 
-        return jsonify({
-            "success": True,
-            "message": "Interview question deleted."
-        })
+        flash(
+            "Interview question deleted successfully.",
+            "success"
+        )
+
+        return redirect(url_for("admin_interview_questions"))
 
     except Exception:
-
         if conn:
             conn.rollback()
 
         app.logger.exception(
-            "Delete interview question error"
+            "ADMIN DELETE INTERVIEW QUESTION ERROR"
         )
 
-        return jsonify({
-            "success": False,
-            "message": "Unable to delete question."
-        }), 500
+        flash(
+            "Unable to delete interview question.",
+            "danger"
+        )
+
+        return redirect(url_for("admin_interview_questions"))
 
     finally:
-
         if cursor:
             cursor.close()
 
         if conn:
             conn.close()
-            # =========================================================
-# PART 9 — AI COACH + AI INTERVIEW + AI RESUME ASSISTANT
-# =========================================================
-
 
 # =========================================================
 # AI HELPER
@@ -6443,120 +6352,201 @@ def inject_global_data():
             "role",
             ""
         )
-    }
-
-
-# ==========================================================
-# COURSES
-# ==========================================================
-
+}
 @app.route("/courses")
+@login_required
 def courses():
 
-    if "user_id" not in session:
-        return redirect(url_for("login"))
+    import os
 
-    conn = get_db_connection()
-    cursor = conn.cursor()
+    conn = None
+    cursor = None
+
+    courses_list = []
+    pyq_papers = []
+    pyq_semesters = []
+    pyq_years = []
+    study_materials = []
 
     try:
+        # =========================================
+        # 1. DATABASE CONNECTION
+        # =========================================
+        conn = get_db_connection()
+        cursor = conn.cursor(pymysql.cursors.DictCursor)
 
+        # =========================================
+        # 2. FETCH COURSES
+        # =========================================
         cursor.execute("""
             SELECT *
             FROM courses
-            ORDER BY course_title
+            ORDER BY course_name
         """)
 
-        db_courses = cursor.fetchall()
+        courses_list = cursor.fetchall()
 
-        icons = {
-            "java":"☕",
-            "python":"🐍",
-            "html":"🌐",
-            "css":"🎨",
-            "javascript":"⚡",
-            "dbms":"🗄️",
-            "sql":"📊",
-            "operating system":"💻",
-            "computer networks":"🌍",
-            "dsa":"📚",
-            "aptitude":"🧠",
-            "hr":"👨‍💼"
-        }
-
-        courses = []
-
-        for row in db_courses:
-
+        # =========================================
+        # 3. FETCH SPPU PREVIOUS YEAR QUESTION PAPERS
+        # =========================================
+        try:
             cursor.execute("""
-                SELECT COUNT(*) AS total_days
-                FROM course_lessons
-                WHERE course_name=%s
-            """, (row["course_name"],))
+                SELECT *
+                FROM pyq_papers
+                ORDER BY exam_year DESC, semester, subject_name
+            """)
 
-            total_days = cursor.fetchone()["total_days"]
+            pyq_papers = cursor.fetchall()
 
-            cursor.execute("""
-                SELECT COUNT(*) AS progress
-                FROM course_progress
-                WHERE user_id=%s
-                AND course_name=%s
-            """, (session["user_id"], row["course_name"]))
+            # Extract available semesters
+            pyq_semesters = sorted(
+                {
+                    str(paper.get("semester"))
+                    for paper in pyq_papers
+                    if paper.get("semester") is not None
+                }
+            )
 
-            progress = cursor.fetchone()["progress"]
+            # Extract available years
+            pyq_years = sorted(
+                {
+                    str(paper.get("exam_year"))
+                    for paper in pyq_papers
+                    if paper.get("exam_year") is not None
+                },
+                reverse=True
+            )
 
-            percentage = 0
+        except Exception:
+            app.logger.exception("PYQ papers loading failed")
+            pyq_papers = []
+            pyq_semesters = []
+            pyq_years = []
 
-            if total_days > 0:
-                percentage = int((progress / total_days) * 100)
-
-            courses.append({
-
-                "course_name": row["course_name"],
-                "course_title": row["course_title"],
-                "description": row["description"],
-
-                "icon": icons.get(
-                    row["course_name"].lower(),
-                    "📘"
-                ),
-
-                "days": total_days,
-
-                "progress": progress,
-
-                "percentage": percentage,
-
-                "rating": 4.9,
-
-                "students": "25K+",
-
-                "level": "Beginner to Advanced"
-
-            })
-
-        return render_template(
-            "courses.html",
-            courses=courses
+        # =========================================
+        # 4. FETCH STUDY MATERIALS FROM ALL FOLDERS
+        # =========================================
+        materials_folder = os.path.join(
+            app.root_path,
+            "static",
+            "uploads",
+            "study_materials"
         )
 
-    except Exception as e:
+        allowed_extensions = {
+            ".pdf",
+            ".doc",
+            ".docx"
+        }
 
-        print(e)
+        if os.path.isdir(materials_folder):
+
+            for root, dirs, files in os.walk(materials_folder):
+
+                for filename in files:
+
+                    extension = os.path.splitext(filename)[1].lower()
+
+                    if extension not in allowed_extensions:
+                        continue
+
+                    full_path = os.path.join(root, filename)
+
+                    # Relative path preserves subfolder structure
+                    relative_path = os.path.relpath(
+                        full_path,
+                        materials_folder
+                    ).replace("\\", "/")
+
+                    file_title = os.path.splitext(filename)[0]
+
+                    file_title = (
+                        file_title
+                        .replace("_", " ")
+                        .replace("-", " ")
+                        .replace(".", " ")
+                        .title()
+                    )
+
+                    study_materials.append({
+                        "filename": relative_path,
+                        "title": file_title,
+                        "extension": extension.replace(".", "").upper(),
+                        "size": round(
+                            os.path.getsize(full_path) / 1024,
+                            2
+                        )
+                    })
+
+        # Sort materials alphabetically
+        study_materials.sort(
+            key=lambda material: material["title"].lower()
+        )
+
+        app.logger.info(
+            "Courses: %s | PYQ Papers: %s | Study Materials: %s",
+            len(courses_list),
+            len(pyq_papers),
+            len(study_materials)
+        )
+
+        # =========================================
+        # 5. RENDER COURSES PAGE
+        # =========================================
+        return render_template(
+            "courses.html",
+            courses=courses_list,
+            pyq_papers=pyq_papers,
+            pyq_semesters=pyq_semesters,
+            pyq_years=pyq_years,
+            study_materials=study_materials
+        )
+
+    except Exception:
+        app.logger.exception("Courses page loading failed")
+
+        flash(
+            "Unable to load courses. Please try again.",
+            "danger"
+        )
 
         return render_template(
             "courses.html",
-            courses=[]
+            courses=[],
+            pyq_papers=[],
+            pyq_semesters=[],
+            pyq_years=[],
+            study_materials=[]
         )
 
     finally:
+        if cursor:
+            cursor.close()
 
-        cursor.close()
-        conn.close()
-# ==========================================================
-# COURSE LEARNING
-# ==========================================================
+        if conn:
+            conn.close()
+@app.route("/study-materials/file/<path:filename>")
+@login_required
+def open_study_material(filename):
 
+    import os
+    from flask import send_from_directory, request, abort
+
+    materials_folder = os.path.join(
+        app.root_path,
+        "static",
+        "uploads",
+        "study_materials"
+    )
+
+    if not os.path.isdir(materials_folder):
+        abort(404)
+
+    return send_from_directory(
+        materials_folder,
+        filename,
+        as_attachment=request.args.get("download") == "1"
+    )
 @app.route("/course/<course_name>")
 @login_required
 def course(course_name):
@@ -6568,10 +6558,7 @@ def course(course_name):
         conn = get_db_connection()
         cursor = conn.cursor(pymysql.cursors.DictCursor)
 
-        # =============================
         # COURSE DETAILS
-        # =============================
-
         cursor.execute("""
             SELECT *
             FROM courses
@@ -6579,16 +6566,13 @@ def course(course_name):
             LIMIT 1
         """, (course_name,))
 
-        course = cursor.fetchone()
+        course_info = cursor.fetchone()
 
-        if not course:
+        if not course_info:
             flash("Course not found.", "danger")
             return redirect(url_for("courses"))
 
-        # =============================
-        # LESSONS
-        # =============================
-
+        # COURSE LESSONS
         cursor.execute("""
             SELECT
                 id,
@@ -6604,49 +6588,46 @@ def course(course_name):
 
         lessons = cursor.fetchall()
 
-        # =============================
+        # COMPLETED DAYS
         # USER PROGRESS
-        # =============================
-
         cursor.execute("""
-            SELECT completed_day
-            FROM user_course_progress
+            SELECT current_day, completed
+            FROM course_progress
             WHERE user_id = %s
             AND LOWER(course_name) = LOWER(%s)
-            ORDER BY completed_day ASC
+            LIMIT 1
         """, (
             session["user_id"],
             course_name
         ))
 
-        completed_days = [
-            row["completed_day"]
-            for row in cursor.fetchall()
-        ]
+        progress_data = cursor.fetchone()
 
-        # =============================
-        # PROGRESS CALCULATION
-        # =============================
+        completed_days = []
 
+        if progress_data:
+            current_day = progress_data["current_day"] or 1
+            completed = progress_data["completed"] or 0
+
+            if completed > 0:
+                completed_days = list(range(1, completed + 1))
+
+        # PROGRESS
         total_days = len(lessons)
 
         progress = len(completed_days)
 
         percentage = (
-            int((progress * 100) / total_days)
+            min(int((progress / total_days) * 100), 100)
             if total_days > 0
             else 0
         )
-
-        # =============================
         # COURSE DATA
-        # =============================
-
         course_data = {
-            "name": course["course_title"],
-            "level": course.get("level", "Beginner"),
-            "description": course.get("description", ""),
-            "projects": course.get("projects", "0")
+            "name": course_info["course_title"],
+            "level": course_info.get("level", "Beginner"),
+            "description": course_info.get("description", ""),
+            "projects": course_info.get("projects", "0")
         }
 
         return render_template(
@@ -6659,83 +6640,103 @@ def course(course_name):
             completed_days=completed_days
         )
 
-    except Exception as e:
-
-        app.logger.exception(e)
+    except Exception:
+        app.logger.exception(
+            "Course learning page failed: %s",
+            course_name
+        )
 
         flash("Unable to load course.", "danger")
-
         return redirect(url_for("courses"))
 
     finally:
-
         if cursor:
             cursor.close()
 
         if conn:
             conn.close()
+
+# ==========================================================
+# COURSE DAY
+# ==========================================================
+
 @app.route("/course/<course_name>/<int:day>")
 @login_required
-def course_day(course_name,day):
+def course_day(course_name, day):
 
-    cursor = mysql.connection.cursor()
+    conn = None
+    cursor = None
 
-    if course_name.lower()=="java":
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(pymysql.cursors.DictCursor)
 
-        table="advanced_java_lessons"
+        # CHECK COURSE
+        cursor.execute("""
+            SELECT course_name, course_title
+            FROM courses
+            WHERE LOWER(course_name) = LOWER(%s)
+            LIMIT 1
+        """, (course_name,))
 
-    elif course_name.lower()=="python":
+        course_info = cursor.fetchone()
 
-        table="advanced_python_lessons"
+        if not course_info:
+            flash("Course not found.", "danger")
+            return redirect(url_for("courses"))
 
-    elif course_name.lower()=="c":
+        # FETCH LESSON
+        cursor.execute("""
+            SELECT
+                id,
+                day_number,
+                title,
+                notes,
+                code_snippet,
+                practice_task
+            FROM course_lessons
+            WHERE LOWER(course_name) = LOWER(%s)
+            AND day_number = %s
+            LIMIT 1
+        """, (course_name, day))
 
-        table="c_lessons"
+        lesson = cursor.fetchone()
 
-    else:
+        if not lesson:
+            flash("Lesson not found.", "warning")
+            return redirect(
+                url_for("course", course_name=course_name)
+            )
 
-        return "Course Not Found"
+        return render_template(
+            "course_day.html",
+            course_name=course_name,
+            day=day,
+            title=lesson["title"],
+            notes=lesson["notes"],
+            code_snippet=lesson["code_snippet"],
+            practice_task=lesson["practice_task"]
+        )
 
-    cursor.execute(f"""
+    except Exception:
+        app.logger.exception(
+            "Course day loading failed: %s, Day: %s",
+            course_name,
+            day
+        )
 
-        SELECT
+        flash("Unable to load lesson.", "danger")
 
-        title,
-        notes,
-        code_snippet,
-        practice_task
+        return redirect(
+            url_for("course", course_name=course_name)
+        )
 
-        FROM {table}
+    finally:
+        if cursor:
+            cursor.close()
 
-        WHERE day_number=%s
-
-    """,(day,))
-
-    row=cursor.fetchone()
-
-    cursor.close()
-
-    if not row:
-
-        return "Lesson Not Found"
-
-    return render_template(
-
-        "course_day.html",
-
-        course_name=course_name,
-
-        day=day,
-
-        title=row[0],
-
-        notes=row[1],
-
-        code_snippet=row[2],
-
-        practice_task=row[3]
-
-    )
+        if conn:
+            conn.close()
 @app.route("/complete_day/<course_name>/<int:day>",methods=["POST"])
 @login_required
 def complete_day(course_name,day):
@@ -6897,8 +6898,7 @@ def results():
 import os
 import requests
 from flask import request, jsonify, render_template
-from flask_login import login_required
-
+from flask_login import login_required as flask_login_required
 
 @app.route("/ai_communication")
 @login_required
@@ -7170,7 +7170,402 @@ def profile():
     if "email" not in session:
         return redirect(url_for("login"))
 
+
     return render_template("profile.html")
+@app.route("/study-materials")
+@login_required
+def study_materials():
+
+    materials_folder = os.path.join(
+        app.root_path,
+        "static",
+        "uploads",
+        "study_materials"
+    )
+
+    materials = []
+
+    if os.path.isdir(materials_folder):
+
+        for filename in os.listdir(materials_folder):
+
+            file_path = os.path.join(materials_folder, filename)
+
+            if not os.path.isfile(file_path):
+                continue
+
+            extension = os.path.splitext(filename)[1].lower()
+
+            if extension not in [".pdf", ".doc", ".docx"]:
+                continue
+
+            materials.append({
+                "filename": filename,
+                "title": os.path.splitext(filename)[0]
+                    .replace("_", " ")
+                    .replace("-", " ")
+                    .title(),
+                "extension": extension.upper().replace(".", ""),
+                "size": round(os.path.getsize(file_path) / 1024, 1)
+            })
+
+    materials.sort(key=lambda x: x["filename"].lower())
+
+    return render_template(
+        "study_materials.html",
+        materials=materials
+    )
+
+from functools import wraps
+from flask import session, redirect, url_for, flash
+# =========================================================
+# ADMIN ACCESS CHECK
+# =========================================================
+
+def admin_required(view_func=None):
+
+    # Normal function call:
+    # if not admin_required():
+
+    if view_func is None:
+
+        if not session.get("user_id"):
+            return False
+
+        user_role = str(
+            session.get("role", "")
+        ).strip().lower()
+
+        return user_role == "admin"
+
+    # Decorator compatibility:
+    # @admin_required
+
+    @wraps(view_func)
+    def decorated_view(*args, **kwargs):
+
+        if not session.get("user_id"):
+
+            flash("Please login first.", "warning")
+
+            return redirect(url_for("login"))
+
+        user_role = str(
+            session.get("role", "")
+        ).strip().lower()
+
+        if user_role != "admin":
+
+            flash("Admin access required.", "danger")
+
+            return redirect(url_for("dashboard"))
+
+        return view_func(*args, **kwargs)
+
+    return decorated_view
+import re
+# =========================================================
+# ADMIN - PYQ COURSE MANAGEMENT
+# =========================================================
+
+@app.route("/admin/pyq/courses", methods=["GET", "POST"])
+def pyq_admin_courses():
+
+    if not admin_required():
+        flash("Admin access required.", "danger")
+        return redirect(url_for("dashboard"))
+
+    conn = None
+    cursor = None
+
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(pymysql.cursors.DictCursor)
+
+        # =================================================
+        # ADD COURSE
+        # =================================================
+
+        if request.method == "POST":
+
+            faculty_id = request.form.get("faculty_id", type=int)
+
+            course_name = request.form.get(
+                "course_name", ""
+            ).strip()
+
+            course_code = request.form.get(
+                "course_code", ""
+            ).strip()
+
+            course_level = request.form.get(
+                "course_level", "UG"
+            ).strip()
+
+            total_semesters = request.form.get(
+                "total_semesters", 6, type=int
+            )
+
+            description = request.form.get(
+                "description", ""
+            ).strip()
+
+            if not faculty_id or not course_name:
+                flash(
+                    "Faculty and course name are required.",
+                    "danger"
+                )
+                return redirect(url_for("pyq_admin_courses"))
+
+            if not total_semesters or not 1 <= total_semesters <= 12:
+                flash("Invalid semester count.", "danger")
+                return redirect(url_for("pyq_admin_courses"))
+
+            # Generate course slug
+            slug = re.sub(
+                r"[^a-z0-9]+",
+                "-",
+                course_name.lower()
+            ).strip("-")
+
+            try:
+
+                cursor.execute("""
+                    INSERT INTO pyq_courses (
+                        faculty_id,
+                        course_code,
+                        course_name,
+                        slug,
+                        course_level,
+                        total_semesters,
+                        description,
+                        is_active
+                    )
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, 1)
+                """, (
+                    faculty_id,
+                    course_code or None,
+                    course_name,
+                    slug,
+                    course_level,
+                    total_semesters,
+                    description or None
+                ))
+
+                conn.commit()
+
+                flash(
+                    "Course added successfully!",
+                    "success"
+                )
+
+            except pymysql.err.IntegrityError:
+
+                conn.rollback()
+
+                flash(
+                    "Course already exists or slug is duplicate.",
+                    "danger"
+                )
+
+            return redirect(url_for("pyq_admin_courses"))
+
+        # =================================================
+        # FETCH FACULTIES
+        # =================================================
+
+        cursor.execute("""
+            SELECT
+                id,
+                faculty_name
+            FROM pyq_faculties
+            WHERE is_active = 1
+            ORDER BY faculty_name
+        """)
+
+        faculties = cursor.fetchall()
+
+        # =================================================
+        # FETCH COURSES
+        # =================================================
+
+        cursor.execute("""
+            SELECT
+                c.id,
+                c.course_code,
+                c.course_name,
+                c.slug,
+                c.course_level,
+                c.total_semesters,
+                c.description,
+                c.is_active,
+                f.faculty_name,
+
+                (
+                    SELECT COUNT(*)
+                    FROM pyq_subjects s
+                    WHERE s.course_id = c.id
+                ) AS total_subjects
+
+            FROM pyq_courses c
+
+            INNER JOIN pyq_faculties f
+                ON c.faculty_id = f.id
+
+            ORDER BY c.created_at DESC
+        """)
+
+        courses = cursor.fetchall()
+
+        # =================================================
+        # COURSE STATISTICS
+        # =================================================
+
+        total_courses = len(courses)
+
+        active_courses = sum(
+            1 for c in courses
+            if c["is_active"]
+        )
+
+        inactive_courses = (
+            total_courses - active_courses
+        )
+
+        # =================================================
+        # RENDER TEMPLATE
+        # =================================================
+
+        return render_template(
+            "admin/pyq_courses.html",
+
+            faculties=faculties,
+            courses=courses,
+
+            total_courses=total_courses,
+            active_courses=active_courses,
+            inactive_courses=inactive_courses
+        )
+
+    except Exception:
+
+        if conn:
+            conn.rollback()
+
+        app.logger.exception(
+            "PYQ COURSE MANAGEMENT ERROR"
+        )
+
+        flash(
+            "Unable to load course management.",
+            "danger"
+        )
+
+        return redirect(url_for("dashboard"))
+
+    finally:
+
+        if cursor:
+            cursor.close()
+
+        if conn:
+            conn.close()
+
+
+# ACTIVATE / DEACTIVATE COURSE
+# =========================================================
+# =========================================================
+# ADMIN - TOGGLE PYQ COURSE STATUS
+# =========================================================
+
+@app.route(
+    "/admin/pyq/courses/toggle/<int:course_id>",
+    methods=["POST"]
+)
+def pyq_toggle_course(course_id):
+
+    if not admin_required():
+        flash("Admin access required.", "danger")
+        return redirect(url_for("dashboard"))
+
+    conn = None
+    cursor = None
+
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(pymysql.cursors.DictCursor)
+
+        # Check course exists
+        cursor.execute("""
+            SELECT id, course_name, is_active
+            FROM pyq_courses
+            WHERE id = %s
+        """, (course_id,))
+
+        course = cursor.fetchone()
+
+        if not course:
+            flash("PYQ course not found.", "warning")
+            return redirect(url_for("pyq_admin_courses"))
+
+        # Toggle status
+        new_status = 0 if course["is_active"] else 1
+
+        cursor.execute("""
+            UPDATE pyq_courses
+            SET is_active = %s
+            WHERE id = %s
+        """, (new_status, course_id))
+
+        conn.commit()
+
+        if new_status == 1:
+            flash(
+                f"{course['course_name']} activated successfully.",
+                "success"
+            )
+        else:
+            flash(
+                f"{course['course_name']} deactivated successfully.",
+                "warning"
+            )
+
+        return redirect(url_for("pyq_admin_courses"))
+
+    except Exception:
+
+        if conn:
+            conn.rollback()
+
+        app.logger.exception("PYQ COURSE STATUS UPDATE ERROR")
+
+        flash(
+            "Unable to update course status.",
+            "danger"
+        )
+
+        return redirect(url_for("pyq_admin_courses"))
+
+    finally:
+
+        if cursor:
+            cursor.close()
+
+        if conn:
+            conn.close()
+
+# =========================================================
+# LOGOUT ROUTE
+# =========================================================
+
+@app.route("/logout", methods=["GET", "POST"])
+def logout():
+
+    session.clear()
+
+    flash("You have been logged out successfully.", "success")
+
+    return redirect(url_for("login"))
 if __name__ == "__main__":
 
     # -----------------------------------------------------
