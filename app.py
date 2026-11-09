@@ -3869,22 +3869,183 @@ def activity_api():
             conn.close()
 
 
+from flask import session, redirect, url_for, flash
+from functools import wraps
 
-# =========================================================
-# ADMIN — USERS
-# =========================================================
+def admin_required(view_func=None):
 
-# =====================================================
-# ADMIN USERS MANAGEMENT
-# =====================================================
+    def decorator(func):
 
-@app.route("/admin/users")
-@app.route("/admin/students")
+        @wraps(func)
+        def decorated_view(*args, **kwargs):
+
+            if not session.get("user_id"):
+                flash("Please login first.", "warning")
+                return redirect(url_for("login"))
+
+            user_role = str(
+                session.get("role", "")
+            ).strip().lower()
+
+            if user_role != "admin":
+                flash("Admin access required.", "danger")
+                return redirect(url_for("dashboard"))
+
+            return func(*args, **kwargs)
+
+        return decorated_view
+
+    # Supports both @admin_required and @admin_required()
+    if view_func is None:
+        return decorator
+
+    return decorator(view_func)
+
+
+@app.route('/admin/users')
+@admin_required()
 def admin_users():
 
-    if not admin_required():
-        flash("Admin access required.", "danger")
-        return redirect(url_for("dashboard"))
+    conn = None
+    cursor = None
+
+    try:
+        search = request.args.get('search', '').strip()
+        role_filter = request.args.get('role', '').strip()
+
+        conn = get_db_connection()
+        cursor = conn.cursor(pymysql.cursors.DictCursor)
+
+        query = """
+            SELECT
+                u.id,
+                u.name,
+                u.email,
+                u.role,
+                u.created_at,
+                u.age,
+                u.address,
+                u.profile_pic,
+                u.last_active,
+
+                COALESCE(r.total_attempts, 0) AS total_attempts,
+                COALESCE(r.average_percentage, 0) AS average_percentage,
+                COALESCE(r.best_percentage, 0) AS best_percentage,
+
+                COALESCE(a.total_activity_seconds, 0)
+                    AS total_activity_seconds
+
+            FROM users u
+
+            LEFT JOIN (
+                SELECT
+                    user_id,
+                    COUNT(*) AS total_attempts,
+                    AVG(percentage) AS average_percentage,
+                    MAX(percentage) AS best_percentage
+                FROM results
+                GROUP BY user_id
+            ) r ON u.id = r.user_id
+
+            LEFT JOIN (
+                SELECT
+                    user_id,
+                    SUM(duration_seconds) AS total_activity_seconds
+                FROM user_activity
+                GROUP BY user_id
+            ) a ON u.id = a.user_id
+
+            WHERE 1=1
+        """
+
+        params = []
+
+        if search:
+            query += """
+                AND (
+                    u.name LIKE %s
+                    OR u.email LIKE %s
+                )
+            """
+            params.extend([f"%{search}%", f"%{search}%"])
+
+        if role_filter:
+            query += " AND u.role = %s"
+            params.append(role_filter)
+
+        query += " ORDER BY u.created_at DESC"
+
+        cursor.execute(query, tuple(params))
+        users = cursor.fetchall()
+
+        # Format activity time
+        for user in users:
+
+            seconds = int(user.get('total_activity_seconds') or 0)
+
+            hours = seconds // 3600
+            minutes = (seconds % 3600) // 60
+
+            user['activity_time_display'] = (
+                f"{hours}h {minutes}m"
+            )
+
+            # Last active
+            user['last_active'] = (
+                user.get('last_active') or 'Never'
+            )
+
+            # Percentage formatting
+            user['average_percentage'] = round(
+                float(user.get('average_percentage') or 0), 2
+            )
+
+            user['best_percentage'] = round(
+                float(user.get('best_percentage') or 0), 2
+            )
+
+        # Summary counts
+        cursor.execute("SELECT COUNT(*) AS total FROM users")
+        total_users = cursor.fetchone()['total']
+
+        cursor.execute("""
+            SELECT COUNT(*) AS total
+            FROM users
+            WHERE role = 'student'
+        """)
+        students_count = cursor.fetchone()['total']
+
+        cursor.execute("""
+            SELECT COUNT(*) AS total
+            FROM users
+            WHERE role = 'admin'
+        """)
+        admins_count = cursor.fetchone()['total']
+
+        return render_template(
+            'admin_users.html',
+            users=users,
+            search=search,
+            role_filter=role_filter,
+            total_users=total_users,
+            students_count=students_count,
+            admins_count=admins_count
+        )
+
+    except Exception as e:
+        print("ADMIN USERS ERROR:", str(e))
+        flash("Unable to load users.", "danger")
+        return redirect(url_for('admin_dashboard'))
+
+    finally:
+        if cursor:
+            cursor.close()
+
+        if conn:
+            conn.close()
+@app.route('/admin/user/<int:user_id>')
+@admin_required()
+def admin_user_profile(user_id):
 
     conn = None
     cursor = None
@@ -3893,63 +4054,68 @@ def admin_users():
         conn = get_db_connection()
         cursor = conn.cursor(pymysql.cursors.DictCursor)
 
-        search = request.args.get("search", "").strip()
-        role_filter = request.args.get("role", "").strip().lower()
-
-        # Base query
-        query = """
+        # Fetch user details
+        cursor.execute("""
             SELECT
                 id,
                 name,
                 email,
                 role,
                 created_at,
-                subscription_status
+                age,
+                address,
+                profile_pic,
+                last_active
             FROM users
-            WHERE 1=1
-        """
+            WHERE id = %s
+        """, (user_id,))
 
-        params = []
+        user = cursor.fetchone()
 
-        # Search by name or email
-        if search:
-            query += """
-                AND (
-                    name LIKE %s
-                    OR email LIKE %s
-                )
-            """
-            params.extend([
-                f"%{search}%",
-                f"%{search}%"
-            ])
+        if not user:
+            flash("User not found.", "danger")
+            return redirect(url_for('admin_users'))
 
-        # Filter by role
-        if role_filter in ("student", "admin"):
-            query += " AND LOWER(COALESCE(role, 'student')) = %s"
-            params.append(role_filter)
+        # Mock test statistics
+        cursor.execute("""
+            SELECT
+                COUNT(*) AS total_attempts,
+                COALESCE(AVG(percentage), 0) AS average_percentage,
+                COALESCE(MAX(percentage), 0) AS best_percentage
+            FROM results
+            WHERE user_id = %s
+        """, (user_id,))
 
-        query += " ORDER BY id DESC"
+        stats = cursor.fetchone()
 
-        cursor.execute(query, tuple(params))
+        # Activity time
+        cursor.execute("""
+            SELECT
+                COALESCE(SUM(duration_seconds), 0) AS total_seconds
+            FROM user_activity
+            WHERE user_id = %s
+        """, (user_id,))
 
-        users = cursor.fetchall()
+        activity = cursor.fetchone()
 
-        # Total users count
-        total_users = len(users)
+        total_seconds = int(activity['total_seconds'] or 0)
+
+        hours = total_seconds // 3600
+        minutes = (total_seconds % 3600) // 60
+
+        activity_time = f"{hours}h {minutes}m"
 
         return render_template(
-            "admin_users.html",
-            users=users,
-            total_users=total_users,
-            search=search,
-            role_filter=role_filter
+            'admin_user_profile.html',
+            user=user,
+            stats=stats,
+            activity_time=activity_time
         )
 
-    except Exception:
-        app.logger.exception("ADMIN USERS ERROR")
-        flash("Unable to load users.", "danger")
-        return redirect(url_for("admin_dashboard"))
+    except Exception as e:
+        print("ADMIN USER PROFILE ERROR:", str(e))
+        flash("Unable to load user profile.", "danger")
+        return redirect(url_for('admin_users'))
 
     finally:
         if cursor:
@@ -3957,10 +4123,6 @@ def admin_users():
 
         if conn:
             conn.close()
-# =====================================================
-# ADMIN - VIEW MOCK QUESTIONS
-# =====================================================
-
 @app.route("/admin/mock-questions")
 def admin_mock_questions():
 
@@ -4185,23 +4347,6 @@ def admin_interview_questions():
 
         if conn:
             conn.close()
-# =====================================================
-# ADMIN ACCESS CHECK
-# =====================================================
-
-def admin_required():
-
-    if not session.get("user_id"):
-        return False
-
-    user_role = str(session.get("role", "")).strip().lower()
-
-    return user_role == "admin"
-# =====================================================
-# ADMIN DASHBOARD
-# =====================================================
-# Add these imports if they are not already present:
-# from datetime import date, datetime, timedelta
 
 @app.route("/admin")
 @app.route("/admin/dashboard")
@@ -6353,148 +6498,92 @@ def inject_global_data():
             ""
         )
 }
-@app.route("/courses")
-@login_required
+@app.route('/courses')
 def courses():
-
-    import os
 
     conn = None
     cursor = None
 
-    courses_list = []
-    pyq_papers = []
-    pyq_semesters = []
-    pyq_years = []
-    study_materials = []
-
     try:
-        # =========================================
-        # 1. DATABASE CONNECTION
-        # =========================================
         conn = get_db_connection()
         cursor = conn.cursor(pymysql.cursors.DictCursor)
 
-        # =========================================
-        # 2. FETCH COURSES
-        # =========================================
+        # Fetch all uploaded materials
         cursor.execute("""
-            SELECT *
-            FROM courses
-            ORDER BY course_name
+            SELECT
+                id,
+                title,
+                description,
+                pdf_link,
+                category,
+                material_type,
+                course_name,
+                semester,
+                subject_name
+            FROM study_materials
+            ORDER BY id DESC
         """)
 
-        courses_list = cursor.fetchall()
+        all_materials = cursor.fetchall()
 
-        # =========================================
-        # 3. FETCH SPPU PREVIOUS YEAR QUESTION PAPERS
-        # =========================================
-        try:
-            cursor.execute("""
-                SELECT *
-                FROM pyq_papers
-                ORDER BY exam_year DESC, semester, subject_name
-            """)
+        pyq_papers = []
+        study_materials = []
 
-            pyq_papers = cursor.fetchall()
+        for item in all_materials:
 
-            # Extract available semesters
-            pyq_semesters = sorted(
-                {
-                    str(paper.get("semester"))
-                    for paper in pyq_papers
-                    if paper.get("semester") is not None
-                }
-            )
+            material_type = str(
+                item.get('material_type') or ''
+            ).strip().lower()
 
-            # Extract available years
-            pyq_years = sorted(
-                {
-                    str(paper.get("exam_year"))
-                    for paper in pyq_papers
-                    if paper.get("exam_year") is not None
-                },
-                reverse=True
-            )
+            category = str(
+                item.get('category') or ''
+            ).strip().lower()
 
-        except Exception:
-            app.logger.exception("PYQ papers loading failed")
-            pyq_papers = []
-            pyq_semesters = []
-            pyq_years = []
+            # PYQ / Question Bank separation
+            if material_type in ['pyq', 'question_bank'] or category in ['pyq', 'question_bank']:
 
-        # =========================================
-        # 4. FETCH STUDY MATERIALS FROM ALL FOLDERS
-        # =========================================
-        materials_folder = os.path.join(
-            app.root_path,
-            "static",
-            "uploads",
-            "study_materials"
-        )
+                pyq_papers.append({
+                    'id': item.get('id'),
+                    'title': item.get('title'),
+                    'course_name': item.get('course_name'),
+                    'subject_name': item.get('subject_name'),
+                    'semester': item.get('semester'),
+                    'exam_year': '',
+                    'exam_session': '',
+                    'paper_pattern': 'SPPU',
+                    'pdf_url': item.get('pdf_link')
+                })
 
-        allowed_extensions = {
-            ".pdf",
-            ".doc",
-            ".docx"
-        }
+            else:
+                study_materials.append({
+                    'id': item.get('id'),
+                    'title': item.get('title'),
+                    'description': item.get('description'),
+                    'filename': item.get('pdf_link'),
+                    'pdf_link': item.get('pdf_link'),
+                    'extension': 'PDF',
+                    'size': ''
+                })
 
-        if os.path.isdir(materials_folder):
+        # PYQ filters
+        pyq_semesters = sorted({
+            str(paper['semester'])
+            for paper in pyq_papers
+            if paper.get('semester')
+        })
 
-            for root, dirs, files in os.walk(materials_folder):
+        pyq_years = sorted({
+            str(paper['exam_year'])
+            for paper in pyq_papers
+            if paper.get('exam_year')
+        }, reverse=True)
 
-                for filename in files:
+        # IMPORTANT:
+        # Yahan apne existing route ka courses-list logic
+        # same rakho. Usko delete ya replace mat karna.
 
-                    extension = os.path.splitext(filename)[1].lower()
-
-                    if extension not in allowed_extensions:
-                        continue
-
-                    full_path = os.path.join(root, filename)
-
-                    # Relative path preserves subfolder structure
-                    relative_path = os.path.relpath(
-                        full_path,
-                        materials_folder
-                    ).replace("\\", "/")
-
-                    file_title = os.path.splitext(filename)[0]
-
-                    file_title = (
-                        file_title
-                        .replace("_", " ")
-                        .replace("-", " ")
-                        .replace(".", " ")
-                        .title()
-                    )
-
-                    study_materials.append({
-                        "filename": relative_path,
-                        "title": file_title,
-                        "extension": extension.replace(".", "").upper(),
-                        "size": round(
-                            os.path.getsize(full_path) / 1024,
-                            2
-                        )
-                    })
-
-        # Sort materials alphabetically
-        study_materials.sort(
-            key=lambda material: material["title"].lower()
-        )
-
-        app.logger.info(
-            "Courses: %s | PYQ Papers: %s | Study Materials: %s",
-            len(courses_list),
-            len(pyq_papers),
-            len(study_materials)
-        )
-
-        # =========================================
-        # 5. RENDER COURSES PAGE
-        # =========================================
         return render_template(
-            "courses.html",
+            'courses.html',
             courses=courses_list,
             pyq_papers=pyq_papers,
             pyq_semesters=pyq_semesters,
@@ -6502,27 +6591,14 @@ def courses():
             study_materials=study_materials
         )
 
-    except Exception:
-        app.logger.exception("Courses page loading failed")
-
-        flash(
-            "Unable to load courses. Please try again.",
-            "danger"
-        )
-
-        return render_template(
-            "courses.html",
-            courses=[],
-            pyq_papers=[],
-            pyq_semesters=[],
-            pyq_years=[],
-            study_materials=[]
-        )
+    except Exception as e:
+        print("Courses Route Error:", str(e))
+        flash("Unable to load courses. Please try again.", "danger")
+        return redirect(url_for('dashboard'))
 
     finally:
         if cursor:
             cursor.close()
-
         if conn:
             conn.close()
 @app.route("/study-materials/file/<path:filename>")
@@ -6588,7 +6664,6 @@ def course(course_name):
 
         lessons = cursor.fetchall()
 
-        # COMPLETED DAYS
         # USER PROGRESS
         cursor.execute("""
             SELECT current_day, completed
@@ -6606,28 +6681,26 @@ def course(course_name):
         completed_days = []
 
         if progress_data:
-            current_day = progress_data["current_day"] or 1
-            completed = progress_data["completed"] or 0
+            completed = int(progress_data.get("completed") or 0)
 
             if completed > 0:
                 completed_days = list(range(1, completed + 1))
 
-        # PROGRESS
+        # PROGRESS CALCULATION
         total_days = len(lessons)
-
         progress = len(completed_days)
 
         percentage = (
             min(int((progress / total_days) * 100), 100)
-            if total_days > 0
-            else 0
+            if total_days > 0 else 0
         )
+
         # COURSE DATA
         course_data = {
-            "name": course_info["course_title"],
-            "level": course_info.get("level", "Beginner"),
-            "description": course_info.get("description", ""),
-            "projects": course_info.get("projects", "0")
+            "name": course_info.get("course_title") or course_info.get("course_name"),
+            "level": course_info.get("level") or "Beginner",
+            "description": course_info.get("description") or "",
+            "projects": course_info.get("projects") or "0"
         }
 
         return render_template(
@@ -6655,7 +6728,6 @@ def course(course_name):
 
         if conn:
             conn.close()
-
 # ==========================================================
 # COURSE DAY
 # ==========================================================
@@ -7216,38 +7288,15 @@ def study_materials():
         materials=materials
     )
 
-from functools import wraps
-from flask import session, redirect, url_for, flash
-# =========================================================
-# ADMIN ACCESS CHECK
-# =========================================================
-
-def admin_required(view_func=None):
-
-    # Normal function call:
-    # if not admin_required():
-
-    if view_func is None:
-
-        if not session.get("user_id"):
-            return False
-
-        user_role = str(
-            session.get("role", "")
-        ).strip().lower()
-
-        return user_role == "admin"
-
-    # Decorator compatibility:
-    # @admin_required
-
-    @wraps(view_func)
+def is_admin():
+    return (
+        bool(session.get("user_id"))
+        and str(session.get("role", "")).strip().lower() == "admin"
+    )
     def decorated_view(*args, **kwargs):
 
         if not session.get("user_id"):
-
             flash("Please login first.", "warning")
-
             return redirect(url_for("login"))
 
         user_role = str(
@@ -7255,9 +7304,7 @@ def admin_required(view_func=None):
         ).strip().lower()
 
         if user_role != "admin":
-
             flash("Admin access required.", "danger")
-
             return redirect(url_for("dashboard"))
 
         return view_func(*args, **kwargs)

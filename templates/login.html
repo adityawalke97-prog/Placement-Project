@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -6,6 +7,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Login | Placement Training Portal</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet">
 
     <!-- Font Awesome -->
     <link rel="stylesheet"
@@ -21,120 +28,194 @@
 <div class="login-page">
 
     <!-- LEFT SECTION -->
+    <section class="login-left">
 
-    <div class="login-left">
+        <div class="left-overlay"></div>
 
-        <div class="brand">
+        <div class="left-content">
 
-            <div class="brand-logo">🎓</div>
+            <div class="brand">
+                <div class="brand-logo">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
 
-            <h1>Placement Training Portal</h1>
+                <div>
+                    <h2>Placement<span>Portal</span></h2>
+                    <p>YOUR CAREER STARTS HERE</p>
+                </div>
+            </div>
 
-            <p>Learn • Practice • Crack Your Dream Job</p>
+            <div class="hero-content">
+
+                <span class="hero-tag">
+                    <i class="fas fa-sparkles"></i>
+                    YOUR FUTURE, OUR PRIORITY
+                </span>
+
+                <h1>
+                    Build Your Skills.<br>
+                    <span>Achieve Your Dream.</span>
+                </h1>
+
+                <p class="hero-description">
+                    Everything you need to prepare for placements,
+                    improve your skills and confidently start your
+                    professional journey.
+                </p>
+
+                <div class="feature-list">
+
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-laptop-code"></i>
+                        </div>
+                        <div>
+                            <h4>Mock Tests</h4>
+                            <p>Practice and improve your performance</p>
+                        </div>
+                    </div>
+
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-comments"></i>
+                        </div>
+                        <div>
+                            <h4>Interview Preparation</h4>
+                            <p>Prepare for technical and HR rounds</p>
+                        </div>
+                    </div>
+
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                        <div>
+                            <h4>Resume Builder</h4>
+                            <p>Create your professional resume</p>
+                        </div>
+                    </div>
+
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <div>
+                            <h4>AI Performance Analysis</h4>
+                            <p>Discover strengths and improve skills</p>
+                        </div>
+                    </div>
+
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div>
+                            <h4>Placement Dashboard</h4>
+                            <p>Track your preparation journey</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="left-footer">
+                <span>© 2026 Placement Training Portal</span>
+                <span>Learn. Practice. Get Placed.</span>
+            </div>
 
         </div>
-
-        <div class="feature-list">
-
-            <div class="feature-item">
-                <i class="fas fa-circle-check"></i>
-                <span>1000+ Mock Tests</span>
-            </div>
-
-            <div class="feature-item">
-                <i class="fas fa-circle-check"></i>
-                <span>Interview Questions</span>
-            </div>
-
-            <div class="feature-item">
-                <i class="fas fa-circle-check"></i>
-                <span>Resume Builder</span>
-            </div>
-
-            <div class="feature-item">
-                <i class="fas fa-circle-check"></i>
-                <span>AI Performance Analysis</span>
-            </div>
-
-            <div class="feature-item">
-                <i class="fas fa-circle-check"></i>
-                <span>Placement Dashboard</span>
-            </div>
-
-        </div>
-
-    </div>
+    </section>
 
 
     <!-- RIGHT SECTION -->
-
-    <div class="login-right">
+    <section class="login-right">
 
         <div class="login-card">
 
-            <h2>Welcome Back 👋</h2>
+            <!-- MOBILE BRAND -->
+            <div class="mobile-brand">
+                <div class="brand-logo">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <h2>Placement<span>Portal</span></h2>
+            </div>
 
-            <p class="subtitle">
-                Login to continue your placement journey
-            </p>
+            <!-- HEADING -->
+            <div class="login-heading">
+
+                <span class="welcome-label">WELCOME BACK</span>
+
+                <h1>Sign in to your account</h1>
+
+                <p>
+                    Enter your credentials to access your placement dashboard.
+                </p>
+
+            </div>
 
 
             <!-- FLASH MESSAGES -->
-
-            {% with messages = get_flashed_messages() %}
+            {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
-            {% for message in messages %}
-            <div class="flash-message">
-                {{ message }}
+            <div class="flash-container">
+
+                {% for category, message in messages %}
+
+                <div class="flash-message {{ category }}">
+
+                    <i class="fas fa-info-circle"></i>
+
+                    <span>{{ message }}</span>
+
+                </div>
+
+                {% endfor %}
+
             </div>
-            {% endfor %}
             {% endif %}
             {% endwith %}
 
 
             <!-- GOOGLE LOGIN -->
+            <a href="{{ url_for('google_login') }}" class="google-btn">
 
-            <a href="{{ url_for('google_login') }}"
-               class="google-btn">
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+                     alt="Google">
 
-                <img
-                        src="https://developers.google.com/identity/images/g-logo.png"
-                        alt="Google Logo">
-
-                Continue with Google
+                <span>Continue with Google</span>
 
             </a>
 
 
+            <!-- DIVIDER -->
             <div class="divider">
-                <span>OR</span>
+                <span></span>
+                <p>OR CONTINUE WITH EMAIL</p>
+                <span></span>
             </div>
 
 
             <!-- LOGIN FORM -->
-
             <form action="{{ url_for('login') }}"
-                  method="POST">
+                  method="POST"
+                  id="loginForm">
+
 
                 <!-- ROLE SELECTION -->
-
                 <div class="input-group">
 
-                    <label for="role">
-                        Login As
-                    </label>
+                    <label for="role">Login As</label>
 
                     <div class="input-box">
 
                         <i class="fas fa-user-shield"></i>
 
-                        <select
+                        <select name="role"
                                 id="role"
-                                name="role"
                                 required>
 
                             <option value="" disabled selected>
-                                Select Account Type
+                                Select your role
                             </option>
 
                             <option value="student">
@@ -142,7 +223,7 @@
                             </option>
 
                             <option value="admin">
-                                Admin
+                                Administrator
                             </option>
 
                         </select>
@@ -153,24 +234,20 @@
 
 
                 <!-- EMAIL -->
-
                 <div class="input-group">
 
-                    <label for="email">
-                        Email Address
-                    </label>
+                    <label for="email">Email Address</label>
 
                     <div class="input-box">
 
-                        <i class="fas fa-envelope"></i>
+                        <i class="far fa-envelope"></i>
 
-                        <input
-                                type="email"
-                                id="email"
-                                name="email"
-                                placeholder="Enter your email"
-                                autocomplete="email"
-                                required>
+                        <input type="email"
+                               id="email"
+                               name="email"
+                               placeholder="Enter your email address"
+                               autocomplete="email"
+                               required>
 
                     </div>
 
@@ -178,68 +255,66 @@
 
 
                 <!-- PASSWORD -->
-
                 <div class="input-group">
 
-                    <label for="password">
-                        Password
-                    </label>
+                    <label for="password">Password</label>
 
                     <div class="input-box">
 
                         <i class="fas fa-lock"></i>
 
-                        <input
-                                type="password"
-                                id="password"
-                                name="password"
-                                placeholder="Enter password"
-                                autocomplete="current-password"
-                                required>
+                        <input type="password"
+                               id="password"
+                               name="password"
+                               placeholder="Enter your password"
+                               autocomplete="current-password"
+                               required>
 
-                        <i
-                                class="fas fa-eye toggle-password"
-                                onclick="togglePassword()"
-                                title="Show or hide password"
-                                role="button"
-                                tabindex="0">
-                        </i>
+                        <button type="button"
+                                class="toggle-password"
+                                id="togglePassword"
+                                aria-label="Show password">
+
+                            <i class="fas fa-eye"></i>
+
+                        </button>
 
                     </div>
 
                 </div>
 
 
-                <!-- LOGIN OPTIONS -->
-
+                <!-- REMEMBER + FORGOT -->
                 <div class="login-options">
 
                     <label class="remember">
 
-                        <input
-                                type="checkbox"
-                                name="remember"
-                                value="on">
+                        <input type="checkbox"
+                               name="remember"
+                               value="on">
 
-                        Remember Me
+                        <span>Remember me</span>
 
                     </label>
 
-                    <a href="/forgot_password">
-                        Forgot Password?
+                    <a href="/forgot_password"
+                       class="forgot-link">
+
+                        Forgot password?
+
                     </a>
 
                 </div>
 
 
                 <!-- LOGIN BUTTON -->
-
                 <button type="submit"
-                        class="login-btn">
+                        class="login-btn"
+                        id="loginButton">
 
-                    <i class="fas fa-sign-in-alt"></i>
+                    <span>Sign In</span>
 
-                    Login
+                    <i class="fas fa-arrow-right"></i>
 
                 </button>
 
@@ -247,24 +322,36 @@
 
 
             <!-- SIGNUP -->
-
             <div class="bottom-links">
 
-                Don't have an account?
+                <p>
+                    Don't have an account?
 
-                <a href="{{ url_for('signup') }}">
-                    Create Account
-                </a>
+                    <a href="{{ url_for('signup') }}">
+                        Create Account
+                    </a>
+                </p>
+
+            </div>
+
+
+            <!-- SECURITY -->
+            <div class="security-note">
+
+                <i class="fas fa-shield-alt"></i>
+
+                <span>Your information is protected and secure.</span>
 
             </div>
 
         </div>
 
-    </div>
+    </section>
 
 </div>
 
 
+<!-- LOGIN JAVASCRIPT -->
 <script src="{{ url_for('static', filename='js/login.js') }}"></script>
 
 </body>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#111827">
+    <title>{% block title %}Admin Panel | Placement Training Portal{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+    <style>
+        :root{--bg:#f4f6fb;--card:#fff;--ink:#182235;--muted:#7d879b;--line:#e9edf5;--purple:#625cf5;--blue:#4388f5;--green:#19a879;--orange:#f59e0b;--red:#e45c69;--nav:#151b2d;--shadow:0 12px 32px rgba(28,39,70,.07)}
+        *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);font-family:Inter,Arial,sans-serif;color:var(--ink)}a{text-decoration:none;color:inherit}button{font:inherit}
+        .topbar{height:72px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:20}.brand{display:flex;align-items:center;gap:12px;font-weight:800;font-size:17px}.brand-icon{height:42px;width:42px;border-radius:13px;background:linear-gradient(135deg,#5865f2,#8b5cf6);color:#fff;display:grid;place-items:center;font-size:19px}.brand small{display:block;color:var(--muted);font-size:10px;font-weight:600;margin-top:3px;letter-spacing:.8px}.top-right{display:flex;align-items:center;gap:16px}.admin-tag{padding:9px 13px;border-radius:30px;background:#f0efff;color:#554de0;font-size:12px;font-weight:800}.profile{display:flex;align-items:center;gap:9px;font-size:13px;font-weight:700}.avatar{height:36px;width:36px;border-radius:50%;display:grid;place-items:center;background:#625cf5;color:#fff;font-weight:800}
+        .shell{display:flex;min-height:calc(100vh - 72px)}.sidebar{width:248px;flex:0 0 248px;background:var(--nav);color:#fff;padding:24px 14px;display:flex;flex-direction:column}.side-caption{font-size:10px;letter-spacing:1.3px;color:#8290aa;font-weight:800;padding:8px 13px 12px}.nav-link{display:flex;align-items:center;gap:12px;padding:12px 13px;margin:3px 0;border-radius:10px;color:#b8c1d2;font-size:13px;font-weight:600;transition:.18s}.nav-link i{width:18px;text-align:center}.nav-link:hover,.nav-link.active{background:linear-gradient(90deg,rgba(98,92,245,.30),rgba(98,92,245,.10));color:#fff}.side-bottom{margin-top:auto}.main{min-width:0;flex:1;padding:30px clamp(18px,3vw,42px) 45px;max-width:1750px;margin:0 auto;width:100%}
+        .heading{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;margin-bottom:24px}.eyebrow{color:var(--purple);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1.2px}.heading h1{font-size:27px;margin:7px 0;letter-spacing:-.8px}.heading p{margin:0;color:var(--muted);font-size:13px;line-height:1.6}.actions{display:flex;gap:9px;flex-wrap:wrap}.btn{border:1px solid var(--line);background:#fff;border-radius:10px;padding:10px 14px;font-size:12px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:8px}.btn.primary{background:var(--purple);border-color:var(--purple);color:#fff}
+        .stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:15px;margin-bottom:17px}.stat{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow);min-width:0}.stat-top{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:12px;font-weight:600}.stat-icon{height:38px;width:38px;border-radius:12px;display:grid;place-items:center;background:#f0efff;color:var(--purple);font-size:16px}.stat:nth-child(2) .stat-icon{background:#eaf8f2;color:var(--green)}.stat:nth-child(3) .stat-icon{background:#fff5e6;color:var(--orange)}.stat:nth-child(4) .stat-icon{background:#eaf2ff;color:var(--blue)}.stat-value{font-size:28px;font-weight:800;margin:12px 0 4px;letter-spacing:-1px}.stat-note{font-size:10px;color:var(--muted)}
+        .grid{display:grid;grid-template-columns:1.45fr 1fr;gap:16px;margin-bottom:16px}.grid.equal{grid-template-columns:1fr 1fr}.panel{background:#fff;border:1px solid var(--line);border-radius:16px;padding:19px;box-shadow:var(--shadow);min-width:0}.panel-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:14px}.panel h3{font-size:14px;margin:0;font-weight:800}.panel-sub{font-size:11px;color:var(--muted);margin-top:5px}.pill{font-size:10px;color:#6863e8;background:#f1f0ff;border-radius:20px;padding:6px 9px;font-weight:700;white-space:nowrap}.chart-box{height:260px;position:relative}.chart-box.short{height:225px}
+        .lower-grid{display:grid;grid-template-columns:1.25fr .85fr;gap:16px}.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;white-space:nowrap}th{text-align:left;color:#929bad;font-size:10px;text-transform:uppercase;letter-spacing:.6px;padding:11px 9px;border-bottom:1px solid var(--line)}td{padding:12px 9px;border-bottom:1px solid #f0f2f7;font-size:11px}tbody tr:last-child td{border-bottom:0}.user-cell{display:flex;align-items:center;gap:9px}.user-avatar{height:31px;width:31px;border-radius:10px;background:#efefff;color:#625cf5;display:grid;place-items:center;font-weight:800;flex:0 0 31px}.user-name{font-weight:700}.user-email{font-size:10px;color:var(--muted);margin-top:3px}.role{padding:5px 8px;border-radius:20px;background:#f0efff;color:#5e58df;font-size:10px;font-weight:700}.status{padding:5px 8px;border-radius:20px;background:#eaf8f2;color:#13845e;font-size:10px;font-weight:700}.empty{padding:23px 10px;text-align:center;color:var(--muted);font-size:12px;white-space:normal}.activity-list{display:flex;flex-direction:column;max-height:400px;overflow:auto}.activity{display:flex;gap:11px;padding:12px 0;border-bottom:1px solid #f0f2f7}.activity:last-child{border-bottom:0}.activity-icon{height:34px;width:34px;flex:0 0 34px;border-radius:11px;background:#eff2ff;color:#625cf5;display:grid;place-items:center}.activity-text{font-size:11px;line-height:1.55;color:#4d566b}.activity-text strong{color:var(--ink)}.activity-time{font-size:10px;color:#9aa2b2;margin-top:4px}.flash{padding:11px 14px;border-radius:10px;margin-bottom:13px;background:#ecfdf5;color:#08794e;font-size:12px}.flash.error{background:#fff1f2;color:#be123c}.footer{padding:22px 0 4px;text-align:center;color:#9aa2b2;font-size:10px}
+        @media(max-width:1100px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.sidebar{width:215px;flex-basis:215px}.grid,.lower-grid{grid-template-columns:1fr}}
+        @media(max-width:720px){.topbar{padding:0 14px}.brand{font-size:14px}.admin-tag{display:none}.shell{display:block}.sidebar{width:100%;padding:9px;flex-direction:row;overflow-x:auto;gap:4px}.side-caption,.side-bottom{display:none}.nav-link{white-space:nowrap;padding:10px;font-size:11px}.nav-link i{width:auto}.main{padding:21px 13px}.heading{display:block}.actions{margin-top:14px}.stats{gap:10px}.stat{padding:14px}.stat-value{font-size:24px}.panel{padding:15px}.grid.equal{grid-template-columns:1fr}}
+        @media(max-width:390px){.stats{grid-template-columns:1fr 1fr}.profile-name{display:none}.heading h1{font-size:23px}}
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+<header class="topbar">
+    <a class="brand" href="{{ url_for('admin_dashboard') }}">
+        <span class="brand-icon"><i class="fa-solid fa-graduation-cap"></i></span>
+        <span>Placement Portal<small>ADMIN CONTROL CENTER</small></span>
+    </a>
+    <div class="top-right">
+        <span class="admin-tag"><i class="fa-solid fa-shield-halved"></i> ADMIN PANEL</span>
+        <div class="profile">
+            <span class="avatar">{{ (session.get('user_name','A')[:1] if session.get('user_name') else 'A')|upper }}</span>
+            <span class="profile-name">{{ session.get('user_name','Administrator') }}</span>
+        </div>
+    </div>
+</header>
+
+<div class="shell">
+    <aside class="sidebar">
+        <div class="side-caption">ADMIN MENU</div>
+        <a class="nav-link {% if active_admin_page == 'dashboard' %}active{% endif %}" href="{{ url_for('admin_dashboard') }}"><i class="fa-solid fa-chart-pie"></i> Analytics Overview</a>
+        <a class="nav-link {% if active_admin_page == 'users' %}active{% endif %}" href="{{ url_for('admin_users') }}"><i class="fa-solid fa-users"></i> Users &amp; Roles</a>
+        <a class="nav-link {% if active_admin_page == 'mock' %}active{% endif %}" href="{{ url_for('admin_mock_questions') }}"><i class="fa-solid fa-circle-question"></i> Mock Questions</a>
+        <a class="nav-link {% if active_admin_page == 'interview' %}active{% endif %}" href="{{ url_for('admin_interview_questions') }}"><i class="fa-solid fa-comments"></i> Interview Bank</a>
+        <a class="nav-link {% if active_admin_page == 'pyq' %}active{% endif %}" href="{{ url_for('pyq_admin_courses') }}"><i class="fa-solid fa-book-open"></i> PYQ Courses</a>
+        <div class="side-bottom">
+            <div class="side-caption">ACCOUNT</div>
+            <a class="nav-link" href="{{ url_for('logout') }}"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+        </div>
+    </aside>
+
+    <main class="main">
+        {% block admin_content %}{% endblock %}
+    </main>
+</div>
+{% block admin_scripts %}{% endblock %}
+</body>
+</html>
