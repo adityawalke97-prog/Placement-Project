@@ -1014,485 +1014,977 @@ def dashboard():
 # =========================================================
 # MOCK TEST CATEGORIES
 # =========================================================
+# ==========================================================
+# MOCK TEST SYSTEM - BACKEND
+# ==========================================================
 
-@app.route("/mock-categories")
-@login_required
-def mock_categories():
+def get_mock_user_id():
+    """Get logged-in user ID."""
+    return session.get("user_id")
 
-    conn = None
-    cursor = None
+
+def mock_login_required():
+    """Check whether user is logged in."""
+    user_id = get_mock_user_id()
+
+    if not user_id:
+        flash("Please login to continue.", "warning")
+        return False
+
+    return True
+
+
+# ==========================================================
+# 1. MOCK TEST DASHBOARD
+# ==========================================================
+
+@app.route("/mock-tests")
+def mock_test_dashboard():
+
+    if not mock_login_required():
+        return redirect(url_for("login"))
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
 
     try:
-        conn = get_db_connection()
-        cursor = conn.cursor(pymysql.cursors.DictCursor)
-
         cursor.execute("""
             SELECT
-                category,
-                COUNT(*) AS total_questions
-            FROM mock_questions
-            GROUP BY category
-            ORDER BY category
+                c.id,
+                c.course_name,
+                c.education_level,
+                c.level_group,
+                c.slug
+            FROM mock_catalog_courses c
+            WHERE c.is_active = 1
+            ORDER BY c.sort_order, c.course_name
         """)
 
-        categories = cursor.fetchall()
+        courses = cursor.fetchall()
+
+        return render_template("mock_test/mock_test_dashboard.html", courses=courses)
+
+    finally:
+        cursor.close()
+        conn.close()
+
+
+# ==========================================================
+# 2. GET COURSE SUBJECTS
+# ==========================================================
+
+@app.route("/mock-tests/course/<int:course_id>")
+def mock_course_subjects(course_id):
+
+    if not mock_login_required():
+        return redirect(url_for("login"))
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("""
+            SELECT id, course_name
+            FROM mock_catalog_courses
+            WHERE id = %s AND is_active = 1
+        """, (course_id,))
+
+        course = cursor.fetchone()
+
+        if not course:
+            abort(404)
+
+        cursor.execute("""
+            SELECT id, subject_name, sort_order
+            FROM mock_catalog_subjects
+            WHERE course_id = %s
+            ORDER BY sort_order, subject_name
+        """, (course_id,))
+
+        subjects = cursor.fetchall()
 
         return render_template(
-            "mock_categories.html",
-            categories=categories
+            "mock_test/mock_subjects.html",
+            course=course,
+            subjects=subjects
+        )
+
+    finally:
+        cursor.close()
+        conn.close()
+
+
+# ==========================================================
+# 3. CREATE CUSTOM MOCK TEST
+# ==========================================================
+
+@app.route("/mock-tests/create", methods=["GET", "POST"])
+def create_mock_test():
+
+    if not mock_login_required():
+        return redirect(url_for("login"))
+
+    user_id = get_mock_user_id()
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+
+        if request.method == "GET":
+
+            cursor.execute("""
+                SELECT id, course_name
+                FROM mock_catalog_courses
+                WHERE is_active = 1
+                ORDER BY course_name
+            """)
+
+            courses = cursor.fetchall()
+
+            return render_template(
+                "create_mock_test.html",
+                courses=courses
+            )
+
+        title = request.form.get("title", "").strip()
+        description = request.form.get("description", "").strip()
+
+        course_id = request.form.get("course_id", type=int)
+
+        difficulty = request.form.get("difficulty", "Mixed")
+
+        question_count = request.form.get(
+            "question_count", type=int
+        )
+
+        duration = request.form.get(
+            "duration_minutes", type=int
+        )
+
+        subject_ids = request.form.getlist("subject_ids")
+
+        allowed_difficulties = [
+            "Easy", "Medium", "Hard", "Mixed"
+        ]
+
+        if not title or not course_id:
+            flash("Please enter test title and course.", "danger")
+            return redirect(url_for("create_mock_test"))
+
+        if difficulty not in allowed_difficulties:
+            flash("Invalid difficulty.", "danger")
+            return redirect(url_for("create_mock_test"))
+
+        if not question_count or not (1 <= question_count <= 200):
+            flash("Question count must be between 1 and 200.", "danger")
+            return redirect(url_for("create_mock_test"))
+
+        if not duration or not (1 <= duration <= 300):
+            flash("Duration must be between 1 and 300 minutes.", "danger")
+            return redirect(url_for("create_mock_test"))
+
+        subject_ids = list({
+            int(s) for s in subject_ids if s.isdigit()
+        })
+
+        if not subject_ids:
+            flash("Please select at least one subject.", "danger")
+            return redirect(url_for("create_mock_test"))
+
+        placeholders = ",".join(["%s"] * len(subject_ids))
+
+        # Verify selected subjects belong to selected course.
+
+        cursor.execute(f"""
+            SELECT id
+            FROM mock_catalog_subjects
+            WHERE course_id = %s
+            AND id IN ({placeholders})
+        """, [course_id] + subject_ids)
+
+        valid_subjects = cursor.fetchall()
+
+        if len(valid_subjects) != len(subject_ids):
+            flash("Invalid subject selection.", "danger")
+            return redirect(url_for("create_mock_test"))
+
+        # Fetch active questions from question bank.
+
+        difficulty_condition = ""
+
+        params = subject_ids.copy()
+
+        if difficulty != "Mixed":
+            difficulty_condition = "AND difficulty = %s"
+            params.append(difficulty)
+
+        cursor.execute(f"""
+            SELECT id
+            FROM mock_question_bank
+            WHERE subject_id IN ({placeholders})
+            AND is_active = 1
+            {difficulty_condition}
+            ORDER BY RAND()
+            LIMIT %s
+        """, params + [question_count])
+
+        questions = cursor.fetchall()
+
+        if len(questions) < question_count:
+            flash(
+                f"Only {len(questions)} questions available. "
+                "Please reduce question count or add more questions.",
+                "warning"
+            )
+            return redirect(url_for("create_mock_test"))
+
+        share_token = secrets.token_urlsafe(32)
+
+        conn.begin()
+
+        cursor.execute("""
+            INSERT INTO mock_test_catalog (
+                creator_user_id,
+                course_id,
+                title,
+                description,
+                difficulty,
+                question_count,
+                duration_minutes,
+                share_token,
+                visibility,
+                status
+            )
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        """, (
+            user_id,
+            course_id,
+            title,
+            description,
+            difficulty,
+            question_count,
+            duration,
+            share_token,
+            "Link",
+            "Published"
+        ))
+
+        test_id = cursor.lastrowid
+
+        # Save selected subjects.
+
+        for subject_id in subject_ids:
+
+            cursor.execute("""
+                INSERT INTO mock_test_subjects (
+                    test_id,
+                    subject_id
+                )
+                VALUES (%s, %s)
+            """, (test_id, subject_id))
+
+        # Save selected questions.
+
+        for index, question in enumerate(questions, start=1):
+
+            cursor.execute("""
+                INSERT INTO mock_test_questions (
+                    test_id,
+                    question_id,
+                    question_order,
+                    marks
+                )
+                VALUES (%s, %s, %s, %s)
+            """, (
+                test_id,
+                question["id"],
+                index,
+                1
+            ))
+
+        conn.commit()
+
+        flash("Mock test created successfully!", "success")
+
+        return redirect(
+            url_for(
+                "mock_test_leaderboard",
+                share_token=share_token
+            )
         )
 
     except Exception as e:
 
-        app.logger.exception(
-            "MOCK CATEGORIES ERROR: %s",
-            e
-        )
+        conn.rollback()
+        print("MOCK TEST CREATE ERROR:", e)
 
-        flash(
-            "Unable to load mock test categories.",
-            "danger"
-        )
+        flash("Unable to create mock test.", "danger")
 
-        return redirect(url_for("dashboard"))
+        return redirect(url_for("create_mock_test"))
 
     finally:
+        cursor.close()
+        conn.close()
 
-        if cursor:
-            cursor.close()
 
-        if conn:
-            conn.close()
-@app.route("/mock_test")
-def mock_test():
-    if "user_id" not in session:
-        flash("Please login first.", "warning")
+# ==========================================================
+# 4. ATTEMPT MOCK TEST
+# ==========================================================
+
+@app.route("/mock-test/<share_token>")
+def attempt_mock_test(share_token):
+
+    if not mock_login_required():
         return redirect(url_for("login"))
 
-    category = request.args.get("category", "").strip()
-    level = request.args.get("level", "").strip()
+    user_id = get_mock_user_id()
 
-    conn = None
-    cursor = None
+    conn = get_db_connection()
+    cursor = conn.cursor()
 
     try:
-        conn = get_db_connection()
-        cursor = conn.cursor(pymysql.cursors.DictCursor)
 
-        # Base Query
-        query = """
+        cursor.execute("""
+            SELECT *
+            FROM mock_test_catalog
+            WHERE share_token = %s
+            AND status = 'Published'
+        """, (share_token,))
+
+        test = cursor.fetchone()
+
+        if not test:
+            abort(404)
+
+        if test["visibility"] == "Private" and test["creator_user_id"] != user_id:
+            abort(403)
+
+        cursor.execute("""
             SELECT
-                id,
-                question,
-                option1,
-                option2,
-                option3,
-                option4,
-                answer,
-                category,
-                level
-            FROM mock_questions
-            WHERE 1=1
-        """
+                qb.id,
+                qb.question_text,
+                qb.option_a,
+                qb.option_b,
+                qb.option_c,
+                qb.option_d,
+                mtq.question_order,
+                mtq.marks
 
-        params = []
+            FROM mock_test_questions mtq
 
-        if category:
-            query += " AND category = %s"
-            params.append(category)
+            JOIN mock_question_bank qb
+                ON qb.id = mtq.question_id
 
-        if level:
-            query += " AND level = %s"
-            params.append(level)
+            WHERE mtq.test_id = %s
+            AND qb.is_active = 1
 
-        query += " ORDER BY RAND() LIMIT 20"
+            ORDER BY mtq.question_order
+        """, (test["id"],))
 
-        cursor.execute(query, tuple(params))
+        questions = cursor.fetchall()
+
+        if len(questions) != test["question_count"]:
+            flash("Some questions are unavailable.", "danger")
+            return redirect(url_for("mock_test_dashboard"))
+
+        # Create new attempt.
+
+        conn.begin()
+
+        cursor.execute("""
+            INSERT INTO mock_attempts (
+                test_id,
+                user_id,
+                total_questions,
+                total_marks,
+                status
+            )
+            VALUES (%s, %s, %s, %s, 'In Progress')
+        """, (
+            test["id"],
+            user_id,
+            len(questions),
+            sum(q["marks"] for q in questions)
+        ))
+
+        attempt_id = cursor.lastrowid
+
+        conn.commit()
+
+        return render_template(
+            "mock_test_attempt.html",
+            test=test,
+            questions=questions,
+            attempt_id=attempt_id
+        )
+
+    except Exception as e:
+
+        conn.rollback()
+        print("MOCK TEST ATTEMPT ERROR:", e)
+
+        flash("Unable to start test.", "danger")
+        return redirect(url_for("mock_test_dashboard"))
+
+    finally:
+        cursor.close()
+        conn.close()
+
+# ==========================================================
+# START SUBJECT-WISE MOCK TEST
+# ==========================================================
+
+@app.route("/mock-tests/subject/<int:subject_id>/start", methods=["POST"])
+def start_subject_mock_test(subject_id):
+
+    if not mock_login_required():
+        return redirect(url_for("login"))
+
+    user_id = get_mock_user_id()
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        # 1. Get subject and course details
+        cursor.execute("""
+            SELECT
+                s.id AS subject_id,
+                s.subject_name,
+                c.id AS course_id,
+                c.course_name
+            FROM mock_catalog_subjects s
+            JOIN mock_catalog_courses c
+                ON c.id = s.course_id
+            WHERE s.id = %s
+            AND c.is_active = 1
+        """, (subject_id,))
+
+        subject = cursor.fetchone()
+
+        if not subject:
+            abort(404)
+
+        # 2. Fetch available questions
+        cursor.execute("""
+            SELECT id
+            FROM mock_question_bank
+            WHERE subject_id = %s
+            AND is_active = 1
+            ORDER BY RAND()
+            LIMIT 20
+        """, (subject_id,))
+
         questions = cursor.fetchall()
 
         if not questions:
-            flash("No questions found for the selected category.", "warning")
-            return redirect(url_for("mock_categories"))
+            flash(
+                "No questions available for this subject yet.",
+                "warning"
+            )
+            return redirect(
+                url_for(
+                    "mock_course_subjects",
+                    course_id=subject["course_id"]
+                )
+            )
 
-        # Remove old session data
-        session.pop("mock_answers", None)
-        session.pop("mock_score", None)
+        question_count = len(questions)
 
-        # Save question IDs and answers in session
-        session["mock_question_ids"] = [q["id"] for q in questions]
+        # 3. Generate test details
+        title = subject["subject_name"] + " Mock Test"
+        duration = max(10, question_count)
 
-        session["correct_answers"] = {
-            str(q["id"]): q["answer"]
-            for q in questions
-        }
+        share_token = secrets.token_urlsafe(32)
 
-        session["mock_category"] = category
-        session["mock_level"] = level
+        # 4. Start database transaction
+        conn.begin()
 
-        # Send only safe data to frontend
-        safe_questions = []
+        cursor.execute("""
+            INSERT INTO mock_test_catalog (
+                creator_user_id,
+                course_id,
+                title,
+                description,
+                difficulty,
+                question_count,
+                duration_minutes,
+                share_token,
+                visibility,
+                status
+            )
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        """, (
+            user_id,
+            subject["course_id"],
+            title,
+            "Subject-wise practice mock test",
+            "Mixed",
+            question_count,
+            duration,
+            share_token,
+            "Link",
+            "Published"
+        ))
 
-        for q in questions:
-            safe_questions.append({
-                "id": q["id"],
-                "question": q["question"],
-                "option1": q["option1"],
-                "option2": q["option2"],
-                "option3": q["option3"],
-                "option4": q["option4"],
-                "category": q["category"],
-                "level": q["level"]
-            })
+        test_id = cursor.lastrowid
 
-        return render_template(
-            "mock_test.html",
-            questions=safe_questions,
-            category=category,
-            level=level
+        # 5. Save selected subject
+        cursor.execute("""
+            INSERT INTO mock_test_subjects (
+                test_id,
+                subject_id
+            )
+            VALUES (%s, %s)
+        """, (test_id, subject_id))
+
+        # 6. Save selected questions
+        for index, question in enumerate(questions, start=1):
+
+            cursor.execute("""
+                INSERT INTO mock_test_questions (
+                    test_id,
+                    question_id,
+                    question_order,
+                    marks
+                )
+                VALUES (%s, %s, %s, %s)
+            """, (
+                test_id,
+                question["id"],
+                index,
+                1
+            ))
+
+        conn.commit()
+
+        # 7. Open existing test engine
+        return redirect(
+            url_for(
+                "attempt_mock_test",
+                share_token=share_token
+            )
         )
 
     except Exception as e:
-        app.logger.exception(f"Mock Test Error: {e}")
-        flash("Unable to load mock test. Please try again.", "danger")
-        return redirect(url_for("mock_categories"))
+
+        conn.rollback()
+
+        print("SUBJECT MOCK TEST ERROR:", e)
+
+        flash("Unable to start subject mock test.", "danger")
+
+        return redirect(
+            url_for(
+                "mock_course_subjects",
+                course_id=subject["course_id"]
+            ) if "subject" in locals() and subject else
+            url_for("mock_test_dashboard")
+        )
 
     finally:
-        if cursor:
-            cursor.close()
-        if conn:
-            conn.close()
+        cursor.close()
+        conn.close()
+# ==========================================================
+# 5. SUBMIT MOCK TEST
+# ==========================================================
 
-@app.route("/submit_mock_test", methods=["POST"])
-@login_required
-def submit_mock_test():
+@app.route("/mock-test/submit/<int:attempt_id>", methods=["POST"])
+def submit_mock_test(attempt_id):
 
-    conn = None
-    cursor = None
+    if not mock_login_required():
+        return redirect(url_for("login"))
+
+    user_id = get_mock_user_id()
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
 
     try:
-        user_id = session.get("user_id")
 
-        if not user_id:
-            return redirect(url_for("login"))
-
-        category = session.get("mock_category", "General")
-        level = session.get("mock_level", "")
-
-        question_ids = session.get("mock_question_ids", [])
-        correct_answers = session.get("correct_answers", {})
-
-        if not question_ids:
-            flash("Mock test session expired. Please start the test again.", "warning")
-            return redirect(url_for("mock_categories"))
-
-        score = 0
-        wrong = 0
-        skipped = 0
-
-        for qid in question_ids:
-
-            submitted = request.form.get(f"question_{qid}")
-
-            # Correct answer get karo
-            correct = None
-
-            if isinstance(correct_answers, dict):
-
-                correct = correct_answers.get(str(qid))
-
-                if correct is None:
-                    correct = correct_answers.get(qid)
-
-            elif isinstance(correct_answers, list):
-
-                try:
-                    index = question_ids.index(qid)
-                    correct = correct_answers[index]
-                except:
-                    correct = None
-
-            # Answer checking
-            if submitted is None or str(submitted).strip() == "":
-                skipped += 1
-
-            elif correct is not None and \
-                    str(submitted).strip() == str(correct).strip():
-
-                score += 1
-
-            else:
-                wrong += 1
-
-        total = len(question_ids)
-
-        percentage = round(
-            (score / total) * 100, 2
-        ) if total > 0 else 0
-
-        # ================= DATABASE =================
-
-        conn = get_db_connection()
-        cursor = conn.cursor(pymysql.cursors.DictCursor)
+        conn.begin()
 
         cursor.execute("""
-            INSERT INTO results
-            (
-                user_id,
-                test_type,
-                category,
-                score,
-                total_questions,
-                percentage
+            SELECT *
+            FROM mock_attempts
+            WHERE id = %s
+            AND user_id = %s
+            FOR UPDATE
+        """, (attempt_id, user_id))
+
+        attempt = cursor.fetchone()
+
+        if not attempt:
+            conn.rollback()
+            abort(404)
+
+        if attempt["status"] != "In Progress":
+            conn.rollback()
+
+            return redirect(
+                url_for(
+                    "mock_test_result",
+                    attempt_id=attempt_id
+                )
             )
-            VALUES
-            (
-                %s,
-                %s,
-                %s,
-                %s,
-                %s,
-                %s
+
+        cursor.execute("""
+            SELECT
+                qb.id,
+                qb.correct_option,
+                mtq.marks
+
+            FROM mock_test_questions mtq
+
+            JOIN mock_question_bank qb
+                ON qb.id = mtq.question_id
+
+            WHERE mtq.test_id = %s
+        """, (attempt["test_id"],))
+
+        questions = cursor.fetchall()
+
+        correct = 0
+        wrong = 0
+        attempted = 0
+        obtained_marks = 0
+
+        for question in questions:
+
+            question_id = question["id"]
+
+            selected = request.form.get(
+                f"question_{question_id}"
             )
+
+            if selected:
+                selected = selected.upper()
+
+            if selected not in ["A", "B", "C", "D"]:
+                selected = None
+
+            correct_option = question["correct_option"].upper()
+
+            is_correct = (
+                selected is not None
+                and selected == correct_option
+            )
+
+            marks_awarded = (
+                question["marks"] if is_correct else 0
+            )
+
+            if selected:
+                attempted += 1
+
+                if is_correct:
+                    correct += 1
+                    obtained_marks += marks_awarded
+                else:
+                    wrong += 1
+
+            cursor.execute("""
+                INSERT INTO mock_attempt_answers (
+                    attempt_id,
+                    question_id,
+                    selected_option,
+                    correct_option,
+                    is_correct,
+                    marks_awarded,
+                    answered_at
+                )
+                VALUES (%s, %s, %s, %s, %s, %s, NOW())
+            """, (
+                attempt_id,
+                question_id,
+                selected,
+                correct_option,
+                1 if is_correct else 0,
+                marks_awarded
+            ))
+
+        total_questions = len(questions)
+
+        unanswered = total_questions - attempted
+
+        total_marks = sum(q["marks"] for q in questions)
+
+        percentage = (
+            (obtained_marks / total_marks) * 100
+            if total_marks > 0 else 0
+        )
+
+        cursor.execute("""
+            SELECT started_at
+            FROM mock_attempts
+            WHERE id = %s
+        """, (attempt_id,))
+
+        started = cursor.fetchone()["started_at"]
+
+        time_taken = max(
+            0,
+            int((datetime.now() - started).total_seconds())
+        )
+
+        cursor.execute("""
+            UPDATE mock_attempts
+            SET
+                attempted_questions = %s,
+                correct_answers = %s,
+                wrong_answers = %s,
+                unanswered_questions = %s,
+                obtained_marks = %s,
+                total_marks = %s,
+                percentage = %s,
+                time_taken_seconds = %s,
+                submitted_at = NOW(),
+                status = 'Submitted'
+
+            WHERE id = %s
         """, (
-            user_id,
-            "Mock Test",
-            category,
-            score,
-            total,
-            percentage
+            attempted,
+            correct,
+            wrong,
+            unanswered,
+            obtained_marks,
+            total_marks,
+            round(percentage, 2),
+            time_taken,
+            attempt_id
         ))
 
         conn.commit()
 
-        result_id = cursor.lastrowid
-
-        # ================= SAVE RESULT IN SESSION =================
-
-        session["last_mock_result"] = {
-            "result_id": result_id,
-            "wrong": wrong,
-            "skipped": skipped,
-            "level": level
-        }
-
-        # ================= CLEAR TEST SESSION =================
-
-        session.pop("mock_question_ids", None)
-        session.pop("correct_answers", None)
-
-        # ================= SHOW RESULT =================
-
         return redirect(
             url_for(
-                "mock_result",
-                result_id=result_id
+                "mock_test_result",
+                attempt_id=attempt_id
             )
         )
 
     except Exception as e:
 
-        if conn:
-            conn.rollback()
+        conn.rollback()
 
-        app.logger.exception(
-            "SUBMIT MOCK TEST ERROR: %s",
-            e
-        )
+        print("MOCK TEST SUBMIT ERROR:", e)
 
-        flash(
-            "Mock test submit failed.",
-            "danger"
-        )
+        flash("Unable to submit test.", "danger")
 
-        return redirect(
-            url_for("mock_test")
-        )
+        return redirect(url_for("mock_test_dashboard"))
 
     finally:
+        cursor.close()
+        conn.close()
 
-        if cursor:
-            cursor.close()
 
-        if conn:
-            conn.close()
-@app.route("/mock_result/<int:result_id>")
-@login_required
-def mock_result(result_id):
+# ==========================================================
+# 6. MOCK TEST RESULT
+# ==========================================================
 
-    conn = None
-    cursor = None
+@app.route("/mock-test/result/<int:attempt_id>")
+def mock_test_result(attempt_id):
+
+    if not mock_login_required():
+        return redirect(url_for("login"))
+
+    user_id = get_mock_user_id()
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
 
     try:
 
-        user_id = session.get("user_id")
-
-        if not user_id:
-            return redirect(url_for("login"))
-
-        conn = get_db_connection()
-        cursor = conn.cursor(pymysql.cursors.DictCursor)
-
         cursor.execute("""
             SELECT
-                id,
-                user_id,
-                test_type,
-                category,
-                score,
-                total_questions,
-                percentage
-            FROM results
-            WHERE id = %s
-            AND user_id = %s
-            LIMIT 1
-        """, (
-            result_id,
-            user_id
-        ))
+                a.*,
+                t.title,
+                t.share_token,
+                u.name
+
+            FROM mock_attempts a
+
+            JOIN mock_test_catalog t
+                ON t.id = a.test_id
+
+            JOIN users u
+                ON u.id = a.user_id
+
+            WHERE a.id = %s
+            AND a.user_id = %s
+        """, (attempt_id, user_id))
 
         result = cursor.fetchone()
 
         if not result:
+            abort(404)
 
-            flash(
-                "Mock test result not found.",
-                "warning"
-            )
+        cursor.execute("""
+            SELECT
+                aa.question_id,
+                aa.selected_option,
+                aa.correct_option,
+                aa.is_correct,
+                aa.marks_awarded,
+                qb.question_text,
+                qb.option_a,
+                qb.option_b,
+                qb.option_c,
+                qb.option_d,
+                qb.explanation
 
-            return redirect(
-                url_for("mock_categories")
-            )
+            FROM mock_attempt_answers aa
 
-        # Session result
-        last_result = session.get(
-            "last_mock_result",
-            {}
-        )
+            JOIN mock_question_bank qb
+                ON qb.id = aa.question_id
 
-        if isinstance(last_result, dict):
+            WHERE aa.attempt_id = %s
 
-            wrong = last_result.get(
-                "wrong",
-                max(
-                    0,
-                    (result["total_questions"] or 0)
-                    -
-                    (result["score"] or 0)
-                )
-            )
+            ORDER BY aa.id
+        """, (attempt_id,))
 
-            skipped = last_result.get(
-                "skipped",
-                0
-            )
-
-            level = last_result.get(
-                "level",
-                ""
-            )
-
-        else:
-
-            wrong = max(
-                0,
-                (result["total_questions"] or 0)
-                -
-                (result["score"] or 0)
-            )
-
-            skipped = 0
-            level = ""
+        answers = cursor.fetchall()
 
         return render_template(
-            "mock_result.html",
+            "mock_test_result.html",
             result=result,
-            wrong=wrong,
-            skipped=skipped,
-            level=level
-        )
-
-    except Exception as e:
-
-        app.logger.exception(
-            "MOCK RESULT ERROR: %s",
-            e
-        )
-
-        flash(
-            "Unable to load mock test result.",
-            "danger"
-        )
-
-        return redirect(
-            url_for("mock_categories")
+            answers=answers
         )
 
     finally:
+        cursor.close()
+        conn.close()
 
-        if cursor:
-            cursor.close()
 
-        if conn:
-            conn.close()
-@app.route("/mock_test_history")
-def mock_test_history():
+# ==========================================================
+# 7. MOCK TEST LEADERBOARD
+# ==========================================================
 
-    if "user_id" not in session:
-        flash("Please login first.", "warning")
+@app.route("/mock-test/leaderboard/<share_token>")
+def mock_test_leaderboard(share_token):
+
+    if not mock_login_required():
         return redirect(url_for("login"))
 
-    user_id = session["user_id"]
-
-    conn = None
-    cursor = None
+    conn = get_db_connection()
+    cursor = conn.cursor()
 
     try:
-
-        conn = get_db_connection()
-        cursor = conn.cursor(pymysql.cursors.DictCursor)
 
         cursor.execute("""
             SELECT
                 id,
-                score,
-                total_questions,
-                percentage,
-                test_date
-            FROM results
-            WHERE user_id = %s
-            ORDER BY test_date DESC
-        """, (user_id,))
+                title,
+                question_count,
+                duration_minutes,
+                share_token
 
-        results = cursor.fetchall()
+            FROM mock_test_catalog
+
+            WHERE share_token = %s
+        """, (share_token,))
+
+        test = cursor.fetchone()
+
+        if not test:
+            abort(404)
+
+        cursor.execute("""
+            SELECT
+                ROW_NUMBER() OVER (
+                    ORDER BY
+                        a.percentage DESC,
+                        a.time_taken_seconds ASC,
+                        a.submitted_at ASC
+                ) AS rank_position,
+
+                u.name,
+                a.correct_answers,
+                a.wrong_answers,
+                a.obtained_marks,
+                a.total_marks,
+                a.percentage,
+                a.time_taken_seconds,
+                a.submitted_at
+
+            FROM mock_attempts a
+
+            JOIN users u
+                ON u.id = a.user_id
+
+            WHERE a.test_id = %s
+
+            AND a.status IN (
+                'Submitted',
+                'Auto Submitted'
+            )
+
+            ORDER BY
+                a.percentage DESC,
+                a.time_taken_seconds ASC,
+                a.submitted_at ASC
+        """, (test["id"],))
+
+        leaderboard = cursor.fetchall()
 
         return render_template(
-            "mock_test_history.html",
-            results=results
-        )
-
-    except Exception:
-
-        app.logger.exception(
-            "Mock test history error"
-        )
-
-        flash(
-            "Unable to load test history.",
-            "danger"
-        )
-
-        return redirect(
-            url_for("dashboard")
+            "mock_test_leaderboard.html",
+            test=test,
+            leaderboard=leaderboard
         )
 
     finally:
+        cursor.close()
+        conn.close()
 
-        if cursor:
-            cursor.close()
 
-        if conn:
-            conn.close()
-            # =========================================================
+# ==========================================================
+# 8. MY CREATED MOCK TESTS
+# ==========================================================
+
+@app.route("/my-mock-tests")
+def my_mock_tests():
+
+    if not mock_login_required():
+        return redirect(url_for("login"))
+
+    user_id = get_mock_user_id()
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+
+        cursor.execute("""
+            SELECT
+                t.*,
+                COUNT(DISTINCT a.id) AS total_attempts
+
+            FROM mock_test_catalog t
+
+            LEFT JOIN mock_attempts a
+                ON a.test_id = t.id
+                AND a.status IN ('Submitted', 'Auto Submitted')
+
+            WHERE t.creator_user_id = %s
+
+            GROUP BY t.id
+
+            ORDER BY t.created_at DESC
+        """, (user_id,))
+
+        tests = cursor.fetchall()
+
+        return render_template(
+            "my_mock_tests.html",
+            tests=tests
+        )
+
+    finally:
+        cursor.close()
+        conn.close()
+
 # PART 4 — INTERVIEW QUESTIONS
 # =========================================================
 @app.route("/interview")
@@ -1542,9 +2034,6 @@ def interview_questions():
             pymysql.cursors.DictCursor
         )
 
-        # =================================================
-        # BUILD FILTER CONDITIONS
-        # =================================================
         conditions = []
         params = []
 

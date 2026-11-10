@@ -20,11 +20,8 @@
             <p>
                 Continue your placement preparation and improve your placement skills every day.
             </p>
-
             <div class="hero-buttons">
-
-                <a href="{{ url_for('mock_categories') }}" class="btn-primary">
-
+                <a href="{{ url_for('mock_test_dashboard') }}" class="btn-primary">
                     <i class="fas fa-play"></i>
                     Start Mock Test
                 </a>
@@ -45,79 +42,36 @@
             </div>
         </div>
     </div>
-
 </section>
-
-
-
 <!-- ================= STATS ================= -->
-
 <section class="stats-grid">
-
     <div class="stat-card glass">
-
         <i class="fas fa-file-circle-question"></i>
-
         <h2>{{ total_tests }}</h2>
-
         <p>Mock Tests</p>
-
     </div>
-
-
-
     <div class="stat-card glass">
-
         <i class="fas fa-chart-line"></i>
-
         <h2>{{ avg_score }}%</h2>
-
         <p>Average Score</p>
-
     </div>
-
-
-
     <div class="stat-card glass">
-
         <i class="fas fa-fire"></i>
-
         <h2>{{ streak }}</h2>
-
         <p>Current Streak</p>
-
     </div>
-
-
-
     <div class="stat-card glass">
-
         <i class="fas fa-trophy"></i>
-
         <h2>#{{ rank }}</h2>
-
         <p>Leaderboard Rank</p>
-
     </div>
-
-
-
     <div class="stat-card glass">
-
         <i class="fas fa-building"></i>
-
         <h2>{{ companies }}</h2>
-
         <p>Companies Ready</p>
-
     </div>
-
-
-
     <div class="stat-card glass">
-
         <i class="fas fa-book"></i>
-
         <h2>{{ completed_courses }}</h2>
 
         <p>Completed Courses</p>
@@ -239,8 +193,7 @@
 
 <section class="quick-grid">
 
-    <a href="{{ url_for('mock_categories') }}" class="quick-card glass">
-        <i class="fas fa-play-circle"></i>
+    <a href="{{ url_for('mock_test_dashboard') }}" class="quick-card glass">        <i class="fas fa-play-circle"></i>
         <h4>Mock Test</h4>
         <p>Practice MCQs</p>
     </a>
@@ -418,10 +371,8 @@
 
         </h3>
 
-        <a href="{{ url_for('mock_test_history') }}">
-
+        <a href="{{ url_for('my_mock_tests') }}">
             View All
-
         </a>
 
     </div>

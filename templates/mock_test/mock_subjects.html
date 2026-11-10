@@ -1,0 +1,301 @@
+{% extends "layout.html" %}
+
+{% block title %}{{ course.course_name }} - Mock Test Subjects{% endblock %}
+
+{% block content %}
+
+<style>
+    .subject-page {
+        max-width: 1250px;
+        margin: 35px auto;
+        padding: 25px;
+        color: var(--text-color, #1e293b);
+    }
+
+    .subject-hero {
+        padding: 35px;
+        margin-bottom: 30px;
+        border-radius: 22px;
+        color: white;
+        background: linear-gradient(120deg, #172554, #4338ca, #7c3aed);
+        box-shadow: 0 12px 35px rgba(79,70,229,.18);
+    }
+
+    .subject-hero h1 {
+        font-size: clamp(26px, 4vw, 36px);
+        font-weight: 800;
+        margin: 20px 0 10px;
+    }
+
+    .subject-hero p {
+        color: #ddd6fe;
+        line-height: 1.7;
+        margin: 0;
+    }
+
+    .back-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 25px;
+        padding: 11px 18px;
+        border-radius: 10px;
+        background: #6366f1;
+        color: white;
+        text-decoration: none;
+        font-weight: 700;
+        transition: .25s;
+    }
+
+    .back-button:hover {
+        background: #4f46e5;
+        color: white;
+        transform: translateX(-3px);
+    }
+
+    .subject-stats {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 22px;
+    }
+
+    .subject-stat {
+        padding: 10px 15px;
+        border-radius: 10px;
+        background: rgba(255,255,255,.13);
+        border: 1px solid rgba(255,255,255,.15);
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .section-heading {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin: 30px 0 20px;
+    }
+
+    .section-heading h2 {
+        font-size: 23px;
+        font-weight: 800;
+        margin: 0;
+    }
+
+    .subject-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+    }
+
+    .subject-card {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        padding: 25px;
+        border-radius: 18px;
+        border: 1px solid rgba(128,128,128,.23);
+        background: var(--card-bg, rgba(128,128,128,.08));
+        transition: .25s ease;
+        overflow: hidden;
+    }
+
+    .subject-card:hover {
+        transform: translateY(-6px);
+        border-color: #6366f1;
+        box-shadow: 0 12px 28px rgba(99,102,241,.12);
+    }
+
+    .subject-icon {
+        width: 48px;
+        height: 48px;
+        display: grid;
+        place-items: center;
+        border-radius: 14px;
+        background: rgba(99,102,241,.14);
+        color: #6366f1;
+        font-size: 21px;
+        margin-bottom: 17px;
+    }
+
+    .subject-number {
+        color: #6366f1;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: .7px;
+    }
+
+    .subject-card h3 {
+        margin: 10px 0;
+        font-size: 19px;
+        font-weight: 800;
+    }
+
+    .subject-card p {
+        color: #888;
+        font-size: 13px;
+        line-height: 1.6;
+        margin-bottom: 20px;
+        flex-grow: 1;
+    }
+
+    .subject-start-btn {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        padding: 13px 16px;
+        border: none;
+        border-radius: 11px;
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        color: white;
+        font-size: 14px;
+        font-weight: 750;
+        cursor: pointer;
+        transition: .25s ease;
+    }
+
+    .subject-start-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(99,102,241,.3);
+    }
+
+    .subject-start-btn:active {
+        transform: scale(.98);
+    }
+
+    .empty-state {
+        padding: 45px 25px;
+        text-align: center;
+        border-radius: 18px;
+        border: 1px dashed rgba(128,128,128,.4);
+        background: rgba(128,128,128,.06);
+    }
+
+    .empty-state i {
+        font-size: 38px;
+        color: #818cf8;
+        margin-bottom: 15px;
+    }
+
+    @media(max-width:600px) {
+        .subject-page {
+            padding: 15px;
+        }
+
+        .subject-hero {
+            padding: 25px 20px;
+        }
+
+        .subject-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="subject-page">
+
+    <a href="{{ url_for('mock_test_dashboard') }}" class="back-button">
+        <i class="fas fa-arrow-left"></i>
+        Back to Courses
+    </a>
+
+    <section class="subject-hero">
+
+        <span class="subject-stat">
+            <i class="fas fa-graduation-cap"></i>
+            MOCK TEST PREPARATION
+        </span>
+
+        <h1>{{ course.course_name }}</h1>
+
+        <p>
+            Select your subject and start practising.
+            Test your knowledge, improve your accuracy
+            and prepare yourself for success.
+        </p>
+
+        <div class="subject-stats">
+
+            <div class="subject-stat">
+                <i class="fas fa-book"></i>
+                {{ subjects|length }} Subjects Available
+            </div>
+
+            <div class="subject-stat">
+                <i class="fas fa-clock"></i>
+                Timed Practice
+            </div>
+
+            <div class="subject-stat">
+                <i class="fas fa-chart-line"></i>
+                Performance Tracking
+            </div>
+
+        </div>
+
+    </section>
+
+    <div class="section-heading">
+        <h2>
+            <i class="fas fa-layer-group"></i>
+            Explore Subjects
+        </h2>
+    </div>
+
+    {% if subjects %}
+
+    <div class="subject-grid">
+
+        {% for subject in subjects %}
+
+        <div class="subject-card">
+
+            <div class="subject-icon">
+                <i class="fas fa-book-open"></i>
+            </div>
+
+            <span class="subject-number">
+                SUBJECT {{ "%02d"|format(loop.index) }}
+            </span>
+
+            <h3>{{ subject.subject_name }}</h3>
+
+            <p>
+                Practise MCQs, test your understanding
+                and improve your subject knowledge.
+            </p>
+
+            <form method="POST"
+                  action="{{ url_for('start_subject_mock_test', subject_id=subject.id) }}">
+
+                <button type="submit" class="subject-start-btn">
+                    <i class="fas fa-play-circle"></i>
+                    Start Mock Test
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+
+            </form>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+    {% else %}
+
+    <div class="empty-state">
+        <i class="fas fa-book-open"></i>
+        <h3>No Subjects Available</h3>
+        <p>Subjects have not been added for this course yet.</p>
+    </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}
