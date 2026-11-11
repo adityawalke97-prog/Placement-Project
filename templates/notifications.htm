@@ -1,0 +1,377 @@
+{% extends "layout.html" %}
+
+{% block title %}Notifications - Placement Portal{% endblock %}
+
+{% block css %}
+
+<style>
+
+.notifications-page {
+    max-width: 1000px;
+    margin: 35px auto;
+    padding: 20px;
+}
+
+.notifications-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.notifications-header h1 {
+    margin: 0;
+    font-size: 28px;
+    color: #172554;
+}
+
+.notifications-header p {
+    color: #64748b;
+    font-size: 13px;
+}
+
+.notification-count {
+    display: inline-block;
+    padding: 5px 12px;
+    border-radius: 20px;
+    background: #dbeafe;
+    color: #2563eb;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.notification-tabs {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 22px;
+}
+
+.notification-tab {
+    padding: 10px 18px;
+    border-radius: 10px;
+    background: white;
+    border: 1px solid #e2e8f0;
+    color: #475569;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.notification-tab.active,
+.notification-tab:hover {
+    background: #2563eb;
+    color: white;
+}
+
+.notification-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.notification-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    padding: 19px;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    transition: .2s;
+}
+
+.notification-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,0,0,.05);
+}
+
+.notification-item.unread {
+    background: #eff6ff;
+    border-color: #bfdbfe;
+}
+
+.notification-icon {
+    width: 43px;
+    height: 43px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: 12px;
+    background: #dbeafe;
+    color: #2563eb;
+    font-size: 17px;
+}
+
+.notification-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.notification-content h3 {
+    margin: 0 0 5px;
+    font-size: 14px;
+    color: #1e293b;
+}
+
+.notification-content p {
+    margin: 0;
+    color: #64748b;
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+.notification-date {
+    display: block;
+    margin-top: 7px;
+    font-size: 10px;
+    color: #94a3b8;
+}
+
+.notification-actions {
+    display: flex;
+    gap: 7px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.notification-action {
+    padding: 7px 11px;
+    border: none;
+    border-radius: 8px;
+    background: #2563eb;
+    color: white;
+    font-size: 11px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.notification-action.secondary {
+    background: #e2e8f0;
+    color: #334155;
+}
+
+.notification-empty {
+    padding: 60px 20px;
+    background: white;
+    border: 1px dashed #cbd5e1;
+    border-radius: 16px;
+    text-align: center;
+    color: #64748b;
+}
+
+.notification-empty i {
+    font-size: 45px;
+    color: #94a3b8;
+    margin-bottom: 15px;
+}
+
+.notification-empty h3 {
+    color: #334155;
+}
+
+@media(max-width:600px) {
+
+    .notifications-page {
+        padding: 12px;
+    }
+
+    .notifications-header h1 {
+        font-size: 23px;
+    }
+
+    .notification-item {
+        padding: 13px;
+    }
+
+}
+
+</style>
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="notifications-page">
+
+
+    <!-- HEADER -->
+
+    <div class="notifications-header">
+
+        <div>
+
+            <h1>
+                <i class="fas fa-bell"></i>
+                Notifications
+            </h1>
+
+            <p>
+                Stay updated with your placement preparation activities.
+            </p>
+
+        </div>
+
+        <span class="notification-count">
+
+            {{ unread_count|default(0) }} Unread
+
+        </span>
+
+    </div>
+
+
+    <!-- FILTER TABS -->
+
+    <div class="notification-tabs">
+
+        <a href="/notifications"
+           class="notification-tab active">
+            All Notifications
+        </a>
+
+        <a href="/notifications?filter=unread"
+           class="notification-tab">
+            Unread
+        </a>
+
+        <a href="/notifications?filter=read"
+           class="notification-tab">
+            Read
+        </a>
+
+    </div>
+
+
+    <!-- NOTIFICATIONS -->
+
+    <div class="notification-list">
+
+        {% for notification in notifications|default([], true) %}
+
+        <div class="notification-item
+            {% if not notification.is_read %}unread{% endif %}">
+
+
+            <!-- ICON -->
+
+            <div class="notification-icon">
+
+                {% if notification.type == 'friend' %}
+
+                    <i class="fas fa-user-plus"></i>
+
+                {% elif notification.type == 'message' %}
+
+                    <i class="fas fa-message"></i>
+
+                {% elif notification.type == 'mock_test' %}
+
+                    <i class="fas fa-file-circle-question"></i>
+
+                {% elif notification.type == 'course' %}
+
+                    <i class="fas fa-book-open"></i>
+
+                {% elif notification.type == 'achievement' %}
+
+                    <i class="fas fa-trophy"></i>
+
+                {% else %}
+
+                    <i class="fas fa-bell"></i>
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- CONTENT -->
+
+            <div class="notification-content">
+
+                <h3>
+                    {{ notification.title }}
+                </h3>
+
+                <p>
+                    {{ notification.message }}
+                </p>
+
+                <span class="notification-date">
+
+                    <i class="far fa-clock"></i>
+
+                    {{ notification.created_at }}
+
+                </span>
+
+
+                <div class="notification-actions">
+
+                    {% if notification.link %}
+
+                    <a href="{{ notification.link }}"
+                       class="notification-action">
+
+                        View Details
+
+                    </a>
+
+                    {% endif %}
+
+
+                    {% if not notification.is_read %}
+
+                    <form method="POST"
+                          action="/notifications/read/{{ notification.id }}">
+
+                        <button type="submit"
+                                class="notification-action secondary">
+
+                            <i class="fas fa-check"></i>
+                            Mark as Read
+
+                        </button>
+
+                    </form>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% else %}
+
+
+        <!-- EMPTY STATE -->
+
+        <div class="notification-empty">
+
+            <i class="far fa-bell-slash"></i>
+
+            <h3>No Notifications Yet</h3>
+
+            <p>
+                When something important happens,
+                your notifications will appear here.
+            </p>
+
+        </div>
+
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -26,7 +26,8 @@ import json
 import csv
 import io
 from functools import wraps
-
+from datetime import datetime
+from zoneinfo import ZoneInfo
 from reportlab.platypus import (
     SimpleDocTemplate,
     Paragraph,
@@ -1113,11 +1114,6 @@ def mock_course_subjects(course_id):
         cursor.close()
         conn.close()
 
-
-# ==========================================================
-# 3. CREATE CUSTOM MOCK TEST
-# ==========================================================
-
 @app.route("/mock-tests/create", methods=["GET", "POST"])
 def create_mock_test():
 
@@ -1131,6 +1127,10 @@ def create_mock_test():
 
     try:
 
+        # ==================================================
+        # GET REQUEST - LOAD COURSES AND SUBJECTS
+        # ==================================================
+
         if request.method == "GET":
 
             cursor.execute("""
@@ -1142,17 +1142,37 @@ def create_mock_test():
 
             courses = cursor.fetchall()
 
+            cursor.execute("""
+                SELECT id, course_id, subject_name
+                FROM mock_catalog_subjects
+                ORDER BY subject_name
+            """)
+
+            subjects = cursor.fetchall()
+
             return render_template(
                 "create_mock_test.html",
-                courses=courses
+                courses=courses,
+                subjects=subjects
             )
 
+        # ==================================================
+        # POST REQUEST - FORM DATA
+        # ==================================================
+
         title = request.form.get("title", "").strip()
-        description = request.form.get("description", "").strip()
 
-        course_id = request.form.get("course_id", type=int)
+        description = request.form.get(
+            "description", ""
+        ).strip()
 
-        difficulty = request.form.get("difficulty", "Mixed")
+        course_id = request.form.get(
+            "course_id", type=int
+        )
+
+        difficulty = request.form.get(
+            "difficulty", "Mixed"
+        )
 
         question_count = request.form.get(
             "question_count", type=int
@@ -1164,37 +1184,169 @@ def create_mock_test():
 
         subject_ids = request.form.getlist("subject_ids")
 
+        start_input = request.form.get(
+            "scheduled_start_at", ""
+        ).strip()
+
+        end_input = request.form.get(
+            "scheduled_end_at", ""
+        ).strip()
+
+        # ==================================================
+        # BASIC VALIDATION
+        # ==================================================
+
         allowed_difficulties = [
-            "Easy", "Medium", "Hard", "Mixed"
+            "Easy",
+            "Medium",
+            "Hard",
+            "Mixed"
         ]
 
         if not title or not course_id:
-            flash("Please enter test title and course.", "danger")
+
+            flash(
+                "Please enter test title and course.",
+                "danger"
+            )
+
+            return redirect(url_for("create_mock_test"))
+
+        if len(title) > 200:
+
+            flash("Test title cannot exceed 200 characters.", "danger")
+
             return redirect(url_for("create_mock_test"))
 
         if difficulty not in allowed_difficulties:
+
             flash("Invalid difficulty.", "danger")
+
             return redirect(url_for("create_mock_test"))
 
         if not question_count or not (1 <= question_count <= 200):
-            flash("Question count must be between 1 and 200.", "danger")
+
+            flash(
+                "Question count must be between 1 and 200.",
+                "danger"
+            )
+
             return redirect(url_for("create_mock_test"))
 
         if not duration or not (1 <= duration <= 300):
-            flash("Duration must be between 1 and 300 minutes.", "danger")
+
+            flash(
+                "Duration must be between 1 and 300 minutes.",
+                "danger"
+            )
+
             return redirect(url_for("create_mock_test"))
 
-        subject_ids = list({
-            int(s) for s in subject_ids if s.isdigit()
-        })
+        # ==================================================
+        # SCHEDULED DATE/TIME VALIDATION
+        # ==================================================
+
+        if not start_input or not end_input:
+
+            flash(
+                "Please select exam start and end date/time.",
+                "danger"
+            )
+
+            return redirect(url_for("create_mock_test"))
+
+        try:
+
+            scheduled_start = datetime.strptime(
+                start_input,
+                "%Y-%m-%dT%H:%M"
+            )
+
+            scheduled_end = datetime.strptime(
+                end_input,
+                "%Y-%m-%dT%H:%M"
+            )
+
+        except ValueError:
+
+            flash("Invalid exam date/time format.", "danger")
+
+            return redirect(url_for("create_mock_test"))
+
+        # Current Indian time
+        current_time = datetime.now(
+            ZoneInfo("Asia/Kolkata")
+        ).replace(tzinfo=None)
+
+        if scheduled_start <= current_time:
+
+            flash(
+                "Exam start time must be in the future.",
+                "danger"
+            )
+
+            return redirect(url_for("create_mock_test"))
+
+        if scheduled_end <= scheduled_start:
+
+            flash(
+                "Exam end time must be after start time.",
+                "danger"
+            )
+
+            return redirect(url_for("create_mock_test"))
+
+        # ==================================================
+        # CONVERT SUBJECT IDS
+        # ==================================================
+
+        try:
+
+            subject_ids = list({
+                int(s)
+                for s in subject_ids
+                if s.isdigit()
+            })
+
+        except (ValueError, TypeError):
+
+            flash("Invalid subject selection.", "danger")
+
+            return redirect(url_for("create_mock_test"))
 
         if not subject_ids:
-            flash("Please select at least one subject.", "danger")
+
+            flash(
+                "Please select at least one subject.",
+                "danger"
+            )
+
             return redirect(url_for("create_mock_test"))
 
-        placeholders = ",".join(["%s"] * len(subject_ids))
+        # ==================================================
+        # VERIFY COURSE
+        # ==================================================
 
-        # Verify selected subjects belong to selected course.
+        cursor.execute("""
+            SELECT id
+            FROM mock_catalog_courses
+            WHERE id = %s
+            AND is_active = 1
+        """, (course_id,))
+
+        if not cursor.fetchone():
+
+            flash("Invalid course selection.", "danger")
+
+            return redirect(url_for("create_mock_test"))
+
+        # ==================================================
+        # VERIFY SUBJECTS
+        # ==================================================
+
+        placeholders = ",".join(
+            ["%s"] * len(subject_ids)
+        )
 
         cursor.execute(f"""
             SELECT id
@@ -1206,17 +1358,28 @@ def create_mock_test():
         valid_subjects = cursor.fetchall()
 
         if len(valid_subjects) != len(subject_ids):
-            flash("Invalid subject selection.", "danger")
+
+            flash(
+                "Invalid subject selection.",
+                "danger"
+            )
+
             return redirect(url_for("create_mock_test"))
 
-        # Fetch active questions from question bank.
+        # ==================================================
+        # FETCH RANDOM QUESTIONS
+        # ==================================================
 
         difficulty_condition = ""
 
         params = subject_ids.copy()
 
         if difficulty != "Mixed":
-            difficulty_condition = "AND difficulty = %s"
+
+            difficulty_condition = """
+                AND difficulty = %s
+            """
+
             params.append(difficulty)
 
         cursor.execute(f"""
@@ -1231,15 +1394,29 @@ def create_mock_test():
 
         questions = cursor.fetchall()
 
+        # ==================================================
+        # CHECK QUESTION AVAILABILITY
+        # ==================================================
+
         if len(questions) < question_count:
+
             flash(
                 f"Only {len(questions)} questions available. "
                 "Please reduce question count or add more questions.",
                 "warning"
             )
+
             return redirect(url_for("create_mock_test"))
 
+        # ==================================================
+        # GENERATE SHARE TOKEN
+        # ==================================================
+
         share_token = secrets.token_urlsafe(32)
+
+        # ==================================================
+        # CREATE TEST TRANSACTION
+        # ==================================================
 
         conn.begin()
 
@@ -1252,11 +1429,16 @@ def create_mock_test():
                 difficulty,
                 question_count,
                 duration_minutes,
+                scheduled_start_at,
+                scheduled_end_at,
                 share_token,
                 visibility,
                 status
             )
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            VALUES (
+                %s, %s, %s, %s, %s, %s,
+                %s, %s, %s, %s, %s, %s
+            )
         """, (
             user_id,
             course_id,
@@ -1265,6 +1447,8 @@ def create_mock_test():
             difficulty,
             question_count,
             duration,
+            scheduled_start,
+            scheduled_end,
             share_token,
             "Link",
             "Published"
@@ -1272,7 +1456,9 @@ def create_mock_test():
 
         test_id = cursor.lastrowid
 
-        # Save selected subjects.
+        # ==================================================
+        # SAVE SUBJECTS
+        # ==================================================
 
         for subject_id in subject_ids:
 
@@ -1282,11 +1468,19 @@ def create_mock_test():
                     subject_id
                 )
                 VALUES (%s, %s)
-            """, (test_id, subject_id))
+            """, (
+                test_id,
+                subject_id
+            ))
 
-        # Save selected questions.
+        # ==================================================
+        # SAVE QUESTIONS
+        # ==================================================
 
-        for index, question in enumerate(questions, start=1):
+        for index, question in enumerate(
+            questions,
+            start=1
+        ):
 
             cursor.execute("""
                 INSERT INTO mock_test_questions (
@@ -1303,9 +1497,31 @@ def create_mock_test():
                 1
             ))
 
+        # ==================================================
+        # COMMIT
+        # ==================================================
+
         conn.commit()
 
-        flash("Mock test created successfully!", "success")
+        # ==================================================
+        # SHARE LINK
+        # ==================================================
+
+        share_link = url_for(
+            "attempt_mock_test",
+            share_token=share_token,
+            _external=True
+        )
+
+        flash(
+            "Scheduled mock exam created successfully!",
+            "success"
+        )
+
+        flash(
+            f"Share your exam link: {share_link}",
+            "info"
+        )
 
         return redirect(
             url_for(
@@ -1317,24 +1533,28 @@ def create_mock_test():
     except Exception as e:
 
         conn.rollback()
+
         print("MOCK TEST CREATE ERROR:", e)
 
-        flash("Unable to create mock test.", "danger")
+        flash(
+            "Unable to create mock test. Please try again.",
+            "danger"
+        )
 
         return redirect(url_for("create_mock_test"))
 
     finally:
+
         cursor.close()
         conn.close()
-
-
 # ==========================================================
-# 4. ATTEMPT MOCK TEST
+# MOCK TEST ATTEMPT - COMPLETE ROUTE
 # ==========================================================
 
 @app.route("/mock-test/<share_token>")
 def attempt_mock_test(share_token):
 
+    # 1. LOGIN CHECK
     if not mock_login_required():
         return redirect(url_for("login"))
 
@@ -1345,11 +1565,16 @@ def attempt_mock_test(share_token):
 
     try:
 
+        # ==================================================
+        # 2. FETCH TEST DETAILS
+        # ==================================================
+
         cursor.execute("""
             SELECT *
             FROM mock_test_catalog
             WHERE share_token = %s
             AND status = 'Published'
+            LIMIT 1
         """, (share_token,))
 
         test = cursor.fetchone()
@@ -1357,8 +1582,19 @@ def attempt_mock_test(share_token):
         if not test:
             abort(404)
 
-        if test["visibility"] == "Private" and test["creator_user_id"] != user_id:
+        # ==================================================
+        # 3. CHECK TEST PERMISSION
+        # ==================================================
+
+        if (
+            test["visibility"] == "Private"
+            and test["creator_user_id"] != user_id
+        ):
             abort(403)
+
+        # ==================================================
+        # 4. FETCH AVAILABLE QUESTIONS
+        # ==================================================
 
         cursor.execute("""
             SELECT
@@ -1379,16 +1615,56 @@ def attempt_mock_test(share_token):
             WHERE mtq.test_id = %s
             AND qb.is_active = 1
 
-            ORDER BY mtq.question_order
+            ORDER BY mtq.question_order ASC
+
         """, (test["id"],))
 
         questions = cursor.fetchall()
 
-        if len(questions) != test["question_count"]:
-            flash("Some questions are unavailable.", "danger")
-            return redirect(url_for("mock_test_dashboard"))
+        # ==================================================
+        # 5. CHECK QUESTION COUNT
+        # ==================================================
 
-        # Create new attempt.
+        question_count = len(questions)
+
+        no_questions = question_count == 0
+
+        total_marks = sum(
+            int(q["marks"] or 1)
+            for q in questions
+        )
+
+        # ==================================================
+        # 6. HANDLE ZERO QUESTIONS
+        # ==================================================
+
+        if no_questions:
+
+            print(
+                f"NO QUESTIONS AVAILABLE - TEST ID: {test['id']}"
+            )
+
+            flash(
+                "No questions available for this subject yet. "
+                "Please check back later.",
+                "warning"
+            )
+
+        # ==================================================
+        # 7. CHECK QUESTION AVAILABILITY
+        # ==================================================
+
+        elif question_count != int(test["question_count"]):
+
+            flash(
+                "Some questions are unavailable. "
+                "Available questions are displayed below.",
+                "warning"
+            )
+
+        # ==================================================
+        # 8. CREATE NEW TEST ATTEMPT
+        # ==================================================
 
         conn.begin()
 
@@ -1404,36 +1680,61 @@ def attempt_mock_test(share_token):
         """, (
             test["id"],
             user_id,
-            len(questions),
-            sum(q["marks"] for q in questions)
+            question_count,
+            total_marks
         ))
 
         attempt_id = cursor.lastrowid
 
         conn.commit()
 
+        # ==================================================
+        # 9. OPEN MOCK TEST PAGE
+        # ==================================================
+
         return render_template(
             "mock_test_attempt.html",
+
             test=test,
+
             questions=questions,
-            attempt_id=attempt_id
+
+            attempt_id=attempt_id,
+
+            no_questions=no_questions,
+
+            question_count=question_count,
+
+            total_marks=total_marks
         )
+
+    # ======================================================
+    # 10. ERROR HANDLING
+    # ======================================================
 
     except Exception as e:
 
         conn.rollback()
-        print("MOCK TEST ATTEMPT ERROR:", e)
 
-        flash("Unable to start test.", "danger")
-        return redirect(url_for("mock_test_dashboard"))
+        print("MOCK TEST ATTEMPT ERROR:", str(e))
+
+        flash(
+            "Unable to start test. Please try again.",
+            "danger"
+        )
+
+        return redirect(
+            url_for("mock_test_dashboard")
+        )
+
+    # ======================================================
+    # 11. CLOSE CONNECTION
+    # ======================================================
 
     finally:
+
         cursor.close()
         conn.close()
-
-# ==========================================================
-# START SUBJECT-WISE MOCK TEST
-# ==========================================================
 
 @app.route("/mock-tests/subject/<int:subject_id>/start", methods=["POST"])
 def start_subject_mock_test(subject_id):
@@ -1446,8 +1747,14 @@ def start_subject_mock_test(subject_id):
     conn = get_db_connection()
     cursor = conn.cursor()
 
+    subject = None
+
     try:
-        # 1. Get subject and course details
+
+        # ==================================================
+        # 1. GET SUBJECT AND COURSE DETAILS
+        # ==================================================
+
         cursor.execute("""
             SELECT
                 s.id AS subject_id,
@@ -1466,7 +1773,11 @@ def start_subject_mock_test(subject_id):
         if not subject:
             abort(404)
 
-        # 2. Fetch available questions
+
+        # ==================================================
+        # 2. FETCH AVAILABLE QUESTIONS
+        # ==================================================
+
         cursor.execute("""
             SELECT id
             FROM mock_question_bank
@@ -1478,28 +1789,30 @@ def start_subject_mock_test(subject_id):
 
         questions = cursor.fetchall()
 
-        if not questions:
-            flash(
-                "No questions available for this subject yet.",
-                "warning"
-            )
-            return redirect(
-                url_for(
-                    "mock_course_subjects",
-                    course_id=subject["course_id"]
-                )
-            )
-
         question_count = len(questions)
 
-        # 3. Generate test details
+
+        # ==================================================
+        # 3. GENERATE TEST DETAILS
+        # ==================================================
+
         title = subject["subject_name"] + " Mock Test"
+
         duration = max(10, question_count)
 
         share_token = secrets.token_urlsafe(32)
 
-        # 4. Start database transaction
+
+        # ==================================================
+        # 4. START DATABASE TRANSACTION
+        # ==================================================
+
         conn.begin()
+
+
+        # ==================================================
+        # 5. CREATE MOCK TEST
+        # ==================================================
 
         cursor.execute("""
             INSERT INTO mock_test_catalog (
@@ -1514,7 +1827,10 @@ def start_subject_mock_test(subject_id):
                 visibility,
                 status
             )
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            VALUES (
+                %s, %s, %s, %s, %s,
+                %s, %s, %s, %s, %s
+            )
         """, (
             user_id,
             subject["course_id"],
@@ -1530,36 +1846,82 @@ def start_subject_mock_test(subject_id):
 
         test_id = cursor.lastrowid
 
-        # 5. Save selected subject
+
+        # ==================================================
+        # 6. SAVE SELECTED SUBJECT
+        # ==================================================
+
         cursor.execute("""
             INSERT INTO mock_test_subjects (
                 test_id,
                 subject_id
             )
             VALUES (%s, %s)
-        """, (test_id, subject_id))
+        """, (
+            test_id,
+            subject_id
+        ))
 
-        # 6. Save selected questions
-        for index, question in enumerate(questions, start=1):
 
-            cursor.execute("""
-                INSERT INTO mock_test_questions (
+        # ==================================================
+        # 7. SAVE QUESTIONS IF AVAILABLE
+        # ==================================================
+
+        if question_count > 0:
+
+            for index, question in enumerate(questions, start=1):
+
+                cursor.execute("""
+                    INSERT INTO mock_test_questions (
+                        test_id,
+                        question_id,
+                        question_order,
+                        marks
+                    )
+                    VALUES (%s, %s, %s, %s)
+                """, (
                     test_id,
-                    question_id,
-                    question_order,
-                    marks
-                )
-                VALUES (%s, %s, %s, %s)
-            """, (
-                test_id,
-                question["id"],
-                index,
-                1
-            ))
+                    question["id"],
+                    index,
+                    1
+                ))
+
+            print(
+                f"MOCK TEST CREATED: {question_count} questions found."
+            )
+
+        else:
+
+            print(
+                f"MOCK TEST CREATED: No questions found for subject {subject_id}."
+            )
+
+
+        # ==================================================
+        # 8. COMMIT TRANSACTION
+        # ==================================================
 
         conn.commit()
 
-        # 7. Open existing test engine
+
+        # ==================================================
+        # 9. SHOW WARNING IF NO QUESTIONS
+        # ==================================================
+
+        if question_count == 0:
+
+            flash(
+                "No questions found for this subject yet. "
+                "You can view the mock test page, but questions "
+                "are not available right now.",
+                "warning"
+            )
+
+
+        # ==================================================
+        # 10. OPEN MOCK TEST PAGE
+        # ==================================================
+
         return redirect(
             url_for(
                 "attempt_mock_test",
@@ -1567,23 +1929,32 @@ def start_subject_mock_test(subject_id):
             )
         )
 
+
     except Exception as e:
 
         conn.rollback()
 
         print("SUBJECT MOCK TEST ERROR:", e)
 
-        flash("Unable to start subject mock test.", "danger")
-
-        return redirect(
-            url_for(
-                "mock_course_subjects",
-                course_id=subject["course_id"]
-            ) if "subject" in locals() and subject else
-            url_for("mock_test_dashboard")
+        flash(
+            "Unable to start subject mock test. Please try again.",
+            "danger"
         )
 
+        if subject:
+
+            return redirect(
+                url_for(
+                    "mock_course_subjects",
+                    course_id=subject["course_id"]
+                )
+            )
+
+        return redirect(url_for("mock_test_dashboard"))
+
+
     finally:
+
         cursor.close()
         conn.close()
 # ==========================================================
@@ -8013,7 +8384,649 @@ def pyq_admin_courses():
 # =========================================================
 # ADMIN - TOGGLE PYQ COURSE STATUS
 # =========================================================
+# ==========================================================
+# SOCIAL SYSTEM - COMMON HELPERS
+# ==========================================================
 
+def social_user_id():
+    return session.get("user_id")
+
+
+def social_login_required():
+    if not social_user_id():
+        flash("Please login to continue.", "warning")
+        return False
+    return True
+
+
+def create_social_notification(
+    cursor,
+    user_id,
+    title,
+    message,
+    notification_type="general",
+    link=None
+):
+    cursor.execute("""
+        INSERT INTO notifications
+        (user_id, title, message, type, link)
+        VALUES (%s, %s, %s, %s, %s)
+    """, (
+        user_id,
+        title,
+        message,
+        notification_type,
+        link
+    ))
+
+
+def are_friends(cursor, user1, user2):
+
+    cursor.execute("""
+        SELECT id
+        FROM friend_requests
+        WHERE (
+            (sender_id=%s AND receiver_id=%s)
+            OR
+            (sender_id=%s AND receiver_id=%s)
+        )
+        AND status='accepted'
+        LIMIT 1
+    """, (user1, user2, user2, user1))
+
+    return cursor.fetchone() is not None
+
+
+# ==========================================================
+# FRIENDS PAGE
+# ==========================================================
+
+@app.route("/friends")
+def friends():
+
+    if not social_login_required():
+        return redirect(url_for("login"))
+
+    user_id = social_user_id()
+
+    conn = get_db_connection()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+
+    try:
+
+        # Incoming friend requests
+        cursor.execute("""
+            SELECT
+                fr.id,
+                fr.sender_id,
+                fr.created_at,
+                u.name,
+                u.email,
+                COALESCE(
+                    NULLIF(u.profile_pic, ''),
+                    NULLIF(u.picture, '')
+                ) AS picture
+            FROM friend_requests fr
+            JOIN users u ON u.id = fr.sender_id
+            WHERE fr.receiver_id=%s
+            AND fr.status='pending'
+            ORDER BY fr.created_at DESC
+        """, (user_id,))
+
+        pending_requests = cursor.fetchall()
+
+        # Accepted friends
+        cursor.execute("""
+            SELECT
+                u.id,
+                u.name,
+                u.email,
+                COALESCE(
+                    NULLIF(u.profile_pic, ''),
+                    NULLIF(u.picture, '')
+                ) AS picture
+            FROM friend_requests fr
+            JOIN users u
+            ON u.id = CASE
+                WHEN fr.sender_id=%s
+                THEN fr.receiver_id
+                ELSE fr.sender_id
+            END
+            WHERE (
+                fr.sender_id=%s
+                OR fr.receiver_id=%s
+            )
+            AND fr.status='accepted'
+            ORDER BY u.name
+        """, (user_id, user_id, user_id))
+
+        friends_list = cursor.fetchall()
+
+        # Suggested students
+        cursor.execute("""
+            SELECT
+                u.id,
+                u.name,
+                u.email,
+                COALESCE(
+                    NULLIF(u.profile_pic, ''),
+                    NULLIF(u.picture, '')
+                ) AS picture
+            FROM users u
+            WHERE u.id != %s
+            AND NOT EXISTS (
+                SELECT 1
+                FROM friend_requests fr
+                WHERE (
+                    (fr.sender_id=%s AND fr.receiver_id=u.id)
+                    OR
+                    (fr.sender_id=u.id AND fr.receiver_id=%s)
+                )
+                AND fr.status IN ('pending', 'accepted')
+            )
+            ORDER BY u.name
+            LIMIT 20
+        """, (user_id, user_id, user_id))
+
+        suggestions = cursor.fetchall()
+
+        return render_template(
+            "friends.html",
+            pending_requests=pending_requests,
+            friends=friends_list,
+            suggestions=suggestions
+        )
+
+    finally:
+        cursor.close()
+        conn.close()
+
+
+# ==========================================================
+# SEND FRIEND REQUEST
+# ==========================================================
+
+@app.route("/friends/send/<int:user_id>", methods=["POST"])
+def send_friend_request(user_id):
+
+    if not social_login_required():
+        return redirect(url_for("login"))
+
+    current_user = social_user_id()
+
+    if current_user == user_id:
+        flash("You cannot send a request to yourself.", "warning")
+        return redirect(url_for("friends"))
+
+    conn = get_db_connection()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+
+    try:
+
+        cursor.execute(
+            "SELECT id FROM users WHERE id=%s",
+            (user_id,)
+        )
+
+        if not cursor.fetchone():
+            flash("User not found.", "danger")
+            return redirect(url_for("friends"))
+
+        cursor.execute("""
+            SELECT id, status
+            FROM friend_requests
+            WHERE (
+                (sender_id=%s AND receiver_id=%s)
+                OR
+                (sender_id=%s AND receiver_id=%s)
+            )
+            AND status IN ('pending', 'accepted')
+            LIMIT 1
+        """, (current_user, user_id, user_id, current_user))
+
+        existing = cursor.fetchone()
+
+        if existing:
+            flash("Request already exists or you are already friends.", "info")
+            return redirect(url_for("friends"))
+
+        cursor.execute("""
+            INSERT INTO friend_requests
+            (sender_id, receiver_id, status)
+            VALUES (%s, %s, 'pending')
+        """, (current_user, user_id))
+
+        create_social_notification(
+            cursor,
+            user_id,
+            "New Friend Request",
+            "Someone sent you a friend request.",
+            "friend_request",
+            "/friends"
+        )
+
+        conn.commit()
+
+        flash("Friend request sent successfully!", "success")
+
+    except Exception:
+        conn.rollback()
+        flash("Unable to send friend request.", "danger")
+        app.logger.exception("Friend request error")
+
+    finally:
+        cursor.close()
+        conn.close()
+
+    return redirect(url_for("friends"))
+
+
+# ==========================================================
+# ACCEPT FRIEND REQUEST
+# ==========================================================
+
+@app.route(
+    "/friends/accept/<int:request_id>",
+    methods=["POST"]
+)
+def accept_friend_request(request_id):
+
+    if not social_login_required():
+        return redirect(url_for("login"))
+
+    current_user = social_user_id()
+
+    conn = get_db_connection()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+
+    try:
+
+        cursor.execute("""
+            SELECT id, sender_id
+            FROM friend_requests
+            WHERE id=%s
+            AND receiver_id=%s
+            AND status='pending'
+        """, (request_id, current_user))
+
+        friend_request = cursor.fetchone()
+
+        if not friend_request:
+            flash("Friend request not found.", "warning")
+            return redirect(url_for("friends"))
+
+        cursor.execute("""
+            UPDATE friend_requests
+            SET status='accepted'
+            WHERE id=%s
+        """, (request_id,))
+
+        create_social_notification(
+            cursor,
+            friend_request["sender_id"],
+            "Friend Request Accepted",
+            "Your friend request has been accepted.",
+            "friend_accepted",
+            "/friends"
+        )
+
+        conn.commit()
+
+        flash("Friend request accepted!", "success")
+
+    except Exception:
+        conn.rollback()
+        flash("Unable to accept request.", "danger")
+        app.logger.exception("Accept request error")
+
+    finally:
+        cursor.close()
+        conn.close()
+
+    return redirect(url_for("friends"))
+
+
+# ==========================================================
+# REJECT FRIEND REQUEST
+# ==========================================================
+
+@app.route(
+    "/friends/reject/<int:request_id>",
+    methods=["POST"]
+)
+def reject_friend_request(request_id):
+
+    if not social_login_required():
+        return redirect(url_for("login"))
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+
+        cursor.execute("""
+            DELETE FROM friend_requests
+            WHERE id=%s
+            AND receiver_id=%s
+            AND status='pending'
+        """, (request_id, social_user_id()))
+
+        conn.commit()
+
+        flash("Friend request rejected.", "info")
+
+    except Exception:
+        conn.rollback()
+        flash("Unable to reject request.", "danger")
+        app.logger.exception("Reject request error")
+
+    finally:
+        cursor.close()
+        conn.close()
+
+    return redirect(url_for("friends"))
+
+
+# ==========================================================
+# MESSAGES PAGE
+# ==========================================================
+
+@app.route("/messages")
+def messages():
+
+    if not social_login_required():
+        return redirect(url_for("login"))
+
+    current_user = social_user_id()
+    selected_id = request.args.get("user", type=int)
+
+    conn = get_db_connection()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+
+    try:
+
+        # Conversation list
+        cursor.execute("""
+            SELECT
+                u.id AS user_id,
+                u.name,
+                COALESCE(
+                    NULLIF(u.profile_pic, ''),
+                    NULLIF(u.picture, '')
+                ) AS picture,
+                (
+                    SELECT m.message
+                    FROM messages m
+                    WHERE (
+                        (m.sender_id=%s AND m.receiver_id=u.id)
+                        OR
+                        (m.sender_id=u.id AND m.receiver_id=%s)
+                    )
+                    ORDER BY m.created_at DESC, m.id DESC
+                    LIMIT 1
+                ) AS last_message
+            FROM users u
+            WHERE u.id IN (
+                SELECT sender_id
+                FROM messages
+                WHERE receiver_id=%s
+
+                UNION
+
+                SELECT receiver_id
+                FROM messages
+                WHERE sender_id=%s
+            )
+            ORDER BY u.name
+        """, (
+            current_user,
+            current_user,
+            current_user,
+            current_user
+        ))
+
+        conversations = cursor.fetchall()
+
+        selected_user = None
+        chat_messages = []
+
+        if selected_id and selected_id != current_user:
+
+            if are_friends(cursor, current_user, selected_id):
+
+                cursor.execute("""
+                    SELECT
+                        id,
+                        name,
+                        COALESCE(
+                            NULLIF(profile_pic, ''),
+                            NULLIF(picture, '')
+                        ) AS picture
+                    FROM users
+                    WHERE id=%s
+                """, (selected_id,))
+
+                selected_user = cursor.fetchone()
+
+                if selected_user:
+
+                    cursor.execute("""
+                        SELECT
+                            id,
+                            sender_id,
+                            receiver_id,
+                            message,
+                            created_at
+                        FROM messages
+                        WHERE (
+                            (sender_id=%s AND receiver_id=%s)
+                            OR
+                            (sender_id=%s AND receiver_id=%s)
+                        )
+                        ORDER BY created_at ASC, id ASC
+                    """, (
+                        current_user,
+                        selected_id,
+                        selected_id,
+                        current_user
+                    ))
+
+                    chat_messages = cursor.fetchall()
+
+                    cursor.execute("""
+                        UPDATE messages
+                        SET is_read=1
+                        WHERE sender_id=%s
+                        AND receiver_id=%s
+                    """, (selected_id, current_user))
+
+                    conn.commit()
+
+            else:
+                flash("You can message your accepted friends only.", "warning")
+
+        return render_template(
+            "messages.html",
+            conversations=conversations,
+            selected_user=selected_user,
+            messages=chat_messages
+        )
+
+    finally:
+        cursor.close()
+        conn.close()
+
+
+# ==========================================================
+# SEND MESSAGE
+# ==========================================================
+
+@app.route("/messages/send", methods=["POST"])
+def send_message():
+
+    if not social_login_required():
+        return redirect(url_for("login"))
+
+    sender_id = social_user_id()
+    receiver_id = request.form.get("receiver_id", type=int)
+    message = request.form.get("message", "").strip()
+
+    if not receiver_id or not message:
+        flash("Please enter a message.", "warning")
+        return redirect(url_for("messages"))
+
+    if len(message) > 5000:
+        flash("Message is too long.", "warning")
+        return redirect(url_for("messages", user=receiver_id))
+
+    conn = get_db_connection()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+
+    try:
+
+        if not are_friends(cursor, sender_id, receiver_id):
+            flash("You can message your accepted friends only.", "warning")
+            return redirect(url_for("messages"))
+
+        cursor.execute("""
+            INSERT INTO messages
+            (sender_id, receiver_id, message)
+            VALUES (%s, %s, %s)
+        """, (sender_id, receiver_id, message))
+
+        cursor.execute("""
+            SELECT name
+            FROM users
+            WHERE id=%s
+        """, (sender_id,))
+
+        sender = cursor.fetchone()
+        sender_name = sender["name"] if sender else "A friend"
+
+        create_social_notification(
+            cursor,
+            receiver_id,
+            "New Message",
+            sender_name + " sent you a message.",
+            "message",
+            "/messages?user=" + str(sender_id)
+        )
+
+        conn.commit()
+
+        flash("Message sent!", "success")
+
+    except Exception:
+        conn.rollback()
+        flash("Unable to send message.", "danger")
+        app.logger.exception("Send message error")
+
+    finally:
+        cursor.close()
+        conn.close()
+
+    return redirect(url_for("messages", user=receiver_id))
+
+
+# ==========================================================
+# NOTIFICATIONS PAGE
+# ==========================================================
+
+@app.route("/notifications")
+def notifications():
+
+    if not social_login_required():
+        return redirect(url_for("login"))
+
+    current_user = social_user_id()
+    notification_filter = request.args.get("filter", "all")
+
+    conn = get_db_connection()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+
+    try:
+
+        cursor.execute("""
+            SELECT COUNT(*) AS unread_count
+            FROM notifications
+            WHERE user_id=%s
+            AND is_read=0
+        """, (current_user,))
+
+        unread_count = cursor.fetchone()["unread_count"]
+
+        if notification_filter == "unread":
+            condition = "AND is_read=0"
+        elif notification_filter == "read":
+            condition = "AND is_read=1"
+        else:
+            condition = ""
+
+        cursor.execute("""
+            SELECT
+                id,
+                title,
+                message,
+                type,
+                link,
+                is_read,
+                created_at
+            FROM notifications
+            WHERE user_id=%s
+            """ + condition + """
+            ORDER BY created_at DESC
+            LIMIT 100
+        """, (current_user,))
+
+        notification_list = cursor.fetchall()
+
+        return render_template(
+            "notifications.html",
+            notifications=notification_list,
+            unread_count=unread_count
+        )
+
+    finally:
+        cursor.close()
+        conn.close()
+
+
+# ==========================================================
+# MARK NOTIFICATION AS READ
+# ==========================================================
+
+@app.route(
+    "/notifications/read/<int:notification_id>",
+    methods=["POST"]
+)
+def mark_notification_read(notification_id):
+
+    if not social_login_required():
+        return redirect(url_for("login"))
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+
+        cursor.execute("""
+            UPDATE notifications
+            SET is_read=1
+            WHERE id=%s
+            AND user_id=%s
+        """, (notification_id, social_user_id()))
+
+        conn.commit()
+
+    except Exception:
+        conn.rollback()
+        app.logger.exception("Notification read error")
+
+    finally:
+        cursor.close()
+        conn.close()
+
+    return redirect(url_for("notifications"))
 @app.route(
     "/admin/pyq/courses/toggle/<int:course_id>",
     methods=["POST"]

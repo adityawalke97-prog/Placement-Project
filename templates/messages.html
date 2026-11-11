@@ -1,0 +1,525 @@
+{% extends "layout.html" %}
+
+{% block title %}Messages - Placement Portal{% endblock %}
+
+{% block css %}
+
+<style>
+
+    .messages-page {
+        max-width: 1250px;
+        margin: 30px auto;
+        padding: 15px;
+    }
+
+    .messages-heading {
+        margin-bottom: 22px;
+    }
+
+    .messages-heading h1 {
+        margin: 0;
+        font-size: 28px;
+        color: #172554;
+    }
+
+    .messages-heading p {
+        color: #64748b;
+        font-size: 13px;
+    }
+
+    .chat-container {
+        display: grid;
+        grid-template-columns: 320px 1fr;
+        min-height: 650px;
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 10px 35px rgba(0,0,0,.05);
+    }
+
+    .chat-sidebar {
+        border-right: 1px solid #e2e8f0;
+        background: #fff;
+    }
+
+    .chat-sidebar-header {
+        padding: 20px;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .chat-sidebar-header h3 {
+        margin: 0 0 15px;
+    }
+
+    .chat-search {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 11px;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        outline: none;
+        font-family: inherit;
+    }
+
+    .conversation {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 15px;
+        border-bottom: 1px solid #f1f5f9;
+        cursor: pointer;
+        text-decoration: none;
+        color: inherit;
+        transition: .2s;
+    }
+
+    .conversation:hover,
+    .conversation.active {
+        background: #eff6ff;
+    }
+
+    .chat-avatar {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        object-fit: cover;
+        background: #dbeafe;
+        flex-shrink: 0;
+    }
+
+    .chat-avatar-placeholder {
+        width: 45px;
+        height: 45px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: linear-gradient(135deg,#2563eb,#7c3aed);
+        color: white;
+        font-weight: 700;
+        flex-shrink: 0;
+    }
+
+    .conversation-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .conversation-info h4 {
+        margin: 0 0 5px;
+        font-size: 13px;
+    }
+
+    .conversation-info p {
+        margin: 0;
+        color: #64748b;
+        font-size: 11px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    .chat-main {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+    }
+
+    .chat-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 17px;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .chat-header h3 {
+        margin: 0;
+        font-size: 15px;
+    }
+
+    .chat-header p {
+        margin: 4px 0 0;
+        color: #16a34a;
+        font-size: 11px;
+    }
+
+    .chat-body {
+        flex: 1;
+        padding: 22px;
+        background: #f8fafc;
+        overflow-y: auto;
+        min-height: 350px;
+    }
+
+    .chat-message {
+        display: flex;
+        margin-bottom: 17px;
+    }
+
+    .chat-message.sent {
+        justify-content: flex-end;
+    }
+
+    .message-bubble {
+        max-width: 70%;
+        padding: 12px 15px;
+        border-radius: 14px;
+        background: white;
+        box-shadow: 0 2px 8px rgba(0,0,0,.04);
+        font-size: 13px;
+        line-height: 1.6;
+        overflow-wrap: anywhere;
+    }
+
+    .chat-message.sent .message-bubble {
+        background: #2563eb;
+        color: white;
+        border-bottom-right-radius: 3px;
+    }
+
+    .chat-message:not(.sent) .message-bubble {
+        border-bottom-left-radius: 3px;
+    }
+
+    .message-time {
+        display: block;
+        margin-top: 5px;
+        font-size: 9px;
+        opacity: .65;
+        text-align: right;
+    }
+
+    .chat-input-area {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 16px;
+        border-top: 1px solid #e2e8f0;
+    }
+
+    .chat-input-area input {
+        flex: 1;
+        min-width: 0;
+        padding: 13px 15px;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        outline: none;
+        font-family: inherit;
+    }
+
+    .chat-send {
+        width: 45px;
+        height: 45px;
+        border: none;
+        border-radius: 12px;
+        background: #2563eb;
+        color: white;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    .chat-empty {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        flex: 1;
+        padding: 30px;
+        text-align: center;
+        color: #64748b;
+    }
+
+    .chat-empty i {
+        font-size: 50px;
+        color: #94a3b8;
+        margin-bottom: 15px;
+    }
+
+    .chat-empty h3 {
+        color: #334155;
+    }
+
+    @media(max-width:750px) {
+
+        .chat-container {
+            grid-template-columns: 1fr;
+        }
+
+        .chat-sidebar {
+            max-height: 260px;
+            overflow-y: auto;
+            border-right: none;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .chat-main {
+            min-height: 480px;
+        }
+
+        .messages-heading h1 {
+            font-size: 23px;
+        }
+
+    }
+
+</style>
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="messages-page">
+
+    <div class="messages-heading">
+
+        <h1>
+            <i class="fas fa-comments"></i>
+            Messages
+        </h1>
+
+        <p>
+            Stay connected with your friends and fellow students.
+        </p>
+
+    </div>
+
+
+    <div class="chat-container">
+
+
+        <!-- CONVERSATION SIDEBAR -->
+
+        <aside class="chat-sidebar">
+
+            <div class="chat-sidebar-header">
+
+                <h3>Conversations</h3>
+
+                <input
+                        type="search"
+                        class="chat-search"
+                        id="chatSearch"
+                        placeholder="Search conversations...">
+
+            </div>
+
+
+            <div id="conversationList">
+
+                {% for conversation in conversations|default([], true) %}
+
+                <a href="/messages?user={{ conversation.user_id }}"
+                   class="conversation">
+
+                    {% if conversation.picture %}
+
+                    <img
+                            src="{{ conversation.picture }}"
+                            class="chat-avatar"
+                            alt="Profile">
+
+                    {% else %}
+
+                    <div class="chat-avatar-placeholder">
+                        {{ conversation.name[0]|upper }}
+                    </div>
+
+                    {% endif %}
+
+                    <div class="conversation-info">
+
+                        <h4>{{ conversation.name }}</h4>
+
+                        <p>
+                            {{ conversation.last_message|default('Start a conversation') }}
+                        </p>
+
+                    </div>
+
+                </a>
+
+                {% else %}
+
+                <div class="chat-empty" style="min-height:180px;">
+
+                    <i class="fas fa-message"></i>
+
+                    <p>No conversations yet.</p>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+        </aside>
+
+
+        <!-- CHAT WINDOW -->
+
+        <section class="chat-main">
+
+            {% if selected_user %}
+
+            <div class="chat-header">
+
+                {% if selected_user.picture %}
+
+                <img
+                        src="{{ selected_user.picture }}"
+                        class="chat-avatar"
+                        alt="Profile">
+
+                {% else %}
+
+                <div class="chat-avatar-placeholder">
+                    {{ selected_user.name[0]|upper }}
+                </div>
+
+                {% endif %}
+
+                <div>
+
+                    <h3>{{ selected_user.name }}</h3>
+
+                    <p>Student</p>
+
+                </div>
+
+            </div>
+
+
+            <!-- MESSAGES -->
+
+            <div class="chat-body" id="chatBody">
+
+                {% for message in messages|default([], true) %}
+
+                <div class="chat-message
+                    {% if message.sender_id == session.get('user_id') %}
+                        sent
+                    {% endif %}">
+
+                    <div class="message-bubble">
+
+                        {{ message.message }}
+
+                        <span class="message-time">
+                            {{ message.created_at }}
+                        </span>
+
+                    </div>
+
+                </div>
+
+                {% else %}
+
+                <div class="chat-empty">
+
+                    <i class="far fa-comments"></i>
+
+                    <h3>Start a Conversation</h3>
+
+                    <p>Send your first message to {{ selected_user.name }}.</p>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+
+            <!-- MESSAGE INPUT -->
+
+            <form class="chat-input-area"
+                  method="POST"
+                  action="/messages/send">
+
+                <input
+                        type="hidden"
+                        name="receiver_id"
+                        value="{{ selected_user.id }}">
+
+                <input
+                        type="text"
+                        name="message"
+                        placeholder="Type your message..."
+                        maxlength="2000"
+                        required
+                        autocomplete="off">
+
+                <button type="submit"
+                        class="chat-send"
+                        aria-label="Send message">
+
+                    <i class="fas fa-paper-plane"></i>
+
+                </button>
+
+            </form>
+
+
+            {% else %}
+
+
+            <div class="chat-empty">
+
+                <i class="far fa-comments"></i>
+
+                <h3>Your Messages</h3>
+
+                <p>
+                    Select a conversation to start chatting.
+                </p>
+
+            </div>
+
+
+            {% endif %}
+
+        </section>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+
+{% block js %}
+
+<script>
+
+    const chatSearch = document.getElementById("chatSearch");
+
+    if (chatSearch) {
+
+        chatSearch.addEventListener("input", function () {
+
+            const query = this.value.toLowerCase();
+
+            document.querySelectorAll(".conversation").forEach(function (item) {
+
+                const name = item.innerText.toLowerCase();
+
+                item.style.display =
+                    name.includes(query) ? "flex" : "none";
+
+            });
+
+        });
+
+    }
+
+    const chatBody = document.getElementById("chatBody");
+
+    if (chatBody) {
+        chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+</script>
+
+{% endblock %}

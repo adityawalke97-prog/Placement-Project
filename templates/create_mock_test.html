@@ -1,0 +1,887 @@
+{% extends "layout.html" %}
+
+{% block title %}Create Scheduled Mock Test{% endblock %}
+
+{% block content %}
+
+<style>
+    .create-test-wrapper {
+        max-width: 1050px;
+        margin: 35px auto;
+        padding: 20px;
+    }
+
+    .create-header {
+        background: linear-gradient(135deg, #172554, #2563eb);
+        padding: 35px;
+        border-radius: 20px;
+        color: white;
+        margin-bottom: 28px;
+        box-shadow: 0 10px 30px rgba(37, 99, 235, .15);
+    }
+
+    .create-header h1 {
+        font-size: 30px;
+        font-weight: 800;
+        margin-bottom: 10px;
+    }
+
+    .create-header p {
+        margin: 0;
+        color: #dbeafe;
+        font-size: 15px;
+    }
+
+    .form-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 18px;
+        padding: 32px;
+        box-shadow: 0 5px 20px rgba(0,0,0,.04);
+    }
+
+    .section-heading {
+        font-size: 19px;
+        font-weight: 750;
+        color: #1e293b;
+        margin: 28px 0 20px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .section-heading:first-child {
+        margin-top: 0;
+    }
+
+    .form-label {
+        font-weight: 650;
+        color: #334155;
+        margin-bottom: 9px;
+        font-size: 14px;
+    }
+
+    .form-control,
+    .form-select {
+        min-height: 48px;
+        border: 1px solid #dbe2ea;
+        border-radius: 10px;
+        padding: 11px 14px;
+        font-size: 14px;
+        transition: .2s;
+        width: 100%;
+    }
+
+    textarea.form-control {
+        min-height: 110px;
+        resize: vertical;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37,99,235,.10);
+        outline: none;
+    }
+
+    .subject-box {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 16px;
+        max-height: 240px;
+        overflow-y: auto;
+    }
+
+    .subject-option {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        padding: 12px;
+        margin-bottom: 8px;
+        border: 1px solid #e2e8f0;
+        background: white;
+        border-radius: 9px;
+        cursor: pointer;
+        transition: .2s;
+    }
+
+    .subject-option:hover {
+        border-color: #2563eb;
+        background: #eff6ff;
+    }
+
+    .subject-option input {
+        width: 17px;
+        height: 17px;
+        accent-color: #2563eb;
+        cursor: pointer;
+        flex-shrink: 0;
+    }
+
+    .subject-option span {
+        font-size: 14px;
+        color: #334155;
+        font-weight: 550;
+    }
+
+    .subject-option.hidden {
+        display: none;
+    }
+
+    .subject-info,
+    .form-hint {
+        font-size: 12px;
+        color: #64748b;
+        margin-top: 8px;
+    }
+
+    .schedule-card {
+        background: linear-gradient(135deg, #eff6ff, #f8fafc);
+        border: 1px solid #bfdbfe;
+        border-radius: 14px;
+        padding: 20px;
+        margin-top: 5px;
+    }
+
+    .schedule-card h4 {
+        font-size: 16px;
+        color: #1e40af;
+        font-weight: 750;
+        margin-bottom: 8px;
+    }
+
+    .schedule-card p {
+        font-size: 13px;
+        color: #475569;
+        margin-bottom: 18px;
+    }
+
+    .schedule-info {
+        background: #fff;
+        padding: 13px;
+        border-radius: 10px;
+        border: 1px solid #dbeafe;
+        margin-top: 12px;
+        font-size: 13px;
+        color: #334155;
+    }
+
+    .create-btn {
+        background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        color: white;
+        border: none;
+        padding: 14px 28px;
+        border-radius: 10px;
+        font-weight: 700;
+        font-size: 15px;
+        transition: .2s;
+        cursor: pointer;
+    }
+
+    .create-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 7px 18px rgba(37,99,235,.25);
+    }
+
+    .create-btn:disabled {
+        opacity: .65;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .back-btn {
+        display: inline-block;
+        padding: 13px 22px;
+        border-radius: 10px;
+        background: #f1f5f9;
+        color: #334155;
+        text-decoration: none;
+        font-weight: 650;
+    }
+
+    .back-btn:hover {
+        background: #e2e8f0;
+        color: #1e293b;
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        margin-top: 30px;
+        padding-top: 25px;
+        border-top: 1px solid #e5e7eb;
+    }
+
+    .required {
+        color: #dc2626;
+    }
+
+    @media(max-width: 650px) {
+        .create-test-wrapper {
+            padding: 12px;
+        }
+
+        .create-header {
+            padding: 24px;
+        }
+
+        .create-header h1 {
+            font-size: 24px;
+        }
+
+        .form-card {
+            padding: 20px;
+        }
+
+        .form-actions {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .form-actions a,
+        .form-actions button {
+            text-align: center;
+            width: 100%;
+        }
+    }
+</style>
+
+
+<div class="create-test-wrapper">
+
+    <!-- HEADER -->
+
+    <div class="create-header">
+
+        <h1>📝 Create Custom Mock Test</h1>
+
+        <p>
+            Build your own group examination by selecting courses,
+            subjects, questions and exam schedule.
+        </p>
+
+    </div>
+
+
+    <!-- FORM -->
+
+    <div class="form-card">
+
+        <form method="POST"
+              action="{{ url_for('create_mock_test') }}"
+              id="createTestForm">
+
+
+            <!-- BASIC INFORMATION -->
+
+            <h3 class="section-heading">
+                📋 Test Information
+            </h3>
+
+
+            <div class="mb-4">
+
+                <label class="form-label">
+                    Test Title <span class="required">*</span>
+                </label>
+
+                <input
+                        type="text"
+                        name="title"
+                        class="form-control"
+                        placeholder="Example: Java Programming Group Exam"
+                        maxlength="200"
+                        required
+                >
+
+            </div>
+
+
+            <div class="mb-4">
+
+                <label class="form-label">
+                    Description
+                </label>
+
+                <textarea
+                        name="description"
+                        class="form-control"
+                        placeholder="Write a short description about your examination..."
+                        maxlength="1000"
+                ></textarea>
+
+            </div>
+
+
+            <!-- COURSE AND SUBJECTS -->
+
+            <h3 class="section-heading">
+                🎓 Course & Subjects
+            </h3>
+
+
+            <div class="mb-4">
+
+                <label class="form-label">
+                    Select Course <span class="required">*</span>
+                </label>
+
+                <select
+                        name="course_id"
+                        id="courseSelect"
+                        class="form-select"
+                        required
+                >
+
+                    <option value="">-- Select Course --</option>
+
+                    {% for course in courses %}
+
+                    <option value="{{ course.id }}">
+                        {{ course.course_name }}
+                    </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+            <!-- SUBJECTS -->
+
+            <div class="mb-4">
+
+                <label class="form-label">
+                    Select Subjects <span class="required">*</span>
+                </label>
+
+                <div class="subject-box" id="subjectContainer">
+
+                    {% for subject in subjects %}
+
+                    <label class="subject-option"
+                           data-course="{{ subject.course_id }}">
+
+                        <input
+                                type="checkbox"
+                                name="subject_ids"
+                                value="{{ subject.id }}"
+                        >
+
+                        <span>
+                            {{ subject.subject_name }}
+                        </span>
+
+                    </label>
+
+                    {% else %}
+
+                    <p class="text-muted mb-0">
+                        No subjects available.
+                    </p>
+
+                    {% endfor %}
+
+                </div>
+
+                <div class="subject-info" id="subjectInfo">
+                    First select a course to view its subjects.
+                </div>
+
+            </div>
+
+
+            <!-- TEST CONFIGURATION -->
+
+            <h3 class="section-heading">
+                ⚙️ Test Configuration
+            </h3>
+
+
+            <div class="row">
+
+                <div class="col-md-6 mb-4">
+
+                    <label class="form-label">
+                        Number of Questions
+                        <span class="required">*</span>
+                    </label>
+
+                    <input
+                            type="number"
+                            name="question_count"
+                            class="form-control"
+                            min="1"
+                            max="200"
+                            value="20"
+                            required
+                    >
+
+                    <div class="form-hint">
+                        Minimum 1 and maximum 200 questions.
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-6 mb-4">
+
+                    <label class="form-label">
+                        Duration (Minutes)
+                        <span class="required">*</span>
+                    </label>
+
+                    <input
+                            type="number"
+                            name="duration_minutes"
+                            class="form-control"
+                            min="1"
+                            max="300"
+                            value="30"
+                            required
+                    >
+
+                    <div class="form-hint">
+                        Individual student exam duration.
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-6 mb-4">
+
+                    <label class="form-label">
+                        Difficulty Level
+                    </label>
+
+                    <select
+                            name="difficulty"
+                            class="form-select"
+                    >
+
+                        <option value="Mixed">Mixed</option>
+                        <option value="Easy">Easy</option>
+                        <option value="Medium">Medium</option>
+                        <option value="Hard">Hard</option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <!-- SCHEDULED EXAM TIMING -->
+
+            <h3 class="section-heading">
+                🗓️ Examination Schedule
+            </h3>
+
+
+            <div class="schedule-card">
+
+                <h4>⏰ Set Your Examination Window</h4>
+
+                <p>
+                    Students can start the exam anytime between
+                    the scheduled start and end time. Their individual
+                    timer will be limited by the overall exam end time.
+                </p>
+
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label">
+                            🟢 Exam Start Date & Time
+                            <span class="required">*</span>
+                        </label>
+
+                        <input
+                                type="datetime-local"
+                                name="scheduled_start_at"
+                                id="scheduledStart"
+                                class="form-control"
+                                required
+                        >
+
+                        <div class="form-hint">
+                            Students can access questions from this time.
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label">
+                            🔴 Exam End Date & Time
+                            <span class="required">*</span>
+                        </label>
+
+                        <input
+                                type="datetime-local"
+                                name="scheduled_end_at"
+                                id="scheduledEnd"
+                                class="form-control"
+                                required
+                        >
+
+                        <div class="form-hint">
+                            All active attempts will close at this time.
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="schedule-info" id="scheduleInfo">
+
+                    📌 Select the start and end time of your examination.
+
+                </div>
+
+            </div>
+
+
+            <!-- EXAM RULES -->
+
+            <div class="schedule-info mt-4">
+
+                <strong>📌 Examination Rules</strong>
+
+                <ul class="mt-2 mb-0">
+
+                    <li>
+                        Students cannot access questions before the scheduled start.
+                    </li>
+
+                    <li>
+                        Each student gets an individual timer.
+                    </li>
+
+                    <li>
+                        Each student can attempt the examination only once.
+                    </li>
+
+                    <li>
+                        No new attempt can start after the scheduled end.
+                    </li>
+
+                    <li>
+                        All active attempts must finish by the scheduled end.
+                    </li>
+
+                </ul>
+
+            </div>
+
+
+            <!-- ACTIONS -->
+
+            <div class="form-actions">
+
+                <a href="{{ url_for('mock_test_dashboard') }}"
+                   class="back-btn">
+
+                    ← Back to Dashboard
+
+                </a>
+
+
+                <button
+                        type="submit"
+                        class="create-btn"
+                        id="createButton"
+                >
+
+                    🚀 Create Scheduled Exam
+
+                </button>
+
+            </div>
+
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<!-- SUBJECT FILTER AND FORM VALIDATION -->
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const courseSelect = document.getElementById("courseSelect");
+
+        const subjectOptions = document.querySelectorAll(".subject-option");
+
+        const subjectInfo = document.getElementById("subjectInfo");
+
+        const startInput = document.getElementById("scheduledStart");
+
+        const endInput = document.getElementById("scheduledEnd");
+
+        const scheduleInfo = document.getElementById("scheduleInfo");
+
+        const createForm = document.getElementById("createTestForm");
+
+        const createButton = document.getElementById("createButton");
+
+
+        // ==========================================
+        // SUBJECT FILTER
+        // ==========================================
+
+        function filterSubjects() {
+
+            const selectedCourse = courseSelect.value;
+
+            let visibleCount = 0;
+
+            subjectOptions.forEach(function (option) {
+
+                const subjectCourse = option.dataset.course;
+
+                const checkbox = option.querySelector("input");
+
+                if (
+                    selectedCourse &&
+                    subjectCourse === selectedCourse
+                ) {
+
+                    option.classList.remove("hidden");
+
+                    visibleCount++;
+
+                } else {
+
+                    option.classList.add("hidden");
+
+                    checkbox.checked = false;
+
+                }
+
+            });
+
+
+            if (!selectedCourse) {
+
+                subjectInfo.textContent =
+                    "First select a course to view its subjects.";
+
+            } else if (visibleCount === 0) {
+
+                subjectInfo.textContent =
+                    "No subjects available for this course.";
+
+            } else {
+
+                subjectInfo.textContent =
+                    visibleCount +
+                    " subjects available. Select one or more.";
+
+            }
+
+        }
+
+
+        courseSelect.addEventListener("change", filterSubjects);
+
+        filterSubjects();
+
+
+        // ==========================================
+        // SET MINIMUM DATETIME
+        // ==========================================
+
+        function getLocalDateTime() {
+
+            const now = new Date();
+
+            const offset = now.getTimezoneOffset();
+
+            const localTime = new Date(
+                now.getTime() - offset * 60000
+            );
+
+            return localTime.toISOString().slice(0, 16);
+
+        }
+
+
+        // Initial minimum date/time
+        startInput.min = getLocalDateTime();
+
+        endInput.min = getLocalDateTime();
+
+
+        // ==========================================
+        // START TIME CHANGE
+        // ==========================================
+
+        startInput.addEventListener("change", function () {
+
+            if (!startInput.value) {
+                return;
+            }
+
+            endInput.min = startInput.value;
+
+            if (
+                endInput.value &&
+                endInput.value <= startInput.value
+            ) {
+
+                endInput.value = "";
+
+            }
+
+            updateScheduleInfo();
+
+        });
+
+
+        // ==========================================
+        // END TIME CHANGE
+        // ==========================================
+
+        endInput.addEventListener("change", function () {
+
+            updateScheduleInfo();
+
+        });
+
+
+        // ==========================================
+        // SCHEDULE INFORMATION
+        // ==========================================
+
+        function updateScheduleInfo() {
+
+            if (!startInput.value || !endInput.value) {
+
+                scheduleInfo.textContent =
+                    "📌 Select the start and end time of your examination.";
+
+                return;
+
+            }
+
+            const start = new Date(startInput.value);
+
+            const end = new Date(endInput.value);
+
+            if (end <= start) {
+
+                scheduleInfo.textContent =
+                    "⚠️ Exam end time must be after start time.";
+
+                return;
+
+            }
+
+            const difference = Math.round(
+                (end - start) / 60000
+            );
+
+            const hours = Math.floor(difference / 60);
+
+            const minutes = difference % 60;
+
+            scheduleInfo.innerHTML =
+                "<strong>✅ Examination Window:</strong><br>" +
+                "Total available window: " +
+                hours + " hour(s) " +
+                minutes + " minute(s).";
+
+        }
+
+
+        // ==========================================
+        // FORM SUBMISSION VALIDATION
+        // ==========================================
+
+        createForm.addEventListener("submit", function (event) {
+
+            const selectedSubjects = document.querySelectorAll(
+                'input[name="subject_ids"]:checked'
+            );
+
+
+            // Subject validation
+
+            if (selectedSubjects.length === 0) {
+
+                event.preventDefault();
+
+                alert("Please select at least one subject.");
+
+                return false;
+
+            }
+
+
+            // Date/time validation
+
+            if (!startInput.value || !endInput.value) {
+
+                event.preventDefault();
+
+                alert("Please select exam start and end date/time.");
+
+                return false;
+
+            }
+
+
+            const now = new Date();
+
+            const start = new Date(startInput.value);
+
+            const end = new Date(endInput.value);
+
+
+            if (start <= now) {
+
+                event.preventDefault();
+
+                alert("Exam start time must be in the future.");
+
+                return false;
+
+            }
+
+
+            if (end <= start) {
+
+                event.preventDefault();
+
+                alert("Exam end time must be after start time.");
+
+                return false;
+
+            }
+
+
+            // Disable button against accidental double click
+
+            createButton.disabled = true;
+
+            createButton.textContent = "Creating Examination...";
+
+        });
+
+    });
+
+</script>
+
+{% endblock %}

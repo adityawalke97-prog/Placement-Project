@@ -1,0 +1,514 @@
+{% extends "layout.html" %}
+
+{% block title %}Friends - Placement Portal{% endblock %}
+
+{% block css %}
+
+<style>
+
+    .friends-page {
+        max-width: 1250px;
+        margin: 35px auto;
+        padding: 20px;
+    }
+
+    .friends-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-bottom: 30px;
+    }
+
+    .friends-header h1 {
+        font-size: 30px;
+        margin: 0;
+        color: #172554;
+    }
+
+    .friends-header p {
+        color: #64748b;
+        margin-top: 7px;
+    }
+
+    .friends-search {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: white;
+        border: 1px solid #e2e8f0;
+        padding: 10px 15px;
+        border-radius: 12px;
+        width: 300px;
+    }
+
+    .friends-search input {
+        border: none;
+        outline: none;
+        width: 100%;
+        font-family: inherit;
+    }
+
+    .friends-tabs {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-bottom: 25px;
+    }
+
+    .friends-tab {
+        padding: 11px 20px;
+        border-radius: 10px;
+        border: 1px solid #e2e8f0;
+        background: white;
+        color: #475569;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .friends-tab.active,
+    .friends-tab:hover {
+        background: #2563eb;
+        color: white;
+        border-color: #2563eb;
+    }
+
+    .friends-section {
+        margin-bottom: 35px;
+    }
+
+    .friends-section h2 {
+        font-size: 21px;
+        margin-bottom: 18px;
+        color: #1e293b;
+    }
+
+    .friends-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill,minmax(240px,1fr));
+        gap: 20px;
+    }
+
+    .friend-card {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 17px;
+        padding: 22px;
+        text-align: center;
+        transition: .25s;
+    }
+
+    .friend-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 30px rgba(0,0,0,.08);
+    }
+
+    .friend-avatar {
+        width: 75px;
+        height: 75px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin: 0 auto 12px;
+        display: block;
+        background: #dbeafe;
+    }
+
+    .friend-avatar-placeholder {
+        width: 75px;
+        height: 75px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 12px;
+        background: linear-gradient(135deg,#2563eb,#7c3aed);
+        color: white;
+        font-size: 25px;
+        font-weight: 700;
+    }
+
+    .friend-card h3 {
+        margin: 5px 0;
+        font-size: 16px;
+    }
+
+    .friend-card p {
+        margin: 5px 0;
+        font-size: 12px;
+        color: #64748b;
+    }
+
+    .friend-status {
+        display: inline-block;
+        font-size: 11px;
+        margin: 8px 0;
+        color: #16a34a;
+    }
+
+    .friend-actions {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 15px;
+    }
+
+    .friend-btn {
+        padding: 9px 14px;
+        border-radius: 9px;
+        border: none;
+        background: #2563eb;
+        color: white;
+        text-decoration: none;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .friend-btn.secondary {
+        background: #f1f5f9;
+        color: #334155;
+    }
+
+    .friend-btn.danger {
+        background: #fee2e2;
+        color: #dc2626;
+    }
+
+    .friend-empty {
+        text-align: center;
+        background: white;
+        border: 1px dashed #cbd5e1;
+        border-radius: 15px;
+        padding: 45px 20px;
+        color: #64748b;
+    }
+
+    .friend-empty i {
+        font-size: 38px;
+        margin-bottom: 15px;
+        color: #94a3b8;
+    }
+
+    .friend-empty h3 {
+        color: #334155;
+    }
+
+    @media(max-width:600px) {
+        .friends-page {
+            padding: 12px;
+        }
+
+        .friends-header h1 {
+            font-size: 24px;
+        }
+
+        .friends-search {
+            width: 100%;
+            box-sizing: border-box;
+        }
+    }
+
+</style>
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="friends-page">
+
+    <div class="friends-header">
+
+        <div>
+            <h1>
+                <i class="fas fa-user-group"></i>
+                My Friends
+            </h1>
+
+            <p>
+                Connect with students and grow your placement network.
+            </p>
+        </div>
+
+        <form method="GET" action="/friends" class="friends-search">
+
+            <i class="fas fa-search"></i>
+
+            <input
+                    type="search"
+                    name="search"
+                    placeholder="Search students..."
+                    value="{{ request.args.get('search', '') }}">
+
+            <button type="submit" class="friend-btn">
+                Search
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <!-- TABS -->
+
+    <div class="friends-tabs">
+
+        <a href="/friends"
+           class="friends-tab active">
+            <i class="fas fa-users"></i>
+            My Friends
+        </a>
+
+        <a href="/friends?tab=requests"
+           class="friends-tab">
+            <i class="fas fa-user-clock"></i>
+            Requests
+            {% if pending_requests %}
+            ({{ pending_requests|length }})
+            {% endif %}
+        </a>
+
+        <a href="/friends?tab=suggestions"
+           class="friends-tab">
+            <i class="fas fa-user-plus"></i>
+            Suggestions
+        </a>
+
+    </div>
+
+
+    <!-- FRIEND REQUESTS -->
+
+    <section class="friends-section">
+
+        <h2>
+            <i class="fas fa-user-clock"></i>
+            Friend Requests
+        </h2>
+
+        <div class="friends-grid">
+
+            {% for request_item in pending_requests|default([], true) %}
+
+            <div class="friend-card">
+
+                {% if request_item.picture %}
+
+                <img
+                        src="{{ request_item.picture }}"
+                        class="friend-avatar"
+                        alt="Profile">
+
+                {% else %}
+
+                <div class="friend-avatar-placeholder">
+                    {{ request_item.name[0]|upper }}
+                </div>
+
+                {% endif %}
+
+                <h3>{{ request_item.name }}</h3>
+
+                <p>{{ request_item.email }}</p>
+
+                <div class="friend-actions">
+
+                    <form method="POST"
+                          action="/friends/accept/{{ request_item.id }}">
+
+                        <button class="friend-btn" type="submit">
+                            Accept
+                        </button>
+
+                    </form>
+
+                    <form method="POST"
+                          action="/friends/reject/{{ request_item.id }}">
+
+                        <button class="friend-btn danger" type="submit">
+                            Reject
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+            {% else %}
+
+            <div class="friend-empty" style="grid-column:1/-1;">
+
+                <i class="fas fa-user-clock"></i>
+
+                <h3>No Pending Requests</h3>
+
+                <p>New friend requests will appear here.</p>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+
+    <!-- MY FRIENDS -->
+
+    <section class="friends-section">
+
+        <h2>
+            <i class="fas fa-users"></i>
+            My Friends
+        </h2>
+
+        <div class="friends-grid">
+
+            {% for friend in friends|default([], true) %}
+
+            <div class="friend-card">
+
+                {% if friend.picture %}
+
+                <img
+                        src="{{ friend.picture }}"
+                        class="friend-avatar"
+                        alt="Profile">
+
+                {% else %}
+
+                <div class="friend-avatar-placeholder">
+                    {{ friend.name[0]|upper }}
+                </div>
+
+                {% endif %}
+
+                <h3>{{ friend.name }}</h3>
+
+                <p>{{ friend.email }}</p>
+
+                <span class="friend-status">
+                    <i class="fas fa-circle"></i>
+                    {{ friend.status|default('Student') }}
+                </span>
+
+                <div class="friend-actions">
+
+                    <a href="/messages?user={{ friend.id }}"
+                       class="friend-btn">
+
+                        <i class="fas fa-message"></i>
+                        Message
+
+                    </a>
+
+                    <a href="/profile/{{ friend.id }}"
+                       class="friend-btn secondary">
+
+                        <i class="fas fa-user"></i>
+                        Profile
+
+                    </a>
+
+                </div>
+
+            </div>
+
+            {% else %}
+
+            <div class="friend-empty" style="grid-column:1/-1;">
+
+                <i class="fas fa-user-group"></i>
+
+                <h3>No Friends Yet</h3>
+
+                <p>
+                    Search for students and send friend requests
+                    to build your network.
+                </p>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+
+    <!-- STUDENT SUGGESTIONS -->
+
+    <section class="friends-section">
+
+        <h2>
+            <i class="fas fa-user-plus"></i>
+            Suggested Students
+        </h2>
+
+        <div class="friends-grid">
+
+            {% for student in suggestions|default([], true) %}
+
+            <div class="friend-card">
+
+                {% if student.picture %}
+
+                <img
+                        src="{{ student.picture }}"
+                        class="friend-avatar"
+                        alt="Profile">
+
+                {% else %}
+
+                <div class="friend-avatar-placeholder">
+                    {{ student.name[0]|upper }}
+                </div>
+
+                {% endif %}
+
+                <h3>{{ student.name }}</h3>
+
+                <p>{{ student.email }}</p>
+
+                <div class="friend-actions">
+
+                    <form method="POST"
+                          action="/friends/send/{{ student.id }}">
+
+                        <button class="friend-btn" type="submit">
+
+                            <i class="fas fa-user-plus"></i>
+                            Add Friend
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+            {% else %}
+
+            <div class="friend-empty" style="grid-column:1/-1;">
+
+                <i class="fas fa-users"></i>
+
+                <h3>No Suggestions Available</h3>
+
+                <p>New student suggestions will appear here.</p>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+</div>
+
+{% endblock %}

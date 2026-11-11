@@ -4,9 +4,7 @@
 <head>
 
     <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>
         {% block title %}
@@ -17,13 +15,12 @@
     <meta name="description"
           content="Placement Training Portal for Mock Tests, Interview Preparation, Resume Builder and Courses">
 
-    <meta name="theme-color"
-          content="#2563eb">
+    <meta name="theme-color" content="#2563eb">
 
     <link rel="icon"
           href="{{ url_for('static', filename='images/favicon.ico') }}">
 
-    <!-- ================= CSS ================= -->
+    <!-- CSS -->
 
     <link rel="stylesheet"
           href="{{ url_for('static', filename='css/layout.css') }}">
@@ -37,10 +34,9 @@
     {% block css %}
     {% endblock %}
 
-    <!-- ================= GOOGLE FONTS ================= -->
+    <!-- GOOGLE FONTS -->
 
-    <link rel="preconnect"
-          href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
 
     <link rel="preconnect"
           href="https://fonts.gstatic.com"
@@ -49,43 +45,32 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
           rel="stylesheet">
 
-    <!-- ================= FONT AWESOME ================= -->
+    <!-- FONT AWESOME -->
 
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
-    <!-- ================= ADVANCED NAV CSS ================= -->
 
     <style>
 
-        /* =====================================================
-           ADVANCED NAVBAR
-        ===================================================== */
+        /* ================= NAVBAR ================= */
 
         .navbar {
             position: sticky;
             top: 0;
             z-index: 9999;
-
             min-height: 72px;
-
             display: flex;
             align-items: center;
-
-            padding: 10px 28px;
-
-            background: rgba(255,255,255,.92);
-
+            padding: 10px 25px;
+            background: rgba(255,255,255,.95);
             backdrop-filter: blur(18px);
             -webkit-backdrop-filter: blur(18px);
-
             border-bottom: 1px solid rgba(0,0,0,.08);
-
             box-shadow: 0 8px 30px rgba(0,0,0,.06);
         }
 
-
-        /* ================= LOGO ================= */
+        /* LOGO */
 
         .nav-left {
             flex-shrink: 0;
@@ -95,7 +80,6 @@
             display: flex;
             align-items: center;
             gap: 12px;
-
             text-decoration: none;
             color: inherit;
         }
@@ -103,107 +87,71 @@
         .logo > i {
             width: 44px;
             height: 44px;
-
             display: flex;
             align-items: center;
             justify-content: center;
-
             border-radius: 13px;
-
-            background: linear-gradient(
-                    135deg,
-                    #2563eb,
-                    #7c3aed
-            );
-
+            background: linear-gradient(135deg,#2563eb,#7c3aed);
             color: white;
-
             font-size: 21px;
-
             box-shadow: 0 8px 20px rgba(37,99,235,.25);
         }
 
         .logo h2 {
             margin: 0;
-
             font-size: 18px;
             font-weight: 700;
         }
 
         .logo span {
             display: block;
-
             margin-top: 1px;
-
             font-size: 10px;
-
             opacity: .6;
-
-            letter-spacing: .3px;
         }
 
-
-        /* ================= SEARCH ================= */
+        /* SEARCH */
 
         .nav-search {
             position: relative;
-
-            width: min(330px, 25vw);
-
+            width: min(250px,20vw);
             margin-left: auto;
-            margin-right: 22px;
+            margin-right: 12px;
         }
 
         .nav-search i {
             position: absolute;
-
             left: 14px;
             top: 50%;
-
             transform: translateY(-50%);
-
             opacity: .5;
         }
 
         .nav-search input {
             width: 100%;
-
             box-sizing: border-box;
-
             padding: 11px 15px 11px 42px;
-
             border: 1px solid rgba(0,0,0,.1);
-
             border-radius: 14px;
-
             outline: none;
-
             background: rgba(255,255,255,.7);
-
             font-family: inherit;
-
             transition: .25s;
         }
 
         .nav-search input:focus {
             border-color: #2563eb;
-
-            box-shadow:
-                    0 0 0 4px rgba(37,99,235,.1);
+            box-shadow: 0 0 0 4px rgba(37,99,235,.1);
         }
 
-
-        /* ================= NAV LINKS ================= */
+        /* NAV LINKS */
 
         .nav-links {
             display: flex;
             align-items: center;
-
-            gap: 4px;
-
+            gap: 3px;
             margin: 0;
             padding: 0;
-
             list-style: none;
         }
 
@@ -215,58 +163,159 @@
             display: flex;
             align-items: center;
             gap: 7px;
-
-            padding: 10px 11px;
-
+            padding: 10px 9px;
             border-radius: 11px;
-
             text-decoration: none;
-
             color: inherit;
-
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 500;
-
             white-space: nowrap;
-
             transition: .2s;
         }
 
-        .nav-links > li > a:hover {
-            background: rgba(37,99,235,.08);
-
+        .nav-links > li > a:hover,
+        .nav-links > li > a.active {
+            background: rgba(37,99,235,.09);
             color: #2563eb;
         }
 
+        .nav-links > li > a.active {
+            font-weight: 700;
+        }
 
-        /* ================= PROFILE ================= */
+        /* NAV ACTIONS */
+
+        .nav-action {
+            position: relative;
+            width: 39px;
+            height: 39px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 3px;
+            border: 1px solid rgba(0,0,0,.07);
+            border-radius: 12px;
+            background: rgba(37,99,235,.06);
+            color: #334155;
+            font-size: 16px;
+            cursor: pointer;
+            transition: .25s;
+        }
+
+        .nav-action:hover {
+            background: #2563eb;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* NOTIFICATIONS */
+
+        .notification-dropdown {
+            position: relative;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            min-width: 17px;
+            height: 17px;
+            padding: 0 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid white;
+            border-radius: 20px;
+            background: #ef4444;
+            color: white;
+            font-size: 9px;
+            font-weight: 700;
+        }
+
+        .notification-panel {
+            position: absolute;
+            top: calc(100% + 13px);
+            right: 0;
+            width: 330px;
+            background: white;
+            border: 1px solid rgba(0,0,0,.08);
+            border-radius: 17px;
+            box-shadow: 0 18px 45px rgba(0,0,0,.15);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-8px);
+            transition: .2s;
+            z-index: 10001;
+        }
+
+        .notification-dropdown.open .notification-panel {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .notification-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px;
+            border-bottom: 1px solid #eef0f4;
+        }
+
+        .notification-header h3 {
+            margin: 0;
+            font-size: 15px;
+        }
+
+        .notification-header a {
+            font-size: 11px;
+            color: #2563eb;
+            text-decoration: none;
+        }
+
+        .notification-empty {
+            padding: 30px 18px;
+            text-align: center;
+            color: #64748b;
+        }
+
+        .notification-empty i {
+            display: block;
+            margin-bottom: 12px;
+            font-size: 30px;
+            color: #94a3b8;
+        }
+
+        .notification-empty h4 {
+            margin: 0 0 6px;
+            color: #334155;
+            font-size: 14px;
+        }
+
+        .notification-empty p {
+            margin: 0;
+            font-size: 12px;
+        }
+
+        /* PROFILE */
 
         .profile-dropdown {
-            margin-left: 8px;
+            margin-left: 5px;
         }
 
         .profile-btn {
             border: none;
-
             display: flex;
             align-items: center;
             gap: 8px;
-
             padding: 5px 9px 5px 5px;
-
             border-radius: 30px;
-
             background: rgba(37,99,235,.07);
-
             cursor: pointer;
-
             font-family: inherit;
-
             font-size: 13px;
             font-weight: 600;
-
             color: inherit;
-
             transition: .25s;
         }
 
@@ -278,121 +327,73 @@
         .nav-profile-placeholder {
             width: 36px;
             height: 36px;
-
             border-radius: 50%;
-
             flex-shrink: 0;
         }
 
         .nav-profile-image {
             display: block;
-
             object-fit: cover;
-
-            border: 2px solid rgba(255,255,255,.9);
-
+            border: 2px solid white;
             box-shadow: 0 3px 10px rgba(0,0,0,.15);
         }
 
         .nav-profile-placeholder {
             display: flex;
-
             align-items: center;
             justify-content: center;
-
-            background: linear-gradient(
-                    135deg,
-                    #2563eb,
-                    #7c3aed
-            );
-
+            background: linear-gradient(135deg,#2563eb,#7c3aed);
             color: white;
-
             font-size: 15px;
             font-weight: 700;
         }
 
         .nav-profile-name {
-            max-width: 110px;
-
+            max-width: 100px;
             overflow: hidden;
-
             text-overflow: ellipsis;
-
             white-space: nowrap;
         }
 
         .profile-btn > .fa-chevron-down {
             font-size: 10px;
-
             opacity: .55;
         }
 
-
-        /* ================= DROPDOWN ================= */
+        /* DROPDOWN */
 
         .dropdown-menu {
             position: absolute;
-
             top: calc(100% + 12px);
-
             right: 0;
-
             width: 245px;
-
             padding: 9px;
-
-            background: rgba(255,255,255,.97);
-
+            background: rgba(255,255,255,.98);
             backdrop-filter: blur(20px);
-
             border: 1px solid rgba(0,0,0,.08);
-
             border-radius: 18px;
-
-            box-shadow:
-                    0 20px 50px rgba(0,0,0,.15);
-
+            box-shadow: 0 20px 50px rgba(0,0,0,.15);
             opacity: 0;
-
             visibility: hidden;
-
-            transform:
-                    translateY(-8px)
-                    scale(.98);
-
+            transform: translateY(-8px);
             transition: .2s;
-
             z-index: 10000;
         }
 
         .profile-dropdown:hover .dropdown-menu,
         .profile-dropdown:focus-within .dropdown-menu {
             opacity: 1;
-
             visibility: visible;
-
-            transform:
-                    translateY(0)
-                    scale(1);
+            transform: translateY(0);
         }
-
-
-        /* PROFILE HEADER */
 
         .dropdown-profile {
             display: flex;
-
             align-items: center;
-
             gap: 12px;
-
             padding: 12px;
-
             margin-bottom: 7px;
-
             border-radius: 13px;
-
             background: rgba(37,99,235,.06);
         }
 
@@ -400,28 +401,17 @@
         .dropdown-profile-placeholder {
             width: 42px;
             height: 42px;
-
             border-radius: 50%;
-
             object-fit: cover;
-
             flex-shrink: 0;
         }
 
         .dropdown-profile-placeholder {
             display: flex;
-
             align-items: center;
             justify-content: center;
-
-            background: linear-gradient(
-                    135deg,
-                    #2563eb,
-                    #7c3aed
-            );
-
+            background: linear-gradient(135deg,#2563eb,#7c3aed);
             color: white;
-
             font-weight: 700;
         }
 
@@ -431,72 +421,47 @@
 
         .dropdown-user-name {
             font-weight: 700;
-
             font-size: 14px;
-
-            white-space: nowrap;
-
             overflow: hidden;
-
             text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         .dropdown-user-email {
             margin-top: 2px;
-
             font-size: 11px;
-
             opacity: .6;
-
-            white-space: nowrap;
-
             overflow: hidden;
-
             text-overflow: ellipsis;
+            white-space: nowrap;
         }
-
-
-        /* DROPDOWN LINKS */
 
         .dropdown-menu a {
             display: flex;
-
             align-items: center;
-
             gap: 12px;
-
             padding: 11px 12px;
-
             border-radius: 11px;
-
             color: inherit;
-
             text-decoration: none;
-
             font-size: 13px;
-
             transition: .2s;
         }
 
         .dropdown-menu a i {
             width: 20px;
-
             text-align: center;
-
             opacity: .7;
         }
 
         .dropdown-menu a:hover {
             background: rgba(37,99,235,.08);
-
             color: #2563eb;
         }
 
         .dropdown-divider {
             height: 1px;
-
             margin: 7px 4px;
-
             background: rgba(0,0,0,.08);
         }
 
@@ -506,55 +471,51 @@
 
         .dropdown-menu a.logout:hover {
             background: rgba(220,38,38,.08);
-
-            color: #dc2626;
         }
 
-
-        /* ================= MOBILE MENU ================= */
+        /* MOBILE MENU */
 
         .menu-toggle {
             display: none;
-
             width: 42px;
             height: 42px;
-
             align-items: center;
             justify-content: center;
-
             border-radius: 12px;
-
             cursor: pointer;
-
             background: rgba(37,99,235,.08);
-
             color: #2563eb;
+            border: none;
+            font-size: 17px;
         }
 
+        /* FLASH */
 
-        /* ================= MOBILE ================= */
+        .flash {
+            transition: opacity .5s ease;
+        }
+
+        /* RESPONSIVE */
 
         @media (max-width: 1250px) {
 
             .navbar {
-                padding: 10px 18px;
+                padding: 10px 15px;
             }
 
             .nav-links > li > a {
-                padding: 9px 7px;
-
-                font-size: 12px;
+                padding: 9px 6px;
+                font-size: 11px;
             }
 
             .nav-search {
-                width: 210px;
+                width: 180px;
             }
 
             .nav-profile-name {
-                max-width: 80px;
+                max-width: 70px;
             }
         }
-
 
         @media (max-width: 1050px) {
 
@@ -564,38 +525,26 @@
 
             .menu-toggle {
                 display: flex;
-
                 margin-left: auto;
             }
 
             .nav-links {
                 position: absolute;
-
                 top: 100%;
-
                 left: 15px;
                 right: 15px;
-
                 display: none;
-
                 flex-direction: column;
-
                 align-items: stretch;
-
                 gap: 4px;
-
                 padding: 12px;
-
-                background: rgba(255,255,255,.98);
-
+                background: rgba(255,255,255,.99);
                 backdrop-filter: blur(20px);
-
                 border: 1px solid rgba(0,0,0,.08);
-
                 border-radius: 18px;
-
-                box-shadow:
-                        0 20px 50px rgba(0,0,0,.14);
+                box-shadow: 0 20px 50px rgba(0,0,0,.14);
+                max-height: 80vh;
+                overflow-y: auto;
             }
 
             .nav-links.active {
@@ -604,6 +553,7 @@
 
             .nav-links > li > a {
                 padding: 12px 14px;
+                font-size: 13px;
             }
 
             .profile-dropdown {
@@ -612,9 +562,7 @@
 
             .profile-btn {
                 width: 100%;
-
                 justify-content: flex-start;
-
                 padding: 6px 10px;
             }
 
@@ -624,27 +572,54 @@
 
             .dropdown-menu {
                 position: static;
-
                 width: auto;
-
                 margin-top: 7px;
-
                 display: none;
-
                 opacity: 1;
-
                 visibility: visible;
-
                 transform: none;
-
                 box-shadow: none;
             }
 
-            .profile-dropdown:hover .dropdown-menu {
+            .profile-dropdown:focus-within .dropdown-menu {
                 display: block;
             }
-        }
 
+            .profile-dropdown:hover .dropdown-menu {
+                display: none;
+            }
+
+            .notification-dropdown {
+                width: 100%;
+            }
+
+            .nav-action {
+                width: 100%;
+                height: 44px;
+                justify-content: flex-start;
+                gap: 12px;
+                margin: 0;
+                padding: 12px 14px;
+                border: none;
+                background: transparent;
+            }
+
+            .notification-panel {
+                position: static;
+                display: none;
+                width: auto;
+                margin: 5px 0 10px;
+                opacity: 1;
+                visibility: visible;
+                transform: none;
+                box-shadow: none;
+            }
+
+            .notification-dropdown.open .notification-panel {
+                display: block;
+            }
+
+        }
 
         @media (max-width: 600px) {
 
@@ -664,13 +639,7 @@
                 width: 40px;
                 height: 40px;
             }
-        }
 
-
-        /* ================= FLASH ================= */
-
-        .flash {
-            transition: opacity .5s ease;
         }
 
     </style>
@@ -681,12 +650,9 @@
 <body>
 
 
-<!-- =====================================================
-     PAGE LOADER
-===================================================== -->
+<!-- PAGE LOADER -->
 
-<div class="page-loader"
-     id="pageLoader">
+<div class="page-loader" id="pageLoader">
 
     <div class="loader-box">
 
@@ -701,19 +667,15 @@
 </div>
 
 
-<!-- =====================================================
-     NAVBAR
-===================================================== -->
+<!-- NAVBAR -->
 
 <nav class="navbar">
-
 
     <!-- LOGO -->
 
     <div class="nav-left">
 
-        <a href="/"
-           class="logo">
+        <a href="/" class="logo">
 
             <i class="fas fa-graduation-cap"></i>
 
@@ -721,9 +683,7 @@
 
                 <h2>Placement Portal</h2>
 
-                <span>
-                    Train • Practice • Get Placed
-                </span>
+                <span>Train • Practice • Get Placed</span>
 
             </div>
 
@@ -751,34 +711,31 @@
     {% endif %}
 
 
-    <!-- MOBILE MENU BUTTON -->
+    <!-- MOBILE BUTTON -->
 
-    <div class="menu-toggle"
-         id="menu-toggle">
+    <button
+            class="menu-toggle"
+            id="menu-toggle"
+            type="button"
+            aria-label="Toggle navigation">
 
         <i class="fas fa-bars"></i>
 
-    </div>
+    </button>
 
 
     <!-- NAVIGATION -->
 
-    <ul class="nav-links"
-        id="nav-links">
-
+    <ul class="nav-links" id="nav-links">
 
         <!-- HOME -->
 
         <li>
-
-            <a href="/">
-
+            <a href="/"
+               class="{% if request.path == '/' %}active{% endif %}">
                 <i class="fas fa-house"></i>
-
                 Home
-
             </a>
-
         </li>
 
 
@@ -788,119 +745,153 @@
         <!-- DASHBOARD -->
 
         <li>
-
             <a href="/dashboard">
-
                 <i class="fas fa-chart-line"></i>
-
                 Dashboard
-
             </a>
-
         </li>
 
 
         <!-- COURSES -->
 
         <li>
-
             <a href="/courses">
-
                 <i class="fas fa-book-open"></i>
-
                 Courses
-
             </a>
-
         </li>
 
 
         <!-- MOCK TEST -->
 
         <li>
-
             <a href="{{ url_for('mock_test_dashboard') }}">
                 <i class="fas fa-file-circle-question"></i>
-
                 Mock Test
-
             </a>
-
         </li>
 
 
         <!-- INTERVIEW -->
 
         <li>
-
             <a href="/interview_questions">
-
                 <i class="fas fa-user-tie"></i>
-
                 Interview
-
             </a>
-
         </li>
 
 
         <!-- COMMUNICATION -->
 
         <li>
-
             <a href="/communication">
-
                 <i class="fas fa-comments"></i>
-
                 Communication
-
             </a>
-
         </li>
 
 
         <!-- RESUME -->
 
         <li>
-
             <a href="/resume_builder">
-
                 <i class="fas fa-file-lines"></i>
-
                 Resume
-
             </a>
-
         </li>
 
 
         <!-- LEADERBOARD -->
 
         <li>
-
             <a href="/leaderboard">
-
                 <i class="fas fa-trophy"></i>
-
                 Leaderboard
-
             </a>
+        </li>
+
+
+        <!-- FRIENDS -->
+
+        <li>
+            <a href="/friends">
+                <i class="fas fa-user-group"></i>
+                Friends
+            </a>
+        </li>
+
+
+        <!-- MESSAGES -->
+
+        <li>
+            <a href="/messages">
+                <i class="fas fa-message"></i>
+                Messages
+            </a>
+        </li>
+
+
+        <!-- NOTIFICATIONS -->
+
+        <li class="notification-dropdown" id="notificationDropdown">
+
+            <button
+                    type="button"
+                    class="nav-action notification-btn"
+                    id="notificationToggle"
+                    aria-label="Notifications"
+                    aria-expanded="false">
+
+                <i class="fas fa-bell"></i>
+
+                <span
+                        class="notification-badge"
+                        id="notificationBadge"
+                        style="display:none;">0</span>
+
+            </button>
+
+            <div class="notification-panel">
+
+                <div class="notification-header">
+
+                    <h3>
+                        <i class="fas fa-bell"></i>
+                        Notifications
+                    </h3>
+
+                    <a href="/notifications">
+                        View All
+                    </a>
+
+                </div>
+
+                <div class="notification-empty">
+
+                    <i class="far fa-bell-slash"></i>
+
+                    <h4>You're all caught up!</h4>
+
+                    <p>
+                        New notifications will appear here.
+                    </p>
+
+                </div>
+
+            </div>
 
         </li>
 
 
-        <!-- =================================================
-             PROFILE DROPDOWN
-        ================================================= -->
+        <!-- PROFILE -->
 
         <li class="profile-dropdown">
-
 
             <button
                     type="button"
                     class="profile-btn"
                     aria-label="Open profile menu">
-
 
                 {% if session.get("picture") %}
 
@@ -913,36 +904,25 @@
                 {% else %}
 
                 <span class="nav-profile-placeholder">
-
-                        {{ session.get("name", "Student")[0]|upper }}
-
-                    </span>
+                    {{ session.get("name", "Student")[0]|upper }}
+                </span>
 
                 {% endif %}
 
-
                 <span class="nav-profile-name">
-
                     {{ session.get("name", "Student") }}
-
                 </span>
 
-
                 <i class="fas fa-chevron-down"></i>
-
 
             </button>
 
 
-            <!-- DROPDOWN -->
+            <!-- PROFILE DROPDOWN -->
 
             <div class="dropdown-menu">
 
-
-                <!-- USER INFORMATION -->
-
                 <div class="dropdown-profile">
-
 
                     {% if session.get("picture") %}
 
@@ -954,26 +934,19 @@
                     {% else %}
 
                     <div class="dropdown-profile-placeholder">
-
                         {{ session.get("name", "Student")[0]|upper }}
-
                     </div>
 
                     {% endif %}
 
-
                     <div class="dropdown-user-info">
 
                         <div class="dropdown-user-name">
-
                             {{ session.get("name", "Student") }}
-
                         </div>
 
                         <div class="dropdown-user-email">
-
                             {{ session.get("email", "No email available") }}
-
                         </div>
 
                     </div>
@@ -984,53 +957,39 @@
                 <div class="dropdown-divider"></div>
 
 
-                <!-- DASHBOARD -->
-
                 <a href="/dashboard">
-
                     <i class="fas fa-chart-line"></i>
-
                     Dashboard
-
                 </a>
-
-
-                <!-- PROFILE -->
 
                 <a href="/profile">
-
                     <i class="fas fa-user"></i>
-
                     My Profile
-
                 </a>
 
-
-                <!-- SETTINGS -->
-
                 <a href="/settings">
-
                     <i class="fas fa-gear"></i>
-
                     Settings
+                </a>
 
+                <a href="/friends">
+                    <i class="fas fa-user-group"></i>
+                    My Friends
+                </a>
+
+                <a href="/messages">
+                    <i class="fas fa-message"></i>
+                    Messages
                 </a>
 
 
                 <div class="dropdown-divider"></div>
 
 
-                <!-- LOGOUT -->
-
-                <a href="/logout"
-                   class="logout">
-
+                <a href="/logout" class="logout">
                     <i class="fas fa-right-from-bracket"></i>
-
                     Logout
-
                 </a>
-
 
             </div>
 
@@ -1043,53 +1002,37 @@
         <!-- LOGIN -->
 
         <li>
-
             <a href="/login">
-
                 <i class="fas fa-right-to-bracket"></i>
-
                 Login
-
             </a>
-
         </li>
 
 
         <!-- SIGNUP -->
 
         <li>
-
-            <a href="/signup"
-               class="signup-btn">
-
+            <a href="/signup" class="signup-btn">
                 <i class="fas fa-user-plus"></i>
-
                 Sign Up
-
             </a>
-
         </li>
 
 
         {% endif %}
-
 
     </ul>
 
 </nav>
 
 
-<!-- =====================================================
-     HERO
-===================================================== -->
+<!-- HERO -->
 
 <header class="hero">
 </header>
 
 
-<!-- =====================================================
-     MAIN CONTENT
-===================================================== -->
+<!-- MAIN CONTENT -->
 
 <main class="main-container">
 
@@ -1106,33 +1049,25 @@
 
         <div class="flash flash-{{ category }}">
 
-                        <span>
+            <span>
 
-                            {% if category == "success" %}
+                {% if category == "success" %}
+                    <i class="fas fa-circle-check"></i>
 
-                                <i class="fas fa-circle-check"></i>
+                {% elif category == "danger" %}
+                    <i class="fas fa-circle-xmark"></i>
 
-                            {% elif category == "danger" %}
+                {% elif category == "warning" %}
+                    <i class="fas fa-triangle-exclamation"></i>
 
-                                <i class="fas fa-circle-xmark"></i>
+                {% else %}
+                    <i class="fas fa-circle-info"></i>
 
-                            {% elif category == "warning" %}
+                {% endif %}
 
-                                <i class="fas fa-triangle-exclamation"></i>
+            </span>
 
-                            {% else %}
-
-                                <i class="fas fa-circle-info"></i>
-
-                            {% endif %}
-
-                        </span>
-
-
-            <p>
-                {{ message }}
-            </p>
-
+            <p>{{ message }}</p>
 
             <button
                     class="flash-close"
@@ -1163,16 +1098,12 @@
 
     </div>
 
-
 </main>
 
 
-<!-- =====================================================
-     FOOTER
-===================================================== -->
+<!-- FOOTER -->
 
 <footer class="footer">
-
 
     <div class="footer-container">
 
@@ -1180,7 +1111,6 @@
         <!-- ABOUT -->
 
         <div class="footer-column">
-
 
             <div class="footer-logo">
 
@@ -1190,54 +1120,36 @@
 
             </div>
 
-
             <p>
-
                 A complete Placement Preparation Portal built with Flask
                 & MySQL. Practice Mock Tests, prepare for Interviews,
                 build Resume, improve Communication Skills and track
                 your learning journey.
-
             </p>
-
 
             <div class="social-icons">
 
-
                 <a href="#"
                    title="GitHub">
-
                     <i class="fab fa-github"></i>
-
                 </a>
-
 
                 <a href="#"
                    title="LinkedIn">
-
                     <i class="fab fa-linkedin"></i>
-
                 </a>
-
 
                 <a href="#"
                    title="Instagram">
-
                     <i class="fab fa-instagram"></i>
-
                 </a>
-
 
                 <a href="#"
                    title="YouTube">
-
                     <i class="fab fa-youtube"></i>
-
                 </a>
 
-
             </div>
-
 
         </div>
 
@@ -1246,108 +1158,117 @@
 
         <div class="footer-column">
 
-
-            <h3>
-                Quick Links
-            </h3>
-
+            <h3>Quick Links</h3>
 
             <ul>
 
-                <li>
-                    <a href="/dashboard">
-                        Home
-                    </a>
-                </li>
-                <li>
-                    <a href="/courses">
-                        Courses
-                    </a>
-                </li>
-                <li>
-                    <a href="/mock_test">
-                        Mock Test
-                    </a>
-                </li>
-                <li>
-                    <a href="/resume_builder">
-                        Resume Builder
-                    </a>
-                </li>
-                <li>
-                    <a href="/leaderboard">
-                        Leaderboard
-                    </a>
-                </li>
+                <li><a href="/dashboard">Home</a></li>
+
+                <li><a href="/courses">Courses</a></li>
+
+                <li><a href="/mock_test">Mock Test</a></li>
+
+                <li><a href="/resume_builder">Resume Builder</a></li>
+
+                <li><a href="/leaderboard">Leaderboard</a></li>
+
+                <li><a href="/friends">Friends</a></li>
+
+                <li><a href="/messages">Messages</a></li>
+
             </ul>
+
         </div>
+
+
+        <!-- RESOURCES -->
+
         <div class="footer-column">
-            <h3>
-                Resources
-            </h3>
+
+            <h3>Resources</h3>
+
             <ul>
+
                 <li>
                     <a href="/communication">
                         Communication
                     </a>
                 </li>
+
                 <li>
                     <a href="/interview_questions">
                         Interview Questions
                     </a>
                 </li>
+
                 <li>
                     <a href="/contact">
                         Contact
                     </a>
                 </li>
+
                 <li>
                     <a href="/about">
                         About
                     </a>
                 </li>
+
                 <li>
                     <a href="/privacy">
                         Privacy Policy
                     </a>
                 </li>
+
                 <li>
                     <a href="/terms">
                         Terms & Conditions
                     </a>
                 </li>
+
             </ul>
+
         </div>
-       <div class="footer-column">
-            <h3>
-                Contact
-            </h3>
+
+
+        <!-- CONTACT -->
+
+        <div class="footer-column">
+
+            <h3>Contact</h3>
+
             <p>
                 <i class="fas fa-envelope"></i>
                 adityawakle97@gmail.com
             </p>
+
             <p>
                 <i class="fas fa-phone"></i>
                 +91 8446170818
             </p>
+
             <p>
                 <i class="fas fa-location-dot"></i>
                 Pune, Maharashtra
             </p>
+
         </div>
+
     </div>
+
+
     <div class="footer-bottom">
+
         <p>
             © 2026 Placement Training Portal |
             Built with ❤️ using Flask, MySQL, HTML, CSS & JavaScript
         </p>
+
     </div>
+
 </footer>
 
 
-<!-- =====================================================
-     SCROLL TOP
-===================================================== -->
+<!-- SCROLL TOP -->
 
 <button
         id="scrollTop"
@@ -1360,17 +1281,13 @@
 </button>
 
 
-<!-- =====================================================
-     PAGE JAVASCRIPT BLOCK
-===================================================== -->
+<!-- PAGE JAVASCRIPT BLOCK -->
 
 {% block js %}
 {% endblock %}
 
 
-<!-- =====================================================
-     GLOBAL JAVASCRIPT
-===================================================== -->
+<!-- GLOBAL JAVASCRIPT -->
 
 <script>
 
@@ -1396,13 +1313,11 @@
             if (navLinks.classList.contains("active")) {
 
                 icon.classList.remove("fa-bars");
-
                 icon.classList.add("fa-xmark");
 
             } else {
 
                 icon.classList.remove("fa-xmark");
-
                 icon.classList.add("fa-bars");
 
             }
@@ -1414,22 +1329,23 @@
 
     /* ================= CLOSE MOBILE MENU ================= */
 
-    document.querySelectorAll(
-        "#nav-links a"
-    ).forEach(function (link) {
+    document.querySelectorAll("#nav-links a").forEach(function (link) {
 
         link.addEventListener("click", function () {
 
-            if (window.innerWidth <= 1050) {
+            if (window.innerWidth <= 1050 && navLinks) {
 
                 navLinks.classList.remove("active");
 
                 const icon =
                     menuToggle.querySelector("i");
 
-                icon.classList.remove("fa-xmark");
+                if (icon) {
 
-                icon.classList.add("fa-bars");
+                    icon.classList.remove("fa-xmark");
+                    icon.classList.add("fa-bars");
+
+                }
 
             }
 
@@ -1438,11 +1354,72 @@
     });
 
 
+    /* ================= NOTIFICATION DROPDOWN ================= */
+
+    const notificationToggle =
+        document.getElementById("notificationToggle");
+
+    const notificationDropdown =
+        document.getElementById("notificationDropdown");
+
+
+    if (notificationToggle && notificationDropdown) {
+
+        notificationToggle.addEventListener("click", function (event) {
+
+            event.stopPropagation();
+
+            const isOpen =
+                notificationDropdown.classList.toggle("open");
+
+            notificationToggle.setAttribute(
+                "aria-expanded",
+                isOpen ? "true" : "false"
+            );
+
+        });
+
+
+        document.addEventListener("click", function (event) {
+
+            if (!notificationDropdown.contains(event.target)) {
+
+                notificationDropdown.classList.remove("open");
+
+                notificationToggle.setAttribute(
+                    "aria-expanded",
+                    "false"
+                );
+
+            }
+
+        });
+
+    }
+
+
+    /* ================= ACTIVE NAVIGATION ================= */
+
+    document.querySelectorAll("#nav-links > li > a").forEach(function (link) {
+
+        const linkPath =
+            new URL(link.href, window.location.origin).pathname;
+
+        if (
+            linkPath !== "/" &&
+            window.location.pathname === linkPath
+        ) {
+
+            link.classList.add("active");
+
+        }
+
+    });
+
+
     /* ================= FLASH CLOSE ================= */
 
-    document.querySelectorAll(
-        ".flash-close"
-    ).forEach(function (btn) {
+    document.querySelectorAll(".flash-close").forEach(function (btn) {
 
         btn.addEventListener("click", function () {
 
@@ -1470,9 +1447,7 @@
 
     setTimeout(function () {
 
-        document.querySelectorAll(
-            ".flash"
-        ).forEach(function (item) {
+        document.querySelectorAll(".flash").forEach(function (item) {
 
             item.style.opacity = "0";
 
@@ -1535,20 +1510,17 @@
 
     if (topBtn) {
 
-        topBtn.addEventListener(
-            "click",
-            function () {
+        topBtn.addEventListener("click", function () {
 
-                window.scrollTo({
+            window.scrollTo({
 
-                    top: 0,
+                top: 0,
 
-                    behavior: "smooth"
+                behavior: "smooth"
 
-                });
+            });
 
-            }
-        );
+        });
 
     }
 
@@ -1558,31 +1530,39 @@
     document.querySelectorAll(
         ".nav-profile-image, .dropdown-profile img"
     ).forEach(function (image) {
-        image.addEventListener(
-            "error",
-            function () {
-                this.style.display = "none";
-            }
-        );
+
+        image.addEventListener("error", function () {
+
+            this.style.display = "none";
+
+        });
+
     });
+
+
     /* ================= GLOBAL SEARCH ================= */
+
     const globalSearch =
         document.getElementById("globalSearch");
+
+
     if (globalSearch) {
-        globalSearch.addEventListener(
-            "keydown",
-            function (event) {
-                if (event.key === "Enter") {
-                    const query =
-                        this.value.trim();
-                    if (query.length > 0) {
-                        window.location.href =
-                            "/courses?search=" +
-                            encodeURIComponent(query);
-                    }
+
+        globalSearch.addEventListener("keydown", function (event) {
+
+            if (event.key === "Enter") {
+
+                const query =
+                    this.value.trim();
+
+                if (query.length > 0) {
+
+                    window.location.href =
+                        "/courses?search=" +
+                        encodeURIComponent(query);
                 }
             }
-        );
+        });
     }
 </script>
 </body>

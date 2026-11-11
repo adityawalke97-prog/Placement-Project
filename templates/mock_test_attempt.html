@@ -1,0 +1,389 @@
+{% extends "layout.html" %}
+
+{% block title %}{{ test.title }} - Mock Examination{% endblock %}
+
+{% block content %}
+
+<style>
+    .exam-wrapper {
+        max-width: 1100px;
+        margin: 30px auto;
+        padding: 20px;
+    }
+
+    .exam-header {
+        background: linear-gradient(135deg, #172554, #2563eb);
+        color: white;
+        padding: 30px;
+        border-radius: 18px;
+        margin-bottom: 25px;
+    }
+
+    .exam-header h1 {
+        font-size: 28px;
+        margin-bottom: 10px;
+    }
+
+    .exam-info {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        margin-top: 20px;
+    }
+
+    .exam-info span {
+        background: rgba(255,255,255,.15);
+        padding: 9px 15px;
+        border-radius: 8px;
+    }
+
+    .status-card {
+        background: white;
+        padding: 35px;
+        border-radius: 15px;
+        text-align: center;
+        box-shadow: 0 5px 20px rgba(0,0,0,.07);
+        margin-bottom: 25px;
+    }
+
+    .status-card h2 {
+        margin-bottom: 12px;
+    }
+
+    .question-card {
+        background: white;
+        padding: 25px;
+        margin-bottom: 20px;
+        border-radius: 14px;
+        box-shadow: 0 4px 15px rgba(0,0,0,.06);
+    }
+
+    .question-title {
+        font-size: 17px;
+        font-weight: 600;
+        margin-bottom: 18px;
+    }
+
+    .option-label {
+        display: block;
+        padding: 13px 16px;
+        border: 1px solid #ddd;
+        border-radius: 9px;
+        margin: 10px 0;
+        cursor: pointer;
+        transition: .2s;
+    }
+
+    .option-label:hover {
+        background: #eff6ff;
+        border-color: #2563eb;
+    }
+
+    .option-label input {
+        margin-right: 10px;
+    }
+
+    .timer-box {
+        position: sticky;
+        top: 10px;
+        z-index: 10;
+        background: #172554;
+        color: white;
+        padding: 15px 20px;
+        border-radius: 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+    }
+
+    #timer {
+        font-size: 24px;
+        font-weight: bold;
+    }
+
+    .submit-btn {
+        background: #2563eb;
+        color: white;
+        border: none;
+        padding: 14px 30px;
+        border-radius: 9px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .submit-btn:hover {
+        background: #1d4ed8;
+    }
+
+    .warning-text {
+        color: #dc2626;
+        font-weight: 600;
+    }
+
+    @media(max-width:600px) {
+        .exam-header h1 {
+            font-size: 22px;
+        }
+
+        .exam-wrapper {
+            padding: 12px;
+        }
+
+        .question-card {
+            padding: 17px;
+        }
+    }
+</style>
+
+<div class="exam-wrapper">
+
+    <!-- EXAM HEADER -->
+
+    <div class="exam-header">
+
+        <h1>{{ test.title }}</h1>
+
+        <p>{{ test.description or 'Scheduled Mock Examination' }}</p>
+
+        <div class="exam-info">
+
+            <span>
+                Duration: {{ test.duration_minutes }} Minutes
+            </span>
+
+            <span>
+                Questions: {{ test.question_count }}
+            </span>
+
+            <span>
+                Difficulty: {{ test.difficulty }}
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- WAITING SCREEN -->
+
+    {% if exam_state == 'waiting' %}
+
+    <div class="status-card">
+
+        <h2>Exam Not Started Yet</h2>
+
+        <p>
+            Your examination has been scheduled.
+            Questions will become available when the exam starts.
+        </p>
+
+        <p>
+            Start Time:
+            {{ test.scheduled_start_at }}
+        </p>
+
+        <p>
+            End Time:
+            {{ test.scheduled_end_at }}
+        </p>
+
+        <p class="warning-text">
+            Please return when the examination starts.
+        </p>
+
+    </div>
+
+
+    <!-- CLOSED SCREEN -->
+
+    {% elif exam_state == 'closed' %}
+
+    <div class="status-card">
+
+        <h2>Examination Closed</h2>
+
+        <p>
+            This examination is no longer accepting attempts.
+        </p>
+
+        <a href="{{ url_for('mock_test_dashboard') }}"
+           class="submit-btn"
+           style="display:inline-block;text-decoration:none;margin-top:15px;">
+            Back to Dashboard
+        </a>
+
+    </div>
+
+
+    <!-- ACTIVE EXAM -->
+
+    {% elif exam_state == 'active' %}
+
+    <div class="timer-box">
+
+        <span>Time Remaining</span>
+
+        <span id="timer">Loading...</span>
+
+    </div>
+
+
+    <form method="POST"
+          action="{{ url_for('attempt_mock_test', share_token=test.share_token) }}"
+          id="examForm">
+
+        {% for question in questions %}
+
+        <div class="question-card">
+
+            <div class="question-title">
+
+                Q{{ loop.index }}.
+                {{ question.question_text }}
+
+            </div>
+
+            <label class="option-label">
+
+                <input type="radio"
+                       name="answers[{{ question.id }}]"
+                       value="A">
+
+                {{ question.option_a }}
+
+            </label>
+
+            <label class="option-label">
+
+                <input type="radio"
+                       name="answers[{{ question.id }}]"
+                       value="B">
+
+                {{ question.option_b }}
+
+            </label>
+
+            <label class="option-label">
+
+                <input type="radio"
+                       name="answers[{{ question.id }}]"
+                       value="C">
+
+                {{ question.option_c }}
+
+            </label>
+
+            <label class="option-label">
+
+                <input type="radio"
+                       name="answers[{{ question.id }}]"
+                       value="D">
+
+                {{ question.option_d }}
+
+            </label>
+
+        </div>
+
+        {% endfor %}
+
+
+        <div style="text-align:center;margin:30px 0;">
+
+            <button type="submit"
+                    class="submit-btn"
+                    id="submitBtn">
+
+                Submit Examination
+
+            </button>
+
+        </div>
+
+    </form>
+
+    {% endif %}
+
+</div>
+
+
+{% if exam_state == 'active' %}
+
+<script>
+
+    let remainingSeconds = {{ remaining_seconds | int }};
+
+    const timerElement = document.getElementById("timer");
+    const examForm = document.getElementById("examForm");
+    const submitBtn = document.getElementById("submitBtn");
+
+    let submitted = false;
+
+    function updateTimer() {
+
+        if (remainingSeconds <= 0) {
+
+            timerElement.innerText = "00:00";
+
+            if (!submitted) {
+                submitted = true;
+                submitBtn.disabled = true;
+                examForm.submit();
+            }
+
+            return;
+        }
+
+        let minutes = Math.floor(remainingSeconds / 60);
+        let seconds = remainingSeconds % 60;
+
+        timerElement.innerText =
+            String(minutes).padStart(2, '0') +
+            ":" +
+            String(seconds).padStart(2, '0');
+
+        remainingSeconds--;
+
+    }
+
+    updateTimer();
+
+    const timerInterval = setInterval(function() {
+
+        if (remainingSeconds <= 0) {
+            clearInterval(timerInterval);
+        }
+
+        updateTimer();
+
+    }, 1000);
+
+
+    examForm.addEventListener("submit", function(event) {
+
+        if (submitted) {
+            return;
+        }
+
+        const confirmed = confirm(
+            "Are you sure you want to submit your examination?"
+        );
+
+        if (!confirmed) {
+            event.preventDefault();
+            return;
+        }
+
+        submitted = true;
+        submitBtn.disabled = true;
+        submitBtn.innerText = "Submitting...";
+
+    });
+
+</script>
+
+{% endif %}
+
+{% endblock %}
