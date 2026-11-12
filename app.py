@@ -5400,6 +5400,76 @@ def admin_dashboard():
         if conn:
             conn.close()
 
+from flask import render_template, request, redirect, url_for, flash, session
+from decimal import Decimal, InvalidOperation
+
+@app.route('/admin/subscription/monthly/edit', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def edit_monthly_subscription():
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        if request.method == 'POST':
+
+            price = request.form.get('amount', '').strip()
+
+            try:
+                amount = Decimal(price)
+                if not amount.is_finite() or amount <= 0 or amount > 100000:
+                    raise ValueError()
+                if amount * 100 != (amount * 100).to_integral_value():
+                    raise ValueError()
+
+                amount_paise = int(amount * 100)
+
+            except (InvalidOperation, ValueError):
+                flash('Please enter a valid price.', 'danger')
+                return redirect(url_for('edit_monthly_subscription'))
+
+            cursor.execute("""
+                UPDATE subscription_plans
+                SET amount = %s
+                WHERE plan_name = 'Monthly'
+            """, (amount_paise,))
+
+            if cursor.rowcount == 0:
+                cursor.execute("""
+                    INSERT INTO subscription_plans
+                    (plan_name, amount, duration_days, is_active)
+                    VALUES ('Monthly', %s, 30, TRUE)
+                """, (amount_paise,))
+
+            conn.commit()
+            flash('Monthly subscription price updated successfully!', 'success')
+
+            return redirect(url_for('edit_monthly_subscription'))
+
+        cursor.execute("""
+            SELECT plan_name, amount, duration_days, is_active
+            FROM subscription_plans
+            WHERE plan_name = 'Monthly'
+            LIMIT 1
+        """)
+
+        plan = cursor.fetchone()
+
+        if not plan:
+            flash('Monthly plan not found.', 'danger')
+            return redirect(url_for('admin_dashboard'))
+
+        return render_template(
+            'admin_edit_monthly.html',
+            plan=plan,
+            amount_rupees=Decimal(str(plan['amount'])) / 100
+        )
+
+    finally:
+        cursor.close()
+        conn.close()
+
 # =====================================================
 # ADMIN - CHANGE USER ROLE
 # =====================================================
