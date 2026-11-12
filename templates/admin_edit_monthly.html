@@ -1,0 +1,141 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Edit Monthly Subscription</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 25px;
+            font-family: Arial, sans-serif;
+            background: #f1f5f9;
+        }
+
+        .container {
+            max-width: 480px;
+            margin: 50px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 25px #00000010;
+        }
+
+        h2 {
+            color: #059669;
+            margin-top: 0;
+        }
+
+        .current {
+            background: #ecfdf5;
+            padding: 18px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .price {
+            font-size: 30px;
+            font-weight: bold;
+            color: #059669;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 9px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 17px;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            margin-top: 20px;
+            background: #059669;
+            color: white;
+            border: 0;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #047857;
+        }
+
+        .back {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #64748b;
+            text-decoration: none;
+        }
+
+        .message {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            background: #ecfdf5;
+            color: #047857;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+
+    <h2>Monthly Subscription</h2>
+    <p>Manage your monthly plan pricing.</p>
+
+    <div class="current">
+        <p>Current Subscription Price</p>
+        <div class="price">
+            ₹{{ "%.2f"|format(amount_rupees) }}
+        </div>
+        <p>{{ plan['duration_days'] }} Days Validity</p>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+            <div class="message">{{ message }}</div>
+        {% endfor %}
+    {% endwith %}
+
+    <form method="POST">
+        <label for="amount">New Monthly Price (₹)</label>
+
+        <input
+            type="number"
+            id="amount"
+            name="amount"
+            min="0.01"
+            max="100000"
+            step="0.01"
+            value="{{ '%.2f'|format(amount_rupees) }}"
+            required
+        >
+
+        <button type="submit">
+            Update Monthly Price
+        </button>
+    </form>
+
+    <a href="{{ url_for('admin_dashboard') }}" class="back">
+        ← Back to Admin Dashboard
+    </a>
+
+</div>
+</body>
+</html>
