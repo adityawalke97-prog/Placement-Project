@@ -1,3 +1,309 @@
-{% extends 'mock_tests/base.html' %}{% block mock_title %}Leaderboard{% endblock %}{% block mock_content %}
-<div class="mt-pagehead"><span class="mt-kicker">LIVE RANKING</span><h1>{{ test.title }} leaderboard</h1><p>All submitted attempts are combined. Highest percentage ranks first; faster time breaks a tie.</p></div><div class="mt-table-wrap"><table class="mt-table"><thead><tr><th>Rank</th><th>Participant</th><th>Score</th><th>Percentage</th><th>Time</th><th>Submitted</th></tr></thead><tbody>{% for r in rows %}<tr><td><span class="mt-rank">{% if loop.index==1 %}🥇{% elif loop.index==2 %}🥈{% elif loop.index==3 %}🥉{% else %}#{{ loop.index }}{% endif %}</span></td><td>{{ r.name }}</td><td>{{ r.score }}/{{ r.total_questions }}</td><td><b>{{ r.percentage }}%</b></td><td>{{ (r.time_taken_seconds or 0)//60 }}m {{ (r.time_taken_seconds or 0)%60 }}s</td><td>{{ r.submitted_at }}</td></tr>{% else %}<tr><td colspan="6">No submitted attempts yet. Share the test link to invite participants.</td></tr>{% endfor %}</tbody></table></div><button class="mt-btn" data-copy-text="{{ request.url }}">Copy leaderboard link</button>
+{% extends "mock_test/base.html" %}
+
+{% block title %}Leaderboard | Mock Test Arena{% endblock %}
+{% block mock_title %}Leaderboard{% endblock %}
+
+{% block mock_content %}
+
+<style>
+    .leaderboard-page {
+        max-width: 1100px;
+        margin: 35px auto;
+        padding: 20px;
+    }
+
+    .lb-header {
+        padding: 32px;
+        border-radius: 22px;
+        background: linear-gradient(135deg, #312e81, #4f46e5, #7c3aed);
+        color: white;
+        margin-bottom: 25px;
+    }
+
+    .lb-header h1 {
+        font-size: 30px;
+        font-weight: 800;
+        margin: 0 0 10px;
+    }
+
+    .lb-header p {
+        margin: 0;
+        opacity: .85;
+    }
+
+    .lb-stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+        margin-bottom: 25px;
+    }
+
+    .lb-stat {
+        background: white;
+        padding: 22px;
+        border-radius: 16px;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 5px 18px rgba(15, 23, 42, .04);
+    }
+
+    .lb-stat span {
+        color: #64748b;
+        font-size: 13px;
+    }
+
+    .lb-stat h2 {
+        margin: 8px 0 0;
+        font-size: 26px;
+        color: #1e293b;
+    }
+
+    .lb-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 8px 25px rgba(15, 23, 42, .05);
+    }
+
+    .lb-card-header {
+        padding: 22px 25px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .lb-card-header h2 {
+        margin: 0;
+        font-size: 20px;
+        color: #1e293b;
+    }
+
+    .lb-table-wrap {
+        overflow-x: auto;
+    }
+
+    .lb-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 750px;
+    }
+
+    .lb-table th {
+        background: #f8fafc;
+        color: #64748b;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: .5px;
+        padding: 16px;
+        text-align: left;
+    }
+
+    .lb-table td {
+        padding: 17px 16px;
+        border-top: 1px solid #f1f5f9;
+        color: #334155;
+        font-size: 14px;
+    }
+
+    .lb-rank {
+        font-weight: 800;
+        font-size: 17px;
+    }
+
+    .lb-rank.first {
+        color: #d97706;
+    }
+
+    .lb-rank.second {
+        color: #64748b;
+    }
+
+    .lb-rank.third {
+        color: #b45309;
+    }
+
+    .lb-name {
+        font-weight: 700;
+        color: #0f172a;
+    }
+
+    .lb-score {
+        font-weight: 800;
+        color: #4f46e5;
+    }
+
+    .lb-badge {
+        display: inline-block;
+        padding: 6px 11px;
+        border-radius: 20px;
+        background: #eef2ff;
+        color: #4338ca;
+        font-weight: 700;
+        font-size: 12px;
+    }
+
+    .lb-empty {
+        text-align: center;
+        padding: 55px 20px;
+    }
+
+    .lb-empty h3 {
+        color: #1e293b;
+        margin-bottom: 8px;
+    }
+
+    .lb-empty p {
+        color: #64748b;
+    }
+
+    .lb-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 22px;
+        flex-wrap: wrap;
+    }
+
+    .lb-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 12px 20px;
+        border-radius: 11px;
+        background: #4f46e5;
+        color: white;
+        text-decoration: none;
+        font-weight: 700;
+    }
+
+    .lb-btn.secondary {
+        background: #eef2ff;
+        color: #4338ca;
+    }
+
+    @media(max-width: 650px) {
+        .lb-stats {
+            grid-template-columns: 1fr;
+        }
+
+        .lb-header {
+            padding: 24px;
+        }
+
+        .lb-header h1 {
+            font-size: 24px;
+        }
+
+        .leaderboard-page {
+            padding: 12px;
+        }
+    }
+</style>
+
+<div class="leaderboard-page">
+
+    <div class="lb-header">
+        <h1>🏆 Leaderboard</h1>
+        <p>{{ test.title }}</p>
+    </div>
+
+    <div class="lb-stats">
+        <div class="lb-stat">
+            <span>Total Questions</span>
+            <h2>{{ test.question_count }}</h2>
+        </div>
+
+        <div class="lb-stat">
+            <span>Test Duration</span>
+            <h2>{{ test.duration_minutes }} min</h2>
+        </div>
+
+        <div class="lb-stat">
+            <span>Total Participants</span>
+            <h2>{{ leaderboard|length }}</h2>
+        </div>
+    </div>
+
+    <div class="lb-card">
+
+        <div class="lb-card-header">
+            <h2>🏅 Top Performers</h2>
+        </div>
+
+        {% if leaderboard %}
+
+        <div class="lb-table-wrap">
+            <table class="lb-table">
+                <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Student</th>
+                    <th>Correct</th>
+                    <th>Wrong</th>
+                    <th>Marks</th>
+                    <th>Percentage</th>
+                    <th>Time Taken</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                {% for row in leaderboard %}
+                <tr>
+                    <td>
+                            <span class="lb-rank {% if row.rank_position == 1 %}first{% elif row.rank_position == 2 %}second{% elif row.rank_position == 3 %}third{% endif %}">
+                                {% if row.rank_position == 1 %}🥇
+                                {% elif row.rank_position == 2 %}🥈
+                                {% elif row.rank_position == 3 %}🥉
+                                {% else %}#{{ row.rank_position }}
+                                {% endif %}
+                            </span>
+                    </td>
+
+                    <td>
+                        <span class="lb-name">{{ row.name }}</span>
+                    </td>
+
+                    <td>{{ row.correct_answers }}</td>
+                    <td>{{ row.wrong_answers }}</td>
+
+                    <td>
+                        {{ row.obtained_marks }}/{{ row.total_marks }}
+                    </td>
+
+                    <td>
+                            <span class="lb-badge">
+                                {{ "%.2f"|format(row.percentage or 0) }}%
+                            </span>
+                    </td>
+
+                    <td>
+                        {% set seconds = row.time_taken_seconds or 0 %}
+                        {{ (seconds // 60)|int }}m {{ (seconds % 60)|int }}s
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% else %}
+
+        <div class="lb-empty">
+            <h3>No Participants Yet</h3>
+            <p>Leaderboard will appear here after students complete this test.</p>
+        </div>
+
+        {% endif %}
+
+    </div>
+
+    <div class="lb-actions">
+        <a href="{{ url_for('mock_test_dashboard') }}" class="lb-btn">
+            Explore Mock Tests
+        </a>
+
+        <a href="{{ url_for('my_mock_tests') }}" class="lb-btn secondary">
+            My Tests
+        </a>
+    </div>
+
+</div>
+
 {% endblock %}

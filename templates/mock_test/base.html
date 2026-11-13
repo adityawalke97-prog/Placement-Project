@@ -1,11 +1,41 @@
 {% extends 'layout.html' %}
+
 {% block title %}{% block mock_title %}Mock Tests{% endblock %}{% endblock %}
+
 {% block content %}
-<link rel="stylesheet" href="{{ url_for('mock_tests.static', filename='mock_tests/mock.css') }}">
+
+<link rel="stylesheet" href="{{ url_for('static', filename='mock_test/mock.css') }}">
+
 <div class="mt-wrap">
-  <div class="mt-top"><a class="mt-brand" href="{{ url_for('mock_tests.home') }}">✦ Mock Test Arena</a><nav><a href="{{ url_for('mock_tests.courses') }}">Explore</a><a href="{{ url_for('mock_tests.custom_create') }}">Create Test</a><a href="{{ url_for('mock_tests.my_tests') }}">My Tests</a></nav></div>
-  {% with messages = get_flashed_messages(with_categories=true) %}{% if messages %}<div class="mt-flashes">{% for category,message in messages %}<div class="mt-alert {{ category }}">{{ message }}</div>{% endfor %}</div>{% endif %}{% endwith %}
+
+  <div class="mt-top">
+    <a class="mt-brand" href="{{ url_for('mock_test_dashboard') }}">
+      ✦ Mock Test Arena
+    </a>
+
+    <nav>
+      <a href="{{ url_for('mock_test_dashboard') }}">Explore</a>
+      <a href="{{ url_for('mock_test_dashboard') }}">Create Test</a>
+      <a href="{{ url_for('my_mock_tests') }}">My Tests</a>
+    </nav>
+  </div>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+  <div class="mt-flashes">
+    {% for category, message in messages %}
+    <div class="mt-alert {{ category }}">
+      {{ message }}
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+  {% endwith %}
+
   {% block mock_content %}{% endblock %}
+
 </div>
-<script src="{{ url_for('mock_tests.static', filename='mock_tests/mock.js') }}"></script>
+
+<script src="{{ url_for('static', filename='mock_test/mock.js') }}"></script>
+
 {% endblock %}

@@ -1,4 +1,3 @@
-
 {% extends "layout.html" %}
 
 {% block title %}Placement Mock Test{% endblock %}
@@ -6,2524 +5,802 @@
 {% block content %}
 
 <style>
-
-    /* =========================================================
-       PLACEMENT MOCK TEST
-       PREMIUM EXAM INTERFACE
-       ========================================================= */
-
     :root {
-        --mt-primary: #6366f1;
-        --mt-primary-dark: #4f46e5;
-        --mt-purple: #8b5cf6;
-        --mt-blue: #2563eb;
-        --mt-success: #10b981;
-        --mt-warning: #f59e0b;
-        --mt-danger: #ef4444;
-
-        --mt-bg: #f5f7fb;
-        --mt-card: #ffffff;
-        --mt-border: #e5e7eb;
-        --mt-text: #111827;
-        --mt-muted: #64748b;
-
-        --mt-shadow:
-                0 12px 35px rgba(15, 23, 42, .07);
-
-        --mt-radius: 18px;
+        --mt-primary:#6366f1;
+        --mt-purple:#8b5cf6;
+        --mt-success:#10b981;
+        --mt-warning:#f59e0b;
+        --mt-danger:#ef4444;
+        --mt-bg:#f5f7fb;
+        --mt-card:#ffffff;
+        --mt-border:#e5e7eb;
+        --mt-text:#111827;
+        --mt-muted:#64748b;
+        --mt-shadow:0 12px 35px rgba(15,23,42,.07);
+        --mt-radius:18px;
     }
-
-
-    /* =========================================================
-       PAGE
-       ========================================================= */
 
     .exam-container {
-        width: 100%;
-        min-height: calc(100vh - 80px);
-
-        padding: 24px;
-
+        width:100%;
+        min-height:calc(100vh - 80px);
+        padding:24px;
         background:
-                radial-gradient(
-                        circle at 5% 5%,
-                        rgba(99,102,241,.07),
-                        transparent 25%
-                ),
-                radial-gradient(
-                        circle at 95% 15%,
-                        rgba(139,92,246,.06),
-                        transparent 25%
-                ),
+                radial-gradient(circle at 5% 5%,rgba(99,102,241,.07),transparent 25%),
+                radial-gradient(circle at 95% 15%,rgba(139,92,246,.06),transparent 25%),
                 var(--mt-bg);
-
-        color: var(--mt-text);
-
-        font-family:
-                Inter,
-                system-ui,
-                -apple-system,
-                BlinkMacSystemFont,
-                "Segoe UI",
-                sans-serif;
+        color:var(--mt-text);
+        font-family:Inter,system-ui,sans-serif;
     }
-
-
-    /* =========================================================
-       HEADER
-       ========================================================= */
 
     .exam-header {
-        position: sticky;
-        top: 0;
-
-        z-index: 100;
-
-        width: 100%;
-        min-height: 82px;
-
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-
-        gap: 25px;
-
-        padding: 18px 24px;
-
-        margin-bottom: 20px;
-
-        background:
-                rgba(255,255,255,.94);
-
-        border: 1px solid var(--mt-border);
-
-        border-radius: 20px;
-
-        box-shadow:
-                0 12px 35px rgba(15,23,42,.08);
-
-        backdrop-filter: blur(15px);
-    }
-
-
-    .left-header {
-        min-width: 240px;
+        position:sticky;
+        top:0;
+        z-index:100;
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        gap:20px;
+        padding:18px 24px;
+        margin-bottom:20px;
+        background:rgba(255,255,255,.96);
+        border:1px solid var(--mt-border);
+        border-radius:20px;
+        box-shadow:var(--mt-shadow);
+        backdrop-filter:blur(15px);
     }
 
     .left-header h2 {
-        margin: 0;
-
-        color: var(--mt-text) !important;
-
-        font-size: 21px;
-        font-weight: 900;
-
-        letter-spacing: -.5px;
+        margin:0;
+        font-size:21px;
+        font-weight:900;
+        color:var(--mt-text);
     }
 
     .left-header p {
-        margin: 5px 0 0;
-
-        color: var(--mt-muted) !important;
-
-        font-size: 12px;
-        font-weight: 600;
+        margin:5px 0 0;
+        color:var(--mt-muted);
+        font-size:12px;
     }
-
 
     .right-header {
-        display: flex;
-        align-items: center;
-
-        gap: 9px;
-
-        flex-wrap: wrap;
+        display:flex;
+        align-items:center;
+        gap:9px;
+        flex-wrap:wrap;
     }
 
-
-    /* =========================================================
-       TIMER
-       ========================================================= */
-
     .timer-box {
-        min-height: 44px;
-
-        display: flex;
-        align-items: center;
-
-        padding: 0 15px;
-
-        background:
-                linear-gradient(
-                        135deg,
-                        #fff7ed,
-                        #fffbeb
-                );
-
-        border: 1px solid #fed7aa;
-
-        border-radius: 11px;
-
-        color: #92400e !important;
-
-        font-size: 12px;
-        font-weight: 800;
+        padding:11px 15px;
+        background:#fff7ed;
+        border:1px solid #fed7aa;
+        border-radius:11px;
+        color:#92400e;
+        font-size:12px;
+        font-weight:800;
     }
 
     #timer {
-        margin-left: 6px;
-
-        color: #dc2626 !important;
-
-        font-size: 17px;
-        font-weight: 950;
-
-        font-variant-numeric: tabular-nums;
+        margin-left:6px;
+        color:#dc2626;
+        font-size:17px;
+        font-weight:950;
+        font-variant-numeric:tabular-nums;
     }
 
-
-    /* =========================================================
-       HEADER BUTTONS
-       ========================================================= */
-
-    .history-btn,
-    .view-btn,
-    .icon-btn {
-        min-height: 44px;
-
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-
-        padding: 0 13px;
-
-        border-radius: 11px;
-
-        font-size: 12px;
-        font-weight: 750;
-
-        text-decoration: none;
-
-        cursor: pointer;
-
-        transition:
-                transform .2s ease,
-                box-shadow .2s ease,
-                background .2s ease;
+    .history-btn,.view-btn,.icon-btn {
+        min-height:44px;
+        display:inline-flex;
+        align-items:center;
+        justify-content:center;
+        padding:0 13px;
+        border-radius:11px;
+        font-size:12px;
+        font-weight:750;
+        text-decoration:none;
+        cursor:pointer;
+        background:#fff;
+        border:1px solid var(--mt-border);
+        color:#475569;
     }
 
-    .history-btn,
-    .view-btn {
-        background: #ffffff;
-
-        border: 1px solid var(--mt-border);
-
-        color: #475569 !important;
+    .history-btn:hover,.view-btn:hover,.icon-btn:hover {
+        background:#eef2ff;
+        border-color:#c7d2fe;
+        color:#4f46e5;
     }
-
-    .icon-btn {
-        background: #f8fafc;
-
-        border: 1px solid #e2e8f0;
-
-        color: #475569 !important;
-    }
-
-    .history-btn:hover,
-    .view-btn:hover,
-    .icon-btn:hover {
-        transform: translateY(-2px);
-
-        background: #eef2ff;
-
-        border-color: #c7d2fe;
-
-        color: var(--mt-primary-dark) !important;
-
-        box-shadow:
-                0 7px 18px rgba(99,102,241,.10);
-    }
-
-
-    /* =========================================================
-       MAIN LAYOUT
-       ========================================================= */
 
     .exam-layout {
-        display: grid;
-
-        grid-template-columns:
-        230px
-        minmax(450px, 1fr)
-        250px;
-
-        gap: 18px;
-
-        align-items: start;
+        display:grid;
+        grid-template-columns:230px minmax(0,1fr) 250px;
+        gap:18px;
+        align-items:start;
     }
 
-
-    /* =========================================================
-       LEFT QUESTION PALETTE
-       ========================================================= */
+    .question-sidebar,.summary-card,.progress-card {
+        padding:20px;
+        background:#fff;
+        border:1px solid var(--mt-border);
+        border-radius:var(--mt-radius);
+        box-shadow:var(--mt-shadow);
+    }
 
     .question-sidebar {
-        position: sticky;
-        top: 122px;
-
-        padding: 20px;
-
-        background: var(--mt-card);
-
-        border: 1px solid var(--mt-border);
-
-        border-radius: var(--mt-radius);
-
-        box-shadow: var(--mt-shadow);
+        position:sticky;
+        top:120px;
     }
 
-    .question-sidebar h3 {
-        margin: 0 0 17px;
-
-        color: var(--mt-text) !important;
-
-        font-size: 15px;
-        font-weight: 850;
+    .question-sidebar h3,.summary-card h3,.progress-card h3 {
+        margin:0 0 17px;
+        font-size:15px;
+        font-weight:850;
+        color:#111827;
     }
-
 
     .question-grid {
-        display: grid;
-
-        grid-template-columns:
-        repeat(4, 1fr);
-
-        gap: 8px;
-
-        max-height: 390px;
-
-        overflow-y: auto;
-
-        padding-right: 3px;
+        display:grid;
+        grid-template-columns:repeat(4,1fr);
+        gap:8px;
+        max-height:390px;
+        overflow-y:auto;
     }
-
-    .question-grid::-webkit-scrollbar {
-        width: 5px;
-    }
-
-    .question-grid::-webkit-scrollbar-thumb {
-        background: #c7d2fe;
-
-        border-radius: 999px;
-    }
-
-
-    /* =========================================================
-       PALETTE BUTTON
-       ========================================================= */
 
     .palette-btn {
-        width: 100%;
-        aspect-ratio: 1;
-
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        border-radius: 9px;
-
-        border: 1px solid #e2e8f0;
-
-        background: #f8fafc;
-
-        color: #475569 !important;
-
-        font-size: 11px;
-        font-weight: 800;
-
-        cursor: pointer;
-
-        transition: .2s ease;
-    }
-
-    .palette-btn:hover {
-        transform: translateY(-2px);
-
-        border-color: #a5b4fc;
-
-        background: #eef2ff;
-
-        color: var(--mt-primary-dark) !important;
-    }
-
-
-    /* JS status classes */
-
-    .palette-btn.not-visited {
-        background: #f8fafc;
-
-        color: #64748b !important;
+        width:100%;
+        aspect-ratio:1;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        border-radius:9px;
+        border:1px solid #e2e8f0;
+        background:#f8fafc;
+        color:#475569;
+        font-size:11px;
+        font-weight:800;
+        cursor:pointer;
     }
 
     .palette-btn.answered {
-        background: #dcfce7 !important;
-
-        border-color: #86efac !important;
-
-        color: #166534 !important;
+        background:#dcfce7;
+        border-color:#86efac;
+        color:#166534;
     }
 
     .palette-btn.review {
-        background: #fef3c7 !important;
-
-        border-color: #fcd34d !important;
-
-        color: #92400e !important;
-    }
-
-    .palette-btn.skipped {
-        background: #fee2e2 !important;
-
-        border-color: #fca5a5 !important;
-
-        color: #991b1b !important;
+        background:#fef3c7;
+        border-color:#fcd34d;
+        color:#92400e;
     }
 
     .palette-btn.active {
-        background:
-                linear-gradient(
-                        135deg,
-                        var(--mt-primary),
-                        var(--mt-purple)
-                ) !important;
-
-        border-color: transparent !important;
-
-        color: #ffffff !important;
-
-        box-shadow:
-                0 6px 15px rgba(99,102,241,.28);
+        background:linear-gradient(135deg,#6366f1,#8b5cf6);
+        border-color:transparent;
+        color:white;
     }
-
-
-    /* =========================================================
-       LEGEND
-       ========================================================= */
 
     .legend {
-        display: grid;
-
-        grid-template-columns: 1fr 1fr;
-
-        gap: 9px;
-
-        margin-top: 18px;
-
-        padding-top: 16px;
-
-        border-top: 1px solid #eef2f7;
+        display:grid;
+        grid-template-columns:1fr 1fr;
+        gap:9px;
+        margin-top:18px;
+        padding-top:16px;
+        border-top:1px solid #eef2f7;
     }
 
-    .legend > div {
-        display: flex;
-        align-items: center;
-
-        gap: 7px;
-
-        color: #64748b !important;
-
-        font-size: 10px;
-        font-weight: 650;
+    .legend div {
+        display:flex;
+        align-items:center;
+        gap:7px;
+        color:#64748b;
+        font-size:10px;
     }
 
     .dot {
-        width: 9px;
-        height: 9px;
-
-        border-radius: 50%;
-
-        display: inline-block;
+        width:9px;
+        height:9px;
+        border-radius:50%;
     }
 
-    .dot.answered {
-        background: #22c55e;
-    }
+    .dot.answered {background:#22c55e}
+    .dot.review {background:#f59e0b}
+    .dot.active {background:#6366f1}
 
-    .dot.review {
-        background: #f59e0b;
-    }
-
-    .dot.skipped {
-        background: #ef4444;
-    }
-
-    .dot.active {
-        background: var(--mt-primary);
-    }
-
-
-    /* =========================================================
-       QUESTION AREA
-       ========================================================= */
-
-    .question-area {
-        min-width: 0;
-    }
-
-
-    /* =========================================================
-       QUESTION CARD
-       ========================================================= */
+    .question-area {min-width:0}
 
     .question-card {
-        position: relative;
-
-        padding: 30px;
-
-        background:
-                linear-gradient(
-                        145deg,
-                        #ffffff,
-                        #fbfcff
-                );
-
-        border: 1px solid var(--mt-border);
-
-        border-radius: 22px;
-
-        box-shadow:
-                0 15px 45px rgba(15,23,42,.07);
-
-        overflow: hidden;
-
-        animation:
-                questionEnter .3s ease;
-    }
-
-    .question-card::before {
-        content: "";
-
-        position: absolute;
-
-        left: 0;
-        top: 0;
-
-        width: 100%;
-        height: 4px;
-
-        background:
-                linear-gradient(
-                        90deg,
-                        var(--mt-primary),
-                        var(--mt-purple),
-                        var(--mt-blue)
-                );
+        padding:30px;
+        background:linear-gradient(145deg,#fff,#fbfcff);
+        border:1px solid var(--mt-border);
+        border-radius:22px;
+        box-shadow:var(--mt-shadow);
+        animation:questionEnter .3s ease;
     }
 
     @keyframes questionEnter {
-
-        from {
-            opacity: 0;
-
-            transform:
-                    translateY(8px);
-        }
-
-        to {
-            opacity: 1;
-
-            transform:
-                    translateY(0);
-        }
+        from {opacity:0;transform:translateY(8px)}
+        to {opacity:1;transform:translateY(0)}
     }
 
-
-    /* =========================================================
-       QUESTION HEADER
-       ========================================================= */
-
     .question-header {
-        display: flex;
-
-        align-items: center;
-
-        justify-content: space-between;
-
-        gap: 15px;
-
-        margin-bottom: 25px;
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        gap:15px;
+        margin-bottom:25px;
     }
 
     .question-header h3 {
-        margin: 0;
-
-        color: #111827 !important;
-
-        font-size: 14px;
-        font-weight: 850;
+        margin:0;
+        font-size:14px;
+        font-weight:850;
+        color:#111827;
     }
 
     .category {
-        display: inline-flex;
-        align-items: center;
-
-        padding: 7px 11px;
-
-        background: #eef2ff;
-
-        border: 1px solid #c7d2fe;
-
-        border-radius: 999px;
-
-        color: #4f46e5 !important;
-
-        font-size: 10px;
-        font-weight: 850;
+        padding:7px 11px;
+        background:#eef2ff;
+        border:1px solid #c7d2fe;
+        border-radius:999px;
+        color:#4f46e5;
+        font-size:10px;
+        font-weight:850;
     }
-
-
-    /* =========================================================
-       QUESTION TEXT
-       ========================================================= */
 
     .question-text {
-        margin-bottom: 28px;
-
-        color: #172033 !important;
-
-        font-size: 20px;
-
-        line-height: 1.65;
-
-        font-weight: 750;
-
-        letter-spacing: -.25px;
+        margin-bottom:28px;
+        color:#172033;
+        font-size:20px;
+        line-height:1.65;
+        font-weight:750;
     }
 
-
-    /* =========================================================
-       OPTIONS
-       ========================================================= */
-
     .options {
-        display: flex;
-
-        flex-direction: column;
-
-        gap: 12px;
+        display:flex;
+        flex-direction:column;
+        gap:12px;
     }
 
     .option-item {
-        position: relative;
-
-        display: flex;
-        align-items: center;
-
-        gap: 14px;
-
-        min-height: 60px;
-
-        padding: 14px 17px;
-
-        background: #ffffff;
-
-        border: 1.5px solid #e2e8f0;
-
-        border-radius: 14px;
-
-        cursor: pointer;
-
-        transition:
-                border-color .2s ease,
-                background .2s ease,
-                transform .2s ease,
-                box-shadow .2s ease;
+        display:flex;
+        align-items:center;
+        gap:14px;
+        min-height:60px;
+        padding:14px 17px;
+        background:#fff;
+        border:1.5px solid #e2e8f0;
+        border-radius:14px;
+        cursor:pointer;
+        transition:.2s;
     }
 
     .option-item:hover {
-        transform: translateX(3px);
-
-        background: #f8faff;
-
-        border-color: #a5b4fc;
-
-        box-shadow:
-                0 7px 20px rgba(99,102,241,.08);
+        background:#f8faff;
+        border-color:#a5b4fc;
     }
 
     .option-item input {
-        width: 18px;
-        height: 18px;
-
-        flex-shrink: 0;
-
-        accent-color: var(--mt-primary);
-
-        cursor: pointer;
+        width:18px;
+        height:18px;
+        accent-color:#6366f1;
     }
 
     .option-item span {
-        color: #334155 !important;
-
-        font-size: 14px;
-
-        line-height: 1.5;
-
-        font-weight: 600;
+        color:#334155;
+        font-size:14px;
+        font-weight:600;
     }
 
     .option-item:has(input:checked) {
-        background:
-                linear-gradient(
-                        135deg,
-                        #eef2ff,
-                        #f5f3ff
-                );
-
-        border-color: #818cf8;
-
-        box-shadow:
-                0 8px 22px rgba(99,102,241,.10);
+        background:#eef2ff;
+        border-color:#818cf8;
     }
 
     .option-item:has(input:checked) span {
-        color: #3730a3 !important;
-
-        font-weight: 800;
+        color:#3730a3;
+        font-weight:800;
     }
-
-
-    /* =========================================================
-       QUESTION ACTIONS
-       ========================================================= */
 
     .question-actions {
-        display: flex;
-
-        align-items: center;
-
-        justify-content: space-between;
-
-        gap: 12px;
-
-        margin-top: 24px;
-
-        padding-top: 20px;
-
-        border-top: 1px solid #eef2f7;
+        display:flex;
+        justify-content:space-between;
+        gap:12px;
+        margin-top:24px;
+        padding-top:20px;
+        border-top:1px solid #eef2f7;
     }
 
-    .clear-btn,
-    .review-btn {
-        min-height: 42px;
-
-        padding: 9px 14px;
-
-        border-radius: 10px;
-
-        font-size: 11px;
-        font-weight: 750;
-
-        cursor: pointer;
-
-        transition: .2s ease;
+    .clear-btn,.review-btn {
+        min-height:42px;
+        padding:9px 14px;
+        border-radius:10px;
+        font-size:11px;
+        font-weight:750;
+        cursor:pointer;
     }
 
     .clear-btn {
-        background: #fff;
-
-        border: 1px solid #fecaca;
-
-        color: #dc2626 !important;
-    }
-
-    .clear-btn:hover {
-        background: #fef2f2;
-
-        transform: translateY(-2px);
+        background:#fff;
+        border:1px solid #fecaca;
+        color:#dc2626;
     }
 
     .review-btn {
-        background: #fffbeb;
-
-        border: 1px solid #fde68a;
-
-        color: #b45309 !important;
+        background:#fffbeb;
+        border:1px solid #fde68a;
+        color:#b45309;
     }
-
-    .review-btn:hover {
-        background: #fef3c7;
-
-        transform: translateY(-2px);
-    }
-
-
-    /* =========================================================
-       NAVIGATION
-       ========================================================= */
 
     .navigation {
-        display: flex;
-
-        justify-content: space-between;
-
-        gap: 12px;
-
-        margin-top: 18px;
+        display:flex;
+        justify-content:space-between;
+        gap:12px;
+        margin-top:18px;
     }
 
     .nav-btn {
-        min-width: 130px;
-        min-height: 45px;
-
-        padding: 10px 17px;
-
-        border: 1px solid #e2e8f0;
-
-        border-radius: 11px;
-
-        background: #ffffff;
-
-        color: #475569 !important;
-
-        font-size: 12px;
-        font-weight: 800;
-
-        cursor: pointer;
-
-        transition: .2s ease;
+        min-width:130px;
+        min-height:45px;
+        padding:10px 17px;
+        border:1px solid #e2e8f0;
+        border-radius:11px;
+        background:#fff;
+        color:#475569;
+        font-size:12px;
+        font-weight:800;
+        cursor:pointer;
     }
-
-    .nav-btn:hover {
-        background: #eef2ff;
-
-        border-color: #c7d2fe;
-
-        color: #4f46e5 !important;
-
-        transform: translateY(-2px);
-    }
-
-
-    /* =========================================================
-       SUBMIT
-       ========================================================= */
 
     .submit-area {
-        display: flex;
-
-        justify-content: center;
-
-        margin-top: 18px;
+        display:flex;
+        justify-content:center;
+        margin-top:18px;
     }
 
-    .submit-btn {
-        min-width: 190px;
-
-        min-height: 47px;
-
-        padding: 11px 20px;
-
-        border: none;
-
-        border-radius: 12px;
-
-        background:
-                linear-gradient(
-                        135deg,
-                        #6366f1,
-                        #8b5cf6
-                );
-
-        color: #ffffff !important;
-
-        font-size: 13px;
-        font-weight: 850;
-
-        cursor: pointer;
-
-        box-shadow:
-                0 10px 25px rgba(99,102,241,.25);
-
-        transition: .25s ease;
+    .submit-btn,.modal-btn {
+        min-height:47px;
+        padding:11px 20px;
+        border:0;
+        border-radius:12px;
+        background:linear-gradient(135deg,#6366f1,#8b5cf6);
+        color:white;
+        font-size:13px;
+        font-weight:850;
+        cursor:pointer;
+        box-shadow:0 10px 25px rgba(99,102,241,.25);
     }
 
-    .submit-btn:hover {
-        transform:
-                translateY(-3px)
-                scale(1.01);
-
-        box-shadow:
-                0 15px 32px rgba(99,102,241,.32);
-    }
-
-
-    /* =========================================================
-       RIGHT SIDEBAR
-       ========================================================= */
+    .submit-btn {min-width:190px}
 
     .right-sidebar {
-        position: sticky;
-        top: 122px;
-
-        display: flex;
-
-        flex-direction: column;
-
-        gap: 16px;
-    }
-
-
-    /* =========================================================
-       SUMMARY
-       ========================================================= */
-
-    .summary-card,
-    .progress-card {
-        padding: 20px;
-
-        background: #ffffff;
-
-        border: 1px solid var(--mt-border);
-
-        border-radius: var(--mt-radius);
-
-        box-shadow: var(--mt-shadow);
-    }
-
-    .summary-card h3,
-    .progress-card h3 {
-        margin: 0 0 17px;
-
-        color: #111827 !important;
-
-        font-size: 15px;
-        font-weight: 850;
+        position:sticky;
+        top:120px;
+        display:flex;
+        flex-direction:column;
+        gap:16px;
     }
 
     .summary-item {
-        display: flex;
-
-        align-items: center;
-
-        justify-content: space-between;
-
-        padding: 12px 0;
-
-        border-bottom: 1px solid #f1f5f9;
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        padding:12px 0;
+        border-bottom:1px solid #f1f5f9;
     }
 
-    .summary-item:last-child {
-        border-bottom: none;
-    }
+    .summary-item:last-child {border-bottom:none}
 
     .summary-item span {
-        color: #64748b !important;
-
-        font-size: 12px;
-        font-weight: 650;
+        color:#64748b;
+        font-size:12px;
     }
 
     .summary-item strong {
-        min-width: 31px;
-        height: 31px;
-
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        border-radius: 9px;
-
-        background: #eef2ff;
-
-        color: #4f46e5 !important;
-
-        font-size: 12px;
-        font-weight: 900;
+        min-width:31px;
+        height:31px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        border-radius:9px;
+        background:#eef2ff;
+        color:#4f46e5;
     }
 
-
-    /* =========================================================
-       PROGRESS
-       ========================================================= */
-
     .progress-bg {
-        width: 100%;
-        height: 10px;
-
-        overflow: hidden;
-
-        background: #e2e8f0;
-
-        border-radius: 999px;
+        width:100%;
+        height:10px;
+        overflow:hidden;
+        background:#e2e8f0;
+        border-radius:999px;
     }
 
     .progress-fill {
-        width: 0%;
-        height: 100%;
-
-        background:
-                linear-gradient(
-                        90deg,
-                        #6366f1,
-                        #8b5cf6
-                );
-
-        border-radius: 999px;
-
-        transition:
-                width .4s ease;
+        width:0%;
+        height:100%;
+        background:linear-gradient(90deg,#6366f1,#8b5cf6);
+        transition:width .4s;
     }
 
     #progressText {
-        margin: 12px 0 0;
-
-        color: #6366f1 !important;
-
-        font-size: 12px;
-        font-weight: 800;
-
-        text-align: center;
+        margin:12px 0 0;
+        color:#6366f1;
+        font-size:12px;
+        font-weight:800;
+        text-align:center;
     }
-
-
-    /* =========================================================
-       MODALS
-       ========================================================= */
 
     .modal {
-        position: fixed;
-
-        inset: 0;
-
-        z-index: 10000;
-
-        display: none;
-
-        align-items: center;
-        justify-content: center;
-
-        padding: 20px;
-
-        background:
-                rgba(15,23,42,.62);
-
-        backdrop-filter: blur(8px);
-
-        animation:
-                modalFade .2s ease;
-    }
-
-    @keyframes modalFade {
-
-        from {
-            opacity: 0;
-        }
-
-        to {
-            opacity: 1;
-        }
+        position:fixed;
+        inset:0;
+        z-index:10000;
+        display:none;
+        align-items:center;
+        justify-content:center;
+        padding:20px;
+        background:rgba(15,23,42,.65);
+        backdrop-filter:blur(8px);
     }
 
     .modal-box {
-        position: relative;
-
-        width: min(530px,100%);
-
-        max-height: 85vh;
-
-        overflow-y: auto;
-
-        padding: 30px;
-
-        background: #ffffff;
-
-        border: 1px solid #e2e8f0;
-
-        border-radius: 22px;
-
-        box-shadow:
-                0 30px 90px rgba(15,23,42,.25);
-
-        animation:
-                modalEnter .25s ease;
-    }
-
-    @keyframes modalEnter {
-
-        from {
-            opacity: 0;
-
-            transform:
-                    translateY(15px)
-                    scale(.97);
-        }
-
-        to {
-            opacity: 1;
-
-            transform:
-                    translateY(0)
-                    scale(1);
-        }
+        position:relative;
+        width:min(530px,100%);
+        max-height:85vh;
+        overflow-y:auto;
+        padding:30px;
+        background:#fff;
+        border-radius:22px;
+        box-shadow:0 30px 90px rgba(15,23,42,.25);
     }
 
     .close-modal {
-        position: absolute;
-
-        top: 15px;
-        right: 15px;
-
-        width: 35px;
-        height: 35px;
-
-        border: none;
-
-        border-radius: 9px;
-
-        background: #f1f5f9;
-
-        color: #475569;
-
-        cursor: pointer;
-
-        transition: .2s ease;
-    }
-
-    .close-modal:hover {
-        background: #fee2e2;
-
-        color: #dc2626;
+        position:absolute;
+        top:15px;
+        right:15px;
+        width:35px;
+        height:35px;
+        border:0;
+        border-radius:9px;
+        background:#f1f5f9;
+        cursor:pointer;
     }
 
     .modal-box h2 {
-        margin: 0 0 18px;
-
-        color: #111827 !important;
-
-        font-size: 22px;
-        font-weight: 900;
+        margin:0 0 18px;
+        color:#111827;
+        font-size:22px;
     }
 
-    .modal-box p,
-    .modal-box li {
-        color: #475569 !important;
-
-        font-size: 13px;
-
-        line-height: 1.7;
+    .modal-box p,.modal-box li {
+        color:#475569;
+        font-size:13px;
+        line-height:1.7;
     }
 
-    .modal-box ul {
-        padding-left: 20px;
-    }
-
-    .modal-box li {
-        margin-bottom: 9px;
-    }
-
-
-    /* =========================================================
-       MODAL BUTTON
-       ========================================================= */
-
-    .modal-btn {
-        min-height: 44px;
-
-        padding: 10px 18px;
-
-        border: none;
-
-        border-radius: 10px;
-
-        background:
-                linear-gradient(
-                        135deg,
-                        #6366f1,
-                        #8b5cf6
-                );
-
-        color: #ffffff !important;
-
-        font-size: 12px;
-        font-weight: 800;
-
-        cursor: pointer;
-
-        transition: .2s ease;
-    }
-
-    .modal-btn:hover {
-        transform: translateY(-2px);
-
-        box-shadow:
-                0 8px 20px rgba(99,102,241,.25);
-    }
-
-
-    /* =========================================================
-       SUBMIT SUMMARY
-       ========================================================= */
+    .modal-box li {margin-bottom:9px}
 
     .submit-summary {
-        margin: 20px 0;
-
-        padding: 15px;
-
-        background: #f8fafc;
-
-        border: 1px solid #e2e8f0;
-
-        border-radius: 13px;
+        margin:20px 0;
+        padding:15px;
+        background:#f8fafc;
+        border:1px solid #e2e8f0;
+        border-radius:13px;
     }
 
     .submit-summary p {
-        display: flex;
-
-        justify-content: space-between;
-
-        margin: 8px 0;
+        display:flex;
+        justify-content:space-between;
     }
 
     .modal-actions {
-        display: flex;
-
-        justify-content: flex-end;
-
-        gap: 10px;
-
-        margin-top: 20px;
+        display:flex;
+        justify-content:flex-end;
+        gap:10px;
+        margin-top:20px;
     }
 
     .modal-actions button {
-        min-height: 42px;
-
-        padding: 9px 16px;
-
-        border: 1px solid #e2e8f0;
-
-        border-radius: 10px;
-
-        background: #ffffff;
-
-        color: #475569;
-
-        font-size: 12px;
-        font-weight: 750;
-
-        cursor: pointer;
+        min-height:42px;
+        padding:9px 16px;
+        border:1px solid #e2e8f0;
+        border-radius:10px;
+        background:#fff;
+        cursor:pointer;
     }
-
-
-    /* =========================================================
-       WARNING MODAL
-       ========================================================= */
-
-    .modal-box.warning {
-        border-top: 4px solid #f59e0b;
-    }
-
-    .modal-box.warning h2 {
-        color: #b45309 !important;
-    }
-
-
-    /* =========================================================
-       AUTOSAVE
-       ========================================================= */
 
     .autosave-box {
-        position: fixed;
-
-        right: 22px;
-        bottom: 22px;
-
-        z-index: 9000;
-
-        padding: 11px 16px;
-
-        background: #111827;
-
-        border-radius: 11px;
-
-        color: #ffffff !important;
-
-        font-size: 11px;
-        font-weight: 750;
-
-        box-shadow:
-                0 10px 25px rgba(15,23,42,.20);
-
-        opacity: 0;
-
-        transform: translateY(10px);
-
-        pointer-events: none;
-
-        transition: .25s ease;
+        position:fixed;
+        right:22px;
+        bottom:22px;
+        z-index:9000;
+        padding:11px 16px;
+        background:#111827;
+        border-radius:11px;
+        color:#fff;
+        font-size:11px;
+        opacity:0;
+        transform:translateY(10px);
+        pointer-events:none;
+        transition:.25s;
     }
 
     .autosave-box.show {
-        opacity: 1;
-
-        transform: translateY(0);
+        opacity:1;
+        transform:translateY(0);
     }
-
-
-    /* =========================================================
-       BOOKMARK PANEL
-       ========================================================= */
-
-    .bookmark-panel {
-        position: fixed;
-
-        right: 20px;
-        top: 100px;
-
-        z-index: 5000;
-
-        width: min(330px,calc(100% - 30px));
-
-        padding: 20px;
-
-        display: none;
-
-        background: #ffffff;
-
-        border: 1px solid var(--mt-border);
-
-        border-radius: 17px;
-
-        box-shadow:
-                0 25px 60px rgba(15,23,42,.18);
-    }
-
-    .bookmark-panel h3 {
-        margin: 0 0 15px;
-
-        color: #111827 !important;
-
-        font-size: 15px;
-    }
-
-
-    /* =========================================================
-       RESULT PREVIEW
-       ========================================================= */
-
-    .result-preview {
-        width: min(900px,100%);
-
-        margin: 25px auto;
-
-    }
-
-    .result-card,
-    .ai-analysis-card {
-        padding: 30px;
-
-        margin-bottom: 18px;
-
-        background: #ffffff;
-
-        border: 1px solid var(--mt-border);
-
-        border-radius: 22px;
-
-        box-shadow: var(--mt-shadow);
-
-        text-align: center;
-    }
-
-    .result-card h2,
-    .ai-analysis-card h2 {
-        margin-top: 0;
-
-        color: #111827 !important;
-
-        font-weight: 900;
-    }
-
-
-    /* =========================================================
-       SCORE CIRCLE
-       ========================================================= */
-
-    .score-circle {
-        width: 150px;
-        height: 150px;
-
-        margin: 25px auto;
-
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        border-radius: 50%;
-
-        background:
-                conic-gradient(
-                        #6366f1 0deg,
-                        #8b5cf6 250deg,
-                        #e2e8f0 250deg
-                );
-
-        position: relative;
-    }
-
-    .score-circle::before {
-        content: "";
-
-        position: absolute;
-
-        width: 118px;
-        height: 118px;
-
-        border-radius: 50%;
-
-        background: #ffffff;
-    }
-
-    .score-circle span {
-        position: relative;
-        z-index: 2;
-
-        color: #4f46e5 !important;
-
-        font-size: 25px;
-        font-weight: 950;
-    }
-
-
-    /* =========================================================
-       RESULT STATS
-       ========================================================= */
-
-    .result-stats {
-        display: grid;
-
-        grid-template-columns:
-        repeat(4,1fr);
-
-        gap: 12px;
-    }
-
-    .stat-box {
-        padding: 15px;
-
-        background: #f8fafc;
-
-        border: 1px solid #e2e8f0;
-
-        border-radius: 13px;
-    }
-
-    .stat-box h3 {
-        margin: 0;
-
-        color: #111827 !important;
-
-        font-size: 22px;
-    }
-
-    .stat-box p {
-        margin: 4px 0 0;
-
-        color: #64748b !important;
-
-        font-size: 11px;
-    }
-
-
-    /* =========================================================
-       AI ANALYSIS
-       ========================================================= */
-
-    .analysis-item {
-        margin: 15px 0;
-
-        padding: 16px;
-
-        text-align: left;
-
-        background: #f8fafc;
-
-        border: 1px solid #e2e8f0;
-
-        border-radius: 13px;
-    }
-
-    .analysis-item h4 {
-        margin: 0 0 6px;
-
-        color: #111827 !important;
-
-        font-size: 13px;
-    }
-
-    .analysis-item p {
-        margin: 0;
-
-        color: #64748b !important;
-
-        font-size: 12px;
-
-        line-height: 1.6;
-    }
-
-
-    /* =========================================================
-       MOBILE NAVIGATION
-       ========================================================= */
 
     .mobile-navigation {
-        display: none;
-
-        position: fixed;
-
-        left: 12px;
-        right: 12px;
-        bottom: 12px;
-
-        z-index: 8000;
-
-        height: 57px;
-
-        padding: 6px;
-
-        background:
-                rgba(255,255,255,.96);
-
-        border: 1px solid #e2e8f0;
-
-        border-radius: 17px;
-
-        box-shadow:
-                0 15px 40px rgba(15,23,42,.16);
-
-        backdrop-filter: blur(12px);
+        display:none;
+        position:fixed;
+        left:12px;
+        right:12px;
+        bottom:12px;
+        z-index:8000;
+        height:57px;
+        padding:6px;
+        background:rgba(255,255,255,.96);
+        border:1px solid #e2e8f0;
+        border-radius:17px;
+        box-shadow:0 15px 40px rgba(15,23,42,.16);
     }
 
     .mobile-navigation button {
-        flex: 1;
-
-        border: none;
-
-        background: transparent;
-
-        border-radius: 11px;
-
-        color: #475569;
-
-        font-size: 18px;
-
-        cursor: pointer;
+        flex:1;
+        border:0;
+        background:transparent;
+        border-radius:11px;
+        font-size:18px;
+        cursor:pointer;
     }
-
-    .mobile-navigation button:hover {
-        background: #eef2ff;
-
-        color: #4f46e5;
-    }
-
-
-    /* =========================================================
-       SHORTCUT BOX
-       ========================================================= */
 
     .shortcut-box {
-        position: fixed;
-
-        left: 20px;
-        bottom: 20px;
-
-        z-index: 400;
-
-        width: 185px;
-
-        padding: 15px;
-
-        background:
-                rgba(255,255,255,.94);
-
-        border: 1px solid #e2e8f0;
-
-        border-radius: 14px;
-
-        box-shadow:
-                0 10px 30px rgba(15,23,42,.08);
-
-        backdrop-filter: blur(10px);
+        position:fixed;
+        left:20px;
+        bottom:20px;
+        z-index:400;
+        width:185px;
+        padding:15px;
+        background:#fff;
+        border:1px solid #e2e8f0;
+        border-radius:14px;
+        box-shadow:var(--mt-shadow);
     }
 
-    .shortcut-box h3 {
-        margin: 0 0 9px;
+    .shortcut-box h3 {font-size:12px;margin:0 0 9px}
+    .shortcut-box p {font-size:10px;color:#64748b;margin:5px 0}
 
-        color: #111827 !important;
-
-        font-size: 12px;
+    @media(max-width:1200px) {
+        .exam-layout {grid-template-columns:200px minmax(0,1fr) 220px}
+        .shortcut-box {display:none}
     }
 
-    .shortcut-box p {
-        margin: 5px 0;
-
-        color: #64748b !important;
-
-        font-size: 10px;
+    @media(max-width:950px) {
+        .exam-container {padding:15px}
+        .exam-header {position:relative;flex-direction:column;align-items:stretch}
+        .exam-layout {grid-template-columns:190px minmax(0,1fr)}
+        .right-sidebar {display:none}
     }
 
-
-    /* =========================================================
-       RESPONSIVE - 1200
-       ========================================================= */
-
-    @media (max-width:1200px) {
-
-        .exam-layout {
-            grid-template-columns:
-            200px
-            minmax(400px,1fr)
-            220px;
-        }
-
-        .right-header {
-            justify-content: flex-end;
-        }
-
-        .shortcut-box {
-            display: none;
-        }
+    @media(max-width:700px) {
+        .exam-container {padding:10px;padding-bottom:85px}
+        .right-header {display:grid;grid-template-columns:repeat(2,1fr);width:100%}
+        .exam-layout {display:block}
+        .question-sidebar {position:relative;margin-bottom:15px}
+        .question-grid {grid-template-columns:repeat(8,1fr);max-height:150px}
+        .question-card {padding:20px}
+        .question-text {font-size:17px}
+        .question-actions {flex-direction:column}
+        .clear-btn,.review-btn {width:100%}
+        .navigation {position:sticky;bottom:70px;z-index:100;padding:8px;background:rgba(245,247,251,.92)}
+        .nav-btn {flex:1;min-width:0}
+        .submit-btn {width:100%}
+        .mobile-navigation {display:flex}
     }
 
-
-    /* =========================================================
-       RESPONSIVE - 950
-       ========================================================= */
-
-    @media (max-width:950px) {
-
-        .exam-container {
-            padding: 15px;
-        }
-
-        .exam-header {
-            position: relative;
-
-            flex-direction: column;
-
-            align-items: stretch;
-        }
-
-        .right-header {
-            justify-content: flex-start;
-        }
-
-        .exam-layout {
-            grid-template-columns:
-            190px
-            minmax(0,1fr);
-        }
-
-        .right-sidebar {
-            display: none;
-        }
+    @media(max-width:450px) {
+        .right-header {grid-template-columns:1fr}
+        .question-grid {grid-template-columns:repeat(6,1fr)}
+        .question-header {flex-direction:column;align-items:flex-start}
+        .question-text {font-size:16px}
+        .option-item {min-height:55px;padding:12px}
+        .option-item span {font-size:13px}
+        .modal-box {padding:23px}
     }
-
-
-    /* =========================================================
-       RESPONSIVE - 700
-       ========================================================= */
-
-    @media (max-width:700px) {
-
-        .exam-container {
-            padding: 10px;
-
-            padding-bottom: 85px;
-        }
-
-        .exam-header {
-            padding: 17px;
-
-            border-radius: 16px;
-        }
-
-        .left-header h2 {
-            font-size: 18px;
-        }
-
-        .right-header {
-            display: grid;
-
-            grid-template-columns:
-            repeat(2,1fr);
-
-            width: 100%;
-        }
-
-        .timer-box {
-            grid-column: 1 / -1;
-
-            justify-content: center;
-        }
-
-        .history-btn,
-        .view-btn,
-        .icon-btn {
-            width: 100%;
-        }
-
-        .exam-layout {
-            display: block;
-        }
-
-        .question-sidebar {
-            position: relative;
-
-            top: auto;
-
-            margin-bottom: 15px;
-        }
-
-        .question-grid {
-            grid-template-columns:
-            repeat(8,1fr);
-
-            max-height: 150px;
-        }
-
-        .question-card {
-            padding: 20px;
-
-            border-radius: 17px;
-        }
-
-        .question-text {
-            font-size: 17px;
-        }
-
-        .question-actions {
-            flex-direction: column;
-
-            align-items: stretch;
-        }
-
-        .clear-btn,
-        .review-btn {
-            width: 100%;
-        }
-
-        .navigation {
-            position: sticky;
-
-            bottom: 70px;
-
-            z-index: 100;
-
-            padding: 8px;
-
-            background:
-                    rgba(245,247,251,.92);
-
-            backdrop-filter: blur(8px);
-        }
-
-        .nav-btn {
-            flex: 1;
-        }
-
-        .submit-btn {
-            width: 100%;
-        }
-
-        .mobile-navigation {
-            display: flex;
-        }
-
-        .result-stats {
-            grid-template-columns:
-            repeat(2,1fr);
-        }
-    }
-
-
-    /* =========================================================
-       RESPONSIVE - 450
-       ========================================================= */
-
-    @media (max-width:450px) {
-
-        .exam-container {
-            padding: 7px;
-        }
-
-        .right-header {
-            grid-template-columns: 1fr;
-        }
-
-        .timer-box {
-            grid-column: auto;
-        }
-
-        .question-grid {
-            grid-template-columns:
-            repeat(6,1fr);
-        }
-
-        .question-header {
-            flex-direction: column;
-
-            align-items: flex-start;
-        }
-
-        .question-text {
-            font-size: 16px;
-        }
-
-        .option-item {
-            min-height: 55px;
-
-            padding: 12px;
-        }
-
-        .option-item span {
-            font-size: 13px;
-        }
-
-        .navigation {
-            gap: 7px;
-        }
-
-        .nav-btn {
-            min-width: 0;
-
-            font-size: 11px;
-        }
-
-        .modal-box {
-            padding: 23px;
-
-            border-radius: 18px;
-        }
-    }
-
-
-    /* =========================================================
-       DARK OVERRIDE PROTECTION
-       ========================================================= */
-
-    .exam-container,
-    .exam-container * {
-        --tw-ring-color: transparent;
-    }
-
-    .exam-container h1,
-    .exam-container h2,
-    .exam-container h3,
-    .exam-container h4,
-    .exam-container p,
-    .exam-container span,
-    .exam-container label,
-    .exam-container strong,
-    .exam-container li {
-        text-shadow: none;
-    }
-
-
-    /* =========================================================
-       SELECTION
-       ========================================================= */
-
-    .exam-container ::selection {
-        background: #c7d2fe;
-
-        color: #312e81;
-    }
-
-
-    /* =========================================================
-       ACCESSIBILITY
-       ========================================================= */
-
-    .exam-container button:focus-visible,
-    .exam-container a:focus-visible,
-    .exam-container input:focus-visible {
-        outline: 3px solid rgba(99,102,241,.25);
-
-        outline-offset: 2px;
-    }
-
 </style>
+
 <div class="exam-container">
 
-    <!-- ================= HEADER ================= -->
-
     <header class="exam-header">
-
         <div class="left-header">
             <h2>🚀 Placement Mock Test</h2>
             <p>Practice • Learn • Crack Your Placement</p>
         </div>
 
         <div class="right-header">
-
             <div class="timer-box">
-                ⏱ Time Left :
-                <span id="timer">20:00</span>
+                ⏱ Time Left: <span id="timer">20:00</span>
             </div>
 
-            <a href="{{ url_for('my_mock_tests') }}" class="history-btn">
-                📊 History
-            </a>
+            <a href="{{ url_for('my_mock_tests') }}" class="history-btn">📊 History</a>
+            <a href="{{ url_for('mock_test_dashboard') }}" class="history-btn">📚 Categories</a>
 
-            <a href="{{ url_for('mock_test_dashboard') }}" class="quick-card glass">                📚 Categories
-            </a>
-
-            <button
-                    type="button"
-                    class="icon-btn"
-                    onclick="showInstruction()">
-                ℹ Instructions
-            </button>
-
-            <button
-                    type="button"
-                    class="icon-btn"
-                    onclick="toggleFullscreen()">
-                ⛶ Full Screen
-            </button>
-
+            <button type="button" class="icon-btn" onclick="showInstruction()">ℹ Instructions</button>
+            <button type="button" class="icon-btn" onclick="toggleFullscreen()">⛶ Full Screen</button>
         </div>
-
     </header>
+
+    {% if not questions %}
+    <div class="question-card" style="text-align:center;padding:50px 20px">
+        <h2>No Questions Available</h2>
+        <p>This mock test does not have any assigned questions yet.</p>
+        <a href="{{ url_for('mock_test_dashboard') }}" class="history-btn">Back to Mock Tests</a>
+    </div>
+    {% else %}
 
     <div class="exam-layout">
 
-        <!-- ================= LEFT SIDEBAR ================= -->
-
         <aside class="question-sidebar">
-
             <h3>Question Palette</h3>
 
             <div class="question-grid">
-
                 {% for q in questions %}
-
-                <button
-                        type="button"
+                <button type="button"
                         id="palette-{{ loop.index }}"
-                        class="palette-btn not-visited"
+                        class="palette-btn"
                         onclick="openQuestion({{ loop.index }})">
-
                     {{ loop.index }}
-
                 </button>
-
                 {% endfor %}
-
             </div>
 
             <div class="legend">
-
-                <div>
-                    <span class="dot answered"></span>
-                    Answered
-                </div>
-
-                <div>
-                    <span class="dot review"></span>
-                    Marked
-                </div>
-
-                <div>
-                    <span class="dot skipped"></span>
-                    Skipped
-                </div>
-
-                <div>
-                    <span class="dot active"></span>
-                    Current
-                </div>
-
+                <div><span class="dot answered"></span>Answered</div>
+                <div><span class="dot review"></span>Marked</div>
+                <div><span class="dot active"></span>Current</div>
             </div>
-
         </aside>
-
-        <!-- ================= QUESTION AREA ================= -->
 
         <main class="question-area">
 
-            <form
-                    id="mockTestForm"
-                    method="POST"
-                    action="{{ url_for('submit_mock_test') }}">
+            <form id="mockTestForm" method="POST" action="{{ url_for('submit_mock_test') }}">
 
                 {% for q in questions %}
-
-                <div
-                        class="question-card"
-                        id="question-{{ loop.index }}"
-                        {% if not loop.first %}
-                        style="display:none;"
-                        {% endif %}>
+                <div class="question-card"
+                     id="question-{{ loop.index }}"
+                     {% if not loop.first %}style="display:none"{% endif %}>
 
                     <div class="question-header">
-
-                        <h3>
-                            Question {{ loop.index }}
-                            /
-                            {{ questions|length }}
-                        </h3>
-
-                        <span class="category">
-                            {{ q.category if q.category else "General" }}
-                        </span>
-
+                        <h3>Question {{ loop.index }} / {{ questions|length }}</h3>
+                        <span class="category">{{ q.category|default(q.difficulty|default('General'),true) }}</span>
                     </div>
 
                     <div class="question-text">
-
-                        {{ q.question }}
-
+                        {{ q.question|default(q.question_text|default('Question unavailable'),true) }}
                     </div>
 
                     <div class="options">
+                        {% set opts = [
+                        ('A', q.option1|default(q.option_a|default('',true),true)),
+                        ('B', q.option2|default(q.option_b|default('',true),true)),
+                        ('C', q.option3|default(q.option_c|default('',true),true)),
+                        ('D', q.option4|default(q.option_d|default('',true),true))
+                        ] %}
 
-                        {% if q.option1 %}
+                        {% for letter, option in opts %}
+                        {% if option %}
                         <label class="option-item">
-                            <input
-                                    type="radio"
-                                    name="question_{{ q.id }}"
-                                    value="{{ q.option1 }}"
-                                    onclick="answerSelected({{ loop.index }})">
-
-                            <span>{{ q.option1 }}</span>
+                            <input type="radio"
+                                   name="question_{{ q.id }}"
+                                   value="{{ letter }}"
+                                   onclick="answerSelected({{ loop.index0 if false else loop.parent.loop.index }})">
+                            <span>{{ letter }}. {{ option }}</span>
                         </label>
                         {% endif %}
-
-                        {% if q.option2 %}
-                        <label class="option-item">
-                            <input
-                                    type="radio"
-                                    name="question_{{ q.id }}"
-                                    value="{{ q.option2 }}"
-                                    onclick="answerSelected({{ loop.index }})">
-
-                            <span>{{ q.option2 }}</span>
-                        </label>
-                        {% endif %}
-
-                        {% if q.option3 %}
-                        <label class="option-item">
-                            <input
-                                    type="radio"
-                                    name="question_{{ q.id }}"
-                                    value="{{ q.option3 }}"
-                                    onclick="answerSelected({{ loop.index }})">
-
-                            <span>{{ q.option3 }}</span>
-                        </label>
-                        {% endif %}
-
-                        {% if q.option4 %}
-                        <label class="option-item">
-                            <input
-                                    type="radio"
-                                    name="question_{{ q.id }}"
-                                    value="{{ q.option4 }}"
-                                    onclick="answerSelected({{ loop.index }})">
-
-                            <span>{{ q.option4 }}</span>
-                        </label>
-                        {% endif %}
-
+                        {% endfor %}
                     </div>
 
                     <div class="question-actions">
-
-                        <button
-                                type="button"
-                                class="clear-btn"
-                                onclick="clearAnswer({{ loop.index }})">
-
-                            ❌ Clear Answer
-
-                        </button>
-
-                        <button
-                                type="button"
-                                class="review-btn"
-                                onclick="markQuestion({{ loop.index }})">
-
-                            ⭐ Mark for Review
-
-                        </button>
-
+                        <button type="button" class="clear-btn" onclick="clearAnswer({{ loop.index }})">❌ Clear Answer</button>
+                        <button type="button" class="review-btn" onclick="markQuestion({{ loop.index }})">⭐ Mark for Review</button>
                     </div>
-
                 </div>
                 {% endfor %}
 
-                <!-- ================= NAVIGATION ================= -->
-
                 <div class="navigation">
-
-                    <button
-                            type="button"
-                            class="nav-btn"
-                            onclick="previousQuestion()">
-
-                        ⬅ Previous
-
-                    </button>
-
-                    <button
-                            type="button"
-                            class="nav-btn"
-                            onclick="nextQuestion()">
-
-                        Next ➜
-
-                    </button>
-
+                    <button type="button" class="nav-btn" onclick="previousQuestion()">⬅ Previous</button>
+                    <button type="button" class="nav-btn" onclick="nextQuestion()">Next ➜</button>
                 </div>
 
-                <!-- ================= SUBMIT ================= -->
-
                 <div class="submit-area">
-
-                    <button
-                            type="button"
-                            class="submit-btn"
-                            onclick="finalSubmit()">
-
-                        Submit Now
-
-                    </button>
-
+                    <button type="button" class="submit-btn" onclick="openSubmitModal()">Submit Now</button>
                 </div>
 
             </form>
-
         </main>
 
-        <!-- ================= RIGHT SIDEBAR ================= -->
-
         <aside class="right-sidebar">
-
-            <!-- Test Summary -->
-
             <div class="summary-card">
-
                 <h3>📊 Test Summary</h3>
-
-                <div class="summary-item">
-                    <span>Answered</span>
-                    <strong id="answeredCount">0</strong>
-                </div>
-
-                <div class="summary-item">
-                    <span>Marked</span>
-                    <strong id="markedCount">0</strong>
-                </div>
-
-                <div class="summary-item">
-                    <span>Remaining</span>
-                    <strong id="remainingCount">
-                        {{ questions|length }}
-                    </strong>
-                </div>
-
+                <div class="summary-item"><span>Answered</span><strong id="answeredCount">0</strong></div>
+                <div class="summary-item"><span>Marked</span><strong id="markedCount">0</strong></div>
+                <div class="summary-item"><span>Remaining</span><strong id="remainingCount">{{ questions|length }}</strong></div>
             </div>
-
-            <!-- Progress -->
 
             <div class="progress-card">
-
                 <h3>📈 Progress</h3>
-
-                <div class="progress-bg">
-
-                    <div
-                            id="progressFill"
-                            class="progress-fill">
-                    </div>
-
-                </div>
-
-                <p id="progressText">
-
-                    0% Completed
-
-                </p>
-
+                <div class="progress-bg"><div id="progressFill" class="progress-fill"></div></div>
+                <p id="progressText">0% Completed</p>
             </div>
-
         </aside>
 
     </div>
-
+    {% endif %}
 </div>
 
-<!-- ================= INSTRUCTION MODAL ================= -->
-
-<div
-        class="modal"
-        id="instructionModal">
-
+<div class="modal" id="instructionModal">
     <div class="modal-box">
-
-        <button
-                class="close-modal"
-                onclick="closeInstruction()">
-
-            ✖
-
-        </button>
-
+        <button class="close-modal" onclick="closeInstruction()">✖</button>
         <h2>📋 Test Instructions</h2>
-
         <ul>
-
-            <li>
-                Total Questions :
-                <strong>{{ questions|length }}</strong>
-            </li>
-
-            <li>Each question carries <strong>1 mark</strong>.</li>
-
+            <li>Total Questions: <strong>{{ questions|length }}</strong></li>
+            <li>Each question carries 1 mark.</li>
             <li>No negative marking.</li>
-
-            <li>Timer will auto submit your test.</li>
-
+            <li>Timer will automatically submit the test.</li>
             <li>You can mark questions for review.</li>
-
-            <li>Do not refresh or close the browser.</li>
-
             <li>Click Submit after completing all questions.</li>
-
         </ul>
-
-        <button
-                class="modal-btn"
-                onclick="closeInstruction()">
-
-            🚀 Start Test
-
-        </button>
-
+        <button class="modal-btn" onclick="startTest()">🚀 Start Test</button>
     </div>
-
 </div>
 
-<!-- ================= SUBMIT MODAL ================= -->
-
-<div
-        class="modal"
-        id="submitModal">
-
+<div class="modal" id="submitModal">
     <div class="modal-box">
-
         <h2>✅ Submit Test</h2>
-
-        <p>
-
-            Are you sure you want to submit your test?
-
-        </p>
+        <p>Are you sure you want to submit your test?</p>
 
         <div class="submit-summary">
-
-            <p>
-
-                Answered :
-                <strong id="submitAnswered">0</strong>
-
-            </p>
-
-            <p>
-
-                Remaining :
-                <strong id="submitNotAnswered">
-
-                    {{ questions|length }}
-
-                </strong>
-
-            </p>
-
-            <p>
-
-                Marked :
-                <strong id="submitMarked">0</strong>
-
-            </p>
-
+            <p>Answered: <strong id="submitAnswered">0</strong></p>
+            <p>Remaining: <strong id="submitNotAnswered">{{ questions|length }}</strong></p>
+            <p>Marked: <strong id="submitMarked">0</strong></p>
         </div>
 
         <div class="modal-actions">
-
-            <button
-                    type="button"
-                    onclick="closeSubmitModal()">
-
-                Cancel
-
-            </button>
-
-            <button
-                    type="button"
-                    class="submit-btn"
-                    onclick="finalSubmit()">
-
-                Submit Now
-
-            </button>
-
+            <button type="button" onclick="closeSubmitModal()">Cancel</button>
+            <button type="button" class="submit-btn" onclick="finalSubmit()">Submit Now</button>
         </div>
-
     </div>
-
 </div>
-<!-- ================= TIME WARNING MODAL ================= -->
 
 <div class="modal" id="timeModal">
-
-    <div class="modal-box warning">
-
-        <h2>⏰ Time Running Out!</h2>
-
-        <p>
-            Only <strong>1 minute</strong> remaining.
-        </p>
-
-        <button
-                type="button"
-                class="modal-btn"
-                onclick="closeTimeModal()">
-
-            Continue Test
-
-        </button>
-
-    </div>
-
-</div>
-
-<!-- ================= EXIT MODAL ================= -->
-
-<div class="modal" id="exitModal">
-
     <div class="modal-box">
-
-        <h2>🚪 Exit Test?</h2>
-
-        <p>
-            Your current progress may be lost.
-        </p>
-
-        <div class="modal-actions">
-
-            <button
-                    type="button"
-                    onclick="closeExitModal()">
-
-                Stay
-
-            </button>
-
-            <button
-                    type="button"
-                    class="clear-btn"
-                    onclick="exitTest()">
-
-                Exit Test
-
-            </button>
-
-        </div>
-
+        <h2>⏰ Time Running Out!</h2>
+        <p>Only one minute remaining.</p>
+        <button class="modal-btn" onclick="closeTimeModal()">Continue Test</button>
     </div>
-
 </div>
 
-<!-- ================= AUTO SAVE ================= -->
-
-<div
-        class="autosave-box"
-        id="autosaveBox">
-
-    💾 Progress Saved
-
-</div>
-
-<!-- ================= BOOKMARK PANEL ================= -->
-
-<div
-        class="bookmark-panel"
-        id="bookmarkPanel">
-
-    <h3>⭐ Bookmarked Questions</h3>
-
-    <div id="bookmarkList">
-
-        <p>No bookmarked questions.</p>
-
-    </div>
-
-</div>
-
-<!-- ================= RESULT PREVIEW ================= -->
-
-<section
-        class="result-preview"
-        id="resultPreview"
-        style="display:none;">
-
-    <div class="result-card">
-
-        <h2>🎉 Test Completed</h2>
-
-        <div class="score-circle">
-
-            <span id="finalScore">
-
-                0%
-
-            </span>
-
-        </div>
-
-        <div class="result-stats">
-
-            <div class="stat-box">
-
-                <h3 id="correctCount">0</h3>
-
-                <p>Correct</p>
-
-            </div>
-
-            <div class="stat-box">
-
-                <h3 id="wrongCount">0</h3>
-
-                <p>Wrong</p>
-
-            </div>
-
-            <div class="stat-box">
-
-                <h3 id="skipCount">0</h3>
-
-                <p>Skipped</p>
-
-            </div>
-
-            <div class="stat-box">
-
-                <h3 id="timeTaken">00:00</h3>
-
-                <p>Time Taken</p>
-
-            </div>
-
-        </div>
-
-    </div>
-
-    <!-- ================= AI ANALYSIS ================= -->
-
-    <div class="ai-analysis-card">
-
-        <h2>🤖 AI Performance Analysis</h2>
-
-        <div class="analysis-item">
-
-            <h4>Strong Topics</h4>
-
-            <p id="strongTopics">
-
-                Loading...
-
-            </p>
-
-        </div>
-
-        <div class="analysis-item">
-
-            <h4>Need Improvement</h4>
-
-            <p id="weakTopics">
-
-                Loading...
-
-            </p>
-
-        </div>
-
-        <button
-                type="button"
-                class="modal-btn">
-
-            Generate Practice Plan
-
-        </button>
-
-    </div>
-
-</section>
-
-<!-- ================= MOBILE NAVIGATION ================= -->
+<div class="autosave-box" id="autosaveBox">💾 Progress Saved</div>
 
 <div class="mobile-navigation">
-
-    <button
-            type="button"
-            onclick="previousQuestion()">
-
-        ⬅
-
-    </button>
-
-    <button
-            type="button"
-            onclick="openPaletteMobile()">
-
-        ☰
-
-    </button>
-
-    <button
-            type="button"
-            onclick="nextQuestion()">
-
-        ➡
-
-    </button>
-
+    <button type="button" onclick="previousQuestion()">⬅</button>
+    <button type="button" onclick="openPaletteMobile()">☰</button>
+    <button type="button" onclick="nextQuestion()">➡</button>
 </div>
-
-<!-- ================= SHORTCUT INFO ================= -->
-
-<div class="shortcut-box">
-
-    <h3>⌨ Keyboard Shortcuts</h3>
-
-    <p>← Previous Question</p>
-
-    <p>→ Next Question</p>
-
-    <p>M = Mark for Review</p>
-
-    <p>C = Clear Answer</p>
-
-    <p>F = Full Screen</p>
-
-</div>
-<!-- ================= MODAL FUNCTIONS ================= -->
 
 <script>
+    window.totalQuestions = {{ questions|length }};
+    window.questionIds = [
+        {% for q in questions %}
+    "{{ q.id }}"{% if not loop.last %},{% endif %}
+    {% endfor %}
+    ];
+
+    window.currentQuestion = 1;
+
+    let currentQuestion = 1;
+    let answeredQuestions = new Set();
+    let markedQuestions = new Set();
+    let testStarted = false;
+    let testSubmitted = false;
+    let remainingSeconds = {{ (duration_minutes|default(20)|int) * 60 }};
+    let timerInterval = null;
 
     function showInstruction() {
         document.getElementById("instructionModal").style.display = "flex";
@@ -2533,19 +810,145 @@
         document.getElementById("instructionModal").style.display = "none";
     }
 
+    function startTest() {
+        if (testStarted) {
+            closeInstruction();
+            return;
+        }
+
+        testStarted = true;
+        closeInstruction();
+
+        if (!timerInterval) {
+            updateTimer();
+            timerInterval = setInterval(updateTimer, 1000);
+        }
+    }
+
+    function updateTimer() {
+        if (testSubmitted) return;
+
+        const timer = document.getElementById("timer");
+        if (!timer) return;
+
+        if (remainingSeconds <= 0) {
+            timer.innerText = "00:00";
+            clearInterval(timerInterval);
+            alert("Time is over. Your test is being submitted.");
+            finalSubmit();
+            return;
+        }
+
+        const minutes = Math.floor(remainingSeconds / 60);
+        const seconds = remainingSeconds % 60;
+
+        timer.innerText =
+            String(minutes).padStart(2, "0") + ":" +
+            String(seconds).padStart(2, "0");
+
+        if (remainingSeconds === 60) {
+            document.getElementById("timeModal").style.display = "flex";
+        }
+
+        remainingSeconds--;
+    }
+
+    function openQuestion(number) {
+        if (number < 1 || number > window.totalQuestions) return;
+
+        document.querySelectorAll(".question-card").forEach(card => {
+            card.style.display = "none";
+        });
+
+        const selected = document.getElementById("question-" + number);
+        if (selected) selected.style.display = "block";
+
+        currentQuestion = number;
+        window.currentQuestion = number;
+
+        updatePalette();
+    }
+
+    function nextQuestion() {
+        if (currentQuestion < window.totalQuestions) {
+            openQuestion(currentQuestion + 1);
+        }
+    }
+
+    function previousQuestion() {
+        if (currentQuestion > 1) {
+            openQuestion(currentQuestion - 1);
+        }
+    }
+
+    function answerSelected(number) {
+        answeredQuestions.add(number);
+        updateSummary();
+        updatePalette();
+        saveProgress();
+    }
+
+    function clearAnswer(number) {
+        const card = document.getElementById("question-" + number);
+        if (!card) return;
+
+        card.querySelectorAll('input[type="radio"]').forEach(input => {
+            input.checked = false;
+        });
+
+        answeredQuestions.delete(number);
+        updateSummary();
+        updatePalette();
+        saveProgress();
+    }
+
+    function markQuestion(number) {
+        if (markedQuestions.has(number)) {
+            markedQuestions.delete(number);
+        } else {
+            markedQuestions.add(number);
+        }
+
+        updateSummary();
+        updatePalette();
+    }
+
+    function updatePalette() {
+        for (let i = 1; i <= window.totalQuestions; i++) {
+            const button = document.getElementById("palette-" + i);
+            if (!button) continue;
+
+            button.className = "palette-btn";
+
+            if (answeredQuestions.has(i)) button.classList.add("answered");
+            if (markedQuestions.has(i)) button.classList.add("review");
+            if (i === currentQuestion) button.classList.add("active");
+        }
+    }
+
+    function updateSummary() {
+        const answered = answeredQuestions.size;
+        const marked = markedQuestions.size;
+        const remaining = window.totalQuestions - answered;
+        const percentage = window.totalQuestions
+            ? Math.round((answered / window.totalQuestions) * 100)
+            : 0;
+
+        document.getElementById("answeredCount").innerText = answered;
+        document.getElementById("markedCount").innerText = marked;
+        document.getElementById("remainingCount").innerText = remaining;
+
+        document.getElementById("progressFill").style.width = percentage + "%";
+        document.getElementById("progressText").innerText = percentage + "% Completed";
+    }
+
     function openSubmitModal() {
+        document.getElementById("submitAnswered").innerText = answeredQuestions.size;
+        document.getElementById("submitMarked").innerText = markedQuestions.size;
+        document.getElementById("submitNotAnswered").innerText =
+            window.totalQuestions - answeredQuestions.size;
 
         document.getElementById("submitModal").style.display = "flex";
-
-        document.getElementById("submitAnswered").innerText =
-            document.getElementById("answeredCount").innerText;
-
-        document.getElementById("submitMarked").innerText =
-            document.getElementById("markedCount").innerText;
-
-        document.getElementById("submitNotAnswered").innerText =
-            document.getElementById("remainingCount").innerText;
-
     }
 
     function closeSubmitModal() {
@@ -2553,32 +956,133 @@
     }
 
     function finalSubmit() {
-        document.getElementById("mockTestForm").submit();
+        if (testSubmitted) return;
+
+        testSubmitted = true;
+        clearInterval(timerInterval);
+
+        const form = document.getElementById("mockTestForm");
+
+        if (!form) return;
+
+        const markedInput = document.createElement("input");
+        markedInput.type = "hidden";
+        markedInput.name = "marked_questions";
+        markedInput.value = JSON.stringify(Array.from(markedQuestions));
+        form.appendChild(markedInput);
+
+        form.submit();
     }
 
     function closeTimeModal() {
         document.getElementById("timeModal").style.display = "none";
     }
 
-    function closeExitModal() {
-        document.getElementById("exitModal").style.display = "none";
+    function toggleFullscreen() {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen?.();
+        } else {
+            document.exitFullscreen?.();
+        }
     }
 
-    function exitTest() {
-        window.location.href = "/dashboard";
+    function openPaletteMobile() {
+        const sidebar = document.querySelector(".question-sidebar");
+        if (!sidebar) return;
+
+        sidebar.scrollIntoView({behavior:"smooth", block:"center"});
     }
 
+    function saveProgress() {
+        const box = document.getElementById("autosaveBox");
+        if (!box) return;
+
+        box.classList.add("show");
+        clearTimeout(window.saveMessageTimer);
+
+        window.saveMessageTimer = setTimeout(() => {
+            box.classList.remove("show");
+        }, 1200);
+
+        const answers = {};
+
+        document.querySelectorAll('#mockTestForm input[type="radio"]:checked')
+            .forEach(input => {
+                answers[input.name] = input.value;
+            });
+
+        try {
+            localStorage.setItem(
+                "mock_test_answers_" + window.location.pathname,
+                JSON.stringify(answers)
+            );
+        } catch (error) {
+            console.warn("Local autosave unavailable", error);
+        }
+    }
+
+    function restoreProgress() {
+        try {
+            const saved = localStorage.getItem(
+                "mock_test_answers_" + window.location.pathname
+            );
+
+            if (!saved) return;
+
+            const answers = JSON.parse(saved);
+
+            Object.entries(answers).forEach(([name, value]) => {
+                const input = document.querySelector(
+                    `input[name="${CSS.escape(name)}"][value="${CSS.escape(value)}"]`
+                );
+
+                if (input) {
+                    input.checked = true;
+
+                    const card = input.closest(".question-card");
+                    const number = Number(card.id.replace("question-", ""));
+
+                    answeredQuestions.add(number);
+                }
+            });
+
+            updateSummary();
+            updatePalette();
+        } catch (error) {
+            console.warn("Could not restore answers", error);
+        }
+    }
+
+    document.addEventListener("keydown", function(event) {
+        if (event.target.matches("input,textarea")) return;
+
+        if (event.key === "ArrowRight") nextQuestion();
+        if (event.key === "ArrowLeft") previousQuestion();
+
+        if (event.key.toLowerCase() === "f") toggleFullscreen();
+
+        if (event.key.toLowerCase() === "m") markQuestion(currentQuestion);
+
+        if (event.key.toLowerCase() === "c") clearAnswer(currentQuestion);
+    });
+
+    document.addEventListener("DOMContentLoaded", function() {
+        restoreProgress();
+        updatePalette();
+        updateSummary();
+
+        if (window.totalQuestions > 0) {
+            openQuestion(1);
+            showInstruction();
+        }
+    });
+
+    window.addEventListener("beforeunload", function(event) {
+        if (testStarted && !testSubmitted) {
+            event.preventDefault();
+            event.returnValue = "";
+        }
+    });
 </script>
-<!-- ================= DATA FOR JS ================= -->
-<script>
-    window.totalQuestions = {{ questions|length }};
-    window.questionIds = [
-        {% for q in questions %}
-    "{{ q.id }}"{% if not loop.last %},{% endif %}
-    {% endfor %}
-    ];
-    window.currentQuestion = 1;
-</script>
-<!-- ================= EXTERNAL JAVASCRIPT ================= -->
-<script src="{{ url_for('static', filename='js/mock_test.js') }}"></script>
+
 {% endblock %}

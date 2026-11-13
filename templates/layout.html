@@ -621,6 +621,88 @@
 
         }
 
+           .notification-item {
+               display: flex;
+               align-items: flex-start;
+               gap: 11px;
+               padding: 13px 15px;
+               text-decoration: none;
+               color: #334155;
+               border-bottom: 1px solid #f1f5f9;
+               transition: .2s;
+           }
+
+        .notification-item:hover {
+            background: #eff6ff;
+        }
+
+        .notification-icon {
+            width: 36px;
+            height: 36px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            background: #dbeafe;
+            color: #2563eb;
+        }
+
+        .notification-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .notification-content h4 {
+            margin: 0 0 4px;
+            font-size: 12px;
+            color: #1e293b;
+        }
+
+        .notification-content p {
+            margin: 0;
+            font-size: 11px;
+            color: #64748b;
+            line-height: 1.5;
+            overflow-wrap: anywhere;
+        }
+
+        .notification-content small {
+            display: block;
+            margin-top: 5px;
+            font-size: 10px;
+            color: #94a3b8;
+        }
+
+        .notification-item.unread {
+            background: #f0f7ff;
+        }
+
+        .notification-dot {
+            width: 8px;
+            height: 8px;
+            margin-top: 5px;
+            border-radius: 50%;
+            background: #2563eb;
+            flex-shrink: 0;
+        }
+
+        .notification-footer {
+            padding: 12px;
+            text-align: center;
+        }
+
+        .notification-footer a {
+            color: #2563eb;
+            font-size: 12px;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .notification-footer a:hover {
+            text-decoration: underline;
+        }
+
         @media (max-width: 600px) {
 
             .navbar {
@@ -852,6 +934,7 @@
 
             </button>
 
+
             <div class="notification-panel">
 
                 <div class="notification-header">
@@ -867,19 +950,17 @@
 
                 </div>
 
-                <div class="notification-empty">
+                <div id="navbarNotifications">
 
-                    <i class="far fa-bell-slash"></i>
-
-                    <h4>You're all caught up!</h4>
-
-                    <p>
-                        New notifications will appear here.
-                    </p>
+                    <div class="notification-empty">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Loading notifications...</p>
+                    </div>
 
                 </div>
 
             </div>
+
 
         </li>
 
@@ -1564,6 +1645,161 @@
             }
         });
     }
+    /* ================= LIVE NOTIFICATIONS ================= */
+
+    async function loadNavbarNotifications() {
+
+        const badge = document.getElementById("notificationBadge");
+        const container = document.getElementById("navbarNotifications");
+
+        if (!badge || !container) return;
+
+        try {
+
+            const response = await fetch("/api/notifications/summary", {
+                method: "GET",
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                },
+                cache: "no-store"
+            });
+
+            if (!response.ok) return;
+
+            const data = await response.json();
+
+            if (!data.success) return;
+
+            // Update unread badge
+
+            if (data.unread_count > 0) {
+
+                badge.textContent =
+                    data.unread_count > 99 ? "99+" : data.unread_count;
+
+                badge.style.display = "flex";
+
+            } else {
+
+                badge.style.display = "none";
+
+            }
+
+            // Empty state
+
+            if (!data.notifications.length) {
+
+                container.innerHTML = `
+                <div class="notification-empty">
+                    <i class="far fa-bell-slash"></i>
+                    <h4>You're all caught up!</h4>
+                    <p>New notifications will appear here.</p>
+                </div>
+            `;
+
+                return;
+            }
+
+            // Notification icons
+
+            function getNotificationIcon(type) {
+
+                const icons = {
+                    message: "fa-comment-dots",
+                    friend_request: "fa-user-plus",
+                    friend_accepted: "fa-user-check",
+                    general: "fa-bell"
+                };
+
+                return icons[type] || "fa-bell";
+            }
+
+            // Build notification list safely
+
+            container.replaceChildren();
+
+            data.notifications.forEach(function (item) {
+
+                const link = document.createElement("a");
+
+                link.className =
+                    "notification-item" +
+                    (Number(item.is_read) === 0 ? " unread" : "");
+
+                link.href = item.link || "/notifications";
+
+                const icon = document.createElement("div");
+                icon.className = "notification-icon";
+
+                const iconElement = document.createElement("i");
+                iconElement.className =
+                    "fas " + getNotificationIcon(item.type);
+
+                icon.appendChild(iconElement);
+
+                const content = document.createElement("div");
+                content.className = "notification-content";
+
+                const title = document.createElement("h4");
+                title.textContent = item.title;
+
+                const message = document.createElement("p");
+                message.textContent = item.message;
+
+                const time = document.createElement("small");
+                time.textContent = item.created_at;
+
+                content.appendChild(title);
+                content.appendChild(message);
+                content.appendChild(time);
+
+                link.appendChild(icon);
+                link.appendChild(content);
+
+                if (Number(item.is_read) === 0) {
+
+                    const dot = document.createElement("span");
+                    dot.className = "notification-dot";
+
+                    link.appendChild(dot);
+
+                }
+
+                container.appendChild(link);
+
+            });
+
+            // View all button
+
+            const footer = document.createElement("div");
+            footer.className = "notification-footer";
+
+            const viewAll = document.createElement("a");
+            viewAll.href = "/notifications";
+            viewAll.textContent = "View All Notifications";
+
+            footer.appendChild(viewAll);
+            container.appendChild(footer);
+
+        }
+
+        catch (error) {
+
+            console.error("Notification loading error:", error);
+
+        }
+
+    }
+
+
+    // Load immediately
+
+    loadNavbarNotifications();
+
+
+    // Refresh every 30 seconds
+
+    setInterval(loadNavbarNotifications, 30000);
 </script>
 </body>
 </html>

@@ -435,8 +435,9 @@
             <!-- MESSAGE INPUT -->
 
             <form class="chat-input-area"
+                  id="messageForm"
                   method="POST"
-                  action="/messages/send">
+                  action="{{ url_for('send_message') }}">
 
                 <input
                         type="hidden"
@@ -446,6 +447,7 @@
                 <input
                         type="text"
                         name="message"
+                        id="messageInput"
                         placeholder="Type your message..."
                         maxlength="2000"
                         required
@@ -453,6 +455,7 @@
 
                 <button type="submit"
                         class="chat-send"
+                        id="sendMessageBtn"
                         aria-label="Send message">
 
                     <i class="fas fa-paper-plane"></i>
@@ -460,6 +463,10 @@
                 </button>
 
             </form>
+
+            <div id="messageStatus"
+                 style="padding:0 16px 8px;font-size:12px;color:#dc2626;">
+            </div>
 
 
             {% else %}
@@ -488,37 +495,186 @@
 
 {% endblock %}
 
-
 {% block js %}
 
 <script>
 
-    const chatSearch = document.getElementById("chatSearch");
+    document.addEventListener("DOMContentLoaded", function () {
 
-    if (chatSearch) {
+        // Conversation Search
 
-        chatSearch.addEventListener("input", function () {
+        const chatSearch = document.getElementById("chatSearch");
 
-            const query = this.value.toLowerCase();
+        if (chatSearch) {
 
-            document.querySelectorAll(".conversation").forEach(function (item) {
+            chatSearch.addEventListener("input", function () {
 
-                const name = item.innerText.toLowerCase();
+                const query = this.value.toLowerCase();
 
-                item.style.display =
-                    name.includes(query) ? "flex" : "none";
+                document.querySelectorAll(".conversation").forEach(function (item) {
+
+                    const name = item.innerText.toLowerCase();
+
+                    item.style.display =
+                        name.includes(query) ? "flex" : "none";
+
+                });
 
             });
 
-        });
+        }
 
-    }
 
-    const chatBody = document.getElementById("chatBody");
+        // Scroll to latest message
 
-    if (chatBody) {
-        chatBody.scrollTop = chatBody.scrollHeight;
-    }
+        const chatBody = document.getElementById("chatBody");
+
+        if (chatBody) {
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
+
+
+        // AJAX Message Sending
+
+        const messageForm = document.getElementById("messageForm");
+
+        if (messageForm) {
+
+            const messageInput = document.getElementById("messageInput");
+            const sendButton = document.getElementById("sendMessageBtn");
+            const messageStatus = document.getElementById("messageStatus");
+
+            messageForm.addEventListener("submit", async function (event) {
+
+                event.preventDefault();
+
+                const message = messageInput.value.trim();
+
+                if (!message) {
+                    return;
+                }
+
+                const originalButton = sendButton.innerHTML;
+
+                sendButton.disabled = true;
+                sendButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+                messageStatus.textContent = "";
+
+                try {
+
+                    const response = await fetch(messageForm.action, {
+
+                        method: "POST",
+
+                        body: new FormData(messageForm),
+
+                        headers: {
+                            "X-Requested-With": "XMLHttpRequest"
+                        }
+
+                    });
+
+                    const result = await response.json();
+
+                    if (!response.ok || !result.success) {
+
+                        throw new Error(result.error || "Message could not be sent.");
+
+                    }
+
+                    // Remove empty chat message
+
+                    const emptyMessage = chatBody.querySelector(".chat-empty");
+
+                    if (emptyMessage) {
+                        emptyMessage.remove();
+                    }
+
+
+                    // Create new message bubble
+
+                    const messageElement = document.createElement("div");
+
+                    messageElement.className = "chat-message sent";
+
+                    const bubble = document.createElement("div");
+
+                    bubble.className = "message-bubble";
+
+                    // textContent prevents HTML/script injection
+
+                    bubble.appendChild(
+                        document.createTextNode(result.message.message)
+                    );
+
+                    const time = document.createElement("span");
+
+                    time.className = "message-time";
+                    time.textContent = result.message.created_at;
+
+                    bubble.appendChild(time);
+
+                    messageElement.appendChild(bubble);
+
+                    chatBody.appendChild(messageElement);
+
+
+                    // Update conversation preview
+
+                    const selectedReceiver = messageForm.querySelector(
+                        '[name="receiver_id"]'
+                    ).value;
+
+                    document.querySelectorAll(".conversation").forEach(function (item) {
+
+                        if (item.href.includes("user=" + selectedReceiver)) {
+
+                            const preview = item.querySelector(".conversation-info p");
+
+                            if (preview) {
+                                preview.textContent = result.message.message;
+                            }
+
+                        }
+
+                    });
+
+
+                    // Clear input
+
+                    messageInput.value = "";
+
+                    messageInput.focus();
+
+                    // Scroll to latest message
+
+                    chatBody.scrollTo({
+                        top: chatBody.scrollHeight,
+                        behavior: "smooth"
+                    });
+
+                }
+
+                catch (error) {
+
+                    messageStatus.textContent = error.message;
+
+                }
+
+                finally {
+
+                    sendButton.disabled = false;
+
+                    sendButton.innerHTML = originalButton;
+
+                }
+
+            });
+
+        }
+
+    });
 
 </script>
 

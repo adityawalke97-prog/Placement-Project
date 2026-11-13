@@ -1114,439 +1114,7 @@ def mock_course_subjects(course_id):
         cursor.close()
         conn.close()
 
-@app.route("/mock-tests/create", methods=["GET", "POST"])
-def create_mock_test():
 
-    if not mock_login_required():
-        return redirect(url_for("login"))
-
-    user_id = get_mock_user_id()
-
-    conn = get_db_connection()
-    cursor = conn.cursor()
-
-    try:
-
-        # ==================================================
-        # GET REQUEST - LOAD COURSES AND SUBJECTS
-        # ==================================================
-
-        if request.method == "GET":
-
-            cursor.execute("""
-                SELECT id, course_name
-                FROM mock_catalog_courses
-                WHERE is_active = 1
-                ORDER BY course_name
-            """)
-
-            courses = cursor.fetchall()
-
-            cursor.execute("""
-                SELECT id, course_id, subject_name
-                FROM mock_catalog_subjects
-                ORDER BY subject_name
-            """)
-
-            subjects = cursor.fetchall()
-
-            return render_template(
-                "create_mock_test.html",
-                courses=courses,
-                subjects=subjects
-            )
-
-        # ==================================================
-        # POST REQUEST - FORM DATA
-        # ==================================================
-
-        title = request.form.get("title", "").strip()
-
-        description = request.form.get(
-            "description", ""
-        ).strip()
-
-        course_id = request.form.get(
-            "course_id", type=int
-        )
-
-        difficulty = request.form.get(
-            "difficulty", "Mixed"
-        )
-
-        question_count = request.form.get(
-            "question_count", type=int
-        )
-
-        duration = request.form.get(
-            "duration_minutes", type=int
-        )
-
-        subject_ids = request.form.getlist("subject_ids")
-
-        start_input = request.form.get(
-            "scheduled_start_at", ""
-        ).strip()
-
-        end_input = request.form.get(
-            "scheduled_end_at", ""
-        ).strip()
-
-        # ==================================================
-        # BASIC VALIDATION
-        # ==================================================
-
-        allowed_difficulties = [
-            "Easy",
-            "Medium",
-            "Hard",
-            "Mixed"
-        ]
-
-        if not title or not course_id:
-
-            flash(
-                "Please enter test title and course.",
-                "danger"
-            )
-
-            return redirect(url_for("create_mock_test"))
-
-        if len(title) > 200:
-
-            flash("Test title cannot exceed 200 characters.", "danger")
-
-            return redirect(url_for("create_mock_test"))
-
-        if difficulty not in allowed_difficulties:
-
-            flash("Invalid difficulty.", "danger")
-
-            return redirect(url_for("create_mock_test"))
-
-        if not question_count or not (1 <= question_count <= 200):
-
-            flash(
-                "Question count must be between 1 and 200.",
-                "danger"
-            )
-
-            return redirect(url_for("create_mock_test"))
-
-        if not duration or not (1 <= duration <= 300):
-
-            flash(
-                "Duration must be between 1 and 300 minutes.",
-                "danger"
-            )
-
-            return redirect(url_for("create_mock_test"))
-
-        # ==================================================
-        # SCHEDULED DATE/TIME VALIDATION
-        # ==================================================
-
-        if not start_input or not end_input:
-
-            flash(
-                "Please select exam start and end date/time.",
-                "danger"
-            )
-
-            return redirect(url_for("create_mock_test"))
-
-        try:
-
-            scheduled_start = datetime.strptime(
-                start_input,
-                "%Y-%m-%dT%H:%M"
-            )
-
-            scheduled_end = datetime.strptime(
-                end_input,
-                "%Y-%m-%dT%H:%M"
-            )
-
-        except ValueError:
-
-            flash("Invalid exam date/time format.", "danger")
-
-            return redirect(url_for("create_mock_test"))
-
-        # Current Indian time
-        current_time = datetime.now(
-            ZoneInfo("Asia/Kolkata")
-        ).replace(tzinfo=None)
-
-        if scheduled_start <= current_time:
-
-            flash(
-                "Exam start time must be in the future.",
-                "danger"
-            )
-
-            return redirect(url_for("create_mock_test"))
-
-        if scheduled_end <= scheduled_start:
-
-            flash(
-                "Exam end time must be after start time.",
-                "danger"
-            )
-
-            return redirect(url_for("create_mock_test"))
-
-        # ==================================================
-        # CONVERT SUBJECT IDS
-        # ==================================================
-
-        try:
-
-            subject_ids = list({
-                int(s)
-                for s in subject_ids
-                if s.isdigit()
-            })
-
-        except (ValueError, TypeError):
-
-            flash("Invalid subject selection.", "danger")
-
-            return redirect(url_for("create_mock_test"))
-
-        if not subject_ids:
-
-            flash(
-                "Please select at least one subject.",
-                "danger"
-            )
-
-            return redirect(url_for("create_mock_test"))
-
-        # ==================================================
-        # VERIFY COURSE
-        # ==================================================
-
-        cursor.execute("""
-            SELECT id
-            FROM mock_catalog_courses
-            WHERE id = %s
-            AND is_active = 1
-        """, (course_id,))
-
-        if not cursor.fetchone():
-
-            flash("Invalid course selection.", "danger")
-
-            return redirect(url_for("create_mock_test"))
-
-        # ==================================================
-        # VERIFY SUBJECTS
-        # ==================================================
-
-        placeholders = ",".join(
-            ["%s"] * len(subject_ids)
-        )
-
-        cursor.execute(f"""
-            SELECT id
-            FROM mock_catalog_subjects
-            WHERE course_id = %s
-            AND id IN ({placeholders})
-        """, [course_id] + subject_ids)
-
-        valid_subjects = cursor.fetchall()
-
-        if len(valid_subjects) != len(subject_ids):
-
-            flash(
-                "Invalid subject selection.",
-                "danger"
-            )
-
-            return redirect(url_for("create_mock_test"))
-
-        # ==================================================
-        # FETCH RANDOM QUESTIONS
-        # ==================================================
-
-        difficulty_condition = ""
-
-        params = subject_ids.copy()
-
-        if difficulty != "Mixed":
-
-            difficulty_condition = """
-                AND difficulty = %s
-            """
-
-            params.append(difficulty)
-
-        cursor.execute(f"""
-            SELECT id
-            FROM mock_question_bank
-            WHERE subject_id IN ({placeholders})
-            AND is_active = 1
-            {difficulty_condition}
-            ORDER BY RAND()
-            LIMIT %s
-        """, params + [question_count])
-
-        questions = cursor.fetchall()
-
-        # ==================================================
-        # CHECK QUESTION AVAILABILITY
-        # ==================================================
-
-        if len(questions) < question_count:
-
-            flash(
-                f"Only {len(questions)} questions available. "
-                "Please reduce question count or add more questions.",
-                "warning"
-            )
-
-            return redirect(url_for("create_mock_test"))
-
-        # ==================================================
-        # GENERATE SHARE TOKEN
-        # ==================================================
-
-        share_token = secrets.token_urlsafe(32)
-
-        # ==================================================
-        # CREATE TEST TRANSACTION
-        # ==================================================
-
-        conn.begin()
-
-        cursor.execute("""
-            INSERT INTO mock_test_catalog (
-                creator_user_id,
-                course_id,
-                title,
-                description,
-                difficulty,
-                question_count,
-                duration_minutes,
-                scheduled_start_at,
-                scheduled_end_at,
-                share_token,
-                visibility,
-                status
-            )
-            VALUES (
-                %s, %s, %s, %s, %s, %s,
-                %s, %s, %s, %s, %s, %s
-            )
-        """, (
-            user_id,
-            course_id,
-            title,
-            description,
-            difficulty,
-            question_count,
-            duration,
-            scheduled_start,
-            scheduled_end,
-            share_token,
-            "Link",
-            "Published"
-        ))
-
-        test_id = cursor.lastrowid
-
-        # ==================================================
-        # SAVE SUBJECTS
-        # ==================================================
-
-        for subject_id in subject_ids:
-
-            cursor.execute("""
-                INSERT INTO mock_test_subjects (
-                    test_id,
-                    subject_id
-                )
-                VALUES (%s, %s)
-            """, (
-                test_id,
-                subject_id
-            ))
-
-        # ==================================================
-        # SAVE QUESTIONS
-        # ==================================================
-
-        for index, question in enumerate(
-            questions,
-            start=1
-        ):
-
-            cursor.execute("""
-                INSERT INTO mock_test_questions (
-                    test_id,
-                    question_id,
-                    question_order,
-                    marks
-                )
-                VALUES (%s, %s, %s, %s)
-            """, (
-                test_id,
-                question["id"],
-                index,
-                1
-            ))
-
-        # ==================================================
-        # COMMIT
-        # ==================================================
-
-        conn.commit()
-
-        # ==================================================
-        # SHARE LINK
-        # ==================================================
-
-        share_link = url_for(
-            "attempt_mock_test",
-            share_token=share_token,
-            _external=True
-        )
-
-        flash(
-            "Scheduled mock exam created successfully!",
-            "success"
-        )
-
-        flash(
-            f"Share your exam link: {share_link}",
-            "info"
-        )
-
-        return redirect(
-            url_for(
-                "mock_test_leaderboard",
-                share_token=share_token
-            )
-        )
-
-    except Exception as e:
-
-        conn.rollback()
-
-        print("MOCK TEST CREATE ERROR:", e)
-
-        flash(
-            "Unable to create mock test. Please try again.",
-            "danger"
-        )
-
-        return redirect(url_for("create_mock_test"))
-
-    finally:
-
-        cursor.close()
-        conn.close()
 # ==========================================================
 # MOCK TEST ATTEMPT - COMPLETE ROUTE
 # ==========================================================
@@ -1694,18 +1262,14 @@ def attempt_mock_test(share_token):
 
         return render_template(
             "mock_test_attempt.html",
-
             test=test,
-
             questions=questions,
-
             attempt_id=attempt_id,
-
             no_questions=no_questions,
-
             question_count=question_count,
-
-            total_marks=total_marks
+            total_marks=total_marks,
+            exam_state="active",
+            remaining_seconds=int(test["duration_minutes"] or 20) * 60
         )
 
     # ======================================================
@@ -1957,239 +1521,38 @@ def start_subject_mock_test(subject_id):
 
         cursor.close()
         conn.close()
-# ==========================================================
-# 5. SUBMIT MOCK TEST
-# ==========================================================
-
-@app.route("/mock-test/submit/<int:attempt_id>", methods=["POST"])
-def submit_mock_test(attempt_id):
-
-    if not mock_login_required():
-        return redirect(url_for("login"))
-
-    user_id = get_mock_user_id()
-
-    conn = get_db_connection()
-    cursor = conn.cursor()
-
-    try:
-
-        conn.begin()
-
-        cursor.execute("""
-            SELECT *
-            FROM mock_attempts
-            WHERE id = %s
-            AND user_id = %s
-            FOR UPDATE
-        """, (attempt_id, user_id))
-
-        attempt = cursor.fetchone()
-
-        if not attempt:
-            conn.rollback()
-            abort(404)
-
-        if attempt["status"] != "In Progress":
-            conn.rollback()
-
-            return redirect(
-                url_for(
-                    "mock_test_result",
-                    attempt_id=attempt_id
-                )
-            )
-
-        cursor.execute("""
-            SELECT
-                qb.id,
-                qb.correct_option,
-                mtq.marks
-
-            FROM mock_test_questions mtq
-
-            JOIN mock_question_bank qb
-                ON qb.id = mtq.question_id
-
-            WHERE mtq.test_id = %s
-        """, (attempt["test_id"],))
-
-        questions = cursor.fetchall()
-
-        correct = 0
-        wrong = 0
-        attempted = 0
-        obtained_marks = 0
-
-        for question in questions:
-
-            question_id = question["id"]
-
-            selected = request.form.get(
-                f"question_{question_id}"
-            )
-
-            if selected:
-                selected = selected.upper()
-
-            if selected not in ["A", "B", "C", "D"]:
-                selected = None
-
-            correct_option = question["correct_option"].upper()
-
-            is_correct = (
-                selected is not None
-                and selected == correct_option
-            )
-
-            marks_awarded = (
-                question["marks"] if is_correct else 0
-            )
-
-            if selected:
-                attempted += 1
-
-                if is_correct:
-                    correct += 1
-                    obtained_marks += marks_awarded
-                else:
-                    wrong += 1
-
-            cursor.execute("""
-                INSERT INTO mock_attempt_answers (
-                    attempt_id,
-                    question_id,
-                    selected_option,
-                    correct_option,
-                    is_correct,
-                    marks_awarded,
-                    answered_at
-                )
-                VALUES (%s, %s, %s, %s, %s, %s, NOW())
-            """, (
-                attempt_id,
-                question_id,
-                selected,
-                correct_option,
-                1 if is_correct else 0,
-                marks_awarded
-            ))
-
-        total_questions = len(questions)
-
-        unanswered = total_questions - attempted
-
-        total_marks = sum(q["marks"] for q in questions)
-
-        percentage = (
-            (obtained_marks / total_marks) * 100
-            if total_marks > 0 else 0
-        )
-
-        cursor.execute("""
-            SELECT started_at
-            FROM mock_attempts
-            WHERE id = %s
-        """, (attempt_id,))
-
-        started = cursor.fetchone()["started_at"]
-
-        time_taken = max(
-            0,
-            int((datetime.now() - started).total_seconds())
-        )
-
-        cursor.execute("""
-            UPDATE mock_attempts
-            SET
-                attempted_questions = %s,
-                correct_answers = %s,
-                wrong_answers = %s,
-                unanswered_questions = %s,
-                obtained_marks = %s,
-                total_marks = %s,
-                percentage = %s,
-                time_taken_seconds = %s,
-                submitted_at = NOW(),
-                status = 'Submitted'
-
-            WHERE id = %s
-        """, (
-            attempted,
-            correct,
-            wrong,
-            unanswered,
-            obtained_marks,
-            total_marks,
-            round(percentage, 2),
-            time_taken,
-            attempt_id
-        ))
-
-        conn.commit()
-
-        return redirect(
-            url_for(
-                "mock_test_result",
-                attempt_id=attempt_id
-            )
-        )
-
-    except Exception as e:
-
-        conn.rollback()
-
-        print("MOCK TEST SUBMIT ERROR:", e)
-
-        flash("Unable to submit test.", "danger")
-
-        return redirect(url_for("mock_test_dashboard"))
-
-    finally:
-        cursor.close()
-        conn.close()
-
-
-# ==========================================================
-# 6. MOCK TEST RESULT
-# ==========================================================
-
 @app.route("/mock-test/result/<int:attempt_id>")
 def mock_test_result(attempt_id):
-
     if not mock_login_required():
         return redirect(url_for("login"))
 
     user_id = get_mock_user_id()
-
     conn = get_db_connection()
     cursor = conn.cursor()
 
     try:
-
         cursor.execute("""
             SELECT
                 a.*,
                 t.title,
                 t.share_token,
                 u.name
-
             FROM mock_attempts a
-
-            JOIN mock_test_catalog t
-                ON t.id = a.test_id
-
-            JOIN users u
-                ON u.id = a.user_id
-
+            JOIN mock_test_catalog t ON t.id = a.test_id
+            JOIN users u ON u.id = a.user_id
             WHERE a.id = %s
             AND a.user_id = %s
+            LIMIT 1
         """, (attempt_id, user_id))
 
         result = cursor.fetchone()
 
         if not result:
             abort(404)
+
+        if result["status"] != "Submitted":
+            flash("This examination has not been submitted yet.", "warning")
+            return redirect(url_for("mock_test_dashboard"))
 
         cursor.execute("""
             SELECT
@@ -2204,34 +1567,33 @@ def mock_test_result(attempt_id):
                 qb.option_c,
                 qb.option_d,
                 qb.explanation
-
             FROM mock_attempt_answers aa
-
             JOIN mock_question_bank qb
                 ON qb.id = aa.question_id
-
             WHERE aa.attempt_id = %s
-
-            ORDER BY aa.id
+            ORDER BY aa.id ASC
         """, (attempt_id,))
 
         answers = cursor.fetchall()
 
         return render_template(
-            "mock_test_result.html",
+            "mock_result.html",
             result=result,
             answers=answers
         )
 
+    except Exception as e:
+        import traceback
+        print("\n========== MOCK RESULT ERROR ==========")
+        traceback.print_exc()
+        print("ERROR MESSAGE:", str(e))
+        print("=======================================\n")
+        flash("Result loading failed: " + str(e), "danger")
+        return redirect(url_for("mock_test_dashboard"))
+
     finally:
         cursor.close()
         conn.close()
-
-
-# ==========================================================
-# 7. MOCK TEST LEADERBOARD
-# ==========================================================
-
 @app.route("/mock-test/leaderboard/<share_token>")
 def mock_test_leaderboard(share_token):
 
@@ -2242,7 +1604,6 @@ def mock_test_leaderboard(share_token):
     cursor = conn.cursor()
 
     try:
-
         cursor.execute("""
             SELECT
                 id,
@@ -2250,9 +1611,7 @@ def mock_test_leaderboard(share_token):
                 question_count,
                 duration_minutes,
                 share_token
-
             FROM mock_test_catalog
-
             WHERE share_token = %s
         """, (share_token,))
 
@@ -2269,7 +1628,6 @@ def mock_test_leaderboard(share_token):
                         a.time_taken_seconds ASC,
                         a.submitted_at ASC
                 ) AS rank_position,
-
                 u.name,
                 a.correct_answers,
                 a.wrong_answers,
@@ -2278,19 +1636,10 @@ def mock_test_leaderboard(share_token):
                 a.percentage,
                 a.time_taken_seconds,
                 a.submitted_at
-
             FROM mock_attempts a
-
-            JOIN users u
-                ON u.id = a.user_id
-
+            JOIN users u ON u.id = a.user_id
             WHERE a.test_id = %s
-
-            AND a.status IN (
-                'Submitted',
-                'Auto Submitted'
-            )
-
+            AND a.status IN ('Submitted', 'Auto Submitted')
             ORDER BY
                 a.percentage DESC,
                 a.time_taken_seconds ASC,
@@ -2300,86 +1649,30 @@ def mock_test_leaderboard(share_token):
         leaderboard = cursor.fetchall()
 
         return render_template(
-            "mock_test_leaderboard.html",
+            "mock_test/leaderboard.html",
             test=test,
             leaderboard=leaderboard
         )
 
-    finally:
-        cursor.close()
-        conn.close()
-
-
-# ==========================================================
-# 8. MY CREATED MOCK TESTS
-# ==========================================================
-
-@app.route("/my-mock-tests")
-def my_mock_tests():
-
-    if not mock_login_required():
-        return redirect(url_for("login"))
-
-    user_id = get_mock_user_id()
-
-    conn = get_db_connection()
-    cursor = conn.cursor()
-
-    try:
-
-        cursor.execute("""
-            SELECT
-                t.*,
-                COUNT(DISTINCT a.id) AS total_attempts
-
-            FROM mock_test_catalog t
-
-            LEFT JOIN mock_attempts a
-                ON a.test_id = t.id
-                AND a.status IN ('Submitted', 'Auto Submitted')
-
-            WHERE t.creator_user_id = %s
-
-            GROUP BY t.id
-
-            ORDER BY t.created_at DESC
-        """, (user_id,))
-
-        tests = cursor.fetchall()
-
-        return render_template(
-            "my_mock_tests.html",
-            tests=tests
-        )
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return "Leaderboard Error: " + str(e), 500
 
     finally:
         cursor.close()
         conn.close()
-
-# PART 4 — INTERVIEW QUESTIONS
-# =========================================================
 @app.route("/interview")
 @app.route("/interview_questions")
 def interview_questions():
-
-    # =====================================================
-    # LOGIN CHECK
-    # =====================================================
     if "user_id" not in session:
         flash("Please login first.", "warning")
         return redirect(url_for("login"))
-
-    # =====================================================
-    # QUERY PARAMETERS
-    # =====================================================
     category = request.args.get("category", "").strip()
     level = request.args.get("level", "").strip()
     company = request.args.get("company", "").strip()
     search = request.args.get("search", "").strip()
 
-    # =====================================================
-    # PAGINATION
-    # =====================================================
     try:
         page = int(request.args.get("page", 1))
     except (ValueError, TypeError):
@@ -2404,11 +1697,8 @@ def interview_questions():
         cursor = conn.cursor(
             pymysql.cursors.DictCursor
         )
-
         conditions = []
         params = []
-
-        # CATEGORY
         if category:
             conditions.append(
                 "category = %s"
@@ -4490,10 +3780,211 @@ def submit_coding():
         if conn:
             conn.close()
 
+@app.route("/mock-test/submit/<int:attempt_id>", methods=["POST"])
+def submit_mock_test(attempt_id):
+    if not mock_login_required():
+        return redirect(url_for("login"))
 
+    user_id = get_mock_user_id()
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("""
+            SELECT *
+            FROM mock_attempts
+            WHERE id = %s AND user_id = %s
+            LIMIT 1
+            FOR UPDATE
+        """, (attempt_id, user_id))
+
+        attempt = cursor.fetchone()
+
+        if not attempt:
+            abort(404)
+
+        if attempt["status"] != "In Progress":
+            return redirect(url_for(
+                "mock_test_result",
+                attempt_id=attempt_id
+            ))
+
+        cursor.execute("""
+            SELECT
+                qb.id,
+                qb.correct_option,
+                mtq.marks
+            FROM mock_test_questions mtq
+            JOIN mock_question_bank qb
+                ON qb.id = mtq.question_id
+            WHERE mtq.test_id = %s
+            AND qb.is_active = 1
+            ORDER BY mtq.question_order ASC
+        """, (attempt["test_id"],))
+
+        questions = cursor.fetchall()
+
+        if not questions:
+            flash("No questions found for this test.", "danger")
+            return redirect(url_for("mock_test_dashboard"))
+
+        attempted = 0
+        correct = 0
+        wrong = 0
+        unanswered = 0
+        obtained_marks = 0
+        total_marks = 0
+
+        for question in questions:
+            question_id = question["id"]
+            selected_option = request.form.get(
+                f"question_{question_id}"
+            )
+
+            selected_option = (
+                selected_option.strip().upper()
+                if selected_option else None
+            )
+
+            correct_option = (
+                question["correct_option"].strip().upper()
+                if question["correct_option"] else ""
+            )
+
+            marks = question["marks"] or 0
+            total_marks += marks
+
+            is_correct = 0
+            marks_awarded = 0
+
+            if selected_option in ["A", "B", "C", "D"]:
+                attempted += 1
+
+                if selected_option == correct_option:
+                    correct += 1
+                    is_correct = 1
+                    marks_awarded = marks
+                    obtained_marks += marks
+                else:
+                    wrong += 1
+            else:
+                selected_option = None
+                unanswered += 1
+
+            cursor.execute("""
+                INSERT INTO mock_attempt_answers (
+                    attempt_id,
+                    question_id,
+                    selected_option,
+                    correct_option,
+                    is_correct,
+                    marks_awarded,
+                    answered_at
+                )
+                VALUES (%s, %s, %s, %s, %s, %s, NOW())
+            """, (
+                attempt_id,
+                question_id,
+                selected_option,
+                correct_option,
+                is_correct,
+                marks_awarded
+            ))
+
+        total_questions = len(questions)
+
+        percentage = (
+            (obtained_marks / total_marks) * 100
+            if total_marks > 0 else 0
+        )
+
+        cursor.execute("""
+            UPDATE mock_attempts
+            SET
+                attempted_questions = %s,
+                correct_answers = %s,
+                wrong_answers = %s,
+                unanswered_questions = %s,
+                obtained_marks = %s,
+                total_marks = %s,
+                total_questions = %s,
+                percentage = %s,
+                submitted_at = NOW(),
+                status = 'Submitted'
+            WHERE id = %s
+            AND user_id = %s
+        """, (
+            attempted,
+            correct,
+            wrong,
+            unanswered,
+            obtained_marks,
+            total_marks,
+            total_questions,
+            percentage,
+            attempt_id,
+            user_id
+        ))
+
+        conn.commit()
+
+        return redirect(url_for(
+            "mock_test_result",
+            attempt_id=attempt_id
+        ))
+
+    except Exception as e:
+        conn.rollback()
+        print("MOCK TEST SUBMIT ERROR:", str(e))
+        flash("Unable to submit mock test. Please try again.", "danger")
+        return redirect(url_for("mock_test_dashboard"))
+
+    finally:
+        cursor.close()
+        conn.close()
 # =========================================================
 # USER PROGRESS
 # =========================================================
+@app.route("/my-mock-tests")
+def my_mock_tests():
+    if not mock_login_required():
+        return redirect(url_for("login"))
+
+    user_id = get_mock_user_id()
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("""
+            SELECT
+                t.*,
+                (
+                    SELECT COUNT(*)
+                    FROM mock_attempts a
+                    WHERE a.test_id = t.id
+                    AND a.status IN ('Submitted', 'Auto Submitted')
+                ) AS total_attempts
+            FROM mock_test_catalog t
+            WHERE t.creator_user_id = %s
+            ORDER BY t.created_at DESC
+        """, (user_id,))
+
+        tests = cursor.fetchall()
+
+        return render_template("mock_test/my_tests.html", tests=tests)
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        print("MY MOCK TESTS ERROR:", str(e))
+        return "My Mock Tests Error: " + str(e), 500
+
+    finally:
+        cursor.close()
+        conn.close()
+
+
 
 @app.route("/progress")
 @app.route("/my_progress")
@@ -8479,8 +7970,8 @@ def create_social_notification(
 ):
     cursor.execute("""
         INSERT INTO notifications
-        (user_id, title, message, type, link)
-        VALUES (%s, %s, %s, %s, %s)
+        (user_id, title, message, type, link, is_read, created_at)
+        VALUES (%s, %s, %s, %s, %s, 0, CURRENT_TIMESTAMP)
     """, (
         user_id,
         title,
@@ -8488,7 +7979,6 @@ def create_social_notification(
         notification_type,
         link
     ))
-
 
 def are_friends(cursor, user1, user2):
 
@@ -8925,16 +8415,18 @@ def messages():
     finally:
         cursor.close()
         conn.close()
-
-
-# ==========================================================
-# SEND MESSAGE
-# ==========================================================
-
 @app.route("/messages/send", methods=["POST"])
 def send_message():
 
+    is_ajax = request.headers.get("X-Requested-With") == "XMLHttpRequest"
+
     if not social_login_required():
+        if is_ajax:
+            return jsonify({
+                "success": False,
+                "error": "Please login again."
+            }), 401
+
         return redirect(url_for("login"))
 
     sender_id = social_user_id()
@@ -8942,10 +8434,22 @@ def send_message():
     message = request.form.get("message", "").strip()
 
     if not receiver_id or not message:
+        if is_ajax:
+            return jsonify({
+                "success": False,
+                "error": "Please enter a message."
+            }), 400
+
         flash("Please enter a message.", "warning")
         return redirect(url_for("messages"))
 
-    if len(message) > 5000:
+    if len(message) > 2000:
+        if is_ajax:
+            return jsonify({
+                "success": False,
+                "error": "Message is too long."
+            }), 400
+
         flash("Message is too long.", "warning")
         return redirect(url_for("messages", user=receiver_id))
 
@@ -8955,6 +8459,13 @@ def send_message():
     try:
 
         if not are_friends(cursor, sender_id, receiver_id):
+
+            if is_ajax:
+                return jsonify({
+                    "success": False,
+                    "error": "You can message your accepted friends only."
+                }), 403
+
             flash("You can message your accepted friends only.", "warning")
             return redirect(url_for("messages"))
 
@@ -8964,10 +8475,12 @@ def send_message():
             VALUES (%s, %s, %s)
         """, (sender_id, receiver_id, message))
 
+        message_id = cursor.lastrowid
+
         cursor.execute("""
             SELECT name
             FROM users
-            WHERE id=%s
+            WHERE id = %s
         """, (sender_id,))
 
         sender = cursor.fetchone()
@@ -8984,20 +8497,37 @@ def send_message():
 
         conn.commit()
 
+        if is_ajax:
+            return jsonify({
+                "success": True,
+                "message": {
+                    "id": message_id,
+                    "sender_id": sender_id,
+                    "message": message,
+                    "created_at": "Just now"
+                }
+            })
+
         flash("Message sent!", "success")
 
     except Exception:
         conn.rollback()
-        flash("Unable to send message.", "danger")
+
         app.logger.exception("Send message error")
+
+        if is_ajax:
+            return jsonify({
+                "success": False,
+                "error": "Unable to send message. Please try again."
+            }), 500
+
+        flash("Unable to send message.", "danger")
 
     finally:
         cursor.close()
         conn.close()
 
     return redirect(url_for("messages", user=receiver_id))
-
-
 # ==========================================================
 # NOTIFICATIONS PAGE
 # ==========================================================
@@ -9019,18 +8549,19 @@ def notifications():
         cursor.execute("""
             SELECT COUNT(*) AS unread_count
             FROM notifications
-            WHERE user_id=%s
-            AND is_read=0
+            WHERE user_id = %s
+            AND is_read = 0
         """, (current_user,))
 
         unread_count = cursor.fetchone()["unread_count"]
 
+        condition = ""
+
         if notification_filter == "unread":
-            condition = "AND is_read=0"
+            condition = "AND is_read = 0"
+
         elif notification_filter == "read":
-            condition = "AND is_read=1"
-        else:
-            condition = ""
+            condition = "AND is_read = 1"
 
         cursor.execute("""
             SELECT
@@ -9042,8 +8573,8 @@ def notifications():
                 is_read,
                 created_at
             FROM notifications
-            WHERE user_id=%s
-            """ + condition + """
+            WHERE user_id = %s
+        """ + condition + """
             ORDER BY created_at DESC
             LIMIT 100
         """, (current_user,))
@@ -9056,15 +8587,42 @@ def notifications():
             unread_count=unread_count
         )
 
+    except Exception:
+        app.logger.exception("Notification fetch error")
+        flash("Unable to load notifications.", "danger")
+        return redirect(url_for("dashboard"))
+
     finally:
         cursor.close()
         conn.close()
+@app.route("/debug-notifications")
+def debug_notifications():
 
+    if not social_login_required():
+        return "Not logged in"
 
-# ==========================================================
-# MARK NOTIFICATION AS READ
-# ==========================================================
+    user_id = social_user_id()
 
+    conn = get_db_connection()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+
+    try:
+        cursor.execute("""
+            SELECT COUNT(*) AS total
+            FROM notifications
+            WHERE user_id = %s AND is_read = 0
+        """, (user_id,))
+
+        result = cursor.fetchone()
+
+        return {
+            "logged_in_user_id": user_id,
+            "unread_notifications": result["total"]
+        }
+
+    finally:
+        cursor.close()
+        conn.close()
 @app.route(
     "/notifications/read/<int:notification_id>",
     methods=["POST"]
@@ -9172,6 +8730,71 @@ def pyq_toggle_course(course_id):
 
         if conn:
             conn.close()
+@app.route("/api/notifications/summary")
+def notification_summary():
+
+    if not social_login_required():
+        return jsonify({
+            "success": False,
+            "error": "Login required"
+        }), 401
+
+    current_user = social_user_id()
+
+    conn = get_db_connection()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+
+    try:
+
+        cursor.execute("""
+            SELECT COUNT(*) AS unread_count
+            FROM notifications
+            WHERE user_id = %s
+            AND is_read = 0
+        """, (current_user,))
+
+        unread_count = cursor.fetchone()["unread_count"]
+
+        cursor.execute("""
+            SELECT
+                id,
+                title,
+                message,
+                type,
+                link,
+                is_read,
+                created_at
+            FROM notifications
+            WHERE user_id = %s
+            ORDER BY created_at DESC
+            LIMIT 5
+        """, (current_user,))
+
+        notification_list = cursor.fetchall()
+
+        for item in notification_list:
+            item["created_at"] = (
+                item["created_at"].strftime("%d %b, %I:%M %p")
+                if item["created_at"] else ""
+            )
+
+        return jsonify({
+            "success": True,
+            "unread_count": unread_count,
+            "notifications": notification_list
+        })
+
+    except Exception:
+        app.logger.exception("Notification API error")
+
+        return jsonify({
+            "success": False,
+            "error": "Unable to load notifications"
+        }), 500
+
+    finally:
+        cursor.close()
+        conn.close()
 
 # =========================================================
 # LOGOUT ROUTE
@@ -9185,6 +8808,16 @@ def logout():
     flash("You have been logged out successfully.", "success")
 
     return redirect(url_for("login"))
+
+
+import os
+
+print("TEMPLATE FOLDER:", app.template_folder)
+print("ROOT PATH:", app.root_path)
+print("FILE EXISTS:", os.path.exists(
+    os.path.join(app.root_path, "templates", "mock_tests", "my_tests.html")
+))
+
 if __name__ == "__main__":
 
     # -----------------------------------------------------

@@ -231,9 +231,8 @@
 
 
     <form method="POST"
-          action="{{ url_for('attempt_mock_test', share_token=test.share_token) }}"
+          action="{{ url_for('submit_mock_test', attempt_id=attempt_id) }}"
           id="examForm">
-
         {% for question in questions %}
 
         <div class="question-card">

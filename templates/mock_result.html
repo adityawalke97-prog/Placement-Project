@@ -5,378 +5,618 @@
 {% block content %}
 
 <div class="result-page">
-
     <div class="result-card">
 
-        <!-- Header -->
         <div class="result-header">
-
-            <div class="success-icon">
-                🎉
-            </div>
-
-            <h1>Mock Test Completed!</h1>
-
-            <p>
-                Great job! Your test has been submitted successfully.
-            </p>
-
+            <div class="success-icon">🎉</div>
+            <span class="result-badge">TEST COMPLETED</span>
+            <h1>Examination Result</h1>
+            <p>Your mock test has been submitted successfully.</p>
+            <h2 class="test-title">{{ result.title or "Mock Test" }}</h2>
         </div>
 
-
-        <!-- Category -->
-        <div class="category-box">
-
-            📚 Category:
-
-            <strong>
-                {{ result.category or "General" }}
-            </strong>
-
-        </div>
-
-
-        <!-- Percentage -->
         <div class="score-section">
-
             <div class="score-circle">
-
-                {{ "%.0f"|format(result.percentage or 0) }}%
-
+                <div>
+                    <strong>{{ "%.0f"|format(result.percentage or 0) }}%</strong>
+                    <span>Overall Score</span>
+                </div>
             </div>
 
-            <h2>
-                Your Score
-            </h2>
-
-            <h3>
-
-                {{ result.score or 0 }}
-
-                /
-
-                {{ result.total_questions or 0 }}
-
-            </h3>
-
+            <div class="score-details">
+                <h2>{{ result.obtained_marks or 0 }} <span>/ {{ result.total_marks or 0 }}</span></h2>
+                <p>Total Marks Obtained</p>
+                <div class="score-progress">
+                    <div class="score-progress-fill" style="width: {{ result.percentage or 0 }}%"></div>
+                </div>
+            </div>
         </div>
 
-
-        <!-- Statistics -->
         <div class="stats-grid">
-
-            <div class="stat correct">
-
-                <div class="stat-icon">
-                    ✅
-                </div>
-
-                <h2>
-                    {{ result.score or 0 }}
-                </h2>
-
-                <p>
-                    Correct
-                </p>
-
+            <div class="stat-card correct">
+                <div class="stat-icon">✓</div>
+                <h2>{{ result.correct_answers or 0 }}</h2>
+                <p>Correct Answers</p>
             </div>
 
-
-            <div class="stat wrong">
-
-                <div class="stat-icon">
-                    ❌
-                </div>
-
-                <h2>
-                    {{ wrong or 0 }}
-                </h2>
-
-                <p>
-                    Wrong
-                </p>
-
+            <div class="stat-card wrong">
+                <div class="stat-icon">✕</div>
+                <h2>{{ result.wrong_answers or 0 }}</h2>
+                <p>Wrong Answers</p>
             </div>
 
-
-            <div class="stat skipped">
-
-                <div class="stat-icon">
-                    ⏭️
-                </div>
-
-                <h2>
-                    {{ skipped or 0 }}
-                </h2>
-
-                <p>
-                    Skipped
-                </p>
-
+            <div class="stat-card skipped">
+                <div class="stat-icon">↗</div>
+                <h2>{{ result.unanswered_questions or 0 }}</h2>
+                <p>Unanswered</p>
             </div>
 
-
-            <div class="stat accuracy">
-
-                <div class="stat-icon">
-                    🎯
-                </div>
-
-                <h2>
-                    {{ "%.2f"|format(result.percentage or 0) }}%
-                </h2>
-
-                <p>
-                    Accuracy
-                </p>
-
+            <div class="stat-card attempted">
+                <div class="stat-icon">◎</div>
+                <h2>{{ result.attempted_questions or 0 }}</h2>
+                <p>Attempted</p>
             </div>
-
         </div>
 
-
-        <!-- Performance -->
         <div class="performance">
-
             {% set percentage = result.percentage or 0 %}
 
             {% if percentage >= 80 %}
-
-            <div class="performance-icon">
-                🏆
-            </div>
-
-            <h2>
-                Excellent Performance!
-            </h2>
-
-            <p>
-                Outstanding! Keep up the excellent work.
-            </p>
-
+            <div class="performance-icon">🏆</div>
+            <h2>Outstanding Performance!</h2>
+            <p>Excellent work! You have demonstrated strong preparation.</p>
+            <span class="performance-label excellent">Excellent</span>
             {% elif percentage >= 60 %}
-
-            <div class="performance-icon">
-                👍
-            </div>
-
-            <h2>
-                Good Performance!
-            </h2>
-
-            <p>
-                Good job! Keep practicing to improve further.
-            </p>
-
+            <div class="performance-icon">🌟</div>
+            <h2>Great Job!</h2>
+            <p>You are performing well. Keep practicing to reach excellence.</p>
+            <span class="performance-label good">Good</span>
             {% elif percentage >= 40 %}
-
-            <div class="performance-icon">
-                📚
-            </div>
-
-            <h2>
-                Keep Practicing!
-            </h2>
-
-            <p>
-                You are improving. Practice more mock tests.
-            </p>
-
+            <div class="performance-icon">📚</div>
+            <h2>Keep Improving!</h2>
+            <p>You are making progress. Review your mistakes and practice more.</p>
+            <span class="performance-label average">Average</span>
             {% else %}
-
-            <div class="performance-icon">
-                💪
-            </div>
-
-            <h2>
-                More Practice Needed
-            </h2>
-
-            <p>
-                Don't give up. Practice regularly and improve your score.
-            </p>
-
+            <div class="performance-icon">💪</div>
+            <h2>More Practice Needed</h2>
+            <p>Don't give up. Focus on your weak areas and try again.</p>
+            <span class="performance-label improve">Needs Improvement</span>
             {% endif %}
-
         </div>
 
+        {% if answers %}
+        <div class="answer-review">
+            <div class="section-heading">
+                <div>
+                    <span class="section-eyebrow">DETAILED ANALYSIS</span>
+                    <h2>Answer Review</h2>
+                    <p>Review your answers and understand your mistakes.</p>
+                </div>
+                <span class="question-count">{{ answers|length }} Questions</span>
+            </div>
 
-        <!-- Buttons -->
+            <div class="answer-list">
+                {% for answer in answers %}
+                <div class="answer-card">
+                    <div class="answer-top">
+                        <span class="question-number">Question {{ loop.index }}</span>
+
+                        {% if answer.is_correct %}
+                        <span class="answer-status correct-status">✓ Correct</span>
+                        {% else %}
+                        <span class="answer-status wrong-status">✕ Incorrect</span>
+                        {% endif %}
+                    </div>
+
+                    <h3>{{ answer.question_text }}</h3>
+
+                    <div class="answer-options">
+                        {% for option_letter, option_text in [
+                        ('A', answer.option_a),
+                        ('B', answer.option_b),
+                        ('C', answer.option_c),
+                        ('D', answer.option_d)
+                        ] %}
+                        {% if option_text %}
+                        <div class="answer-option
+                                {% if option_letter == answer.correct_option %} correct-option{% endif %}
+                                {% if option_letter == answer.selected_option and not answer.is_correct %} wrong-option{% endif %}">
+
+                            <span class="option-letter">{{ option_letter }}</span>
+                            <span>{{ option_text }}</span>
+
+                            {% if option_letter == answer.correct_option %}
+                            <span class="option-label">Correct Answer</span>
+                            {% elif option_letter == answer.selected_option %}
+                            <span class="option-label">Your Answer</span>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+
+                    {% if answer.selected_option %}
+                    <p class="your-answer">
+                        Your answer: <strong>{{ answer.selected_option }}</strong>
+                    </p>
+                    {% else %}
+                    <p class="your-answer unanswered-text">You did not attempt this question.</p>
+                    {% endif %}
+
+                    {% if answer.explanation %}
+                    <div class="explanation">
+                        <strong>💡 Explanation</strong>
+                        <p>{{ answer.explanation }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
         <div class="result-actions">
-
-            <a
-                    href="{{ url_for('dashboard') }}"
-                    class="btn dashboard-btn"
-            >
-                🏠 Dashboard
+            <a href="{{ url_for('dashboard') }}" class="action-btn dashboard-btn">
+                <span>⌂</span> Dashboard
             </a>
 
-
-            <a
-                    href="{{ url_for('mock_categories') }}"
-                    class="btn test-btn"
-            >
-                🔄 Take Another Test
+            <a href="{{ url_for('mock_test_dashboard') }}" class="action-btn test-btn">
+                <span>↻</span> Take Another Test
             </a>
 
-
-            <a
-                    href="{{ url_for('mock_test_history') }}"
-                    class="btn history-btn"
-            >
-                📊 Test History
+            <a href="{{ url_for('mock_test_dashboard') }}" class="action-btn history-btn">
+                <span>▤</span> Mock Test Dashboard
             </a>
-
         </div>
 
     </div>
-
 </div>
 
-
 <style>
-
     .result-page {
-        min-height: 80vh;
-        padding: 40px 20px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        min-height: 85vh;
+        padding: 40px 18px;
+        background: #f5f7ff;
     }
 
     .result-card {
-        width: 100%;
-        max-width: 950px;
-        background: #ffffff;
-        border-radius: 24px;
-        padding: 45px;
-        box-shadow: 0 15px 50px rgba(0,0,0,0.10);
-        text-align: center;
+        max-width: 1050px;
+        margin: auto;
+        padding: 42px;
+        background: #fff;
+        border: 1px solid #e8eaf3;
+        border-radius: 26px;
+        box-shadow: 0 15px 55px rgba(30, 41, 59, .07);
     }
 
     .result-header {
-        margin-bottom: 25px;
+        text-align: center;
+        padding-bottom: 30px;
+        border-bottom: 1px solid #edf0f5;
     }
 
     .success-icon {
-        font-size: 60px;
-        margin-bottom: 10px;
+        font-size: 55px;
+        margin-bottom: 12px;
+    }
+
+    .result-badge {
+        display: inline-block;
+        padding: 7px 15px;
+        border-radius: 30px;
+        background: #dcfce7;
+        color: #15803d;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 1px;
     }
 
     .result-header h1 {
         font-size: 32px;
-        margin: 0 0 8px;
+        font-weight: 800;
+        color: #172033;
+        margin: 15px 0 8px;
     }
 
-    .result-header p {
-        color: #64748b;
+    .result-header p,
+    .section-heading p {
+        color: #8490a3;
         margin: 0;
     }
 
-    .category-box {
-        display: inline-block;
-        padding: 12px 22px;
-        background: #f1f5f9;
-        border-radius: 30px;
-        margin: 20px 0;
-        color: #334155;
+    .test-title {
+        color: #4f46e5;
+        font-size: 19px;
+        margin-top: 16px;
     }
 
     .score-section {
-        margin: 25px 0 35px;
-    }
-
-    .score-circle {
-        width: 170px;
-        height: 170px;
-        border-radius: 50%;
-        margin: auto;
         display: flex;
         justify-content: center;
         align-items: center;
-        font-size: 42px;
-        font-weight: 800;
-        background: #eef2ff;
+        gap: 65px;
+        padding: 38px 15px;
+    }
+
+    .score-circle {
+        width: 185px;
+        height: 185px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: conic-gradient(#4f46e5 {{ result.percentage or 0 }}%, #e8eaf5 0);
+        position: relative;
+    }
+
+    .score-circle::before {
+        content: "";
+        position: absolute;
+        width: 150px;
+        height: 150px;
+        background: white;
+        border-radius: 50%;
+    }
+
+    .score-circle div {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .score-circle strong {
+        font-size: 39px;
         color: #4f46e5;
-        border: 10px solid #c7d2fe;
+        font-weight: 850;
     }
 
-    .score-section h2 {
-        margin: 20px 0 5px;
+    .score-circle span {
+        font-size: 11px;
+        color: #8993a5;
+        font-weight: 700;
     }
 
-    .score-section h3 {
-        font-size: 28px;
+    .score-details {
+        min-width: 240px;
+    }
+
+    .score-details h2 {
+        font-size: 39px;
+        color: #172033;
         margin: 0;
-        color: #475569;
+    }
+
+    .score-details h2 span {
+        color: #9ca3af;
+        font-size: 25px;
+    }
+
+    .score-details p {
+        color: #8490a3;
+        margin: 5px 0 18px;
+    }
+
+    .score-progress {
+        height: 9px;
+        background: #edf0f7;
+        border-radius: 20px;
+        overflow: hidden;
+    }
+
+    .score-progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #6366f1, #8b5cf6);
+        border-radius: 20px;
     }
 
     .stats-grid {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
-        gap: 18px;
-        margin: 30px 0;
+        gap: 17px;
+        margin: 10px 0 30px;
     }
 
-    .stat {
-        padding: 25px 15px;
+    .stat-card {
+        padding: 24px 15px;
+        border: 1px solid #edf0f5;
         border-radius: 18px;
-        background: #f8fafc;
+        text-align: center;
+        background: #fafbff;
     }
 
     .stat-icon {
-        font-size: 30px;
+        width: 42px;
+        height: 42px;
+        border-radius: 13px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: auto;
+        font-size: 23px;
+        font-weight: 800;
     }
 
-    .stat h2 {
-        margin: 8px 0 3px;
-        font-size: 28px;
+    .stat-card h2 {
+        font-size: 29px;
+        margin: 12px 0 4px;
+        color: #172033;
     }
 
-    .stat p {
+    .stat-card p {
+        font-size: 13px;
+        color: #8490a3;
         margin: 0;
-        color: #64748b;
+    }
+
+    .correct .stat-icon {
+        color: #16a34a;
+        background: #dcfce7;
+    }
+
+    .wrong .stat-icon {
+        color: #dc2626;
+        background: #fee2e2;
+    }
+
+    .skipped .stat-icon {
+        color: #d97706;
+        background: #fef3c7;
+    }
+
+    .attempted .stat-icon {
+        color: #4f46e5;
+        background: #e0e7ff;
     }
 
     .performance {
-        margin: 30px 0;
-        padding: 25px;
-        border-radius: 18px;
-        background: #f8fafc;
+        text-align: center;
+        padding: 30px 20px;
+        background: linear-gradient(135deg, #f5f3ff, #eff6ff);
+        border: 1px solid #e5e7ff;
+        border-radius: 20px;
+        margin: 25px 0 40px;
     }
 
     .performance-icon {
-        font-size: 40px;
+        font-size: 42px;
     }
 
     .performance h2 {
-        margin: 8px 0;
+        font-size: 23px;
+        color: #172033;
+        margin: 10px 0;
     }
 
     .performance p {
-        margin: 0;
+        color: #778399;
+        margin-bottom: 15px;
+    }
+
+    .performance-label {
+        display: inline-block;
+        padding: 7px 17px;
+        border-radius: 30px;
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    .excellent {
+        background: #dcfce7;
+        color: #15803d;
+    }
+
+    .good {
+        background: #dbeafe;
+        color: #1d4ed8;
+    }
+
+    .average {
+        background: #fef3c7;
+        color: #b45309;
+    }
+
+    .improve {
+        background: #fee2e2;
+        color: #b91c1c;
+    }
+
+    .answer-review {
+        margin-top: 35px;
+    }
+
+    .section-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 22px;
+    }
+
+    .section-eyebrow {
+        color: #6366f1;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 1.3px;
+    }
+
+    .section-heading h2 {
+        color: #172033;
+        font-size: 25px;
+        margin: 7px 0;
+    }
+
+    .question-count {
+        padding: 9px 14px;
+        border-radius: 25px;
+        background: #eef2ff;
+        color: #4f46e5;
+        font-size: 12px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .answer-card {
+        padding: 24px;
+        margin-bottom: 17px;
+        border: 1px solid #e9edf5;
+        border-radius: 17px;
+        background: #fff;
+    }
+
+    .answer-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 17px;
+    }
+
+    .question-number {
         color: #64748b;
+        font-size: 12px;
+        font-weight: 800;
+        text-transform: uppercase;
+    }
+
+    .answer-status {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 800;
+    }
+
+    .correct-status {
+        color: #15803d;
+        background: #dcfce7;
+    }
+
+    .wrong-status {
+        color: #dc2626;
+        background: #fee2e2;
+    }
+
+    .answer-card h3 {
+        color: #172033;
+        font-size: 16px;
+        line-height: 1.6;
+        margin: 0 0 18px;
+    }
+
+    .answer-options {
+        display: grid;
+        gap: 10px;
+    }
+
+    .answer-option {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 14px;
+        border: 1px solid #edf0f5;
+        border-radius: 11px;
+        color: #475569;
+        font-size: 13px;
+    }
+
+    .option-letter {
+        width: 28px;
+        height: 28px;
+        flex-shrink: 0;
+        border-radius: 8px;
+        background: #f1f5f9;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        color: #475569;
+    }
+
+    .correct-option {
+        background: #f0fdf4;
+        border-color: #86efac;
+        color: #166534;
+    }
+
+    .correct-option .option-letter {
+        background: #16a34a;
+        color: white;
+    }
+
+    .wrong-option {
+        background: #fff1f2;
+        border-color: #fda4af;
+        color: #be123c;
+    }
+
+    .wrong-option .option-letter {
+        background: #dc2626;
+        color: white;
+    }
+
+    .option-label {
+        margin-left: auto;
+        font-size: 10px;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .your-answer {
+        color: #64748b;
+        font-size: 13px;
+        margin: 15px 0 0;
+    }
+
+    .unanswered-text {
+        color: #d97706;
+    }
+
+    .explanation {
+        margin-top: 16px;
+        padding: 15px;
+        background: #eff6ff;
+        border-radius: 11px;
+        border-left: 4px solid #3b82f6;
+    }
+
+    .explanation strong {
+        color: #1d4ed8;
+        font-size: 13px;
+    }
+
+    .explanation p {
+        color: #475569;
+        font-size: 13px;
+        line-height: 1.6;
+        margin: 7px 0 0;
     }
 
     .result-actions {
         display: flex;
         justify-content: center;
         flex-wrap: wrap;
-        gap: 12px;
-        margin-top: 30px;
+        gap: 13px;
+        margin-top: 35px;
     }
 
-    .btn {
-        padding: 13px 22px;
+    .action-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        padding: 14px 23px;
         border-radius: 12px;
-        text-decoration: none;
         color: white;
-        font-weight: 600;
-        transition: 0.2s;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 700;
+        transition: .2s ease;
     }
 
-    .btn:hover {
-        transform: translateY(-2px);
+    .action-btn:hover {
+        color: white;
+        transform: translateY(-3px);
+        box-shadow: 0 8px 18px rgba(0,0,0,.12);
     }
 
     .dashboard-btn {
@@ -391,40 +631,80 @@
         background: #7c3aed;
     }
 
-
-    /* Mobile */
-
-    @media (max-width: 700px) {
+    @media(max-width: 700px) {
+        .result-page {
+            padding: 20px 10px;
+        }
 
         .result-card {
             padding: 25px 15px;
+            border-radius: 18px;
         }
 
         .result-header h1 {
             font-size: 25px;
         }
 
+        .score-section {
+            flex-direction: column;
+            gap: 22px;
+            text-align: center;
+        }
+
         .score-circle {
-            width: 140px;
-            height: 140px;
+            width: 160px;
+            height: 160px;
+        }
+
+        .score-circle::before {
+            width: 130px;
+            height: 130px;
+        }
+
+        .score-circle strong {
             font-size: 34px;
+        }
+
+        .score-details {
+            width: 100%;
+            min-width: 0;
         }
 
         .stats-grid {
             grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .stat-card {
+            padding: 18px 8px;
+        }
+
+        .section-heading {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .answer-card {
+            padding: 17px 12px;
+        }
+
+        .answer-option {
+            flex-wrap: wrap;
+        }
+
+        .option-label {
+            margin-left: 40px;
         }
 
         .result-actions {
             flex-direction: column;
         }
 
-        .btn {
+        .action-btn {
             width: 100%;
             box-sizing: border-box;
         }
-
     }
-
 </style>
 
 {% endblock %}
