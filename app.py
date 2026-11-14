@@ -10,6 +10,8 @@ from flask import (
     url_for,
     jsonify
 )
+
+from flask import abort
 from authlib.integrations.flask_client import OAuth
 from flask_bcrypt import Bcrypt
 from dotenv import load_dotenv
@@ -177,9 +179,6 @@ def get_google_redirect_uri():
         "http://localhost:5000"
         "/login/google/callback"
     )
-# =========================================================
-# GOOGLE LOGIN
-# =========================================================
 
 @app.route("/login/google")
 def google_login():
@@ -219,12 +218,6 @@ def google_callback():
         print(
             "GOOGLE TOKEN RECEIVED"
         )
-
-
-        # -------------------------------------------------
-        # Get Google user information
-        # -------------------------------------------------
-
         userinfo = token.get(
             "userinfo"
         )
@@ -1510,7 +1503,7 @@ def mock_test_participants_api(share_token):
 def mock_test_participant_ready(share_token):
 
     if not mock_login_required():
-        return jsonify({"success": False}), 401
+        return jsonify({"success": False, "message": "Login required."}), 401
 
     user_id = get_mock_user_id()
     conn = get_db_connection()
@@ -1527,7 +1520,10 @@ def mock_test_participant_ready(share_token):
         test = cursor.fetchone()
 
         if not test:
-            return jsonify({"success": False}), 404
+            return jsonify({
+                "success": False,
+                "message": "Mock test not found."
+            }), 404
 
         if test["scheduled_start_at"] is not None:
             return jsonify({
@@ -1536,33 +1532,45 @@ def mock_test_participant_ready(share_token):
             }), 400
 
         cursor.execute("""
-            UPDATE mock_test_participants
-            SET status = CASE
-                WHEN status = 'Ready' THEN 'Joined'
-                ELSE 'Ready'
-            END
+            SELECT id, status
+            FROM mock_test_participants
             WHERE test_id = %s
             AND user_id = %s
-            AND status IN ('Joined', 'Ready')
+            AND status != 'Left'
+            LIMIT 1
         """, (test["id"], user_id))
 
-        if cursor.rowcount == 0:
+        participant = cursor.fetchone()
+
+        if not participant:
             return jsonify({
                 "success": False,
-                "message": "Participant not found."
+                "message": "You are not a participant in this test."
             }), 404
+
+        new_status = "Joined" if participant["status"] == "Ready" else "Ready"
+
+        cursor.execute("""
+            UPDATE mock_test_participants
+            SET status = %s
+            WHERE id = %s
+        """, (new_status, participant["id"]))
 
         conn.commit()
 
         return jsonify({
             "success": True,
-            "message": "Status updated."
+            "status": new_status,
+            "message": "You are now " + new_status + "."
         })
 
     except Exception as e:
         conn.rollback()
         print("READY API ERROR:", str(e))
-        return jsonify({"success": False}), 500
+        return jsonify({
+            "success": False,
+            "message": "Something went wrong. Please try again."
+        }), 500
 
     finally:
         cursor.close()

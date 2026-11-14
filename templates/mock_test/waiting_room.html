@@ -1,95 +1,166 @@
 {% extends "mock_test/base.html" %}
 
-{% block title %}Waiting Room | {{ test.title }}{% endblock %}
+{% block title %}Waiting Room | Mock Test{% endblock %}
 
 {% block content %}
 
 <style>
-    .waiting-wrapper {
-        max-width: 1100px;
+    .waiting-page {
+        max-width: 1150px;
         margin: 35px auto;
-        padding: 20px;
+        padding: 0 20px 50px;
     }
 
     .waiting-header {
-        background: linear-gradient(135deg, #172554, #312e81, #4338ca);
-        color: white;
-        border-radius: 22px;
-        padding: 35px;
-        margin-bottom: 25px;
-        position: relative;
-        overflow: hidden;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 28px;
+        flex-wrap: wrap;
     }
 
-    .waiting-header h1 {
+    .waiting-title h1 {
         font-size: 30px;
         font-weight: 800;
-        margin-bottom: 10px;
+        margin: 0 0 8px;
+        color: var(--text-primary, #172033);
     }
 
-    .waiting-header p {
-        color: #dbeafe;
+    .waiting-title p {
         margin: 0;
-    }
-
-    .header-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        background: rgba(255,255,255,.15);
-        padding: 8px 15px;
-        border-radius: 30px;
-        margin-bottom: 18px;
-        font-size: 13px;
-    }
-
-    .waiting-grid {
-        display: grid;
-        grid-template-columns: 1.5fr 1fr;
-        gap: 22px;
-    }
-
-    .waiting-card {
-        background: white;
-        border: 1px solid #e5e7eb;
-        border-radius: 20px;
-        padding: 25px;
-        box-shadow: 0 8px 30px rgba(15,23,42,.05);
-    }
-
-    .card-heading {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 22px;
-    }
-
-    .card-heading h3 {
-        font-size: 19px;
-        font-weight: 800;
-        margin: 0;
-        color: #111827;
+        color: var(--text-secondary, #718096);
+        font-size: 14px;
     }
 
     .live-indicator {
         display: inline-flex;
         align-items: center;
-        gap: 7px;
-        color: #059669;
-        font-size: 12px;
+        gap: 8px;
+        padding: 9px 15px;
+        border-radius: 30px;
+        background: rgba(34, 197, 94, 0.1);
+        color: #16a34a;
+        font-size: 13px;
         font-weight: 700;
     }
 
     .live-dot {
         width: 8px;
         height: 8px;
-        background: #10b981;
         border-radius: 50%;
-        animation: pulse 1.5s infinite;
+        background: #22c55e;
+        animation: livePulse 1.5s infinite;
     }
 
-    @keyframes pulse {
-        50% { opacity: .3; }
+    @keyframes livePulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: .35; }
+    }
+
+    .test-overview {
+        display: grid;
+        grid-template-columns: 1.5fr 1fr;
+        gap: 20px;
+        margin-bottom: 22px;
+    }
+
+    .overview-card,
+    .participants-card,
+    .readiness-card {
+        background: var(--card-bg, #ffffff);
+        border: 1px solid var(--border-color, #e5e7eb);
+        border-radius: 18px;
+        padding: 25px;
+        box-shadow: 0 5px 20px rgba(0,0,0,.035);
+    }
+
+    .overview-card h2 {
+        font-size: 21px;
+        font-weight: 800;
+        color: var(--text-primary, #172033);
+        margin: 0 0 10px;
+    }
+
+    .overview-card > p {
+        color: var(--text-secondary, #718096);
+        font-size: 14px;
+        line-height: 1.6;
+        margin: 0;
+    }
+
+    .test-meta {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 22px;
+    }
+
+    .meta-item {
+        background: var(--secondary-bg, #f5f7fb);
+        padding: 10px 14px;
+        border-radius: 10px;
+        font-size: 13px;
+        color: var(--text-primary, #172033);
+        font-weight: 600;
+    }
+
+    .overview-stats {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+
+    .stat-box {
+        background: var(--secondary-bg, #f5f7fb);
+        border-radius: 14px;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .stat-box span {
+        font-size: 13px;
+        color: var(--text-secondary, #718096);
+        margin-bottom: 8px;
+    }
+
+    .stat-box strong {
+        font-size: 28px;
+        font-weight: 800;
+        color: var(--text-primary, #172033);
+    }
+
+    .waiting-grid {
+        display: grid;
+        grid-template-columns: 1.5fr 1fr;
+        gap: 20px;
+        align-items: start;
+    }
+
+    .section-heading {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+
+    .section-heading h3 {
+        margin: 0;
+        font-size: 19px;
+        font-weight: 800;
+        color: var(--text-primary, #172033);
+    }
+
+    .participant-count {
+        background: rgba(59, 130, 246, .1);
+        color: #2563eb;
+        padding: 6px 11px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 700;
     }
 
     .participant-list {
@@ -101,337 +172,415 @@
     .participant-item {
         display: flex;
         align-items: center;
-        justify-content: space-between;
+        gap: 13px;
         padding: 14px;
-        background: #f8fafc;
-        border: 1px solid #edf0f5;
+        border: 1px solid var(--border-color, #edf0f5);
         border-radius: 13px;
+        transition: .2s ease;
     }
 
-    .participant-left {
-        display: flex;
-        align-items: center;
-        gap: 12px;
+    .participant-item:hover {
+        border-color: #93c5fd;
+        transform: translateY(-1px);
     }
 
     .participant-avatar {
         width: 43px;
         height: 43px;
+        flex-shrink: 0;
+        border-radius: 13px;
         display: flex;
         align-items: center;
         justify-content: center;
-        border-radius: 13px;
-        background: #e0e7ff;
-        color: #3730a3;
+        background: linear-gradient(135deg, #2563eb, #7c3aed);
+        color: white;
         font-weight: 800;
-        font-size: 17px;
+        font-size: 16px;
     }
 
-    .participant-name {
-        font-weight: 700;
-        color: #1f2937;
+    .participant-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .participant-info strong {
+        display: block;
+        color: var(--text-primary, #172033);
         font-size: 14px;
+        font-weight: 700;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
-    .participant-role {
-        font-size: 11px;
-        color: #64748b;
-        margin-top: 3px;
+    .participant-info small {
+        display: block;
+        color: var(--text-secondary, #718096);
+        margin-top: 4px;
+        font-size: 12px;
     }
 
     .status-badge {
-        padding: 6px 11px;
-        border-radius: 30px;
+        padding: 7px 11px;
+        border-radius: 20px;
         font-size: 11px;
         font-weight: 800;
+        white-space: nowrap;
     }
 
     .status-ready {
-        background: #dcfce7;
         color: #15803d;
+        background: #dcfce7;
     }
 
     .status-joined {
-        background: #fef3c7;
         color: #b45309;
+        background: #fef3c7;
     }
 
-    .status-started {
-        background: #dbeafe;
+    .status-host {
         color: #1d4ed8;
+        background: #dbeafe;
     }
 
-    .status-completed {
-        background: #ede9fe;
-        color: #6d28d9;
+    .empty-participants {
+        text-align: center;
+        padding: 35px 15px;
+        color: var(--text-secondary, #718096);
+        font-size: 14px;
     }
 
-    .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 12px;
-        margin-bottom: 22px;
-    }
-
-    .stat-box {
-        background: #f8fafc;
-        border: 1px solid #e5e7eb;
-        border-radius: 14px;
-        padding: 17px;
-    }
-
-    .stat-box strong {
-        display: block;
-        font-size: 25px;
-        color: #111827;
+    .readiness-card h3 {
+        margin: 0 0 8px;
+        font-size: 19px;
         font-weight: 800;
+        color: var(--text-primary, #172033);
     }
 
-    .stat-box span {
-        font-size: 12px;
-        color: #64748b;
+    .readiness-description {
+        color: var(--text-secondary, #718096);
+        font-size: 13px;
+        line-height: 1.6;
+        margin: 0 0 22px;
+    }
+
+    .readiness-numbers {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .readiness-numbers span {
+        font-size: 13px;
+        color: var(--text-secondary, #718096);
+    }
+
+    .readiness-numbers strong {
+        font-size: 15px;
+        color: var(--text-primary, #172033);
     }
 
     .progress-track {
-        height: 9px;
-        background: #e5e7eb;
+        width: 100%;
+        height: 11px;
         border-radius: 20px;
         overflow: hidden;
-        margin: 12px 0 8px;
+        background: var(--secondary-bg, #e9edf4);
     }
 
     .progress-fill {
         height: 100%;
-        width: 0;
-        background: linear-gradient(90deg, #4f46e5, #818cf8);
+        width: 0%;
         border-radius: 20px;
-        transition: width .3s ease;
+        background: linear-gradient(90deg, #2563eb, #22c55e);
+        transition: width .35s ease;
     }
 
-    .action-button {
+    .readiness-message {
+        margin-top: 20px;
+        padding: 13px;
+        border-radius: 11px;
+        background: var(--secondary-bg, #f5f7fb);
+        color: var(--text-secondary, #64748b);
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    .action-area {
+        margin-top: 22px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .action-btn {
         width: 100%;
         border: none;
         border-radius: 12px;
-        padding: 15px;
-        font-size: 15px;
+        padding: 14px 18px;
+        font-size: 14px;
         font-weight: 800;
         cursor: pointer;
-        transition: .2s;
-        margin-top: 12px;
+        transition: .2s ease;
     }
 
-    .ready-button {
-        background: #4f46e5;
-        color: white;
-    }
-
-    .ready-button:hover {
-        background: #3730a3;
-    }
-
-    .ready-button.is-ready {
-        background: #059669;
-    }
-
-    .start-button {
-        background: #059669;
-        color: white;
-    }
-
-    .start-button:hover {
-        background: #047857;
-    }
-
-    .action-button:disabled {
-        opacity: .55;
+    .action-btn:disabled {
+        opacity: .5;
         cursor: not-allowed;
     }
 
-    .info-box {
-        background: #eff6ff;
-        border: 1px solid #bfdbfe;
-        border-radius: 13px;
-        padding: 15px;
-        color: #1e40af;
-        font-size: 13px;
-        line-height: 1.6;
-        margin-top: 18px;
+    .ready-btn {
+        color: white;
+        background: linear-gradient(135deg, #2563eb, #4f46e5);
     }
 
-    .host-label {
-        background: #ede9fe;
-        color: #6d28d9;
-        font-size: 10px;
-        font-weight: 800;
-        padding: 4px 8px;
-        border-radius: 20px;
+    .ready-btn:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 7px 18px rgba(37, 99, 235, .2);
     }
 
-    .empty-state {
+    .unready-btn {
+        color: #92400e;
+        background: #fef3c7;
+    }
+
+    .start-btn {
+        color: white;
+        background: linear-gradient(135deg, #16a34a, #059669);
+    }
+
+    .start-btn:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 7px 18px rgba(22, 163, 74, .2);
+    }
+
+    .waiting-note {
         text-align: center;
-        padding: 35px 15px;
-        color: #64748b;
+        font-size: 12px;
+        color: var(--text-secondary, #718096);
+        line-height: 1.6;
     }
 
-    .empty-state-icon {
-        font-size: 35px;
-        margin-bottom: 10px;
+    .connection-status {
+        text-align: center;
+        font-size: 12px;
+        color: var(--text-secondary, #718096);
+        margin-top: 12px;
     }
 
-    @media(max-width: 768px) {
+    @media(max-width: 800px) {
+        .test-overview,
         .waiting-grid {
             grid-template-columns: 1fr;
         }
+    }
 
-        .waiting-header {
-            padding: 25px;
+    @media(max-width: 520px) {
+        .waiting-page {
+            padding: 0 12px 35px;
+            margin-top: 20px;
         }
 
-        .waiting-header h1 {
+        .waiting-title h1 {
+            font-size: 24px;
+        }
+
+        .overview-card,
+        .participants-card,
+        .readiness-card {
+            padding: 18px;
+        }
+
+        .stat-box {
+            padding: 15px;
+        }
+
+        .stat-box strong {
             font-size: 23px;
         }
 
-        .waiting-wrapper {
-            padding: 12px;
+        .status-badge {
+            font-size: 10px;
+            padding: 6px 8px;
         }
     }
 </style>
 
-<div class="waiting-wrapper">
+<div class="waiting-page">
 
     <div class="waiting-header">
-        <div class="header-badge">
-            <span>●</span>
-            LIVE WAITING ROOM
+        <div class="waiting-title">
+            <h1>Mock Test Waiting Room</h1>
+            <p>Get ready! The test will begin when everyone is ready.</p>
         </div>
 
-        <h1>{{ test.title }}</h1>
+        <div class="live-indicator">
+            <span class="live-dot"></span>
+            Live Session
+        </div>
+    </div>
 
-        <p>
-            Participants are joining. Get ready for your mock test.
-        </p>
+    <div class="test-overview">
+
+        <div class="overview-card">
+            <h2>{{ test.title }}</h2>
+
+            <p>
+                Your mock test session is ready. Wait for all participants
+                to mark themselves as ready before starting.
+            </p>
+
+            <div class="test-meta">
+                <div class="meta-item">
+                    {{ test.question_count }} Questions
+                </div>
+
+                <div class="meta-item">
+                    {{ test.duration_minutes }} Minutes
+                </div>
+
+                <div class="meta-item">
+                    {% if is_host %}
+                    Host
+                    {% else %}
+                    Participant
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="overview-card">
+            <div class="overview-stats">
+                <div class="stat-box">
+                    <span>Total Participants</span>
+                    <strong id="totalParticipants">{{ participant_count }}</strong>
+                </div>
+
+                <div class="stat-box">
+                    <span>Ready Participants</span>
+                    <strong id="readyParticipants">0</strong>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <div class="waiting-grid">
 
-        <div class="waiting-card">
+        <div class="participants-card">
 
-            <div class="card-heading">
+            <div class="section-heading">
                 <h3>Participants</h3>
-
-                <div class="live-indicator">
-                    <span class="live-dot"></span>
-                    LIVE
-                </div>
+                <span class="participant-count" id="participantCountBadge">
+                    {{ participant_count }} Joined
+                </span>
             </div>
 
             <div class="participant-list" id="participantList">
 
-                {% for p in participants %}
+                {% for participant in participants %}
                 <div class="participant-item">
 
-                    <div class="participant-left">
-                        <div class="participant-avatar">
-                            {{ p.name[:1]|upper }}
-                        </div>
-
-                        <div>
-                            <div class="participant-name">
-                                {{ p.name }}
-
-                                {% if p.user_id == test.creator_user_id %}
-                                <span class="host-label">HOST</span>
-                                {% endif %}
-                            </div>
-
-                            <div class="participant-role">
-                                {% if p.user_id == current_user_id %}
-                                You
-                                {% else %}
-                                Participant
-                                {% endif %}
-                            </div>
-                        </div>
+                    <div class="participant-avatar">
+                        {{ (participant.name or 'U')[:1]|upper }}
                     </div>
 
-                    <span class="status-badge {% if p.status == 'Ready' %}status-ready{% elif p.status == 'Started' %}status-started{% elif p.status == 'Completed' %}status-completed{% else %}status-joined{% endif %}">
-                        {{ p.status }}
-                    </span>
+                    <div class="participant-info">
+                        <strong>
+                            {{ participant.name or 'Student' }}
+                            {% if participant.user_id == current_user_id %}
+                            (You)
+                            {% endif %}
+                        </strong>
 
+                        <small>
+                            {% if participant.user_id == test.creator_user_id %}
+                            Test Host
+                            {% else %}
+                            Participant
+                            {% endif %}
+                        </small>
+                    </div>
+
+                    {% if participant.user_id == test.creator_user_id %}
+                    <span class="status-badge status-host">HOST</span>
+                    {% elif participant.status == 'Ready' %}
+                    <span class="status-badge status-ready">READY</span>
+                    {% else %}
+                    <span class="status-badge status-joined">JOINED</span>
+                    {% endif %}
+
+                </div>
+                {% else %}
+                <div class="empty-participants">
+                    No participants found.
                 </div>
                 {% endfor %}
 
             </div>
 
+            <div class="connection-status" id="connectionStatus">
+                Connecting to live session...
+            </div>
+
         </div>
 
-        <div class="waiting-card">
+        <div>
 
-            <div class="card-heading">
-                <h3>Test Overview</h3>
-            </div>
+            <div class="readiness-card">
 
-            <div class="stats-grid">
+                <h3>Session Readiness</h3>
 
-                <div class="stat-box">
-                    <strong>{{ test.question_count }}</strong>
-                    <span>Total Questions</span>
+                <p class="readiness-description">
+                    Every participant must mark themselves as ready.
+                    The host can start the test once everyone is ready.
+                </p>
+
+                <div class="readiness-numbers">
+                    <span>Ready Progress</span>
+                    <strong id="readinessPercentage">0%</strong>
                 </div>
 
-                <div class="stat-box">
-                    <strong>{{ test.duration_minutes }}</strong>
-                    <span>Minutes</span>
+                <div class="progress-track">
+                    <div class="progress-fill" id="readinessProgress"></div>
                 </div>
 
-                <div class="stat-box">
-                    <strong id="totalParticipants">{{ participant_count }}</strong>
-                    <span>Participants</span>
+                <div class="readiness-message" id="readinessMessage">
+                    Waiting for participants to get ready.
                 </div>
 
-                <div class="stat-box">
-                    <strong id="readyParticipants">0</strong>
-                    <span>Ready</span>
+                <div class="action-area">
+
+                    {% if not is_host %}
+                    <button
+                            type="button"
+                            class="action-btn ready-btn"
+                            id="readyButton"
+                            onclick="toggleReady()"
+                    >
+                        Mark as Ready
+                    </button>
+                    {% endif %}
+
+                    {% if is_host %}
+                    <button
+                            type="button"
+                            class="action-btn start-btn"
+                            id="startButton"
+                            onclick="startTest()"
+                            disabled
+                    >
+                        Start Mock Test
+                    </button>
+                    {% endif %}
+
+                    <div class="waiting-note" id="waitingNote">
+                        Keep this page open while waiting for the test to start.
+                    </div>
+
                 </div>
 
-            </div>
-
-            <div style="font-size:13px;font-weight:700;color:#374151;">
-                Participant Readiness
-            </div>
-
-            <div class="progress-track">
-                <div class="progress-fill" id="readyProgress"></div>
-            </div>
-
-            <div style="font-size:12px;color:#64748b;" id="readyText">
-                Waiting for participants...
-            </div>
-
-            {% if not is_host %}
-            <button
-                    class="action-button ready-button"
-                    id="readyButton"
-                    onclick="toggleReady()">
-                Mark as Ready
-            </button>
-            {% endif %}
-
-            {% if is_host %}
-            <button
-                    class="action-button start-button"
-                    id="startButton"
-                    onclick="startTest()"
-                    disabled>
-                Start Test
-            </button>
-            {% endif %}
-
-            <div class="info-box" id="statusMessage">
-                {% if is_host %}
-                You are the host. Start the test when all participants are ready.
-                {% else %}
-                Click Mark as Ready when you are prepared for the test.
-                {% endif %}
             </div>
 
         </div>
@@ -441,171 +590,239 @@
 </div>
 
 <script>
-    const participantsUrl = {{ url_for("mock_test_participants_api", share_token=test.share_token)|tojson }};
-    const readyUrl = {{ url_for("mock_test_participant_ready", share_token=test.share_token)|tojson }};
-    const startUrl = {{ url_for("start_mock_test", share_token=test.share_token)|tojson }};
-    const attemptUrl = {{ url_for("attempt_mock_test", share_token=test.share_token)|tojson }};
+    const participantsUrl = {{ url_for("mock_test_participants_api", share_token=share_token)|tojson }};
+    const readyUrl = {{ url_for("mock_test_participant_ready", share_token=share_token)|tojson }};
+    const startUrl = {{ url_for("start_mock_test", share_token=share_token)|tojson }};
+    const attemptUrl = {{ url_for("attempt_mock_test", share_token=share_token)|tojson }};
+
     const currentUserId = {{ current_user_id|tojson }};
     const isHost = {{ is_host|tojson }};
 
     let currentReady = false;
-    let requestRunning = false;
+    let isRefreshing = false;
+    let isActionRunning = false;
 
     function escapeHTML(value) {
-        const div = document.createElement("div");
-        div.textContent = value ?? "";
-        return div.innerHTML;
+        return String(value ?? "").replace(/[&<>"']/g, function(char) {
+            return {
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#039;"
+            }[char];
+        });
+    }
+
+    function updateConnectionStatus(message, connected = true) {
+        const element = document.getElementById("connectionStatus");
+
+        if (!element) return;
+
+        element.textContent = message;
+        element.style.color = connected ? "#16a34a" : "#dc2626";
     }
 
     function renderParticipants(participants) {
         const container = document.getElementById("participantList");
 
-        if (!participants.length) {
+        if (!container) return;
+
+        if (!participants || participants.length === 0) {
             container.innerHTML = `
-            <div class="empty-state">
-                <div class="empty-state-icon">👥</div>
-                <strong>No participants yet</strong>
-                <p>Share the invite link to invite participants.</p>
+            <div class="empty-participants">
+                No participants found.
             </div>
         `;
             return;
         }
 
-        container.innerHTML = participants.map(p => {
-            const name = escapeHTML(p.name);
-            const status = escapeHTML(p.status);
-            const initial = escapeHTML((p.name || "?").charAt(0).toUpperCase());
+        container.innerHTML = participants.map(participant => {
+            const name = participant.name || "Student";
+            const initial = name.charAt(0).toUpperCase();
+            const isCurrentUser = Number(participant.user_id) === Number(currentUserId);
+            const isParticipantHost = participant.is_host === true ||
+                participant.is_host === 1 ||
+                participant.is_host === "1";
 
-            let badgeClass = "status-joined";
+            let badge = "";
 
-            if (p.status === "Ready") badgeClass = "status-ready";
-            if (p.status === "Started") badgeClass = "status-started";
-            if (p.status === "Completed") badgeClass = "status-completed";
-
-            const hostLabel = Number(p.user_id) === Number({{ test.creator_user_id|tojson }})
-                ? '<span class="host-label">HOST</span>'
-                : '';
-
-            const youLabel = Number(p.user_id) === Number(currentUserId)
-                ? "You"
-                : "Participant";
+            if (isParticipantHost) {
+                badge = `<span class="status-badge status-host">HOST</span>`;
+            } else if (participant.status === "Ready") {
+                badge = `<span class="status-badge status-ready">READY</span>`;
+            } else {
+                badge = `<span class="status-badge status-joined">JOINED</span>`;
+            }
 
             return `
             <div class="participant-item">
-                <div class="participant-left">
-                    <div class="participant-avatar">${initial}</div>
-                    <div>
-                        <div class="participant-name">${name} ${hostLabel}</div>
-                        <div class="participant-role">${youLabel}</div>
-                    </div>
+                <div class="participant-avatar">${escapeHTML(initial)}</div>
+
+                <div class="participant-info">
+                    <strong>
+                        ${escapeHTML(name)}
+                        ${isCurrentUser ? "(You)" : ""}
+                    </strong>
+                    <small>${isParticipantHost ? "Test Host" : "Participant"}</small>
                 </div>
-                <span class="status-badge ${badgeClass}">${status}</span>
+
+                ${badge}
             </div>
         `;
         }).join("");
     }
 
     async function refreshParticipants() {
-        if (requestRunning) return;
+        if (isRefreshing) return;
 
-        requestRunning = true;
+        isRefreshing = true;
 
         try {
             const response = await fetch(participantsUrl, {
-                headers: {"X-Requested-With": "XMLHttpRequest"}
+                method: "GET",
+                headers: {
+                    "Accept": "application/json"
+                },
+                credentials: "same-origin",
+                cache: "no-store"
             });
 
-            if (!response.ok) return;
+            if (!response.ok) {
+                throw new Error("Participants request failed: " + response.status);
+            }
 
             const data = await response.json();
 
-            if (!data.success) return;
+            if (!data.success) {
+                throw new Error(data.message || "Unable to load participants.");
+            }
 
-            renderParticipants(data.participants);
+            const participants = data.participants || [];
 
-            document.getElementById("totalParticipants").textContent = data.total;
-            document.getElementById("readyParticipants").textContent = data.ready_count;
+            renderParticipants(participants);
 
-            const percentage = data.total
-                ? (data.ready_count / data.total) * 100
+            const total = participants.length;
+
+            const ready = participants.filter(
+                participant => participant.status === "Ready"
+            ).length;
+
+            const percentage = total > 0
+                ? Math.round((ready / total) * 100)
                 : 0;
 
-            document.getElementById("readyProgress").style.width = percentage + "%";
+            document.getElementById("totalParticipants").textContent = total;
+            document.getElementById("readyParticipants").textContent = ready;
+            document.getElementById("participantCountBadge").textContent = total + " Joined";
+            document.getElementById("readinessPercentage").textContent = percentage + "%";
+            document.getElementById("readinessProgress").style.width = percentage + "%";
 
-            document.getElementById("readyText").textContent =
-                `${data.ready_count} of ${data.total} participants are ready`;
-
-            currentReady = data.participants.some(
-                p => Number(p.user_id) === Number(currentUserId) &&
-                    p.status === "Ready"
+            const myParticipant = participants.find(
+                participant => Number(participant.user_id) === Number(currentUserId)
             );
+
+            currentReady = myParticipant
+                ? myParticipant.status === "Ready"
+                : false;
 
             const readyButton = document.getElementById("readyButton");
 
             if (readyButton) {
                 readyButton.textContent = currentReady
-                    ? "✓ You are Ready"
+                    ? "✓ You Are Ready"
                     : "Mark as Ready";
 
-                readyButton.classList.toggle("is-ready", currentReady);
+                readyButton.classList.toggle("unready-btn", currentReady);
+                readyButton.classList.toggle("ready-btn", !currentReady);
             }
+
+            const allReady = total > 0 && ready === total;
 
             const startButton = document.getElementById("startButton");
 
             if (startButton) {
-                startButton.disabled =
-                    data.total === 0 ||
-                    data.total !== data.ready_count;
+                startButton.disabled = !allReady || isActionRunning;
+            }
+
+            const message = document.getElementById("readinessMessage");
+
+            if (message) {
+                if (allReady) {
+                    message.textContent = "Everyone is ready! The host can start the mock test.";
+                } else {
+                    message.textContent = (total - ready) + " participant(s) still need to get ready.";
+                }
             }
 
             if (data.started) {
-                document.getElementById("statusMessage").textContent =
-                    "Test started! Redirecting to your test...";
-
                 window.location.href = attemptUrl;
+                return;
             }
 
+            updateConnectionStatus("● Connected · Live updates active");
+
         } catch (error) {
-            console.error("Waiting room refresh error:", error);
+            console.error("PARTICIPANTS API ERROR:", error);
+            updateConnectionStatus("Connection issue. Retrying...", false);
         } finally {
-            requestRunning = false;
+            isRefreshing = false;
         }
     }
 
     async function toggleReady() {
+        if (isActionRunning) return;
+
         const button = document.getElementById("readyButton");
 
+        if (!button) return;
+
+        isActionRunning = true;
         button.disabled = true;
 
         try {
             const response = await fetch(readyUrl, {
                 method: "POST",
                 headers: {
+                    "Accept": "application/json",
                     "Content-Type": "application/json"
-                }
+                },
+                credentials: "same-origin"
             });
 
             const data = await response.json();
 
-            if (!data.success) {
-                alert(data.message || "Unable to update your status.");
+            if (!response.ok || !data.success) {
+                throw new Error(data.message || "Unable to update readiness.");
             }
+
+            currentReady = data.status === "Ready";
 
             await refreshParticipants();
 
         } catch (error) {
-            alert("Something went wrong. Please try again.");
+            console.error("READY API ERROR:", error);
+            alert(error.message || "Something went wrong. Please try again.");
         } finally {
+            isActionRunning = false;
             button.disabled = false;
         }
     }
 
     async function startTest() {
-        if (!confirm("Are you sure you want to start this mock test?")) {
-            return;
-        }
+        if (isActionRunning) return;
 
         const button = document.getElementById("startButton");
+
+        if (!button || button.disabled) return;
+
+        const confirmed = confirm(
+            "Are you sure you want to start this mock test?"
+        );
+
+        if (!confirmed) return;
+
+        isActionRunning = true;
         button.disabled = true;
         button.textContent = "Starting Test...";
 
@@ -613,29 +830,33 @@
             const response = await fetch(startUrl, {
                 method: "POST",
                 headers: {
+                    "Accept": "application/json",
                     "Content-Type": "application/json"
-                }
+                },
+                credentials: "same-origin"
             });
 
             const data = await response.json();
 
-            if (!data.success) {
-                alert(data.message || "Unable to start test.");
-                button.textContent = "Start Test";
-                await refreshParticipants();
-                return;
+            if (!response.ok || !data.success) {
+                throw new Error(data.message || "Unable to start the test.");
             }
 
             window.location.href = attemptUrl;
 
         } catch (error) {
-            alert("Unable to start test. Please try again.");
-            button.textContent = "Start Test";
-            button.disabled = false;
+            console.error("START TEST API ERROR:", error);
+            alert(error.message || "Unable to start the test.");
+
+            button.textContent = "Start Mock Test";
+            isActionRunning = false;
+
+            await refreshParticipants();
         }
     }
 
     refreshParticipants();
+
     setInterval(refreshParticipants, 3000);
 </script>
 
