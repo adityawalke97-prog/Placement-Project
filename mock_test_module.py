@@ -218,17 +218,30 @@ def create_mock_test_blueprint(get_db_connection):
             return redirect(url_for("mock_tests.custom_created", token=token))
         return render_template("mock_tests/custom_create.html", courses=courses_list)
 
-    @bp.route("/custom/created/<token>")
-    @login_required
-    def custom_created(token):
-        test = fetch_one("""SELECT t.*,c.course_name,s.subject_name FROM mock_tests t
-                           JOIN mock_catalog_courses c ON c.id=t.course_id
-                           JOIN mock_catalog_subjects s ON s.id=t.subject_id
-                           WHERE t.share_token=%s AND t.created_by=%s AND t.is_active=1""", (token,session["user_id"]))
-        if not test: abort(404)
-        share_url = url_for("mock_tests.take_test", token=token, _external=True)
-        board_url = url_for("mock_tests.leaderboard", token=token, _external=True)
-        return render_template("mock_tests/custom_created.html", test=test, share_url=share_url, board_url=board_url)
+        @bp.route("/custom/created/<token>")
+        @login_required
+        def custom_created(token):
+            test = fetch_one("""SELECT t.*,c.course_name,s.subject_name FROM mock_tests t
+                               JOIN mock_catalog_courses c ON c.id=t.course_id
+                               JOIN mock_catalog_subjects s ON s.id=t.subject_id
+                               WHERE t.share_token=%s AND t.created_by=%s AND t.is_active=1""", (token,session["user_id"]))
+
+            if not test:
+                abort(404)
+
+            public_base_url = os.getenv("PUBLIC_BASE_URL", "").rstrip("/")
+
+            share_path = url_for("mock_tests.take_test", token=token)
+            board_path = url_for("mock_tests.leaderboard", token=token)
+
+            if public_base_url:
+                share_url = public_base_url + share_path
+                board_url = public_base_url + board_path
+            else:
+                share_url = url_for("mock_tests.take_test", token=token, _external=True)
+                board_url = url_for("mock_tests.leaderboard", token=token, _external=True)
+
+            return render_template("mock_tests/custom_created.html", test=test, share_url=share_url, board_url=board_url)
 
     @bp.route("/share/<token>")
     @login_required
