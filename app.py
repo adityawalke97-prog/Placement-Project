@@ -24,6 +24,7 @@ import math
 import os
 import json
 import csv
+import random
 import io
 from functools import wraps
 from datetime import datetime
@@ -1277,20 +1278,10 @@ def attempt_mock_test(share_token):
     # ======================================================
 
     except Exception as e:
-
         conn.rollback()
-
-        print("MOCK TEST ATTEMPT ERROR:", str(e))
-
-        flash(
-            "Unable to start test. Please try again.",
-            "danger"
-        )
-
-        return redirect(
-            url_for("mock_test_dashboard")
-        )
-
+        print("CREATE MOCK TEST ERROR:", str(e))
+        flash("Unable to create mock test. Please try again.", "danger")
+        return redirect(url_for("create_mock_test"))
     # ======================================================
     # 11. CLOSE CONNECTION
     # ======================================================
@@ -1299,7 +1290,374 @@ def attempt_mock_test(share_token):
 
         cursor.close()
         conn.close()
+@app.route("/mock-test/<share_token>/join", methods=["GET", "POST"])
+def mock_test_join(share_token):
 
+    if not mock_login_required():
+        return redirect(url_for("login"))
+
+    user_id = get_mock_user_id()
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("""
+            SELECT
+                id,
+                creator_user_id,
+                title,
+                visibility,
+                status
+            FROM mock_test_catalog
+            WHERE share_token = %s
+            LIMIT 1
+        """, (share_token,))
+
+        test = cursor.fetchone()
+
+        if not test:
+            abort(404)
+
+        if test["status"] != "Published":
+            flash("This mock test is not available.", "warning")
+            return redirect(url_for("mock_test_dashboard"))
+
+        if test["visibility"] == "Private" and test["creator_user_id"] != user_id:
+            abort(403)
+
+        cursor.execute("""
+            INSERT IGNORE INTO mock_test_participants
+            (test_id, user_id, status)
+            VALUES (%s, %s, %s)
+        """, (test["id"], user_id, "Joined"))
+
+        conn.commit()
+
+        return redirect(
+            url_for(
+                "mock_test_waiting_room",
+                share_token=share_token
+            )
+        )
+
+    except Exception as e:
+        conn.rollback()
+        print("MOCK TEST JOIN ERROR:", str(e))
+        flash("Unable to join mock test.", "danger")
+        return redirect(url_for("mock_test_dashboard"))
+
+    finally:
+        cursor.close()
+        conn.close()
+@app.route("/mock-test/<share_token>/waiting-room")
+def mock_test_waiting_room(share_token):
+
+    if not mock_login_required():
+        return redirect(url_for("login"))
+
+    user_id = get_mock_user_id()
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("""
+            SELECT
+                id,
+                creator_user_id,
+                title,
+                description,
+                question_count,
+                duration_minutes,
+                visibility,
+                status,
+                scheduled_start_at,
+                scheduled_end_at
+            FROM mock_test_catalog
+            WHERE share_token = %s
+            LIMIT 1
+        """, (share_token,))
+
+        test = cursor.fetchone()
+
+        if not test:
+            abort(404)
+
+        if test["visibility"] == "Private" and test["creator_user_id"] != user_id:
+            abort(403)
+
+        cursor.execute("""
+            SELECT id
+            FROM mock_test_participants
+            WHERE test_id = %s
+            AND user_id = %s
+            AND status != 'Left'
+            LIMIT 1
+        """, (test["id"], user_id))
+
+        participant = cursor.fetchone()
+
+        if not participant:
+            return redirect(
+                url_for(
+                    "mock_test_join",
+                    share_token=share_token
+                )
+            )
+
+        cursor.execute("""
+            SELECT
+                p.id,
+                p.user_id,
+                p.joined_at,
+                p.status,
+                u.name
+            FROM mock_test_participants p
+            INNER JOIN users u ON u.id = p.user_id
+            WHERE p.test_id = %s
+            AND p.status != 'Left'
+            ORDER BY p.joined_at ASC
+        """, (test["id"],))
+
+        participants = cursor.fetchall()
+
+        is_host = test["creator_user_id"] == user_id
+
+        return render_template(
+            "mock_test/waiting_room.html",
+            test=test,
+            participants=participants,
+            is_host=is_host,
+            current_user_id=user_id,
+            participant_count=len(participants)
+        )
+
+    except Exception as e:
+        print("MOCK TEST WAITING ROOM ERROR:", str(e))
+        return "Waiting Room Error: " + str(e), 500
+
+    finally:
+        cursor.close()
+        conn.close()
+
+@app.route("/mock-test/<share_token>/participants")
+def mock_test_participants_api(share_token):
+
+    if not mock_login_required():
+        return jsonify({"success": False}), 401
+
+    user_id = get_mock_user_id()
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("""
+            SELECT id, creator_user_id, scheduled_start_at
+            FROM mock_test_catalog
+            WHERE share_token = %s
+            LIMIT 1
+        """, (share_token,))
+
+        test = cursor.fetchone()
+
+        if not test:
+            return jsonify({"success": False}), 404
+
+        cursor.execute("""
+            SELECT id
+            FROM mock_test_participants
+            WHERE test_id = %s
+            AND user_id = %s
+            AND status != 'Left'
+        """, (test["id"], user_id))
+
+        if not cursor.fetchone():
+            return jsonify({"success": False}), 403
+
+        cursor.execute("""
+            SELECT
+                p.user_id,
+                p.status,
+                p.joined_at,
+                u.name
+            FROM mock_test_participants p
+            INNER JOIN users u ON u.id = p.user_id
+            WHERE p.test_id = %s
+            AND p.status != 'Left'
+            ORDER BY p.joined_at ASC
+        """, (test["id"],))
+
+        participants = cursor.fetchall()
+
+        return jsonify({
+            "success": True,
+            "started": test["scheduled_start_at"] is not None,
+            "is_host": test["creator_user_id"] == user_id,
+            "participants": participants,
+            "total": len(participants),
+            "ready_count": sum(
+                1 for p in participants if p["status"] == "Ready"
+            )
+        })
+
+    except Exception as e:
+        print("PARTICIPANTS API ERROR:", str(e))
+        return jsonify({"success": False}), 500
+
+    finally:
+        cursor.close()
+        conn.close()
+@app.route("/mock-test/<share_token>/ready", methods=["POST"])
+def mock_test_participant_ready(share_token):
+
+    if not mock_login_required():
+        return jsonify({"success": False}), 401
+
+    user_id = get_mock_user_id()
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("""
+            SELECT id, scheduled_start_at
+            FROM mock_test_catalog
+            WHERE share_token = %s
+            LIMIT 1
+        """, (share_token,))
+
+        test = cursor.fetchone()
+
+        if not test:
+            return jsonify({"success": False}), 404
+
+        if test["scheduled_start_at"] is not None:
+            return jsonify({
+                "success": False,
+                "message": "Test has already started."
+            }), 400
+
+        cursor.execute("""
+            UPDATE mock_test_participants
+            SET status = CASE
+                WHEN status = 'Ready' THEN 'Joined'
+                ELSE 'Ready'
+            END
+            WHERE test_id = %s
+            AND user_id = %s
+            AND status IN ('Joined', 'Ready')
+        """, (test["id"], user_id))
+
+        if cursor.rowcount == 0:
+            return jsonify({
+                "success": False,
+                "message": "Participant not found."
+            }), 404
+
+        conn.commit()
+
+        return jsonify({
+            "success": True,
+            "message": "Status updated."
+        })
+
+    except Exception as e:
+        conn.rollback()
+        print("READY API ERROR:", str(e))
+        return jsonify({"success": False}), 500
+
+    finally:
+        cursor.close()
+        conn.close()
+@app.route("/mock-test/<share_token>/start", methods=["POST"])
+def start_mock_test(share_token):
+
+    if not mock_login_required():
+        return jsonify({"success": False}), 401
+
+    user_id = get_mock_user_id()
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("""
+            SELECT id, creator_user_id, scheduled_start_at
+            FROM mock_test_catalog
+            WHERE share_token = %s
+            LIMIT 1
+        """, (share_token,))
+
+        test = cursor.fetchone()
+
+        if not test:
+            return jsonify({"success": False}), 404
+
+        if test["creator_user_id"] != user_id:
+            return jsonify({
+                "success": False,
+                "message": "Only the host can start the test."
+            }), 403
+
+        if test["scheduled_start_at"] is not None:
+            return jsonify({
+                "success": False,
+                "message": "Test has already started."
+            }), 400
+
+        cursor.execute("""
+            SELECT
+                COUNT(*) AS total,
+                SUM(CASE WHEN status = 'Ready' THEN 1 ELSE 0 END) AS ready_count
+            FROM mock_test_participants
+            WHERE test_id = %s
+            AND status != 'Left'
+        """, (test["id"],))
+
+        result = cursor.fetchone()
+
+        total = result["total"] or 0
+        ready_count = result["ready_count"] or 0
+
+        if total == 0 or total != ready_count:
+            return jsonify({
+                "success": False,
+                "message": "All participants must be ready before starting."
+            }), 400
+
+        cursor.execute("""
+            UPDATE mock_test_catalog
+            SET scheduled_start_at = NOW()
+            WHERE id = %s
+            AND scheduled_start_at IS NULL
+        """, (test["id"],))
+
+        if cursor.rowcount == 0:
+            conn.rollback()
+            return jsonify({
+                "success": False,
+                "message": "Test could not be started."
+            }), 400
+
+        cursor.execute("""
+            UPDATE mock_test_participants
+            SET status = 'Started'
+            WHERE test_id = %s
+            AND status = 'Ready'
+        """, (test["id"],))
+
+        conn.commit()
+
+        return jsonify({
+            "success": True,
+            "message": "Test started successfully."
+        })
+
+    except Exception as e:
+        conn.rollback()
+        print("START MOCK TEST ERROR:", str(e))
+        return jsonify({"success": False}), 500
+
+    finally:
+        cursor.close()
+        conn.close()
 @app.route("/mock-tests/subject/<int:subject_id>/start", methods=["POST"])
 def start_subject_mock_test(subject_id):
 
@@ -1409,12 +1767,11 @@ def start_subject_mock_test(subject_id):
         ))
 
         test_id = cursor.lastrowid
-
-
-        # ==================================================
-        # 6. SAVE SELECTED SUBJECT
-        # ==================================================
-
+        cursor.execute("""
+            INSERT INTO mock_test_participants
+            (test_id, user_id, status)
+            VALUES (%s, %s, 'Ready')
+        """, (test_id, user_id))
         cursor.execute("""
             INSERT INTO mock_test_subjects (
                 test_id,
@@ -1519,6 +1876,221 @@ def start_subject_mock_test(subject_id):
 
     finally:
 
+        cursor.close()
+        conn.close()
+@app.route("/mock-test/<share_token>/invite")
+def mock_test_invite(share_token):
+    if not mock_login_required():
+        return redirect(url_for("login"))
+
+    user_id = get_mock_user_id()
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("""
+            SELECT *
+            FROM mock_test_catalog
+            WHERE share_token = %s
+            LIMIT 1
+        """, (share_token,))
+
+        test = cursor.fetchone()
+
+        if not test:
+            abort(404)
+
+        if test["creator_user_id"] != user_id:
+            return redirect(
+                url_for(
+                    "mock_test_waiting_room",
+                    share_token=share_token
+                )
+            )
+
+        cursor.execute("""
+            SELECT
+                u.id,
+                u.name,
+                u.email,
+                COALESCE(
+                    NULLIF(u.profile_pic, ''),
+                    NULLIF(u.picture, '')
+                ) AS picture
+            FROM friend_requests fr
+            JOIN users u
+                ON u.id = CASE
+                    WHEN fr.sender_id = %s THEN fr.receiver_id
+                    ELSE fr.sender_id
+                END
+            WHERE (
+                fr.sender_id = %s
+                OR fr.receiver_id = %s
+            )
+            AND fr.status = 'accepted'
+            AND u.id != %s
+            ORDER BY u.name ASC
+        """, (user_id, user_id, user_id, user_id))
+
+        friends = cursor.fetchall()
+
+        cursor.execute("""
+            SELECT COUNT(*) AS total
+            FROM mock_test_participants
+            WHERE test_id = %s
+            AND status != 'Left'
+        """, (test["id"],))
+
+        participant_count = cursor.fetchone()["total"]
+
+        invite_link = request.host_url.rstrip("/") + url_for(
+            "mock_test_join",
+            share_token=share_token
+        )
+
+        return render_template(
+            "mock_test/invite.html",
+            test=test,
+            friends=friends,
+            invite_link=invite_link,
+            participant_count=participant_count
+        )
+
+    except Exception as e:
+        print("MOCK TEST INVITE ERROR:", str(e))
+        traceback.print_exc()
+        abort(500)
+
+    finally:
+        cursor.close()
+        conn.close()
+@app.route("/mock-test/<share_token>/send-invitations", methods=["POST"])
+@app.route("/mock-test/<share_token>/invite/send-invitations", methods=["POST"])
+def send_mock_test_invitations(share_token):
+    if not mock_login_required():
+        return jsonify({
+            "success": False,
+            "message": "Please login first."
+        }), 401
+
+    user_id = get_mock_user_id()
+    data = request.get_json(silent=True) or {}
+    friend_ids = data.get("friend_ids", [])
+
+    if not isinstance(friend_ids, list) or not friend_ids:
+        return jsonify({
+            "success": False,
+            "message": "Please select at least one friend."
+        }), 400
+
+    try:
+        friend_ids = list(set(int(fid) for fid in friend_ids))
+    except (ValueError, TypeError):
+        return jsonify({
+            "success": False,
+            "message": "Invalid friend selection."
+        }), 400
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("""
+            SELECT id, creator_user_id, title
+            FROM mock_test_catalog
+            WHERE share_token = %s
+            AND status = 'Published'
+            LIMIT 1
+        """, (share_token,))
+
+        test = cursor.fetchone()
+
+        if not test:
+            return jsonify({
+                "success": False,
+                "message": "Mock test not found."
+            }), 404
+
+        if int(test["creator_user_id"]) != int(user_id):
+            return jsonify({
+                "success": False,
+                "message": "Only the test creator can send invitations."
+            }), 403
+
+        invite_link = request.host_url.rstrip("/") + url_for(
+            "mock_test_join",
+            share_token=share_token
+        )
+
+        sent = []
+        already_invited = []
+        failed = []
+
+        for friend_id in friend_ids:
+
+            if friend_id == user_id:
+                failed.append(friend_id)
+                continue
+
+            if not are_friends(cursor, user_id, friend_id):
+                failed.append(friend_id)
+                continue
+
+            cursor.execute("""
+                SELECT id
+                FROM notifications
+                WHERE user_id = %s
+                AND type = 'mock_test_invite'
+                AND link = %s
+                LIMIT 1
+            """, (friend_id, invite_link))
+
+            existing = cursor.fetchone()
+
+            if existing:
+                already_invited.append(friend_id)
+                continue
+
+            try:
+                create_social_notification(
+                    cursor,
+                    friend_id,
+                    "Mock Test Invitation",
+                    f"You have been invited to join '{test['title']}'. Click to join the mock test.",
+                    "mock_test_invite",
+                    invite_link
+                )
+
+                sent.append(friend_id)
+
+            except Exception as e:
+                print("INVITATION ERROR:", str(e))
+                failed.append(friend_id)
+
+        conn.commit()
+
+        return jsonify({
+            "success": True,
+            "sent": sent,
+            "sent_count": len(sent),
+            "already_invited": already_invited,
+            "already_invited_count": len(already_invited),
+            "failed": failed,
+            "failed_count": len(failed),
+            "message": "Invitation process completed."
+        })
+
+    except Exception as e:
+        conn.rollback()
+        print("SEND MOCK INVITATIONS ERROR:", str(e))
+        traceback.print_exc()
+
+        return jsonify({
+            "success": False,
+            "message": "Unable to send invitations."
+        }), 500
+
+    finally:
         cursor.close()
         conn.close()
 @app.route("/mock-test/result/<int:attempt_id>")
@@ -8612,13 +9184,202 @@ def debug_notifications():
             FROM notifications
             WHERE user_id = %s AND is_read = 0
         """, (user_id,))
-
         result = cursor.fetchone()
-
         return {
             "logged_in_user_id": user_id,
             "unread_notifications": result["total"]
         }
+    finally:
+        cursor.close()
+        conn.close()
+@app.route("/mock-tests/create", methods=["GET", "POST"])
+def create_mock_test():
+
+    if not mock_login_required():
+        return redirect(url_for("login"))
+
+    user_id = get_mock_user_id()
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("""
+            SELECT id, course_name
+            FROM mock_catalog_courses
+            WHERE is_active = 1
+            ORDER BY course_name
+        """)
+        courses = cursor.fetchall()
+
+        cursor.execute("""
+            SELECT s.id, s.course_id, s.subject_name
+            FROM mock_catalog_subjects s
+            INNER JOIN mock_catalog_courses c ON c.id = s.course_id
+            WHERE c.is_active = 1
+            ORDER BY s.subject_name
+        """)
+        subjects = cursor.fetchall()
+
+        if request.method == "GET":
+            return render_template(
+                "mock_test/custom_create.html",
+                courses=courses,
+                subjects=subjects
+            )
+
+        title = request.form.get("title", "").strip()
+        description = request.form.get("description", "").strip()
+        course_id = request.form.get("course_id", type=int)
+        difficulty = request.form.get("difficulty", "Mixed")
+        question_count = request.form.get("question_count", type=int)
+        duration_minutes = request.form.get("duration_minutes", type=int)
+        subject_ids = request.form.getlist("subject_ids")
+
+        if not title:
+            flash("Please enter test title.", "danger")
+            return redirect(url_for("create_mock_test"))
+
+        if not course_id or not question_count or not duration_minutes:
+            flash("Please fill all required fields.", "danger")
+            return redirect(url_for("create_mock_test"))
+
+        if difficulty not in ["Easy", "Medium", "Hard", "Mixed"]:
+            flash("Invalid difficulty selected.", "danger")
+            return redirect(url_for("create_mock_test"))
+
+        if not 1 <= question_count <= 200:
+            flash("Question count must be between 1 and 200.", "danger")
+            return redirect(url_for("create_mock_test"))
+
+        if not 1 <= duration_minutes <= 300:
+            flash("Duration must be between 1 and 300 minutes.", "danger")
+            return redirect(url_for("create_mock_test"))
+
+        if not subject_ids:
+            flash("Please select at least one subject.", "danger")
+            return redirect(url_for("create_mock_test"))
+
+        try:
+            subject_ids = list(set(int(sid) for sid in subject_ids))
+        except (ValueError, TypeError):
+            flash("Invalid subject selection.", "danger")
+            return redirect(url_for("create_mock_test"))
+
+        placeholders = ",".join(["%s"] * len(subject_ids))
+
+        cursor.execute(f"""
+            SELECT id
+            FROM mock_catalog_subjects
+            WHERE course_id = %s
+            AND id IN ({placeholders})
+        """, [course_id] + subject_ids)
+
+        valid_subjects = cursor.fetchall()
+
+        if len(valid_subjects) != len(subject_ids):
+            flash("Invalid subject selection for this course.", "danger")
+            return redirect(url_for("create_mock_test"))
+
+        cursor.execute(f"""
+            SELECT id
+            FROM mock_question_bank
+            WHERE subject_id IN ({placeholders})
+            AND is_active = 1
+            {"AND difficulty = %s" if difficulty != "Mixed" else ""}
+        """, subject_ids + ([difficulty] if difficulty != "Mixed" else []))
+
+        available_questions = cursor.fetchall()
+
+        if len(available_questions) < question_count:
+            flash(
+                f"Only {len(available_questions)} questions are available for your selection.",
+                "danger"
+            )
+            return redirect(url_for("create_mock_test"))
+
+        selected_questions = random.sample(
+            available_questions,
+            question_count
+        )
+
+        share_token = secrets.token_urlsafe(32)
+
+        cursor.execute("""
+            INSERT INTO mock_test_catalog
+            (
+                creator_user_id,
+                course_id,
+                title,
+                description,
+                difficulty,
+                question_count,
+                duration_minutes,
+                share_token,
+                visibility,
+                status
+            )
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        """, (
+            user_id,
+            course_id,
+            title,
+            description,
+            difficulty,
+            question_count,
+            duration_minutes,
+            share_token,
+            "Link",
+            "Published"
+        ))
+
+        test_id = cursor.lastrowid
+        cursor.execute("""
+            INSERT IGNORE INTO mock_test_participants
+            (test_id, user_id, status)
+            VALUES (%s, %s, %s)
+        """, (test_id, user_id, "Ready"))
+
+        for subject_id in subject_ids:
+            cursor.execute("""
+                INSERT INTO mock_test_subjects
+                (test_id, subject_id)
+                VALUES (%s, %s)
+            """, (test_id, subject_id))
+
+        for index, question in enumerate(selected_questions, start=1):
+            cursor.execute("""
+                INSERT INTO mock_test_questions
+                (
+                    test_id,
+                    question_id,
+                    question_order,
+                    marks
+                )
+                VALUES (%s, %s, %s, %s)
+            """, (
+                test_id,
+                question["id"],
+                index,
+                1
+            ))
+
+        conn.commit()
+
+        flash("Custom mock test created successfully!", "success")
+
+        return redirect(
+            url_for(
+                "mock_test_invite",
+                share_token=share_token
+            )
+        )
+
+    except Exception as e:
+        conn.rollback()
+        print("CREATE MOCK TEST ERROR:", str(e))
+        flash("Unable to create mock test. Please try again.", "danger")
+        return redirect(url_for("create_mock_test"))
 
     finally:
         cursor.close()
@@ -8628,24 +9389,18 @@ def debug_notifications():
     methods=["POST"]
 )
 def mark_notification_read(notification_id):
-
     if not social_login_required():
         return redirect(url_for("login"))
-
     conn = get_db_connection()
     cursor = conn.cursor()
-
     try:
-
         cursor.execute("""
             UPDATE notifications
             SET is_read=1
             WHERE id=%s
             AND user_id=%s
         """, (notification_id, social_user_id()))
-
         conn.commit()
-
     except Exception:
         conn.rollback()
         app.logger.exception("Notification read error")
@@ -8816,8 +9571,8 @@ print("TEMPLATE FOLDER:", app.template_folder)
 print("ROOT PATH:", app.root_path)
 print("FILE EXISTS:", os.path.exists(
     os.path.join(app.root_path, "templates", "mock_tests", "my_tests.html")
-))
 
+))
 if __name__ == "__main__":
 
     # -----------------------------------------------------

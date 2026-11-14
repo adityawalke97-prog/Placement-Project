@@ -1,0 +1,865 @@
+{% extends "mock_test/base.html" %}
+
+{% block title %}Share & Invite | {{ test.title }}{% endblock %}
+
+{% block content %}
+
+<style>
+    .invite-wrapper {
+        max-width: 1150px;
+        margin: 35px auto;
+        padding: 20px;
+    }
+
+    .invite-hero {
+        background: linear-gradient(135deg, #172554, #312e81, #4f46e5);
+        color: white;
+        border-radius: 24px;
+        padding: 42px;
+        margin-bottom: 25px;
+    }
+
+    .hero-label {
+        display: inline-block;
+        background: rgba(255,255,255,.15);
+        padding: 8px 15px;
+        border-radius: 30px;
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    .invite-hero h1 {
+        font-size: 32px;
+        font-weight: 850;
+        margin: 18px 0 10px;
+    }
+
+    .invite-hero p {
+        color: #dbeafe;
+        max-width: 650px;
+        line-height: 1.7;
+        margin: 0;
+    }
+
+    .invite-grid {
+        display: grid;
+        grid-template-columns: 1.3fr .9fr;
+        gap: 22px;
+        margin-bottom: 22px;
+    }
+
+    .invite-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 20px;
+        padding: 27px;
+        box-shadow: 0 8px 30px rgba(15,23,42,.05);
+        margin-bottom: 22px;
+    }
+
+    .card-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 10px;
+    }
+
+    .card-heading h3 {
+        font-size: 19px;
+        font-weight: 850;
+        color: #111827;
+        margin: 0;
+    }
+
+    .card-description {
+        font-size: 13px;
+        color: #64748b;
+        line-height: 1.7;
+        margin-bottom: 22px;
+    }
+
+    .link-box {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        padding: 9px;
+        border-radius: 13px;
+    }
+
+    .link-box input {
+        flex: 1;
+        min-width: 0;
+        border: none;
+        outline: none;
+        background: transparent;
+        color: #334155;
+        font-size: 13px;
+        padding: 8px;
+    }
+
+    .primary-button {
+        border: none;
+        background: #4f46e5;
+        color: white;
+        padding: 12px 18px;
+        border-radius: 10px;
+        font-weight: 750;
+        cursor: pointer;
+        transition: .2s;
+    }
+
+    .primary-button:hover {
+        background: #3730a3;
+    }
+
+    .share-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-top: 16px;
+    }
+
+    .share-button {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 9px;
+        padding: 14px;
+        border-radius: 11px;
+        text-decoration: none;
+        font-weight: 750;
+        font-size: 13px;
+        border: none;
+        cursor: pointer;
+    }
+
+    .whatsapp-button {
+        background: #dcfce7;
+        color: #15803d;
+    }
+
+    .native-share-button {
+        background: #e0e7ff;
+        color: #3730a3;
+    }
+
+    .copy-message {
+        display: none;
+        color: #059669;
+        font-size: 12px;
+        font-weight: 700;
+        margin-top: 12px;
+    }
+
+    .friends-search {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 12px 15px;
+        margin-bottom: 17px;
+    }
+
+    .friends-search input {
+        width: 100%;
+        border: none;
+        outline: none;
+        background: transparent;
+        font-size: 14px;
+        color: #1f2937;
+    }
+
+    .friends-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 15px;
+    }
+
+    .select-all {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        font-weight: 700;
+        color: #374151;
+        cursor: pointer;
+    }
+
+    .select-all input,
+    .friend-checkbox {
+        width: 17px;
+        height: 17px;
+        accent-color: #4f46e5;
+        cursor: pointer;
+    }
+
+    .selected-count {
+        font-size: 12px;
+        font-weight: 800;
+        color: #4f46e5;
+        background: #eef2ff;
+        padding: 7px 12px;
+        border-radius: 20px;
+    }
+
+    .friends-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        max-height: 390px;
+        overflow-y: auto;
+    }
+
+    .friend-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 13px;
+        border: 1px solid #e5e7eb;
+        border-radius: 13px;
+        transition: .2s;
+        cursor: pointer;
+    }
+
+    .friend-item:hover {
+        border-color: #818cf8;
+        background: #f8faff;
+    }
+
+    .friend-item.selected {
+        border-color: #6366f1;
+        background: #eef2ff;
+    }
+
+    .friend-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 0;
+    }
+
+    .friend-avatar {
+        width: 43px;
+        height: 43px;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #e0e7ff;
+        color: #3730a3;
+        border-radius: 13px;
+        font-weight: 850;
+        font-size: 17px;
+    }
+
+    .friend-details {
+        min-width: 0;
+    }
+
+    .friend-name {
+        font-size: 14px;
+        font-weight: 750;
+        color: #1f2937;
+    }
+
+    .friend-email {
+        font-size: 11px;
+        color: #64748b;
+        margin-top: 4px;
+        overflow-wrap: anywhere;
+    }
+
+    .friend-right {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .empty-friends {
+        text-align: center;
+        padding: 35px 15px;
+        border: 1px dashed #cbd5e1;
+        border-radius: 15px;
+        color: #64748b;
+    }
+
+    .empty-friends-icon {
+        font-size: 35px;
+        margin-bottom: 10px;
+    }
+
+    .send-invitation-button {
+        width: 100%;
+        margin-top: 18px;
+        padding: 15px;
+        background: linear-gradient(135deg, #4f46e5, #6366f1);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 850;
+        cursor: pointer;
+        transition: .2s;
+    }
+
+    .send-invitation-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(79,70,229,.2);
+    }
+
+    .send-invitation-button:disabled {
+        opacity: .5;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .invite-status {
+        display: none;
+        padding: 13px;
+        border-radius: 11px;
+        margin-top: 14px;
+        font-size: 13px;
+        font-weight: 650;
+    }
+
+    .invite-status.success {
+        display: block;
+        color: #166534;
+        background: #dcfce7;
+    }
+
+    .invite-status.error {
+        display: block;
+        color: #991b1b;
+        background: #fee2e2;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 13px;
+    }
+
+    .stat-item {
+        background: #f8fafc;
+        border: 1px solid #e5e7eb;
+        padding: 17px;
+        border-radius: 14px;
+    }
+
+    .stat-item strong {
+        display: block;
+        font-size: 24px;
+        font-weight: 850;
+        color: #111827;
+    }
+
+    .stat-item span {
+        font-size: 12px;
+        color: #64748b;
+    }
+
+    .steps {
+        display: flex;
+        flex-direction: column;
+        gap: 19px;
+        margin-top: 23px;
+    }
+
+    .step {
+        display: flex;
+        gap: 13px;
+        align-items: flex-start;
+    }
+
+    .step-number {
+        min-width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        background: #e0e7ff;
+        color: #4338ca;
+        font-weight: 800;
+    }
+
+    .step-text strong {
+        display: block;
+        color: #1f2937;
+        font-size: 13px;
+    }
+
+    .step-text span {
+        color: #64748b;
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+    .waiting-button {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        background: #4f46e5;
+        color: white;
+        text-decoration: none;
+        padding: 16px;
+        border-radius: 12px;
+        font-weight: 800;
+        margin-top: 22px;
+    }
+
+    .waiting-button:hover {
+        background: #3730a3;
+        color: white;
+    }
+
+    @media(max-width: 800px) {
+        .invite-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .invite-hero {
+            padding: 28px;
+        }
+
+        .invite-hero h1 {
+            font-size: 25px;
+        }
+    }
+
+    @media(max-width: 480px) {
+        .invite-wrapper {
+            padding: 10px;
+        }
+
+        .invite-card {
+            padding: 19px;
+        }
+
+        .link-box {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .share-actions {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="invite-wrapper">
+
+    <section class="invite-hero">
+        <div class="hero-label">✦ MOCK TEST INVITATION</div>
+        <h1>{{ test.title }}</h1>
+        <p>
+            Your custom mock test has been created successfully.
+            Invite your friends, share the test link and compete together.
+        </p>
+    </section>
+
+    <div class="invite-grid">
+
+        <div>
+
+            <div class="invite-card">
+
+                <div class="card-heading">
+                    <h3>Share Invitation Link</h3>
+                </div>
+
+                <p class="card-description">
+                    Share this unique link with participants so they can
+                    join your mock test.
+                </p>
+
+                <div class="link-box">
+                    <input
+                            type="text"
+                            id="inviteLink"
+                            value="{{ invite_link }}"
+                            readonly
+                    >
+
+                    <button
+                            type="button"
+                            class="primary-button"
+                            id="copyButton"
+                            onclick="copyInviteLink()">
+                        Copy Link
+                    </button>
+                </div>
+
+                <div class="copy-message" id="copyMessage">
+                    ✓ Invitation link copied successfully!
+                </div>
+
+                <div class="share-actions">
+
+                    <a
+                            href="https://wa.me/?text={{ ('Join my mock test: ' ~ invite_link)|urlencode }}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="share-button whatsapp-button">
+                        WhatsApp
+                    </a>
+
+                    <button
+                            type="button"
+                            class="share-button native-share-button"
+                            onclick="shareInvitation()">
+                        ↗ Share Invitation
+                    </button>
+
+                </div>
+
+            </div>
+
+            <div class="invite-card">
+
+                <div class="card-heading">
+                    <h3>Invite Your Friends</h3>
+                    <span class="selected-count" id="selectedCount">
+                        0 Selected
+                    </span>
+                </div>
+
+                <p class="card-description">
+                    Select friends from your friends list and send them
+                    a direct mock test invitation.
+                </p>
+
+                <div class="friends-search">
+                    <span>⌕</span>
+                    <input
+                            type="text"
+                            id="friendSearch"
+                            placeholder="Search friends by name..."
+                            oninput="filterFriends()"
+                    >
+                </div>
+
+                <div class="friends-toolbar">
+                    <label class="select-all">
+                        <input
+                                type="checkbox"
+                                id="selectAll"
+                                onchange="toggleSelectAll()"
+                        >
+                        Select All Friends
+                    </label>
+
+                    <span style="font-size:12px;color:#64748b;">
+                        {{ friends|default([])|length }} Friends
+                    </span>
+                </div>
+
+                <div class="friends-list" id="friendsList">
+
+                    {% for friend in friends|default([]) %}
+
+                    <label
+                            class="friend-item"
+                            data-name="{{ friend.name|lower }}"
+                    >
+
+                        <div class="friend-info">
+
+                            <div class="friend-avatar">
+                                {{ friend.name[:1]|upper }}
+                            </div>
+
+                            <div class="friend-details">
+                                <div class="friend-name">
+                                    {{ friend.name }}
+                                </div>
+
+                                <div class="friend-email">
+                                    {{ friend.email|default('Placement Portal Friend') }}
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="friend-right">
+                            <input
+                                    type="checkbox"
+                                    class="friend-checkbox"
+                                    value="{{ friend.id }}"
+                                    onchange="updateSelection()"
+                            >
+                        </div>
+
+                    </label>
+
+                    {% else %}
+
+                    <div class="empty-friends">
+                        <div class="empty-friends-icon">👥</div>
+                        <strong>No Friends Available</strong>
+                        <p style="font-size:12px;margin-top:8px;">
+                            Your friends list will appear here once connected.
+                        </p>
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+                <button
+                        type="button"
+                        class="send-invitation-button"
+                        id="sendInvitationButton"
+                        onclick="sendFriendInvitations()"
+                        disabled>
+                    Send Invitations to Selected Friends →
+                </button>
+
+                <div class="invite-status" id="inviteStatus"></div>
+
+            </div>
+
+        </div>
+
+        <div>
+
+            <div class="invite-card">
+
+                <h3>Test Overview</h3>
+
+                <p class="card-description">
+                    Your mock test is ready for participants.
+                </p>
+
+                <div class="stats-grid">
+
+                    <div class="stat-item">
+                        <strong>{{ test.question_count }}</strong>
+                        <span>Questions</span>
+                    </div>
+
+                    <div class="stat-item">
+                        <strong>{{ test.duration_minutes }}</strong>
+                        <span>Minutes</span>
+                    </div>
+
+                    <div class="stat-item">
+                        <strong>{{ participant_count }}</strong>
+                        <span>Participants</span>
+                    </div>
+
+                    <div class="stat-item">
+                        <strong>{{ test.difficulty }}</strong>
+                        <span>Difficulty</span>
+                    </div>
+
+                </div>
+
+                <div class="steps">
+
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-text">
+                            <strong>Invite Your Friends</strong>
+                            <span>Send invitations directly to your friends.</span>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-text">
+                            <strong>Participants Join</strong>
+                            <span>Everyone joins the common waiting room.</span>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-text">
+                            <strong>Get Ready</strong>
+                            <span>Wait until all participants are ready.</span>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <div class="step-text">
+                            <strong>Start the Test</strong>
+                            <span>The host starts the test for everyone.</span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <a
+                        href="{{ url_for('mock_test_waiting_room', share_token=test.share_token) }}"
+                        class="waiting-button">
+                    Enter Waiting Room →
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+    const inviteLink = document.getElementById("inviteLink");
+
+    function copyInviteLink() {
+        const button = document.getElementById("copyButton");
+        const message = document.getElementById("copyMessage");
+
+        navigator.clipboard.writeText(inviteLink.value).then(() => {
+            button.textContent = "Copied!";
+            message.style.display = "block";
+
+            setTimeout(() => {
+                button.textContent = "Copy Link";
+                message.style.display = "none";
+            }, 2500);
+        }).catch(() => {
+            inviteLink.select();
+            document.execCommand("copy");
+            button.textContent = "Copied!";
+            message.style.display = "block";
+        });
+    }
+
+    async function shareInvitation() {
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    title: {{ test.title|tojson }},
+                text: "Join my mock test!",
+                    url: inviteLink.value
+            });
+            } catch (error) {
+                if (error.name !== "AbortError") {
+                    console.error(error);
+                }
+            }
+        } else {
+            copyInviteLink();
+        }
+    }
+
+    function getFriendCheckboxes() {
+        return Array.from(document.querySelectorAll(".friend-checkbox"));
+    }
+
+    function updateSelection() {
+        const checkboxes = getFriendCheckboxes();
+        const selected = checkboxes.filter(cb => cb.checked);
+
+        document.getElementById("selectedCount").textContent =
+            selected.length + " Selected";
+
+        document.getElementById("sendInvitationButton").disabled =
+            selected.length === 0;
+
+        document.getElementById("selectAll").checked =
+            checkboxes.length > 0 && selected.length === checkboxes.length;
+    }
+
+    function toggleSelectAll() {
+        const checked = document.getElementById("selectAll").checked;
+
+        document.querySelectorAll(".friend-item").forEach(item => {
+            if (item.style.display !== "none") {
+                const checkbox = item.querySelector(".friend-checkbox");
+                if (checkbox) checkbox.checked = checked;
+            }
+        });
+
+        updateSelection();
+    }
+
+    function filterFriends() {
+        const search = document.getElementById("friendSearch")
+            .value.toLowerCase().trim();
+
+        document.querySelectorAll(".friend-item").forEach(item => {
+            const name = item.dataset.name || "";
+            item.style.display = name.includes(search) ? "flex" : "none";
+        });
+
+        updateSelection();
+    }
+
+    async function sendFriendInvitations() {
+        const selectedIds = getFriendCheckboxes()
+            .filter(cb => cb.checked)
+            .map(cb => cb.value);
+
+        if (!selectedIds.length) return;
+
+        const button = document.getElementById("sendInvitationButton");
+        const status = document.getElementById("inviteStatus");
+
+        button.disabled = true;
+        button.textContent = "Sending Invitations...";
+
+        status.className = "invite-status";
+        status.style.display = "none";
+
+        try {
+            const response = await fetch(
+                window.location.pathname + "/send-invitations",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-Requested-With": "XMLHttpRequest"
+                    },
+                    body: JSON.stringify({
+                        friend_ids: selectedIds
+                    })
+                }
+            );
+
+            const data = await response.json();
+
+            if (!response.ok || !data.success) {
+                throw new Error(data.message || "Unable to send invitations.");
+            }
+
+            status.textContent =
+                data.message || "Invitations sent successfully!";
+
+            status.className = "invite-status success";
+
+            getFriendCheckboxes().forEach(cb => {
+                if (selectedIds.includes(cb.value)) {
+                    cb.checked = false;
+                }
+            });
+
+            updateSelection();
+
+        } catch (error) {
+            status.textContent = error.message;
+            status.className = "invite-status error";
+        } finally {
+            button.textContent = "Send Invitations to Selected Friends →";
+            button.disabled = getFriendCheckboxes().every(cb => !cb.checked);
+        }
+    }
+
+    updateSelection();
+</script>
+
+{% endblock %}

@@ -1,4 +1,1028 @@
-{% extends 'mock_tests/base.html' %}{% block mock_title %}Create Custom Mock Test{% endblock %}{% block mock_content %}
-<div class="mt-pagehead"><span class="mt-kicker">CUSTOM TEST BUILDER</span><h1>Create your own challenge</h1><p>Set the test your way, then share one link with friends, classmates or your study group.</p></div>
-<form method="post" class="mt-form mt-builder"><div class="mt-form-grid"><div class="wide"><label>Test name (optional)</label><input name="title" maxlength="150" placeholder="e.g. Java OOP Weekend Challenge"></div><div><label>Course / Class</label><select id="courseSelect" name="course_id" required><option value="">Select course</option>{% for c in courses %}<option value="{{ c.id }}">{{ c.course_name }} — {{ c.education_level }}</option>{% endfor %}</select></div><div><label>Subject / Category</label><select id="subjectSelect" name="subject_id" required><option value="">First select course</option></select></div><div><label>Difficulty</label><select name="difficulty"><option>All</option><option>Easy</option><option>Medium</option><option>Hard</option></select></div><div><label>Number of questions</label><select name="question_count"><option>5</option><option>10</option><option selected>20</option><option>30</option><option>50</option><option>100</option></select></div><div><label>Time limit (minutes)</label><select name="time_limit"><option>10</option><option>15</option><option selected>30</option><option>45</option><option>60</option><option>90</option><option>120</option></select></div></div><div class="mt-note">A custom test is created from available question-bank questions. After creation, share its unique link. Each signed-in participant can attempt it once. The leaderboard combines submitted attempts and ranks users by percentage, then faster completion time.</div><button class="mt-btn">Create test & generate share link →</button></form>
+{% extends 'mock_test/base.html' %}
+{% block mock_title %}Create Custom Mock Test{% endblock %}
+{% block mock_content %}
+<style>
+    .builder-wrapper {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 15px 0 45px;
+    }
+    .builder-hero {
+        position: relative;
+        overflow: hidden;
+        padding: 38px;
+        border-radius: 24px;
+        background: linear-gradient(125deg, #111c44, #3730a3, #6366f1);
+        color: white;
+        margin-bottom: 28px;
+    }
+
+    .builder-hero::before {
+        content: "";
+        position: absolute;
+        width: 260px;
+        height: 260px;
+        border: 45px solid rgba(255,255,255,.07);
+        border-radius: 50%;
+        right: -50px;
+        top: -100px;
+    }
+
+    .builder-hero-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    .builder-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 13px;
+        background: rgba(255,255,255,.14);
+        border: 1px solid rgba(255,255,255,.2);
+        border-radius: 30px;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 1.3px;
+        margin-bottom: 17px;
+    }
+
+    .builder-hero h1 {
+        font-size: clamp(27px, 4vw, 39px);
+        font-weight: 850;
+        margin: 0 0 12px;
+        color: white;
+    }
+
+    .builder-hero p {
+        max-width: 650px;
+        color: #dbeafe;
+        font-size: 15px;
+        line-height: 1.7;
+        margin: 0;
+    }
+
+    .builder-hero-stats {
+        display: flex;
+        gap: 25px;
+        flex-wrap: wrap;
+        margin-top: 25px;
+    }
+
+    .hero-stat {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        font-size: 13px;
+        color: #e0e7ff;
+    }
+
+    .hero-stat i {
+        font-size: 17px;
+    }
+
+    .builder-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 310px;
+        gap: 24px;
+        align-items: start;
+    }
+
+    .builder-main,
+    .builder-sidebar {
+        min-width: 0;
+    }
+
+    .builder-card {
+        background: var(--card-bg, #fff);
+        border: 1px solid var(--border-color, #e5e7eb);
+        border-radius: 19px;
+        padding: 27px;
+        margin-bottom: 22px;
+        box-shadow: 0 5px 22px rgba(0,0,0,.035);
+    }
+
+    .builder-section-heading {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        margin-bottom: 24px;
+    }
+
+    .section-icon {
+        width: 43px;
+        height: 43px;
+        flex-shrink: 0;
+        display: grid;
+        place-items: center;
+        border-radius: 13px;
+        background: #eef2ff;
+        color: #4f46e5;
+        font-size: 18px;
+    }
+
+    .builder-section-heading h3 {
+        font-size: 17px;
+        font-weight: 800;
+        margin: 0 0 4px;
+        color: var(--text-color, #111827);
+    }
+
+    .builder-section-heading p {
+        font-size: 12px;
+        margin: 0;
+        color: var(--muted-color, #6b7280);
+    }
+
+    .builder-form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 21px;
+    }
+
+    .builder-field {
+        min-width: 0;
+    }
+
+    .builder-field.wide {
+        grid-column: 1 / -1;
+    }
+
+    .builder-field label {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 13px;
+        font-weight: 750;
+        margin-bottom: 9px;
+        color: var(--text-color, #374151);
+    }
+
+    .builder-field label .optional {
+        color: #9ca3af;
+        font-size: 11px;
+        font-weight: 500;
+    }
+
+    .builder-input,
+    .builder-select {
+        width: 100%;
+        min-height: 49px;
+        padding: 12px 14px;
+        border-radius: 11px;
+        border: 1px solid var(--border-color, #d1d5db);
+        background: var(--input-bg, #fff);
+        color: var(--text-color, #111827);
+        font-size: 14px;
+        outline: none;
+        transition: .2s;
+    }
+
+    .builder-select[multiple] {
+        min-height: 145px;
+        padding: 8px;
+    }
+
+    .builder-select[multiple] option {
+        padding: 10px;
+        border-radius: 7px;
+    }
+
+    .builder-select:disabled {
+        opacity: .55;
+        cursor: not-allowed;
+    }
+
+    .builder-input:focus,
+    .builder-select:focus {
+        border-color: #6366f1;
+        box-shadow: 0 0 0 4px rgba(99,102,241,.11);
+    }
+
+    .builder-input::placeholder {
+        color: #9ca3af;
+    }
+
+    .field-hint {
+        font-size: 11px;
+        color: #9ca3af;
+        margin-top: 7px;
+        line-height: 1.6;
+    }
+
+    .difficulty-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 9px;
+    }
+
+    .difficulty-option {
+        position: relative;
+    }
+
+    .difficulty-option input {
+        position: absolute;
+        opacity: 0;
+    }
+
+    .difficulty-option label {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 6px;
+        min-height: 45px;
+        border: 1px solid var(--border-color, #e5e7eb);
+        border-radius: 10px;
+        font-size: 12px;
+        font-weight: 750;
+        cursor: pointer;
+        transition: .2s;
+        margin: 0;
+    }
+
+    .difficulty-option input:checked + label {
+        background: #eef2ff;
+        color: #4338ca;
+        border-color: #6366f1;
+    }
+
+    .difficulty-option label:hover {
+        border-color: #818cf8;
+    }
+
+    .question-options {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 11px;
+    }
+
+    .question-option {
+        position: relative;
+    }
+
+    .question-option input {
+        position: absolute;
+        opacity: 0;
+    }
+
+    .question-option label {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 76px;
+        border: 1px solid var(--border-color, #e5e7eb);
+        border-radius: 12px;
+        cursor: pointer;
+        margin: 0;
+        transition: .2s;
+    }
+
+    .question-option label strong {
+        font-size: 20px;
+        font-weight: 850;
+    }
+
+    .question-option label span {
+        font-size: 10px;
+        color: #9ca3af;
+    }
+
+    .question-option input:checked + label {
+        background: #eef2ff;
+        border-color: #6366f1;
+        color: #4338ca;
+    }
+
+    .question-option label:hover {
+        border-color: #818cf8;
+    }
+
+    .builder-note {
+        display: flex;
+        align-items: flex-start;
+        gap: 13px;
+        padding: 17px;
+        border-radius: 13px;
+        background: #eff6ff;
+        border: 1px solid #dbeafe;
+        margin-top: 23px;
+    }
+
+    .builder-note i {
+        color: #2563eb;
+        font-size: 19px;
+        margin-top: 2px;
+    }
+
+    .builder-note strong {
+        display: block;
+        color: #1e40af;
+        font-size: 12px;
+        margin-bottom: 5px;
+    }
+
+    .builder-note p {
+        color: #475569;
+        font-size: 11px;
+        line-height: 1.7;
+        margin: 0;
+    }
+
+    .builder-sidebar-card {
+        background: var(--card-bg, #fff);
+        border: 1px solid var(--border-color, #e5e7eb);
+        border-radius: 18px;
+        padding: 22px;
+        margin-bottom: 20px;
+        box-shadow: 0 5px 22px rgba(0,0,0,.035);
+        position: sticky;
+        top: 20px;
+    }
+
+    .sidebar-heading {
+        font-size: 15px;
+        font-weight: 850;
+        margin-bottom: 20px;
+        color: var(--text-color, #111827);
+    }
+
+    .preview-banner {
+        padding: 20px;
+        border-radius: 15px;
+        background: linear-gradient(135deg, #312e81, #6366f1);
+        color: white;
+        margin-bottom: 20px;
+    }
+
+    .preview-banner span {
+        font-size: 10px;
+        letter-spacing: 1px;
+        font-weight: 800;
+        color: #c7d2fe;
+    }
+
+    .preview-banner h3 {
+        font-size: 17px;
+        font-weight: 800;
+        margin: 10px 0 5px;
+        color: white;
+        word-break: break-word;
+    }
+
+    .preview-banner p {
+        font-size: 11px;
+        color: #e0e7ff;
+        margin: 0;
+    }
+
+    .preview-list {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .preview-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 10px;
+        font-size: 12px;
+    }
+
+    .preview-item span {
+        color: #9ca3af;
+        flex-shrink: 0;
+    }
+
+    .preview-item strong {
+        color: var(--text-color, #111827);
+        font-weight: 750;
+        text-align: right;
+        overflow-wrap: anywhere;
+    }
+
+    .preview-divider {
+        height: 1px;
+        background: var(--border-color, #e5e7eb);
+        margin: 19px 0;
+    }
+
+    .preview-time {
+        text-align: center;
+        padding: 16px;
+        background: #f5f3ff;
+        border-radius: 13px;
+    }
+
+    .preview-time strong {
+        display: block;
+        font-size: 28px;
+        color: #4f46e5;
+        font-weight: 900;
+    }
+
+    .preview-time span {
+        color: #6b7280;
+        font-size: 11px;
+    }
+
+    .builder-tips {
+        padding: 19px;
+        background: var(--card-bg, #fff);
+        border: 1px solid var(--border-color, #e5e7eb);
+        border-radius: 17px;
+    }
+
+    .builder-tips h4 {
+        font-size: 13px;
+        font-weight: 800;
+        margin: 0 0 15px;
+        color: var(--text-color, #111827);
+    }
+
+    .tip-item {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 13px;
+        font-size: 11px;
+        line-height: 1.6;
+        color: #6b7280;
+    }
+
+    .tip-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .tip-item i {
+        color: #6366f1;
+        margin-top: 2px;
+    }
+
+    .builder-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 23px;
+    }
+
+    .builder-submit {
+        flex: 1;
+        min-height: 53px;
+        border: none;
+        border-radius: 12px;
+        background: linear-gradient(120deg, #4338ca, #6366f1);
+        color: white;
+        font-weight: 800;
+        font-size: 13px;
+        cursor: pointer;
+        transition: .2s;
+    }
+
+    .builder-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 9px 22px rgba(79,70,229,.25);
+    }
+
+    .builder-submit:disabled {
+        opacity: .65;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .builder-cancel {
+        min-height: 53px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 18px;
+        border-radius: 12px;
+        border: 1px solid var(--border-color, #e5e7eb);
+        color: var(--text-color, #374151);
+        font-size: 12px;
+        font-weight: 750;
+        text-decoration: none;
+    }
+
+    .builder-cancel:hover {
+        background: #f9fafb;
+    }
+
+    @media(max-width:900px) {
+        .builder-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .builder-sidebar-card {
+            position: static;
+        }
+    }
+
+    @media(max-width:600px) {
+        .builder-hero {
+            padding: 25px 21px;
+        }
+
+        .builder-card {
+            padding: 20px 16px;
+        }
+
+        .builder-form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .builder-field.wide {
+            grid-column: auto;
+        }
+
+        .difficulty-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .question-options {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .builder-actions {
+            flex-direction: column;
+        }
+
+        .builder-cancel {
+            order: 2;
+        }
+
+        .builder-hero-stats {
+            gap: 13px;
+        }
+    }
+</style>
+
+<div class="builder-wrapper">
+
+    <div class="builder-hero">
+        <div class="builder-hero-content">
+            <div class="builder-badge">
+                <i class="fas fa-wand-magic-sparkles"></i>
+                ADVANCED TEST BUILDER
+            </div>
+
+            <h1>Create Your Own Challenge</h1>
+
+            <p>
+                Design a personalized mock test, choose your subjects,
+                set difficulty and challenge your friends with a unique share link.
+            </p>
+
+            <div class="builder-hero-stats">
+                <div class="hero-stat">
+                    <i class="fas fa-layer-group"></i>
+                    Multiple Subjects
+                </div>
+
+                <div class="hero-stat">
+                    <i class="fas fa-sliders"></i>
+                    Flexible Difficulty
+                </div>
+
+                <div class="hero-stat">
+                    <i class="fas fa-share-nodes"></i>
+                    Shareable Test
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <form method="POST" class="mt-form mt-builder" id="customTestForm">
+
+        <div class="builder-layout">
+
+            <div class="builder-main">
+
+                <div class="builder-card">
+
+                    <div class="builder-section-heading">
+                        <div class="section-icon">
+                            <i class="fas fa-pen-to-square"></i>
+                        </div>
+
+                        <div>
+                            <h3>Basic Test Information</h3>
+                            <p>Give your mock test a name and select its category.</p>
+                        </div>
+                    </div>
+
+                    <div class="builder-form-grid">
+
+                        <div class="builder-field wide">
+                            <label for="testTitle">
+                                Test Name
+                                <span class="optional">Optional</span>
+                            </label>
+
+                            <input
+                                    type="text"
+                                    name="title"
+                                    id="testTitle"
+                                    class="builder-input"
+                                    maxlength="150"
+                                    placeholder="e.g. Java OOP Weekend Challenge"
+                            >
+
+                            <div class="field-hint">
+                                Choose a memorable name for your challenge.
+                            </div>
+                        </div>
+
+                        <div class="builder-field">
+                            <label for="courseSelect">
+                                <i class="fas fa-graduation-cap"></i>
+                                Course / Class
+                            </label>
+
+                            <select id="courseSelect" name="course_id" class="builder-select" required>
+                                <option value="">Select Course</option>
+                                {% for course in courses %}
+                                <option value="{{ course.id }}">{{ course.course_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="builder-field">
+                            <label for="subjectSelect">
+                                <i class="fas fa-book"></i>
+                                Select Subjects
+                            </label>
+
+                            <select
+                                    id="subjectSelect"
+                                    name="subject_ids"
+                                    class="builder-select"
+                                    multiple
+                                    required
+                                    disabled
+                                    size="5"
+                            >
+                                {% for subject in subjects %}
+                                <option value="{{ subject.id }}" data-course-id="{{ subject.course_id }}">
+                                    {{ subject.subject_name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+
+                            <div class="field-hint" id="subjectHelp">
+                                First select a course. Hold Ctrl to select multiple subjects.
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="builder-card">
+
+                    <div class="builder-section-heading">
+                        <div class="section-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+
+                        <div>
+                            <h3>Difficulty Level</h3>
+                            <p>Choose the complexity of your questions.</p>
+                        </div>
+                    </div>
+
+                    <div class="difficulty-grid">
+
+                        <div class="difficulty-option">
+                            <input type="radio" name="difficulty" id="diffAll" value="Mixed" checked>
+                            <label for="diffAll">
+                                <i class="fas fa-layer-group"></i>
+                                All Levels
+                            </label>
+                        </div>
+
+                        <div class="difficulty-option">
+                            <input type="radio" name="difficulty" id="diffEasy" value="Easy">
+                            <label for="diffEasy">
+                                <i class="fas fa-seedling"></i>
+                                Easy
+                            </label>
+                        </div>
+
+                        <div class="difficulty-option">
+                            <input type="radio" name="difficulty" id="diffMedium" value="Medium">
+                            <label for="diffMedium">
+                                <i class="fas fa-bolt"></i>
+                                Medium
+                            </label>
+                        </div>
+
+                        <div class="difficulty-option">
+                            <input type="radio" name="difficulty" id="diffHard" value="Hard">
+                            <label for="diffHard">
+                                <i class="fas fa-fire"></i>
+                                Hard
+                            </label>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="builder-card">
+
+                    <div class="builder-section-heading">
+                        <div class="section-icon">
+                            <i class="fas fa-list-check"></i>
+                        </div>
+
+                        <div>
+                            <h3>Test Configuration</h3>
+                            <p>Configure the number of questions and total time.</p>
+                        </div>
+                    </div>
+
+                    <div class="builder-form-grid">
+
+                        <div class="builder-field wide">
+                            <label>
+                                <i class="fas fa-circle-question"></i>
+                                Number of Questions
+                            </label>
+
+                            <div class="question-options">
+
+                                {% for count in [5, 10, 20, 30, 50, 100] %}
+                                <div class="question-option">
+                                    <input
+                                            type="radio"
+                                            name="question_count"
+                                            id="count{{ count }}"
+                                            value="{{ count }}"
+                                            {% if count == 20 %}checked{% endif %}
+                                    >
+
+                                    <label for="count{{ count }}">
+                                        <strong>{{ count }}</strong>
+                                        <span>Questions</span>
+                                    </label>
+                                </div>
+                                {% endfor %}
+
+                            </div>
+                        </div>
+
+                        <div class="builder-field wide">
+                            <label for="timeLimit">
+                                <i class="fas fa-clock"></i>
+                                Time Limit
+                            </label>
+
+                            <select name="duration_minutes" id="timeLimit" class="builder-select" required>
+                                <option value="10">10 Minutes</option>
+                                <option value="15">15 Minutes</option>
+                                <option value="30" selected>30 Minutes</option>
+                                <option value="45">45 Minutes</option>
+                                <option value="60">60 Minutes</option>
+                                <option value="90">90 Minutes</option>
+                                <option value="120">120 Minutes</option>
+                            </select>
+                        </div>
+
+                    </div>
+
+                    <div class="builder-note">
+                        <i class="fas fa-circle-info"></i>
+
+                        <div>
+                            <strong>How your custom test works</strong>
+
+                            <p>
+                                Questions are selected from your available question bank.
+                                Once created, your test receives a unique share link.
+                                Signed-in participants can attempt the test and compete
+                                on the leaderboard.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="builder-actions">
+
+                        <a href="{{ url_for('mock_test_dashboard') }}" class="builder-cancel">
+                            Cancel
+                        </a>
+
+                        <button type="submit" class="builder-submit" id="createButton">
+                            <i class="fas fa-wand-magic-sparkles"></i>
+                            Create Test & Generate Share Link
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <aside class="builder-sidebar">
+
+                <div class="builder-sidebar-card">
+
+                    <div class="sidebar-heading">
+                        <i class="fas fa-eye"></i>
+                        Live Test Preview
+                    </div>
+
+                    <div class="preview-banner">
+                        <span>YOUR CHALLENGE</span>
+                        <h3 id="previewTitle">My Custom Mock Test</h3>
+                        <p>Personalized Practice Challenge</p>
+                    </div>
+
+                    <div class="preview-list">
+
+                        <div class="preview-item">
+                            <span>Course</span>
+                            <strong id="previewCourse">Not selected</strong>
+                        </div>
+
+                        <div class="preview-item">
+                            <span>Subjects</span>
+                            <strong id="previewSubject">Not selected</strong>
+                        </div>
+
+                        <div class="preview-item">
+                            <span>Difficulty</span>
+                            <strong id="previewDifficulty">All Levels</strong>
+                        </div>
+
+                        <div class="preview-item">
+                            <span>Questions</span>
+                            <strong id="previewQuestions">20 Questions</strong>
+                        </div>
+
+                        <div class="preview-item">
+                            <span>Time Limit</span>
+                            <strong id="previewDuration">30 Minutes</strong>
+                        </div>
+
+                    </div>
+
+                    <div class="preview-divider"></div>
+
+                    <div class="preview-time">
+                        <strong id="previewTime">30:00</strong>
+                        <span>Total Test Duration</span>
+                    </div>
+
+                </div>
+
+                <div class="builder-tips">
+
+                    <h4>
+                        <i class="fas fa-lightbulb"></i>
+                        Builder Tips
+                    </h4>
+
+                    <div class="tip-item">
+                        <i class="fas fa-check-circle"></i>
+                        Select a course before choosing your subjects.
+                    </div>
+
+                    <div class="tip-item">
+                        <i class="fas fa-check-circle"></i>
+                        Choose a suitable difficulty for your participants.
+                    </div>
+
+                    <div class="tip-item">
+                        <i class="fas fa-check-circle"></i>
+                        Set enough time to complete all questions.
+                    </div>
+
+                    <div class="tip-item">
+                        <i class="fas fa-check-circle"></i>
+                        Share your generated test link with friends.
+                    </div>
+
+                </div>
+
+            </aside>
+
+        </div>
+
+    </form>
+
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const courseSelect = document.getElementById("courseSelect");
+        const subjectSelect = document.getElementById("subjectSelect");
+        const titleInput = document.getElementById("testTitle");
+        const timeSelect = document.getElementById("timeLimit");
+        const form = document.getElementById("customTestForm");
+        const subjectHelp = document.getElementById("subjectHelp");
+        const createButton = document.getElementById("createButton");
+
+        const allSubjects = Array.from(subjectSelect.options);
+
+        function loadSubjects() {
+            const courseId = courseSelect.value;
+            let count = 0;
+
+            allSubjects.forEach(option => {
+                const matches = courseId && option.dataset.courseId === courseId;
+
+                option.hidden = !matches;
+                option.disabled = !matches;
+                option.selected = false;
+
+                if (matches) {
+                    count++;
+                }
+            });
+
+            subjectSelect.disabled = !courseId || count === 0;
+
+            if (!courseId) {
+                subjectHelp.textContent = "First select a course.";
+            } else if (count === 0) {
+                subjectHelp.textContent = "No subjects available for this course.";
+            } else {
+                subjectHelp.textContent = count + " subjects available. Hold Ctrl to select multiple subjects.";
+            }
+
+            updatePreview();
+        }
+
+        function updatePreview() {
+            const selectedCourse = courseSelect.options[courseSelect.selectedIndex];
+            const selectedSubjects = Array.from(subjectSelect.selectedOptions);
+            const selectedDifficulty = document.querySelector('input[name="difficulty"]:checked');
+            const selectedQuestions = document.querySelector('input[name="question_count"]:checked');
+
+            document.getElementById("previewTitle").textContent =
+                titleInput.value.trim() || "My Custom Mock Test";
+
+            document.getElementById("previewCourse").textContent =
+                courseSelect.value ? selectedCourse.text : "Not selected";
+
+            document.getElementById("previewSubject").textContent =
+                selectedSubjects.length
+                    ? selectedSubjects.map(option => option.text.trim()).join(", ")
+                    : "Not selected";
+
+            document.getElementById("previewDifficulty").textContent =
+                selectedDifficulty
+                    ? selectedDifficulty.value === "Mixed" ? "All Levels" : selectedDifficulty.value
+                    : "All Levels";
+
+            document.getElementById("previewQuestions").textContent =
+                selectedQuestions ? selectedQuestions.value + " Questions" : "20 Questions";
+
+            document.getElementById("previewDuration").textContent =
+                timeSelect.value + " Minutes";
+
+            document.getElementById("previewTime").textContent =
+                timeSelect.value.padStart(2, "0") + ":00";
+        }
+
+        courseSelect.addEventListener("change", loadSubjects);
+        subjectSelect.addEventListener("change", updatePreview);
+        titleInput.addEventListener("input", updatePreview);
+        timeSelect.addEventListener("change", updatePreview);
+
+        document.querySelectorAll('input[name="difficulty"], input[name="question_count"]').forEach(input => {
+            input.addEventListener("change", updatePreview);
+        });
+
+        form.addEventListener("submit", function(event) {
+            const selectedSubjects = Array.from(subjectSelect.selectedOptions);
+
+            if (!courseSelect.value) {
+                event.preventDefault();
+                alert("Please select a course.");
+                return;
+            }
+
+            if (selectedSubjects.length === 0) {
+                event.preventDefault();
+                alert("Please select at least one subject.");
+                return;
+            }
+
+            if (!document.querySelector('input[name="question_count"]:checked')) {
+                event.preventDefault();
+                alert("Please select the number of questions.");
+                return;
+            }
+
+            createButton.disabled = true;
+            createButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Your Test...';
+        });
+
+        loadSubjects();
+        updatePreview();
+    });
+</script>
+
 {% endblock %}

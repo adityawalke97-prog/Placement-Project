@@ -5,10 +5,6 @@
 {% block content %}
 
 <style>
-    /* ==========================================
-   PREMIUM MOCK TEST DASHBOARD
-========================================== */
-
     .mock-container,
     .mock-container * {
         box-sizing: border-box;
@@ -22,22 +18,13 @@
         color: var(--text-color, #1e293b);
     }
 
-    /* ==========================================
-       HERO SECTION
-    ========================================== */
-
     .mock-hero {
         position: relative;
         isolation: isolate;
         overflow: hidden;
         padding: 55px 48px;
         border-radius: 26px;
-        background: linear-gradient(
-                125deg,
-                #111827 0%,
-                #312e81 55%,
-                #6d28d9 100%
-        );
+        background: linear-gradient(125deg, #111827 0%, #312e81 55%, #6d28d9 100%);
         color: #ffffff;
         box-shadow: 0 20px 50px rgba(49, 46, 129, .22);
     }
@@ -120,8 +107,6 @@
         margin-top: 30px;
     }
 
-    /* BUTTONS */
-
     .mock-btn {
         display: inline-flex;
         align-items: center;
@@ -161,10 +146,6 @@
         background: rgba(255,255,255,.20);
         color: #ffffff;
     }
-
-    /* ==========================================
-       STATISTICS
-    ========================================== */
 
     .mock-stats {
         display: grid;
@@ -220,10 +201,6 @@
         font-size: 12px;
     }
 
-    /* ==========================================
-       SECTIONS
-    ========================================== */
-
     .mock-section {
         margin-top: 48px;
     }
@@ -270,10 +247,6 @@
         font-size: 12px;
         line-height: 1.6;
     }
-
-    /* ==========================================
-       CATEGORY CARDS
-    ========================================== */
 
     .mock-category-grid {
         display: grid;
@@ -345,10 +318,6 @@
         transform: translateX(5px);
     }
 
-    /* ==========================================
-       SEARCH
-    ========================================== */
-
     .mock-search-wrapper {
         position: relative;
         width: min(100%, 380px);
@@ -388,10 +357,6 @@
         box-shadow: 0 0 0 4px rgba(99,102,241,.12);
     }
 
-    /* ==========================================
-       FILTER BUTTONS
-    ========================================== */
-
     .mock-filter-list {
         display: flex;
         flex-wrap: wrap;
@@ -419,10 +384,6 @@
         color: #ffffff;
         box-shadow: 0 5px 15px rgba(99,102,241,.20);
     }
-
-    /* ==========================================
-       COURSE CARDS
-    ========================================== */
 
     .mock-course-grid {
         display: grid;
@@ -516,10 +477,6 @@
         transform: translateX(5px);
     }
 
-    /* ==========================================
-       EMPTY STATES
-    ========================================== */
-
     .mock-empty {
         grid-column: 1 / -1;
         padding: 50px 20px;
@@ -548,10 +505,6 @@
         line-height: 1.7;
     }
 
-    /* ==========================================
-       ACCESSIBILITY
-    ========================================== */
-
     .mock-btn:focus-visible,
     .mock-filter-btn:focus-visible,
     .mock-course-link:focus-visible,
@@ -560,12 +513,7 @@
         outline-offset: 4px;
     }
 
-    /* ==========================================
-       TABLET RESPONSIVE
-    ========================================== */
-
     @media (max-width: 1000px) {
-
         .mock-container {
             padding: 28px 20px 60px;
         }
@@ -577,15 +525,9 @@
         .mock-course-grid {
             grid-template-columns: repeat(2, minmax(0, 1fr));
         }
-
     }
 
-    /* ==========================================
-       MOBILE RESPONSIVE
-    ========================================== */
-
     @media (max-width: 650px) {
-
         .mock-container {
             padding: 18px 14px 45px;
         }
@@ -658,15 +600,9 @@
         .mock-course-card {
             min-height: 215px;
         }
-
     }
 
-    /* ==========================================
-       SMALL MOBILE
-    ========================================== */
-
     @media (max-width: 380px) {
-
         .mock-hero {
             padding: 27px 18px;
         }
@@ -692,32 +628,21 @@
             padding: 9px 13px;
             font-size: 11px;
         }
-
     }
 
-    /* ==========================================
-       REDUCED MOTION
-    ========================================== */
-
     @media (prefers-reduced-motion: reduce) {
-
         .mock-container *,
         .mock-container *::before,
         .mock-container *::after {
             transition-duration: .01ms !important;
             animation-duration: .01ms !important;
         }
-
     }
 </style>
 
-
 <div class="mock-container">
 
-    <!-- HERO SECTION -->
-
     <section class="mock-hero">
-
         <div class="mock-hero-content">
 
             <span class="mock-label">
@@ -743,13 +668,11 @@
                     <i class="fas fa-rocket"></i>
                     Explore Courses
                 </a>
-
-                <a href="{{ url_for('create_mock_test') }}"
+                <a href="/mock-tests/create"
                    class="mock-btn mock-btn-secondary">
                     <i class="fas fa-plus-circle"></i>
                     Create Custom Test
                 </a>
-
                 <a href="{{ url_for('my_mock_tests') }}"
                    class="mock-btn mock-btn-secondary">
                     <i class="fas fa-folder-open"></i>
@@ -759,167 +682,119 @@
             </div>
 
         </div>
-
     </section>
-
-
-    <!-- STATISTICS -->
 
     <section class="mock-stats">
 
         <div class="mock-stat-card">
-
             <div class="mock-stat-icon">
                 <i class="fas fa-book-open"></i>
             </div>
-
             <div>
                 <strong>{{ courses|length }}</strong>
                 <span>Available Courses</span>
             </div>
-
         </div>
 
         <div class="mock-stat-card">
-
             <div class="mock-stat-icon">
                 <i class="fas fa-layer-group"></i>
             </div>
-
             <div>
-                <strong>
-                    {{ courses|map(attribute='level_group')|unique|list|length }}
-                </strong>
+                <strong>{{ courses|map(attribute='level_group')|unique|list|length }}</strong>
                 <span>Education Categories</span>
             </div>
-
         </div>
 
         <div class="mock-stat-card">
-
             <div class="mock-stat-icon">
                 <i class="fas fa-bullseye"></i>
             </div>
-
             <div>
                 <strong>24/7</strong>
                 <span>Practice Anytime</span>
             </div>
-
         </div>
 
     </section>
 
-
-    <!-- CATEGORY SECTION -->
-
     <section class="mock-section">
 
         <div class="mock-section-header">
-
             <div class="mock-section-heading">
                 <i class="fas fa-th-large"></i>
-
                 <div>
                     <h2>Explore Categories</h2>
                     <p>Find the right learning path for your preparation.</p>
                 </div>
             </div>
-
         </div>
-
 
         <div class="mock-category-grid">
 
             <div class="mock-category-card">
-
                 <div class="mock-category-icon">
                     <i class="fas fa-school"></i>
                 </div>
-
                 <h3>School Education</h3>
-
                 <p>
                     Prepare for Class 10th, 11th and 12th
                     examinations across different streams.
                 </p>
-
                 <a href="#courses">
                     Explore Courses
                     <i class="fas fa-arrow-right"></i>
                 </a>
-
             </div>
 
-
             <div class="mock-category-card">
-
                 <div class="mock-category-icon">
                     <i class="fas fa-university"></i>
                 </div>
-
                 <h3>College Education</h3>
-
                 <p>
                     Practice university subjects, semester
                     examinations and academic concepts.
                 </p>
-
                 <a href="#courses">
                     Explore Courses
                     <i class="fas fa-arrow-right"></i>
                 </a>
-
             </div>
 
-
             <div class="mock-category-card">
-
                 <div class="mock-category-icon">
                     <i class="fas fa-laptop-code"></i>
                 </div>
-
                 <h3>Professional IT</h3>
-
                 <p>
                     Improve your technical knowledge in
                     programming, databases and modern technologies.
                 </p>
-
                 <a href="#courses">
                     Explore Courses
                     <i class="fas fa-arrow-right"></i>
                 </a>
-
             </div>
 
         </div>
 
     </section>
-
-
-    <!-- COURSE SECTION -->
 
     <section class="mock-section" id="courses">
 
         <div class="mock-section-header">
 
             <div class="mock-section-heading">
-
                 <i class="fas fa-book"></i>
-
                 <div>
                     <h2>Available Courses</h2>
                     <p>Select a course to explore its subjects.</p>
                 </div>
-
             </div>
 
-
             <div class="mock-search-wrapper">
-
                 <i class="fas fa-search"></i>
-
                 <input
                         type="text"
                         id="courseSearch"
@@ -927,13 +802,9 @@
                         placeholder="Search courses..."
                         autocomplete="off"
                         aria-label="Search courses">
-
             </div>
 
         </div>
-
-
-        <!-- FILTER BUTTONS -->
 
         <div class="mock-filter-list" id="courseFilters">
 
@@ -945,9 +816,6 @@
 
         </div>
 
-
-        <!-- COURSE CARDS -->
-
         <div class="mock-course-grid" id="courseGrid">
 
             {% for course in courses %}
@@ -955,12 +823,12 @@
             <article
                     class="mock-course-card"
                     data-group="{{ course.level_group or 'Other' }}"
-                    data-search="{{ (course.course_name ~ ' ' ~ course.education_level ~ ' ' ~ course.level_group)|lower }}">
+                    data-search="{{ (course.course_name ~ ' ' ~ (course.education_level or '') ~ ' ' ~ (course.level_group or ''))|lower }}">
 
                 <div class="mock-course-top">
 
                     <span class="mock-course-tag">
-                        {{ course.level_group }}
+                        {{ course.level_group or 'Other' }}
                     </span>
 
                     <span class="mock-course-number">
@@ -969,15 +837,11 @@
 
                 </div>
 
-
                 <h3>{{ course.course_name }}</h3>
 
-
                 <p>
-                    {{ course.description or
-                    'Practice questions, strengthen your concepts and improve your knowledge.' }}
+                    {{ course.description or 'Practice questions, strengthen your concepts and improve your knowledge.' }}
                 </p>
-
 
                 <a href="{{ url_for('mock_course_subjects', course_id=course.id) }}"
                    class="mock-course-link">
@@ -993,33 +857,24 @@
             {% else %}
 
             <div class="mock-empty">
-
                 <i class="fas fa-book-open fa-2x"></i>
-
                 <h3>No Courses Available</h3>
-
                 <p>
                     Courses will appear here after they are added
                     to the catalogue.
                 </p>
-
             </div>
 
             {% endfor %}
 
         </div>
 
-
-        <!-- NO RESULTS -->
-
         <div id="noCoursesFound"
              class="mock-empty"
              style="display:none; margin-top:20px;">
 
             <i class="fas fa-search fa-2x"></i>
-
             <h3>No Matching Courses</h3>
-
             <p>Try another course name or select a different category.</p>
 
         </div>
@@ -1027,9 +882,6 @@
     </section>
 
 </div>
-
-
-<!-- SEARCH AND FILTER JAVASCRIPT -->
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
@@ -1045,9 +897,6 @@
         if (!filterContainer) return;
 
         let activeFilter = "all";
-
-
-        // Generate category filters from database course data
 
         const groups = [
             ...new Set(
@@ -1068,9 +917,6 @@
 
         });
 
-
-        // Filter and search
-
         function filterCourses() {
 
             const searchValue = searchInput
@@ -1090,30 +936,22 @@
                     activeFilter === "all" || group === activeFilter;
 
                 if (matchesSearch && matchesFilter) {
-
                     card.style.display = "";
                     visibleCount++;
-
                 } else {
-
                     card.style.display = "none";
-
                 }
 
             });
 
-
             if (noResults) {
-
                 noResults.style.display =
-                    visibleCount === 0 ? "block" : "none";
-
+                    courseCards.length > 0 && visibleCount === 0
+                        ? "block"
+                        : "none";
             }
 
         }
-
-
-        // Category filter click
 
         filterContainer.addEventListener("click", function (event) {
 
@@ -1123,7 +961,7 @@
 
             activeFilter = button.dataset.filter;
 
-            document.querySelectorAll(".mock-filter-btn").forEach(btn => {
+            filterContainer.querySelectorAll(".mock-filter-btn").forEach(btn => {
                 btn.classList.remove("active");
             });
 
@@ -1132,9 +970,6 @@
             filterCourses();
 
         });
-
-
-        // Live search
 
         if (searchInput) {
             searchInput.addEventListener("input", filterCourses);

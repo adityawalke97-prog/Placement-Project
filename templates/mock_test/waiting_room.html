@@ -1,0 +1,642 @@
+{% extends "mock_test/base.html" %}
+
+{% block title %}Waiting Room | {{ test.title }}{% endblock %}
+
+{% block content %}
+
+<style>
+    .waiting-wrapper {
+        max-width: 1100px;
+        margin: 35px auto;
+        padding: 20px;
+    }
+
+    .waiting-header {
+        background: linear-gradient(135deg, #172554, #312e81, #4338ca);
+        color: white;
+        border-radius: 22px;
+        padding: 35px;
+        margin-bottom: 25px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .waiting-header h1 {
+        font-size: 30px;
+        font-weight: 800;
+        margin-bottom: 10px;
+    }
+
+    .waiting-header p {
+        color: #dbeafe;
+        margin: 0;
+    }
+
+    .header-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(255,255,255,.15);
+        padding: 8px 15px;
+        border-radius: 30px;
+        margin-bottom: 18px;
+        font-size: 13px;
+    }
+
+    .waiting-grid {
+        display: grid;
+        grid-template-columns: 1.5fr 1fr;
+        gap: 22px;
+    }
+
+    .waiting-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 20px;
+        padding: 25px;
+        box-shadow: 0 8px 30px rgba(15,23,42,.05);
+    }
+
+    .card-heading {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 22px;
+    }
+
+    .card-heading h3 {
+        font-size: 19px;
+        font-weight: 800;
+        margin: 0;
+        color: #111827;
+    }
+
+    .live-indicator {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        color: #059669;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .live-dot {
+        width: 8px;
+        height: 8px;
+        background: #10b981;
+        border-radius: 50%;
+        animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+        50% { opacity: .3; }
+    }
+
+    .participant-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .participant-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px;
+        background: #f8fafc;
+        border: 1px solid #edf0f5;
+        border-radius: 13px;
+    }
+
+    .participant-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .participant-avatar {
+        width: 43px;
+        height: 43px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 13px;
+        background: #e0e7ff;
+        color: #3730a3;
+        font-weight: 800;
+        font-size: 17px;
+    }
+
+    .participant-name {
+        font-weight: 700;
+        color: #1f2937;
+        font-size: 14px;
+    }
+
+    .participant-role {
+        font-size: 11px;
+        color: #64748b;
+        margin-top: 3px;
+    }
+
+    .status-badge {
+        padding: 6px 11px;
+        border-radius: 30px;
+        font-size: 11px;
+        font-weight: 800;
+    }
+
+    .status-ready {
+        background: #dcfce7;
+        color: #15803d;
+    }
+
+    .status-joined {
+        background: #fef3c7;
+        color: #b45309;
+    }
+
+    .status-started {
+        background: #dbeafe;
+        color: #1d4ed8;
+    }
+
+    .status-completed {
+        background: #ede9fe;
+        color: #6d28d9;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        margin-bottom: 22px;
+    }
+
+    .stat-box {
+        background: #f8fafc;
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        padding: 17px;
+    }
+
+    .stat-box strong {
+        display: block;
+        font-size: 25px;
+        color: #111827;
+        font-weight: 800;
+    }
+
+    .stat-box span {
+        font-size: 12px;
+        color: #64748b;
+    }
+
+    .progress-track {
+        height: 9px;
+        background: #e5e7eb;
+        border-radius: 20px;
+        overflow: hidden;
+        margin: 12px 0 8px;
+    }
+
+    .progress-fill {
+        height: 100%;
+        width: 0;
+        background: linear-gradient(90deg, #4f46e5, #818cf8);
+        border-radius: 20px;
+        transition: width .3s ease;
+    }
+
+    .action-button {
+        width: 100%;
+        border: none;
+        border-radius: 12px;
+        padding: 15px;
+        font-size: 15px;
+        font-weight: 800;
+        cursor: pointer;
+        transition: .2s;
+        margin-top: 12px;
+    }
+
+    .ready-button {
+        background: #4f46e5;
+        color: white;
+    }
+
+    .ready-button:hover {
+        background: #3730a3;
+    }
+
+    .ready-button.is-ready {
+        background: #059669;
+    }
+
+    .start-button {
+        background: #059669;
+        color: white;
+    }
+
+    .start-button:hover {
+        background: #047857;
+    }
+
+    .action-button:disabled {
+        opacity: .55;
+        cursor: not-allowed;
+    }
+
+    .info-box {
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+        border-radius: 13px;
+        padding: 15px;
+        color: #1e40af;
+        font-size: 13px;
+        line-height: 1.6;
+        margin-top: 18px;
+    }
+
+    .host-label {
+        background: #ede9fe;
+        color: #6d28d9;
+        font-size: 10px;
+        font-weight: 800;
+        padding: 4px 8px;
+        border-radius: 20px;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 35px 15px;
+        color: #64748b;
+    }
+
+    .empty-state-icon {
+        font-size: 35px;
+        margin-bottom: 10px;
+    }
+
+    @media(max-width: 768px) {
+        .waiting-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .waiting-header {
+            padding: 25px;
+        }
+
+        .waiting-header h1 {
+            font-size: 23px;
+        }
+
+        .waiting-wrapper {
+            padding: 12px;
+        }
+    }
+</style>
+
+<div class="waiting-wrapper">
+
+    <div class="waiting-header">
+        <div class="header-badge">
+            <span>●</span>
+            LIVE WAITING ROOM
+        </div>
+
+        <h1>{{ test.title }}</h1>
+
+        <p>
+            Participants are joining. Get ready for your mock test.
+        </p>
+    </div>
+
+    <div class="waiting-grid">
+
+        <div class="waiting-card">
+
+            <div class="card-heading">
+                <h3>Participants</h3>
+
+                <div class="live-indicator">
+                    <span class="live-dot"></span>
+                    LIVE
+                </div>
+            </div>
+
+            <div class="participant-list" id="participantList">
+
+                {% for p in participants %}
+                <div class="participant-item">
+
+                    <div class="participant-left">
+                        <div class="participant-avatar">
+                            {{ p.name[:1]|upper }}
+                        </div>
+
+                        <div>
+                            <div class="participant-name">
+                                {{ p.name }}
+
+                                {% if p.user_id == test.creator_user_id %}
+                                <span class="host-label">HOST</span>
+                                {% endif %}
+                            </div>
+
+                            <div class="participant-role">
+                                {% if p.user_id == current_user_id %}
+                                You
+                                {% else %}
+                                Participant
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <span class="status-badge {% if p.status == 'Ready' %}status-ready{% elif p.status == 'Started' %}status-started{% elif p.status == 'Completed' %}status-completed{% else %}status-joined{% endif %}">
+                        {{ p.status }}
+                    </span>
+
+                </div>
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+        <div class="waiting-card">
+
+            <div class="card-heading">
+                <h3>Test Overview</h3>
+            </div>
+
+            <div class="stats-grid">
+
+                <div class="stat-box">
+                    <strong>{{ test.question_count }}</strong>
+                    <span>Total Questions</span>
+                </div>
+
+                <div class="stat-box">
+                    <strong>{{ test.duration_minutes }}</strong>
+                    <span>Minutes</span>
+                </div>
+
+                <div class="stat-box">
+                    <strong id="totalParticipants">{{ participant_count }}</strong>
+                    <span>Participants</span>
+                </div>
+
+                <div class="stat-box">
+                    <strong id="readyParticipants">0</strong>
+                    <span>Ready</span>
+                </div>
+
+            </div>
+
+            <div style="font-size:13px;font-weight:700;color:#374151;">
+                Participant Readiness
+            </div>
+
+            <div class="progress-track">
+                <div class="progress-fill" id="readyProgress"></div>
+            </div>
+
+            <div style="font-size:12px;color:#64748b;" id="readyText">
+                Waiting for participants...
+            </div>
+
+            {% if not is_host %}
+            <button
+                    class="action-button ready-button"
+                    id="readyButton"
+                    onclick="toggleReady()">
+                Mark as Ready
+            </button>
+            {% endif %}
+
+            {% if is_host %}
+            <button
+                    class="action-button start-button"
+                    id="startButton"
+                    onclick="startTest()"
+                    disabled>
+                Start Test
+            </button>
+            {% endif %}
+
+            <div class="info-box" id="statusMessage">
+                {% if is_host %}
+                You are the host. Start the test when all participants are ready.
+                {% else %}
+                Click Mark as Ready when you are prepared for the test.
+                {% endif %}
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+    const participantsUrl = {{ url_for("mock_test_participants_api", share_token=test.share_token)|tojson }};
+    const readyUrl = {{ url_for("mock_test_participant_ready", share_token=test.share_token)|tojson }};
+    const startUrl = {{ url_for("start_mock_test", share_token=test.share_token)|tojson }};
+    const attemptUrl = {{ url_for("attempt_mock_test", share_token=test.share_token)|tojson }};
+    const currentUserId = {{ current_user_id|tojson }};
+    const isHost = {{ is_host|tojson }};
+
+    let currentReady = false;
+    let requestRunning = false;
+
+    function escapeHTML(value) {
+        const div = document.createElement("div");
+        div.textContent = value ?? "";
+        return div.innerHTML;
+    }
+
+    function renderParticipants(participants) {
+        const container = document.getElementById("participantList");
+
+        if (!participants.length) {
+            container.innerHTML = `
+            <div class="empty-state">
+                <div class="empty-state-icon">👥</div>
+                <strong>No participants yet</strong>
+                <p>Share the invite link to invite participants.</p>
+            </div>
+        `;
+            return;
+        }
+
+        container.innerHTML = participants.map(p => {
+            const name = escapeHTML(p.name);
+            const status = escapeHTML(p.status);
+            const initial = escapeHTML((p.name || "?").charAt(0).toUpperCase());
+
+            let badgeClass = "status-joined";
+
+            if (p.status === "Ready") badgeClass = "status-ready";
+            if (p.status === "Started") badgeClass = "status-started";
+            if (p.status === "Completed") badgeClass = "status-completed";
+
+            const hostLabel = Number(p.user_id) === Number({{ test.creator_user_id|tojson }})
+                ? '<span class="host-label">HOST</span>'
+                : '';
+
+            const youLabel = Number(p.user_id) === Number(currentUserId)
+                ? "You"
+                : "Participant";
+
+            return `
+            <div class="participant-item">
+                <div class="participant-left">
+                    <div class="participant-avatar">${initial}</div>
+                    <div>
+                        <div class="participant-name">${name} ${hostLabel}</div>
+                        <div class="participant-role">${youLabel}</div>
+                    </div>
+                </div>
+                <span class="status-badge ${badgeClass}">${status}</span>
+            </div>
+        `;
+        }).join("");
+    }
+
+    async function refreshParticipants() {
+        if (requestRunning) return;
+
+        requestRunning = true;
+
+        try {
+            const response = await fetch(participantsUrl, {
+                headers: {"X-Requested-With": "XMLHttpRequest"}
+            });
+
+            if (!response.ok) return;
+
+            const data = await response.json();
+
+            if (!data.success) return;
+
+            renderParticipants(data.participants);
+
+            document.getElementById("totalParticipants").textContent = data.total;
+            document.getElementById("readyParticipants").textContent = data.ready_count;
+
+            const percentage = data.total
+                ? (data.ready_count / data.total) * 100
+                : 0;
+
+            document.getElementById("readyProgress").style.width = percentage + "%";
+
+            document.getElementById("readyText").textContent =
+                `${data.ready_count} of ${data.total} participants are ready`;
+
+            currentReady = data.participants.some(
+                p => Number(p.user_id) === Number(currentUserId) &&
+                    p.status === "Ready"
+            );
+
+            const readyButton = document.getElementById("readyButton");
+
+            if (readyButton) {
+                readyButton.textContent = currentReady
+                    ? "✓ You are Ready"
+                    : "Mark as Ready";
+
+                readyButton.classList.toggle("is-ready", currentReady);
+            }
+
+            const startButton = document.getElementById("startButton");
+
+            if (startButton) {
+                startButton.disabled =
+                    data.total === 0 ||
+                    data.total !== data.ready_count;
+            }
+
+            if (data.started) {
+                document.getElementById("statusMessage").textContent =
+                    "Test started! Redirecting to your test...";
+
+                window.location.href = attemptUrl;
+            }
+
+        } catch (error) {
+            console.error("Waiting room refresh error:", error);
+        } finally {
+            requestRunning = false;
+        }
+    }
+
+    async function toggleReady() {
+        const button = document.getElementById("readyButton");
+
+        button.disabled = true;
+
+        try {
+            const response = await fetch(readyUrl, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            });
+
+            const data = await response.json();
+
+            if (!data.success) {
+                alert(data.message || "Unable to update your status.");
+            }
+
+            await refreshParticipants();
+
+        } catch (error) {
+            alert("Something went wrong. Please try again.");
+        } finally {
+            button.disabled = false;
+        }
+    }
+
+    async function startTest() {
+        if (!confirm("Are you sure you want to start this mock test?")) {
+            return;
+        }
+
+        const button = document.getElementById("startButton");
+        button.disabled = true;
+        button.textContent = "Starting Test...";
+
+        try {
+            const response = await fetch(startUrl, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            });
+
+            const data = await response.json();
+
+            if (!data.success) {
+                alert(data.message || "Unable to start test.");
+                button.textContent = "Start Test";
+                await refreshParticipants();
+                return;
+            }
+
+            window.location.href = attemptUrl;
+
+        } catch (error) {
+            alert("Unable to start test. Please try again.");
+            button.textContent = "Start Test";
+            button.disabled = false;
+        }
+    }
+
+    refreshParticipants();
+    setInterval(refreshParticipants, 3000);
+</script>
+
+{% endblock %}
