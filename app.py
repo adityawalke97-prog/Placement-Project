@@ -476,17 +476,7 @@ def google_callback():
                 conn.close()
             except Exception:
                 pass
-# =========================================================
-# SIGNUP
-# =========================================================
-from flask import send_from_directory
 
-@app.route('/google198ac2c96cde6243.html')
-def google_verification():
-    return send_from_directory(
-        app.root_path,
-        'google198ac2c96cde6243.html'
-    )
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
 
