@@ -441,11 +441,7 @@
                 </div>
 
                 <div class="meta-item">
-                    {% if is_host %}
-                    Host
-                    {% else %}
-                    Participant
-                    {% endif %}
+                    {% if is_host %}Host{% else %}Participant{% endif %}
                 </div>
             </div>
         </div>
@@ -489,9 +485,7 @@
                     <div class="participant-info">
                         <strong>
                             {{ participant.name or 'Student' }}
-                            {% if participant.user_id == current_user_id %}
-                            (You)
-                            {% endif %}
+                            {% if participant.user_id == current_user_id %}(You){% endif %}
                         </strong>
 
                         <small>
@@ -513,9 +507,7 @@
 
                 </div>
                 {% else %}
-                <div class="empty-participants">
-                    No participants found.
-                </div>
+                <div class="empty-participants">No participants found.</div>
                 {% endfor %}
 
             </div>
@@ -527,7 +519,6 @@
         </div>
 
         <div>
-
             <div class="readiness-card">
 
                 <h3>Session Readiness</h3>
@@ -582,7 +573,6 @@
                 </div>
 
             </div>
-
         </div>
 
     </div>
@@ -601,6 +591,49 @@
     let currentReady = false;
     let isRefreshing = false;
     let isActionRunning = false;
+
+    async function fetchJSON(url, options = {}) {
+        const response = await fetch(url, {
+            credentials: "same-origin",
+            cache: "no-store",
+            ...options,
+            headers: {
+                "Accept": "application/json",
+                ...(options.headers || {})
+            }
+        });
+
+        const contentType = response.headers.get("content-type") || "";
+
+        if (!contentType.includes("application/json")) {
+            const responseText = await response.text();
+
+            console.error("NON-JSON API RESPONSE:", {
+                url,
+                status: response.status,
+                redirected: response.redirected,
+                response: responseText.substring(0, 1000)
+            });
+
+            if (response.redirected) {
+                throw new Error("Your session has expired. Please log in again.");
+            }
+
+            throw new Error("Server returned HTML instead of JSON. Check the Flask route and login session.");
+        }
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            if (response.status === 401) {
+                throw new Error(data.message || "Please log in again.");
+            }
+
+            throw new Error(data.message || "Request failed. Please try again.");
+        }
+
+        return data;
+    }
 
     function escapeHTML(value) {
         return String(value ?? "").replace(/[&<>"']/g, function(char) {
@@ -640,8 +673,12 @@
         container.innerHTML = participants.map(participant => {
             const name = participant.name || "Student";
             const initial = name.charAt(0).toUpperCase();
-            const isCurrentUser = Number(participant.user_id) === Number(currentUserId);
-            const isParticipantHost = participant.is_host === true ||
+
+            const isCurrentUser =
+                Number(participant.user_id) === Number(currentUserId);
+
+            const isParticipantHost =
+                participant.is_host === true ||
                 participant.is_host === 1 ||
                 participant.is_host === "1";
 
@@ -679,24 +716,7 @@
         isRefreshing = true;
 
         try {
-            const response = await fetch(participantsUrl, {
-                method: "GET",
-                headers: {
-                    "Accept": "application/json"
-                },
-                credentials: "same-origin",
-                cache: "no-store"
-            });
-
-            if (!response.ok) {
-                throw new Error("Participants request failed: " + response.status);
-            }
-
-            const data = await response.json();
-
-            if (!data.success) {
-                throw new Error(data.message || "Unable to load participants.");
-            }
+            const data = await fetchJSON(participantsUrl);
 
             const participants = data.participants || [];
 
@@ -748,11 +768,9 @@
             const message = document.getElementById("readinessMessage");
 
             if (message) {
-                if (allReady) {
-                    message.textContent = "Everyone is ready! The host can start the mock test.";
-                } else {
-                    message.textContent = (total - ready) + " participant(s) still need to get ready.";
-                }
+                message.textContent = allReady
+                    ? "Everyone is ready! The host can start the mock test."
+                    : (total - ready) + " participant(s) still need to get ready.";
             }
 
             if (data.started) {
@@ -764,7 +782,7 @@
 
         } catch (error) {
             console.error("PARTICIPANTS API ERROR:", error);
-            updateConnectionStatus("Connection issue. Retrying...", false);
+            updateConnectionStatus(error.message, false);
         } finally {
             isRefreshing = false;
         }
@@ -781,20 +799,12 @@
         button.disabled = true;
 
         try {
-            const response = await fetch(readyUrl, {
+            const data = await fetchJSON(readyUrl, {
                 method: "POST",
                 headers: {
-                    "Accept": "application/json",
                     "Content-Type": "application/json"
-                },
-                credentials: "same-origin"
+                }
             });
-
-            const data = await response.json();
-
-            if (!response.ok || !data.success) {
-                throw new Error(data.message || "Unable to update readiness.");
-            }
 
             currentReady = data.status === "Ready";
 
@@ -827,20 +837,12 @@
         button.textContent = "Starting Test...";
 
         try {
-            const response = await fetch(startUrl, {
+            await fetchJSON(startUrl, {
                 method: "POST",
                 headers: {
-                    "Accept": "application/json",
                     "Content-Type": "application/json"
-                },
-                credentials: "same-origin"
+                }
             });
-
-            const data = await response.json();
-
-            if (!response.ok || !data.success) {
-                throw new Error(data.message || "Unable to start the test.");
-            }
 
             window.location.href = attemptUrl;
 

@@ -1,980 +1,998 @@
 {% extends "layout.html" %}
-
 {% block title %}Mock Test Dashboard | Placement Portal{% endblock %}
-
 {% block content %}
-
 <style>
-    .mock-container,
-    .mock-container * {
+    .mock-dashboard {
+        --primary: #6366f1;
+        --primary-dark: #4f46e5;
+        --surface: var(--card-bg, #ffffff);
+        --text: var(--text-primary, #171923);
+        --muted: var(--text-secondary, #777);
+        --border: var(--border-color, #e5e7eb);
+        max-width: 1450px;
+        margin: auto;
+        padding: 25px 20px 60px;
+    }
+    .mock-dashboard * {
         box-sizing: border-box;
     }
-
-    .mock-container {
-        width: 100%;
-        max-width: 1450px;
-        margin: 0 auto;
-        padding: 35px 25px 75px;
-        color: var(--text-color, #1e293b);
-    }
-
     .mock-hero {
         position: relative;
-        isolation: isolate;
         overflow: hidden;
-        padding: 55px 48px;
-        border-radius: 26px;
-        background: linear-gradient(125deg, #111827 0%, #312e81 55%, #6d28d9 100%);
-        color: #ffffff;
-        box-shadow: 0 20px 50px rgba(49, 46, 129, .22);
+        padding: 48px;
+        border-radius: 25px;
+        color: white;
+        background: linear-gradient(125deg, #312e81, #4f46e5 55%, #818cf8);
+        box-shadow: 0 18px 45px rgba(79, 70, 229, .20);
     }
 
     .mock-hero::before,
     .mock-hero::after {
         content: "";
         position: absolute;
-        z-index: -1;
         border-radius: 50%;
-        pointer-events: none;
+        background: rgba(255,255,255,.08);
     }
 
     .mock-hero::before {
-        width: 380px;
-        height: 380px;
-        right: -100px;
-        top: -190px;
-        background: rgba(139, 92, 246, .25);
-        filter: blur(12px);
+        width: 300px;
+        height: 300px;
+        right: -80px;
+        top: -130px;
     }
 
     .mock-hero::after {
-        width: 280px;
-        height: 280px;
-        right: 220px;
-        bottom: -210px;
-        background: rgba(59, 130, 246, .22);
-        filter: blur(15px);
+        width: 220px;
+        height: 220px;
+        right: 180px;
+        bottom: -170px;
     }
 
-    .mock-hero-content {
+    .hero-content {
         position: relative;
-        z-index: 1;
-        max-width: 760px;
+        z-index: 2;
+        max-width: 720px;
     }
 
-    .mock-label {
+    .hero-label {
         display: inline-flex;
-        align-items: center;
-        gap: 9px;
-        padding: 9px 15px;
-        border: 1px solid rgba(255,255,255,.2);
+        padding: 8px 13px;
+        border: 1px solid rgba(255,255,255,.25);
         border-radius: 30px;
-        background: rgba(255,255,255,.10);
-        color: #ddd6fe;
+        background: rgba(255,255,255,.12);
         font-size: 11px;
         font-weight: 800;
-        letter-spacing: 1.2px;
+        letter-spacing: 1.5px;
     }
 
     .mock-hero h1 {
-        margin: 24px 0 17px;
-        color: #ffffff;
-        font-size: clamp(32px, 4vw, 49px);
-        font-weight: 850;
-        line-height: 1.18;
-        letter-spacing: -1.5px;
-    }
-
-    .mock-hero h1 span {
-        background: linear-gradient(90deg, #c4b5fd, #93c5fd);
-        -webkit-background-clip: text;
-        background-clip: text;
-        -webkit-text-fill-color: transparent;
+        margin: 22px 0 12px;
+        color: white;
+        font-size: clamp(30px, 5vw, 45px);
+        font-weight: 900;
+        line-height: 1.15;
     }
 
     .mock-hero p {
-        max-width: 650px;
-        margin: 0;
-        color: #ddd6fe;
+        max-width: 600px;
+        color: rgba(255,255,255,.82);
         font-size: 15px;
-        line-height: 1.85;
+        line-height: 1.8;
     }
 
-    .mock-hero-actions {
+    .hero-actions {
         display: flex;
         flex-wrap: wrap;
         gap: 12px;
-        margin-top: 30px;
+        margin-top: 27px;
     }
 
-    .mock-btn {
+    .hero-btn {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        gap: 9px;
-        min-height: 46px;
-        padding: 13px 21px;
-        border-radius: 12px;
-        font-size: 13px;
-        font-weight: 750;
+        padding: 13px 20px;
+        border-radius: 11px;
         text-decoration: none;
-        transition: all .25s ease;
+        font-size: 13px;
+        font-weight: 800;
+        transition: .2s;
     }
 
-    .mock-btn:hover {
+    .hero-btn-primary {
+        background: white;
+        color: #4338ca;
+    }
+
+    .hero-btn-secondary {
+        color: white;
+        border: 1px solid rgba(255,255,255,.4);
+        background: rgba(255,255,255,.12);
+    }
+
+    .hero-btn:hover {
         transform: translateY(-3px);
+        color: inherit;
     }
 
-    .mock-btn-primary {
-        background: #ffffff;
-        color: #312e81;
-        box-shadow: 0 7px 20px rgba(0,0,0,.15);
-    }
-
-    .mock-btn-primary:hover {
-        background: #ede9fe;
-        color: #312e81;
-    }
-
-    .mock-btn-secondary {
-        border: 1px solid rgba(255,255,255,.25);
-        background: rgba(255,255,255,.10);
-        color: #ffffff;
-    }
-
-    .mock-btn-secondary:hover {
-        background: rgba(255,255,255,.20);
-        color: #ffffff;
-    }
-
-    .mock-stats {
+    .dashboard-stats {
         display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 20px;
-        margin: 28px 0 45px;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 17px;
+        margin: 25px 0 38px;
     }
 
-    .mock-stat-card {
+    .stat-card {
         display: flex;
         align-items: center;
-        gap: 17px;
-        min-width: 0;
-        padding: 23px;
-        border: 1px solid rgba(128,128,128,.17);
-        border-radius: 18px;
-        background: var(--card-bg, #ffffff);
-        box-shadow: 0 5px 20px rgba(0,0,0,.035);
-        transition: all .25s ease;
+        gap: 15px;
+        padding: 21px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 17px;
     }
 
-    .mock-stat-card:hover {
-        transform: translateY(-5px);
-        border-color: #818cf8;
-        box-shadow: 0 12px 28px rgba(99,102,241,.10);
-    }
-
-    .mock-stat-icon {
+    .stat-icon {
         display: grid;
         place-items: center;
+        width: 49px;
+        height: 49px;
         flex-shrink: 0;
-        width: 52px;
-        height: 52px;
-        border-radius: 15px;
-        background: rgba(99,102,241,.13);
-        color: #6366f1;
-        font-size: 21px;
+        border-radius: 14px;
+        background: rgba(99,102,241,.11);
+        font-size: 23px;
     }
 
-    .mock-stat-card strong {
+    .stat-card strong {
         display: block;
-        color: var(--text-color, #1e293b);
-        font-size: 25px;
-        font-weight: 850;
-        line-height: 1.2;
+        color: var(--text);
+        font-size: 22px;
+        font-weight: 900;
     }
 
-    .mock-stat-card span {
+    .stat-card span {
         display: block;
-        margin-top: 6px;
-        color: var(--text-color, #64748b);
-        opacity: .7;
+        margin-top: 4px;
+        color: var(--muted);
         font-size: 12px;
     }
 
-    .mock-section {
-        margin-top: 48px;
+    .dashboard-section {
+        margin-top: 43px;
     }
 
-    .mock-section-header {
+    .section-heading {
         display: flex;
-        align-items: center;
         justify-content: space-between;
-        flex-wrap: wrap;
+        align-items: flex-end;
         gap: 20px;
-        margin-bottom: 25px;
+        margin-bottom: 21px;
     }
 
-    .mock-section-heading {
+    .section-eyebrow {
+        color: var(--primary);
+        font-size: 10px;
+        font-weight: 900;
+        letter-spacing: 1.7px;
+    }
+
+    .section-heading h2 {
+        margin: 7px 0;
+        color: var(--text);
+        font-size: 25px;
+        font-weight: 900;
+    }
+
+    .section-heading p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    .hub-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 17px;
+    }
+
+    .hub-card {
+        position: relative;
         display: flex;
         align-items: center;
-        gap: 14px;
+        gap: 15px;
+        min-height: 120px;
+        padding: 21px;
+        color: var(--text);
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        text-decoration: none;
+        transition: .25s ease;
     }
 
-    .mock-section-heading > i {
+    .hub-card:hover {
+        transform: translateY(-5px);
+        border-color: var(--primary);
+        box-shadow: 0 12px 30px rgba(79,70,229,.10);
+        color: var(--text);
+    }
+
+    .hub-icon {
         display: grid;
         place-items: center;
+        width: 52px;
+        height: 52px;
         flex-shrink: 0;
-        width: 46px;
-        height: 46px;
-        border-radius: 14px;
-        background: rgba(99,102,241,.13);
-        color: #6366f1;
-        font-size: 19px;
+        border-radius: 15px;
+        background: rgba(99,102,241,.11);
+        font-size: 24px;
     }
 
-    .mock-section-heading h2 {
-        margin: 0;
-        color: var(--text-color, #1e293b);
-        font-size: 23px;
+    .hub-card h3 {
+        margin: 0 0 7px;
+        font-size: 14px;
         font-weight: 850;
-        letter-spacing: -.4px;
     }
 
-    .mock-section-heading p {
-        margin: 5px 0 0;
-        color: var(--text-color, #64748b);
-        opacity: .7;
+    .hub-card p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 11px;
+        line-height: 1.6;
+    }
+
+    .hub-arrow {
+        margin-left: auto;
+        color: var(--primary);
+        font-size: 20px;
+    }
+
+    .hub-card.featured {
+        background: linear-gradient(135deg, #eef2ff, #f5f3ff);
+        border-color: #c7d2fe;
+    }
+
+    .created-tests-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 17px;
+    }
+
+    .created-test-card {
+        padding: 22px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        transition: .2s;
+    }
+
+    .created-test-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 28px rgba(0,0,0,.07);
+    }
+
+    .test-card-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .test-status,
+    .test-visibility {
+        display: inline-flex;
+        padding: 7px 10px;
+        border-radius: 20px;
+        font-size: 10px;
+        font-weight: 850;
+    }
+
+    .test-status.waiting {
+        color: #92400e;
+        background: #fef3c7;
+    }
+
+    .test-status.in-progress {
+        color: #047857;
+        background: #d1fae5;
+    }
+
+    .test-status.ended {
+        color: #475569;
+        background: #e2e8f0;
+    }
+
+    .test-visibility {
+        color: #4338ca;
+        background: #eef2ff;
+    }
+
+    .created-test-card h3 {
+        margin: 19px 0 8px;
+        color: var(--text);
+        font-size: 17px;
+        font-weight: 850;
+    }
+
+    .created-test-card > p {
+        min-height: 40px;
+        color: var(--muted);
         font-size: 12px;
         line-height: 1.6;
     }
 
-    .mock-category-grid {
+    .test-details {
         display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 20px;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        margin: 19px 0;
+        padding: 15px 0;
+        border-top: 1px solid var(--border);
+        border-bottom: 1px solid var(--border);
     }
 
-    .mock-category-card {
-        position: relative;
-        overflow: hidden;
-        padding: 27px;
-        border: 1px solid rgba(128,128,128,.18);
-        border-radius: 20px;
-        background: var(--card-bg, #ffffff);
-        box-shadow: 0 5px 20px rgba(0,0,0,.035);
-        transition: all .3s ease;
-    }
-
-    .mock-category-card:hover {
-        transform: translateY(-6px);
-        border-color: #818cf8;
-        box-shadow: 0 15px 35px rgba(99,102,241,.12);
-    }
-
-    .mock-category-icon {
-        display: grid;
-        place-items: center;
-        width: 55px;
-        height: 55px;
-        margin-bottom: 20px;
-        border-radius: 16px;
-        background: rgba(99,102,241,.13);
-        color: #6366f1;
-        font-size: 23px;
-    }
-
-    .mock-category-card h3 {
-        margin: 0 0 11px;
-        color: var(--text-color, #1e293b);
+    .test-details strong {
+        display: block;
+        color: var(--text);
         font-size: 18px;
-        font-weight: 800;
+        font-weight: 900;
     }
 
-    .mock-category-card p {
-        min-height: 48px;
-        margin: 0;
-        color: var(--text-color, #64748b);
-        opacity: .75;
-        font-size: 13px;
-        line-height: 1.8;
-    }
-
-    .mock-category-card a {
-        display: inline-flex;
-        align-items: center;
-        gap: 9px;
-        margin-top: 20px;
-        color: #6366f1;
-        font-size: 13px;
-        font-weight: 800;
-        text-decoration: none;
-    }
-
-    .mock-category-card a i {
-        transition: transform .2s ease;
-    }
-
-    .mock-category-card a:hover i {
-        transform: translateX(5px);
-    }
-
-    .mock-search-wrapper {
-        position: relative;
-        width: min(100%, 380px);
-    }
-
-    .mock-search-wrapper > i {
-        position: absolute;
-        top: 50%;
-        left: 17px;
-        z-index: 1;
-        transform: translateY(-50%);
-        color: #818cf8;
-        pointer-events: none;
-    }
-
-    .mock-search {
-        width: 100%;
-        height: 49px;
-        padding: 12px 16px 12px 45px;
-        border: 1px solid rgba(128,128,128,.25);
-        border-radius: 13px;
-        outline: none;
-        background: var(--card-bg, #ffffff);
-        color: var(--text-color, #1e293b);
-        font-family: inherit;
-        font-size: 13px;
-        transition: all .25s ease;
-    }
-
-    .mock-search::placeholder {
-        color: var(--text-color, #94a3b8);
-        opacity: .55;
-    }
-
-    .mock-search:focus {
-        border-color: #818cf8;
-        box-shadow: 0 0 0 4px rgba(99,102,241,.12);
-    }
-
-    .mock-filter-list {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        margin-bottom: 25px;
-    }
-
-    .mock-filter-btn {
-        padding: 10px 18px;
-        border: 1px solid rgba(128,128,128,.22);
-        border-radius: 30px;
-        background: var(--card-bg, #ffffff);
-        color: var(--text-color, #475569);
-        font-family: inherit;
-        font-size: 12px;
-        font-weight: 750;
-        cursor: pointer;
-        transition: all .22s ease;
-    }
-
-    .mock-filter-btn:hover,
-    .mock-filter-btn.active {
-        border-color: #6366f1;
-        background: #6366f1;
-        color: #ffffff;
-        box-shadow: 0 5px 15px rgba(99,102,241,.20);
-    }
-
-    .mock-course-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-        gap: 21px;
-    }
-
-    .mock-course-card {
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        min-width: 0;
-        min-height: 235px;
-        padding: 24px;
-        border: 1px solid rgba(128,128,128,.18);
-        border-radius: 19px;
-        background: var(--card-bg, #ffffff);
-        box-shadow: 0 5px 20px rgba(0,0,0,.035);
-        transition: all .3s ease;
-    }
-
-    .mock-course-card:hover {
-        transform: translateY(-6px);
-        border-color: #818cf8;
-        box-shadow: 0 15px 35px rgba(99,102,241,.12);
-    }
-
-    .mock-course-top {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        flex-wrap: wrap;
-        gap: 10px;
-    }
-
-    .mock-course-tag {
-        display: inline-flex;
-        align-items: center;
-        max-width: 85%;
-        padding: 7px 12px;
-        border-radius: 30px;
-        background: rgba(99,102,241,.13);
-        color: #6366f1;
+    .test-details span {
+        display: block;
+        margin-top: 5px;
+        color: var(--muted);
         font-size: 10px;
-        font-weight: 850;
-        letter-spacing: .5px;
     }
 
-    .mock-course-number {
-        color: #818cf8;
-        font-size: 12px;
-        font-weight: 800;
-    }
-
-    .mock-course-card h3 {
-        margin: 20px 0 10px;
-        color: var(--text-color, #1e293b);
-        font-size: 17px;
-        font-weight: 800;
-        line-height: 1.5;
-        overflow-wrap: anywhere;
-    }
-
-    .mock-course-card p {
-        margin: 0 0 20px;
-        color: var(--text-color, #64748b);
-        opacity: .75;
-        font-size: 12px;
-        line-height: 1.8;
-    }
-
-    .mock-course-link {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 10px;
-        margin-top: auto;
-        padding-top: 16px;
-        border-top: 1px solid rgba(128,128,128,.16);
-        color: #6366f1;
-        font-size: 13px;
-        font-weight: 800;
+    .test-room-btn {
+        display: block;
+        padding: 12px;
+        border-radius: 10px;
+        color: white;
+        background: var(--primary-dark);
+        text-align: center;
         text-decoration: none;
+        font-size: 12px;
+        font-weight: 850;
     }
 
-    .mock-course-link i {
-        transition: transform .25s ease;
+    .test-room-btn:hover {
+        color: white;
+        background: #3730a3;
     }
 
-    .mock-course-link:hover i {
-        transform: translateX(5px);
-    }
-
-    .mock-empty {
-        grid-column: 1 / -1;
-        padding: 50px 20px;
-        border: 1px dashed rgba(128,128,128,.35);
+    .empty-state {
+        padding: 42px 20px;
+        border: 1px dashed var(--border);
         border-radius: 18px;
-        background: rgba(128,128,128,.025);
+        background: var(--surface);
         text-align: center;
     }
 
-    .mock-empty > i {
-        margin-bottom: 16px;
-        color: #818cf8;
+    .empty-state-icon {
+        font-size: 40px;
     }
 
-    .mock-empty h3 {
-        margin: 0 0 9px;
-        color: var(--text-color, #1e293b);
-        font-size: 18px;
+    .empty-state h3 {
+        margin: 13px 0 7px;
+        color: var(--text);
+        font-size: 17px;
+        font-weight: 850;
     }
 
-    .mock-empty p {
+    .empty-state p {
         margin: 0;
-        color: var(--text-color, #64748b);
-        opacity: .7;
+        color: var(--muted);
+        font-size: 12px;
+    }
+
+    .course-toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 13px;
+        margin-bottom: 20px;
+    }
+
+    .course-search {
+        width: min(100%, 350px);
+        padding: 13px 16px;
+        color: var(--text);
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 11px;
+        outline: none;
         font-size: 13px;
-        line-height: 1.7;
     }
 
-    .mock-btn:focus-visible,
-    .mock-filter-btn:focus-visible,
-    .mock-course-link:focus-visible,
-    .mock-category-card a:focus-visible {
-        outline: 3px solid #818cf8;
-        outline-offset: 4px;
+    .course-search:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(99,102,241,.10);
     }
 
-    @media (max-width: 1000px) {
-        .mock-container {
-            padding: 28px 20px 60px;
-        }
+    .category-filters {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
 
-        .mock-category-grid {
+    .category-filter {
+        padding: 9px 14px;
+        color: var(--muted);
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 30px;
+        cursor: pointer;
+        font-size: 11px;
+        font-weight: 800;
+    }
+
+    .category-filter.active,
+    .category-filter:hover {
+        color: white;
+        background: var(--primary);
+        border-color: var(--primary);
+    }
+
+    .course-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 17px;
+    }
+
+    .course-card {
+        display: flex;
+        flex-direction: column;
+        padding: 22px;
+        color: var(--text);
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 17px;
+        transition: .2s;
+    }
+
+    .course-card:hover {
+        transform: translateY(-4px);
+        border-color: #a5b4fc;
+        box-shadow: 0 12px 28px rgba(79,70,229,.08);
+    }
+
+    .course-card-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+    }
+
+    .course-icon {
+        display: grid;
+        place-items: center;
+        width: 46px;
+        height: 46px;
+        border-radius: 13px;
+        background: rgba(99,102,241,.11);
+        font-size: 22px;
+    }
+
+    .course-level {
+        padding: 6px 10px;
+        border-radius: 20px;
+        color: #4338ca;
+        background: #eef2ff;
+        font-size: 10px;
+        font-weight: 850;
+    }
+
+    .course-card h3 {
+        margin: 18px 0 7px;
+        color: var(--text);
+        font-size: 17px;
+        font-weight: 850;
+    }
+
+    .course-card p {
+        flex: 1;
+        margin: 0 0 18px;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.6;
+    }
+
+    .course-meta {
+        margin-bottom: 15px;
+        color: var(--muted);
+        font-size: 11px;
+    }
+
+    .course-open-btn {
+        display: block;
+        padding: 12px;
+        border-radius: 10px;
+        color: white;
+        background: var(--primary-dark);
+        text-align: center;
+        text-decoration: none;
+        font-size: 12px;
+        font-weight: 850;
+    }
+
+    .course-open-btn:hover {
+        color: white;
+        background: #3730a3;
+    }
+
+    .no-courses {
+        display: none;
+        padding: 35px;
+        color: var(--muted);
+        background: var(--surface);
+        border: 1px dashed var(--border);
+        border-radius: 15px;
+        text-align: center;
+        font-size: 13px;
+    }
+
+    @media(max-width: 1000px) {
+        .hub-grid,
+        .created-tests-grid,
+        .course-grid {
             grid-template-columns: repeat(2, minmax(0, 1fr));
         }
-
-        .mock-course-grid {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-        }
     }
 
-    @media (max-width: 650px) {
-        .mock-container {
-            padding: 18px 14px 45px;
+    @media(max-width: 650px) {
+        .mock-dashboard {
+            padding: 15px 12px 40px;
         }
 
         .mock-hero {
-            padding: 32px 23px;
-            border-radius: 21px;
+            padding: 30px 23px;
         }
 
-        .mock-hero h1 {
-            font-size: 32px;
-            letter-spacing: -.8px;
-        }
-
-        .mock-hero p {
-            font-size: 13px;
-            line-height: 1.8;
-        }
-
-        .mock-hero-actions {
-            flex-direction: column;
-            align-items: stretch;
-        }
-
-        .mock-btn {
-            width: 100%;
-        }
-
-        .mock-stats {
+        .dashboard-stats {
             grid-template-columns: 1fr;
-            gap: 12px;
-            margin: 20px 0 35px;
         }
 
-        .mock-stat-card {
-            padding: 18px;
+        .hub-grid,
+        .created-tests-grid,
+        .course-grid {
+            grid-template-columns: 1fr;
         }
 
-        .mock-section {
-            margin-top: 36px;
+        .section-heading {
+            align-items: flex-start;
+            flex-direction: column;
         }
 
-        .mock-section-heading h2 {
-            font-size: 19px;
-        }
-
-        .mock-section-header {
+        .course-toolbar {
             align-items: stretch;
             flex-direction: column;
         }
 
-        .mock-search-wrapper {
+        .course-search {
             width: 100%;
         }
-
-        .mock-category-grid {
-            grid-template-columns: 1fr;
-            gap: 14px;
-        }
-
-        .mock-category-card {
-            padding: 23px;
-        }
-
-        .mock-course-grid {
-            grid-template-columns: 1fr;
-            gap: 14px;
-        }
-
-        .mock-course-card {
-            min-height: 215px;
-        }
     }
 
-    @media (max-width: 380px) {
-        .mock-hero {
-            padding: 27px 18px;
-        }
-
-        .mock-hero h1 {
-            font-size: 28px;
-        }
-
-        .mock-label {
-            font-size: 9px;
-        }
-
-        .mock-section-heading {
-            gap: 10px;
-        }
-
-        .mock-section-heading > i {
-            width: 39px;
-            height: 39px;
-        }
-
-        .mock-filter-btn {
-            padding: 9px 13px;
-            font-size: 11px;
-        }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-        .mock-container *,
-        .mock-container *::before,
-        .mock-container *::after {
-            transition-duration: .01ms !important;
-            animation-duration: .01ms !important;
+    @media(prefers-reduced-motion: reduce) {
+        .mock-dashboard *,
+        .mock-dashboard *::before,
+        .mock-dashboard *::after {
+            transition: none !important;
+            animation: none !important;
         }
     }
 </style>
 
-<div class="mock-container">
+<div class="mock-dashboard">
 
     <section class="mock-hero">
-        <div class="mock-hero-content">
-
-            <span class="mock-label">
-                <i class="fas fa-graduation-cap"></i>
-                SMART EXAM PREPARATION
-            </span>
-
-            <h1>
-                Practice Smarter.<br>
-                <span>Perform Better.</span>
-            </h1>
-
+        <div class="hero-content">
+            <span class="hero-label">PLACEMENT PREPARATION PLATFORM</span>
+            <h1>Master Your Skills.<br>Get Placement Ready.</h1>
             <p>
-                Prepare for school examinations, university exams
-                and IT placements with structured mock tests.
-                Choose your course, explore subjects and improve
-                your performance with consistent practice.
+                Practice technical questions, create custom assessments,
+                challenge yourself and track your preparation journey
+                with your personal mock test center.
             </p>
 
-            <div class="mock-hero-actions">
-
-                <a href="#courses" class="mock-btn mock-btn-primary">
-                    <i class="fas fa-rocket"></i>
-                    Explore Courses
+            <div class="hero-actions">
+                <a href="#courses-section" class="hero-btn hero-btn-primary">
+                    Explore Courses →
                 </a>
-                <a href="/mock-tests/create"
-                   class="mock-btn mock-btn-secondary">
-                    <i class="fas fa-plus-circle"></i>
-                    Create Custom Test
-                </a>
-                <a href="{{ url_for('my_mock_tests') }}"
-                   class="mock-btn mock-btn-secondary">
-                    <i class="fas fa-folder-open"></i>
+                <a href="{{ url_for('my_mock_tests') }}" class="hero-btn hero-btn-secondary">
                     My Mock Tests
                 </a>
-
             </div>
-
         </div>
     </section>
 
-    <section class="mock-stats">
-
-        <div class="mock-stat-card">
-            <div class="mock-stat-icon">
-                <i class="fas fa-book-open"></i>
-            </div>
+    <section class="dashboard-stats">
+        <div class="stat-card">
+            <div class="stat-icon">📚</div>
             <div>
                 <strong>{{ courses|length }}</strong>
                 <span>Available Courses</span>
             </div>
         </div>
 
-        <div class="mock-stat-card">
-            <div class="mock-stat-icon">
-                <i class="fas fa-layer-group"></i>
-            </div>
+        <div class="stat-card">
+            <div class="stat-icon">📝</div>
             <div>
-                <strong>{{ courses|map(attribute='level_group')|unique|list|length }}</strong>
-                <span>Education Categories</span>
+                <strong>{{ created_tests|default([])|length }}</strong>
+                <span>Tests Created By You</span>
             </div>
         </div>
 
-        <div class="mock-stat-card">
-            <div class="mock-stat-icon">
-                <i class="fas fa-bullseye"></i>
-            </div>
+        <div class="stat-card">
+            <div class="stat-icon">🚀</div>
             <div>
                 <strong>24/7</strong>
                 <span>Practice Anytime</span>
             </div>
         </div>
-
     </section>
 
-    <section class="mock-section">
+    <section class="dashboard-section">
+        <div class="section-heading">
+            <div>
+                <span class="section-eyebrow">YOUR WORKSPACE</span>
+                <h2>Learning & Performance Hub</h2>
+                <p>Everything you need to practice, compete and manage your assessments.</p>
+            </div>
+        </div>
 
-        <div class="mock-section-header">
-            <div class="mock-section-heading">
-                <i class="fas fa-th-large"></i>
+        <div class="hub-grid">
+
+            <a href="#courses-section" class="hub-card">
+                <div class="hub-icon">📚</div>
                 <div>
-                    <h2>Explore Categories</h2>
-                    <p>Find the right learning path for your preparation.</p>
+                    <h3>Explore Courses</h3>
+                    <p>Discover subjects and practice questions.</p>
                 </div>
-            </div>
-        </div>
+                <span class="hub-arrow">↗</span>
+            </a>
 
-        <div class="mock-category-grid">
-
-            <div class="mock-category-card">
-                <div class="mock-category-icon">
-                    <i class="fas fa-school"></i>
+            <a href="/mock-tests/create" class="hub-card featured">
+                <div class="hub-icon">✦</div>
+                <div>
+                    <h3>Create Custom Test</h3>
+                    <p>Build your own assessment and invite students.</p>
                 </div>
-                <h3>School Education</h3>
-                <p>
-                    Prepare for Class 10th, 11th and 12th
-                    examinations across different streams.
-                </p>
-                <a href="#courses">
-                    Explore Courses
-                    <i class="fas fa-arrow-right"></i>
-                </a>
-            </div>
+                <span class="hub-arrow">↗</span>
+            </a>
 
-            <div class="mock-category-card">
-                <div class="mock-category-icon">
-                    <i class="fas fa-university"></i>
+            <a href="{{ url_for('my_mock_tests') }}" class="hub-card">
+                <div class="hub-icon">📝</div>
+                <div>
+                    <h3>My Mock Tests</h3>
+                    <p>Manage your tests and joined assessments.</p>
                 </div>
-                <h3>College Education</h3>
-                <p>
-                    Practice university subjects, semester
-                    examinations and academic concepts.
-                </p>
-                <a href="#courses">
-                    Explore Courses
-                    <i class="fas fa-arrow-right"></i>
-                </a>
-            </div>
+                <span class="hub-arrow">↗</span>
+            </a>
 
-            <div class="mock-category-card">
-                <div class="mock-category-icon">
-                    <i class="fas fa-laptop-code"></i>
+            <a href="#leaderboard-info" class="hub-card">
+                <div class="hub-icon">🏆</div>
+                <div>
+                    <h3>Leaderboard</h3>
+                    <p>Check rankings on individual test leaderboards.</p>
                 </div>
-                <h3>Professional IT</h3>
-                <p>
-                    Improve your technical knowledge in
-                    programming, databases and modern technologies.
-                </p>
-                <a href="#courses">
-                    Explore Courses
-                    <i class="fas fa-arrow-right"></i>
-                </a>
-            </div>
+                <span class="hub-arrow">↗</span>
+            </a>
+
+            <a href="#result-history-info" class="hub-card">
+                <div class="hub-icon">📊</div>
+                <div>
+                    <h3>Result History</h3>
+                    <p>Access your completed test performance.</p>
+                </div>
+                <span class="hub-arrow">↗</span>
+            </a>
+
+            <a href="#created-tests-section" class="hub-card">
+                <div class="hub-icon">📁</div>
+                <div>
+                    <h3>Custom Test History</h3>
+                    <p>Track tests created and managed by you.</p>
+                </div>
+                <span class="hub-arrow">↗</span>
+            </a>
 
         </div>
-
     </section>
 
-    <section class="mock-section" id="courses">
+    <section class="dashboard-section" id="created-tests-section">
+        <div class="section-heading">
+            <div>
+                <span class="section-eyebrow">TEST MANAGEMENT</span>
+                <h2>Your Created Tests</h2>
+                <p>Monitor your custom tests, participants and test room status.</p>
+            </div>
 
-        <div class="mock-section-header">
+            <a href="{{ url_for('my_mock_tests') }}"
+               class="view-all-btn"
+               style="color:var(--primary);font-size:13px;font-weight:800;text-decoration:none;">
+                View All Tests →
+            </a>
+        </div>
 
-            <div class="mock-section-heading">
-                <i class="fas fa-book"></i>
-                <div>
-                    <h2>Available Courses</h2>
-                    <p>Select a course to explore its subjects.</p>
+        {% if created_tests %}
+        <div class="created-tests-grid">
+            {% for test in created_tests %}
+            <article class="created-test-card">
+
+                <div class="test-card-top">
+                    <span class="test-status {{ test.display_status|lower|replace(' ', '-') }}">
+                        {{ test.display_status }}
+                    </span>
+
+                    <span class="test-visibility">
+                        {{ test.visibility }}
+                    </span>
                 </div>
-            </div>
 
-            <div class="mock-search-wrapper">
-                <i class="fas fa-search"></i>
-                <input
-                        type="text"
-                        id="courseSearch"
-                        class="mock-search"
-                        placeholder="Search courses..."
-                        autocomplete="off"
-                        aria-label="Search courses">
-            </div>
+                <h3>{{ test.title }}</h3>
 
+                <p>
+                    {{ test.description or 'Custom mock test created by you.' }}
+                </p>
+
+                <div class="test-details">
+                    <div>
+                        <strong>{{ test.question_count }}</strong>
+                        <span>Questions</span>
+                    </div>
+
+                    <div>
+                        <strong>{{ test.duration_minutes }}</strong>
+                        <span>Minutes</span>
+                    </div>
+
+                    <div>
+                        <strong>{{ test.participant_count }}</strong>
+                        <span>Participants</span>
+                    </div>
+                </div>
+
+                <a href="{{ url_for('mock_test_waiting_room', share_token=test.share_token) }}"
+                   class="test-room-btn">
+                    Open Test Room →
+                </a>
+
+                {% if test.share_token %}
+                <a href="{{ url_for('mock_test_leaderboard', share_token=test.share_token) }}"
+                   style="display:block;margin-top:10px;text-align:center;color:var(--primary);font-size:12px;font-weight:800;text-decoration:none;">
+                    View Test Leaderboard
+                </a>
+                {% endif %}
+
+            </article>
+            {% endfor %}
         </div>
 
-        <div class="mock-filter-list" id="courseFilters">
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-state-icon">📋</div>
+            <h3>No Custom Tests Created Yet</h3>
+            <p>Create your first mock test and invite other students to participate.</p>
+            <a href="/mock-tests/create"
+               class="test-room-btn"
+               style="display:inline-block;margin-top:17px;padding:12px 22px;">
+                Create Your First Test →
+            </a>
+        </div>
+        {% endif %}
+    </section>
 
-            <button type="button"
-                    class="mock-filter-btn active"
-                    data-filter="all">
-                All Courses
-            </button>
-
+    <section class="dashboard-section" id="leaderboard-info">
+        <div class="section-heading">
+            <div>
+                <span class="section-eyebrow">COMPETE & IMPROVE</span>
+                <h2>Leaderboard</h2>
+                <p>Compare your performance with participants in your custom tests.</p>
+            </div>
         </div>
 
-        <div class="mock-course-grid" id="courseGrid">
+        {% if created_tests %}
+        <div class="hub-grid">
+            {% for test in created_tests %}
+            <a href="{{ url_for('mock_test_leaderboard', share_token=test.share_token) }}"
+               class="hub-card">
+                <div class="hub-icon">🏆</div>
+                <div>
+                    <h3>{{ test.title }}</h3>
+                    <p>View participant rankings and scores.</p>
+                </div>
+                <span class="hub-arrow">↗</span>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-state-icon">🏆</div>
+            <h3>Leaderboards Will Appear Here</h3>
+            <p>Create a custom test to access its participant leaderboard.</p>
+        </div>
+        {% endif %}
+    </section>
 
+    <section class="dashboard-section" id="result-history-info">
+        <div class="section-heading">
+            <div>
+                <span class="section-eyebrow">YOUR PERFORMANCE</span>
+                <h2>Result History</h2>
+                <p>Review your completed mock tests and track your progress.</p>
+            </div>
+        </div>
+
+        <div class="empty-state">
+            <div class="empty-state-icon">📊</div>
+            <h3>Track Your Test Results</h3>
+            <p>
+                Your result history will be available here once the result
+                history backend is connected.
+            </p>
+            <a href="{{ url_for('my_mock_tests') }}"
+               class="test-room-btn"
+               style="display:inline-block;margin-top:17px;padding:12px 22px;">
+                Open My Mock Tests →
+            </a>
+        </div>
+    </section>
+
+    <section class="dashboard-section" id="courses-section">
+        <div class="section-heading">
+            <div>
+                <span class="section-eyebrow">PRACTICE & LEARN</span>
+                <h2>Explore Courses</h2>
+                <p>Select a course and improve your technical knowledge.</p>
+            </div>
+        </div>
+
+        <div class="course-toolbar">
+            <input
+                    type="search"
+                    id="courseSearch"
+                    class="course-search"
+                    placeholder="🔍 Search courses..."
+                    autocomplete="off"
+            >
+
+            <div class="category-filters">
+                <button type="button" class="category-filter active" data-filter="all">
+                    All Courses
+                </button>
+                <button type="button" class="category-filter" data-filter="school">
+                    School
+                </button>
+                <button type="button" class="category-filter" data-filter="college">
+                    College
+                </button>
+                <button type="button" class="category-filter" data-filter="it">
+                    IT & Technology
+                </button>
+            </div>
+        </div>
+
+        <div class="course-grid" id="courseGrid">
             {% for course in courses %}
+            <article class="course-card"
+                     data-name="{{ course.course_name|lower }}"
+                     data-level="{{ course.education_level|default('', true)|lower }}"
+                     data-group="{{ course.level_group|default('', true)|lower }}">
 
-            <article
-                    class="mock-course-card"
-                    data-group="{{ course.level_group or 'Other' }}"
-                    data-search="{{ (course.course_name ~ ' ' ~ (course.education_level or '') ~ ' ' ~ (course.level_group or ''))|lower }}">
+                <div class="course-card-top">
+                    <div class="course-icon">
+                        {% if 'computer' in course.course_name|lower or 'python' in course.course_name|lower or 'java' in course.course_name|lower %}
+                        💻
+                        {% elif 'science' in course.course_name|lower %}
+                        🔬
+                        {% elif 'commerce' in course.course_name|lower %}
+                        📈
+                        {% else %}
+                        📘
+                        {% endif %}
+                    </div>
 
-                <div class="mock-course-top">
-
-                    <span class="mock-course-tag">
-                        {{ course.level_group or 'Other' }}
+                    <span class="course-level">
+                        {{ course.education_level or 'General' }}
                     </span>
-
-                    <span class="mock-course-number">
-                        {{ loop.index }}
-                    </span>
-
                 </div>
 
                 <h3>{{ course.course_name }}</h3>
 
                 <p>
-                    {{ course.description or 'Practice questions, strengthen your concepts and improve your knowledge.' }}
+                    {{ course.description|default('Practice important concepts and improve your knowledge through mock tests.', true) }}
                 </p>
 
+                <div class="course-meta">
+                    {{ course.level_group or 'All Levels' }}
+                </div>
+
                 <a href="{{ url_for('mock_course_subjects', course_id=course.id) }}"
-                   class="mock-course-link">
-
-                    Explore Subjects
-
-                    <i class="fas fa-arrow-right"></i>
-
+                   class="course-open-btn">
+                    Explore Course →
                 </a>
 
             </article>
-
-            {% else %}
-
-            <div class="mock-empty">
-                <i class="fas fa-book-open fa-2x"></i>
-                <h3>No Courses Available</h3>
-                <p>
-                    Courses will appear here after they are added
-                    to the catalogue.
-                </p>
-            </div>
-
             {% endfor %}
-
         </div>
 
-        <div id="noCoursesFound"
-             class="mock-empty"
-             style="display:none; margin-top:20px;">
-
-            <i class="fas fa-search fa-2x"></i>
-            <h3>No Matching Courses</h3>
-            <p>Try another course name or select a different category.</p>
-
+        <div class="no-courses" id="noCourses">
+            No matching courses found. Try another search.
         </div>
-
     </section>
 
 </div>
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-
         const searchInput = document.getElementById("courseSearch");
-        const courseCards = Array.from(
-            document.querySelectorAll(".mock-course-card")
-        );
-
-        const filterContainer = document.getElementById("courseFilters");
-        const noResults = document.getElementById("noCoursesFound");
-
-        if (!filterContainer) return;
+        const courseCards = Array.from(document.querySelectorAll(".course-card"));
+        const filterButtons = document.querySelectorAll(".category-filter");
+        const noCourses = document.getElementById("noCourses");
 
         let activeFilter = "all";
 
-        const groups = [
-            ...new Set(
-                courseCards.map(card => card.dataset.group).filter(Boolean)
-            )
-        ];
-
-        groups.forEach(function (group) {
-
-            const button = document.createElement("button");
-
-            button.type = "button";
-            button.className = "mock-filter-btn";
-            button.dataset.filter = group;
-            button.textContent = group;
-
-            filterContainer.appendChild(button);
-
-        });
-
         function filterCourses() {
-
-            const searchValue = searchInput
-                ? searchInput.value.toLowerCase().trim()
-                : "";
-
+            const search = searchInput.value.trim().toLowerCase();
             let visibleCount = 0;
 
             courseCards.forEach(function (card) {
-
-                const searchText = card.dataset.search || "";
+                const name = card.dataset.name || "";
+                const level = card.dataset.level || "";
                 const group = card.dataset.group || "";
 
-                const matchesSearch = searchText.includes(searchValue);
+                const matchesSearch =
+                    name.includes(search) ||
+                    level.includes(search) ||
+                    group.includes(search);
 
-                const matchesFilter =
-                    activeFilter === "all" || group === activeFilter;
+                let matchesFilter = true;
 
-                if (matchesSearch && matchesFilter) {
-                    card.style.display = "";
-                    visibleCount++;
-                } else {
-                    card.style.display = "none";
+                if (activeFilter === "school") {
+                    matchesFilter = level.includes("school") || group.includes("school");
+                } else if (activeFilter === "college") {
+                    matchesFilter = level.includes("college") || group.includes("college");
+                } else if (activeFilter === "it") {
+                    matchesFilter =
+                        name.includes("computer") ||
+                        name.includes("programming") ||
+                        name.includes("python") ||
+                        name.includes("java") ||
+                        name.includes("information technology") ||
+                        group.includes("it");
                 }
 
+                const visible = matchesSearch && matchesFilter;
+                card.style.display = visible ? "" : "none";
+
+                if (visible) {
+                    visibleCount++;
+                }
             });
 
-            if (noResults) {
-                noResults.style.display =
-                    courseCards.length > 0 && visibleCount === 0
-                        ? "block"
-                        : "none";
-            }
-
+            noCourses.style.display = visibleCount === 0 ? "block" : "none";
         }
 
-        filterContainer.addEventListener("click", function (event) {
+        searchInput.addEventListener("input", filterCourses);
 
-            const button = event.target.closest(".mock-filter-btn");
+        filterButtons.forEach(function (button) {
+            button.addEventListener("click", function () {
+                filterButtons.forEach(function (item) {
+                    item.classList.remove("active");
+                });
 
-            if (!button) return;
-
-            activeFilter = button.dataset.filter;
-
-            filterContainer.querySelectorAll(".mock-filter-btn").forEach(btn => {
-                btn.classList.remove("active");
+                button.classList.add("active");
+                activeFilter = button.dataset.filter;
+                filterCourses();
             });
-
-            button.classList.add("active");
-
-            filterCourses();
-
         });
 
-        if (searchInput) {
-            searchInput.addEventListener("input", filterCourses);
-        }
-
+        filterCourses();
     });
 </script>
 

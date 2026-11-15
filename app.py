@@ -12,8 +12,8 @@ from flask import (
 )
 
 from flask import abort
-from authlib.integrations.flask_client import OAuth
 from flask_bcrypt import Bcrypt
+from authlib.integrations.flask_client import OAuth
 from dotenv import load_dotenv
 from werkzeug.middleware.proxy_fix import ProxyFix
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -39,6 +39,7 @@ from reportlab.platypus import (
 from reportlab.lib.styles import getSampleStyleSheet
 load_dotenv()
 app = Flask(__name__)
+bcrypt = Bcrypt(app)
 from flask import send_from_directory
 
 @app.route('/google198ac2c96cde6243.html')
@@ -323,22 +324,11 @@ def google_callback():
 
             user_id = user["id"]
             user_name = user["name"]
-
-
-        # =================================================
-        # NEW GOOGLE USER
-        # =================================================
-
         else:
-
             random_password = secrets.token_hex(32)
-
-            hashed_password = (
-    bcrypt.generate_password_hash(password)
-    .decode("utf-8")
-)
-
-
+            hashed_password = bcrypt.generate_password_hash(
+                random_password
+            ).decode("utf-8")
             cur.execute(
                 """
                 INSERT INTO users
@@ -659,63 +649,34 @@ def login():
             FROM users
 
             WHERE LOWER(email) = %s
-
             LIMIT 1
         """, (email,))
-
         user = cursor.fetchone()
-
-        # -------------------------------------------------
-        # 7. CHECK USER EXISTS
-        # -------------------------------------------------
-
         if not user:
-
             flash(
                 "Invalid email or password.",
                 "danger"
             )
-
             return redirect(url_for("login"))
-
-        # -------------------------------------------------
-        # 8. VERIFY PASSWORD
-        # -------------------------------------------------
-
         if not bcrypt.check_password_hash(
             user["password"],
             password
         ):
-
             flash(
                 "Invalid email or password.",
                 "danger"
             )
-
             return redirect(url_for("login"))
-
-        # -------------------------------------------------
-        # 9. GET ACTUAL ROLE FROM DATABASE
-        # -------------------------------------------------
-
         user_role = str(
             user.get("role") or "student"
         ).strip().lower()
-
         # Only student and admin roles are permitted
         if user_role not in ("student", "admin"):
-
             flash(
                 "Your account has an invalid role. Contact administrator.",
                 "danger"
             )
-
             return redirect(url_for("login"))
-
-        # -------------------------------------------------
-        # 10. VERIFY SELECTED ROLE
-        # -------------------------------------------------
-
         if selected_role != user_role:
 
             flash(
@@ -724,75 +685,39 @@ def login():
             )
 
             return redirect(url_for("login"))
-
-        # -------------------------------------------------
-        # 11. CREATE SESSION
-        # -------------------------------------------------
-
         session.clear()
-
         session["user_id"] = user["id"]
         session["user_name"] = user["name"]
         session["user_email"] = user["email"]
         session["role"] = user_role
-
-        # Remember Me
         session.permanent = remember
-
-        # -------------------------------------------------
-        # 12. ADMIN LOGIN
-        # -------------------------------------------------
-
         if user_role == "admin":
-
             flash(
                 "Welcome Admin! Login successful.",
                 "success"
             )
-
             return redirect(
                 url_for("admin_dashboard")
             )
-
-        # -------------------------------------------------
-        # 13. STUDENT LOGIN
-        # -------------------------------------------------
-
         flash(
             "Login successful. Welcome back!",
             "success"
         )
-
         return redirect(
             url_for("dashboard")
         )
-
-    # -----------------------------------------------------
-    # 14. ERROR HANDLING
-    # -----------------------------------------------------
-
     except Exception:
-
         app.logger.exception(
             "LOGIN ROUTE ERROR"
         )
-
         flash(
             "Something went wrong during login. Please try again.",
             "danger"
         )
-
         return redirect(url_for("login"))
-
-    # -----------------------------------------------------
-    # 15. CLOSE DATABASE CONNECTION
-    # -----------------------------------------------------
-
     finally:
-
         if cursor:
             cursor.close()
-
         if conn:
             conn.close()
 @app.route("/dashboard")
@@ -1025,47 +950,78 @@ def mock_login_required():
         return False
 
     return True
-
-
-# ==========================================================
-# 1. MOCK TEST DASHBOARD
-# ==========================================================
-
 @app.route("/mock-tests")
 def mock_test_dashboard():
-
     if not mock_login_required():
         return redirect(url_for("login"))
 
+    user_id = get_mock_user_id()
     conn = get_db_connection()
     cursor = conn.cursor()
 
     try:
         cursor.execute("""
             SELECT
-                c.id,
-                c.course_name,
-                c.education_level,
-                c.level_group,
-                c.slug
-            FROM mock_catalog_courses c
-            WHERE c.is_active = 1
-            ORDER BY c.sort_order, c.course_name
+                id,
+                course_name,
+                education_level,
+                level_group,
+                slug
+            FROM mock_catalog_courses
+            WHERE is_active = 1
+            ORDER BY sort_order, course_name
         """)
-
         courses = cursor.fetchall()
 
-        return render_template("mock_test/mock_test_dashboard.html", courses=courses)
+        cursor.execute("""
+            SELECT
+                t.id,
+                t.title,
+                t.description,
+                t.question_count,
+                t.duration_minutes,
+                t.visibility,
+                t.status,
+                t.share_token,
+                t.scheduled_start_at,
+                t.scheduled_end_at,
+                t.created_at,
+                (
+                    SELECT COUNT(*)
+                    FROM mock_test_participants p
+                    WHERE p.test_id = t.id
+                    AND p.status != 'Left'
+                ) AS participant_count
+            FROM mock_test_catalog t
+            WHERE t.creator_user_id = %s
+            ORDER BY t.created_at DESC
+        """, (user_id,))
+
+        created_tests = cursor.fetchall()
+
+        for test in created_tests:
+            status = str(test.get("status") or "").lower()
+
+            if status in ("completed", "ended", "cancelled"):
+                test["display_status"] = "Ended"
+            elif test.get("scheduled_start_at") is None:
+                test["display_status"] = "Waiting"
+            else:
+                test["display_status"] = "In Progress"
+
+        return render_template(
+            "mock_test/mock_test_dashboard.html",
+            courses=courses,
+            created_tests=created_tests
+        )
+
+    except Exception as e:
+        print("MOCK TEST DASHBOARD ERROR:", str(e))
+        return "Unable to load mock test dashboard.", 500
 
     finally:
         cursor.close()
         conn.close()
-
-
-# ==========================================================
-# 2. GET COURSE SUBJECTS
-# ==========================================================
-
 @app.route("/mock-tests/course/<int:course_id>")
 def mock_course_subjects(course_id):
 
@@ -1110,11 +1066,9 @@ def mock_course_subjects(course_id):
 # ==========================================================
 # MOCK TEST ATTEMPT - COMPLETE ROUTE
 # ==========================================================
-
 @app.route("/mock-test/<share_token>")
 def attempt_mock_test(share_token):
 
-    # 1. LOGIN CHECK
     if not mock_login_required():
         return redirect(url_for("login"))
 
@@ -1124,11 +1078,6 @@ def attempt_mock_test(share_token):
     cursor = conn.cursor()
 
     try:
-
-        # ==================================================
-        # 2. FETCH TEST DETAILS
-        # ==================================================
-
         cursor.execute("""
             SELECT *
             FROM mock_test_catalog
@@ -1142,19 +1091,11 @@ def attempt_mock_test(share_token):
         if not test:
             abort(404)
 
-        # ==================================================
-        # 3. CHECK TEST PERMISSION
-        # ==================================================
-
         if (
             test["visibility"] == "Private"
             and test["creator_user_id"] != user_id
         ):
             abort(403)
-
-        # ==================================================
-        # 4. FETCH AVAILABLE QUESTIONS
-        # ==================================================
 
         cursor.execute("""
             SELECT
@@ -1166,27 +1107,17 @@ def attempt_mock_test(share_token):
                 qb.option_d,
                 mtq.question_order,
                 mtq.marks
-
             FROM mock_test_questions mtq
-
             JOIN mock_question_bank qb
                 ON qb.id = mtq.question_id
-
             WHERE mtq.test_id = %s
             AND qb.is_active = 1
-
             ORDER BY mtq.question_order ASC
-
         """, (test["id"],))
 
         questions = cursor.fetchall()
 
-        # ==================================================
-        # 5. CHECK QUESTION COUNT
-        # ==================================================
-
         question_count = len(questions)
-
         no_questions = question_count == 0
 
         total_marks = sum(
@@ -1194,39 +1125,46 @@ def attempt_mock_test(share_token):
             for q in questions
         )
 
-        # ==================================================
-        # 6. HANDLE ZERO QUESTIONS
-        # ==================================================
-
         if no_questions:
-
-            print(
-                f"NO QUESTIONS AVAILABLE - TEST ID: {test['id']}"
-            )
-
             flash(
-                "No questions available for this subject yet. "
-                "Please check back later.",
+                "No questions available for this subject yet. Please check back later.",
                 "warning"
             )
-
-        # ==================================================
-        # 7. CHECK QUESTION AVAILABILITY
-        # ==================================================
 
         elif question_count != int(test["question_count"]):
-
             flash(
-                "Some questions are unavailable. "
-                "Available questions are displayed below.",
+                "Some questions are unavailable. Available questions are displayed below.",
                 "warning"
             )
 
-        # ==================================================
-        # 8. CREATE NEW TEST ATTEMPT
-        # ==================================================
-
         conn.begin()
+
+        cursor.execute("""
+            SELECT id
+            FROM mock_test_participants
+            WHERE test_id = %s
+            AND user_id = %s
+            LIMIT 1
+        """, (test["id"], user_id))
+
+        participant = cursor.fetchone()
+
+        if participant:
+            cursor.execute("""
+                UPDATE mock_test_participants
+                SET status = 'Started'
+                WHERE test_id = %s
+                AND user_id = %s
+            """, (test["id"], user_id))
+        else:
+            cursor.execute("""
+                INSERT INTO mock_test_participants (
+                    test_id,
+                    user_id,
+                    status
+                )
+                VALUES (%s, %s, 'Started')
+            """, (test["id"], user_id))
 
         cursor.execute("""
             INSERT INTO mock_attempts (
@@ -1248,10 +1186,6 @@ def attempt_mock_test(share_token):
 
         conn.commit()
 
-        # ==================================================
-        # 9. OPEN MOCK TEST PAGE
-        # ==================================================
-
         return render_template(
             "mock_test_attempt.html",
             test=test,
@@ -1264,21 +1198,13 @@ def attempt_mock_test(share_token):
             remaining_seconds=int(test["duration_minutes"] or 20) * 60
         )
 
-    # ======================================================
-    # 10. ERROR HANDLING
-    # ======================================================
-
     except Exception as e:
         conn.rollback()
         print("CREATE MOCK TEST ERROR:", str(e))
         flash("Unable to create mock test. Please try again.", "danger")
         return redirect(url_for("create_mock_test"))
-    # ======================================================
-    # 11. CLOSE CONNECTION
-    # ======================================================
 
     finally:
-
         cursor.close()
         conn.close()
 @app.route("/mock-test/<share_token>/join", methods=["GET", "POST"])
@@ -1340,11 +1266,14 @@ def mock_test_join(share_token):
     finally:
         cursor.close()
         conn.close()
+
+from flask import abort
+from werkzeug.exceptions import HTTPException
 @app.route("/mock-test/<share_token>/waiting-room")
 def mock_test_waiting_room(share_token):
 
     if not mock_login_required():
-        return redirect(url_for("login"))
+        return redirect(url_for("login", next=request.url))
 
     user_id = get_mock_user_id()
     conn = get_db_connection()
@@ -1362,7 +1291,8 @@ def mock_test_waiting_room(share_token):
                 visibility,
                 status,
                 scheduled_start_at,
-                scheduled_end_at
+                scheduled_end_at,
+                share_token
             FROM mock_test_catalog
             WHERE share_token = %s
             LIMIT 1
@@ -1412,15 +1342,25 @@ def mock_test_waiting_room(share_token):
         participants = cursor.fetchall()
 
         is_host = test["creator_user_id"] == user_id
-
+        print("========== WAITING ROOM DEBUG ==========")
+        print("SESSION USER ID:", session.get("user_id"))
+        print("SESSION USER NAME:", session.get("user_name"))
+        print("TEST HOST ID:", test["creator_user_id"])
+        print("CURRENT USER ID:", user_id)
+        print("SHARE TOKEN:", share_token)
+        print("========================================")
         return render_template(
             "mock_test/waiting_room.html",
             test=test,
+            share_token=share_token,
             participants=participants,
             is_host=is_host,
             current_user_id=user_id,
             participant_count=len(participants)
         )
+
+    except HTTPException:
+        raise
 
     except Exception as e:
         print("MOCK TEST WAITING ROOM ERROR:", str(e))
@@ -1429,18 +1369,32 @@ def mock_test_waiting_room(share_token):
     finally:
         cursor.close()
         conn.close()
-
-@app.route("/mock-test/<share_token>/participants")
+@app.route("/mock-test/<share_token>/participants", methods=["GET"])
 def mock_test_participants_api(share_token):
 
-    if not mock_login_required():
-        return jsonify({"success": False}), 401
-
-    user_id = get_mock_user_id()
-    conn = get_db_connection()
-    cursor = conn.cursor()
+    conn = None
+    cursor = None
 
     try:
+        if not mock_login_required():
+            return jsonify({
+                "success": False,
+                "message": "Login required.",
+                "login_required": True
+            }), 401
+
+        user_id = get_mock_user_id()
+
+        if not user_id:
+            return jsonify({
+                "success": False,
+                "message": "User session not found.",
+                "login_required": True
+            }), 401
+
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
         cursor.execute("""
             SELECT id, creator_user_id, scheduled_start_at
             FROM mock_test_catalog
@@ -1451,7 +1405,10 @@ def mock_test_participants_api(share_token):
         test = cursor.fetchone()
 
         if not test:
-            return jsonify({"success": False}), 404
+            return jsonify({
+                "success": False,
+                "message": "Mock test not found."
+            }), 404
 
         cursor.execute("""
             SELECT id
@@ -1459,13 +1416,18 @@ def mock_test_participants_api(share_token):
             WHERE test_id = %s
             AND user_id = %s
             AND status != 'Left'
+            LIMIT 1
         """, (test["id"], user_id))
 
         if not cursor.fetchone():
-            return jsonify({"success": False}), 403
+            return jsonify({
+                "success": False,
+                "message": "You are not a participant in this test."
+            }), 403
 
         cursor.execute("""
             SELECT
+                p.id,
                 p.user_id,
                 p.status,
                 p.joined_at,
@@ -1479,24 +1441,39 @@ def mock_test_participants_api(share_token):
 
         participants = cursor.fetchall()
 
+        for participant in participants:
+            participant["is_host"] = (
+                int(participant["user_id"]) == int(test["creator_user_id"])
+            )
+
+        ready_count = sum(
+            1 for p in participants if p["status"] == "Ready"
+        )
+
         return jsonify({
             "success": True,
             "started": test["scheduled_start_at"] is not None,
-            "is_host": test["creator_user_id"] == user_id,
+            "is_host": int(test["creator_user_id"]) == int(user_id),
             "participants": participants,
             "total": len(participants),
-            "ready_count": sum(
-                1 for p in participants if p["status"] == "Ready"
-            )
-        })
+            "ready_count": ready_count
+        }), 200
 
     except Exception as e:
-        print("PARTICIPANTS API ERROR:", str(e))
-        return jsonify({"success": False}), 500
+        print("PARTICIPANTS API ERROR:", repr(e))
+
+        return jsonify({
+            "success": False,
+            "message": "Unable to load participants.",
+            "error": str(e)
+        }), 500
 
     finally:
-        cursor.close()
-        conn.close()
+        if cursor:
+            cursor.close()
+
+        if conn:
+            conn.close()
 @app.route("/mock-test/<share_token>/ready", methods=["POST"])
 def mock_test_participant_ready(share_token):
 
@@ -2101,6 +2078,7 @@ def send_mock_test_invitations(share_token):
         conn.close()
 @app.route("/mock-test/result/<int:attempt_id>")
 def mock_test_result(attempt_id):
+
     if not mock_login_required():
         return redirect(url_for("login"))
 
@@ -2114,21 +2092,27 @@ def mock_test_result(attempt_id):
                 a.*,
                 t.title,
                 t.share_token,
+                t.creator_user_id,
                 u.name
             FROM mock_attempts a
             JOIN mock_test_catalog t ON t.id = a.test_id
             JOIN users u ON u.id = a.user_id
             WHERE a.id = %s
-            AND a.user_id = %s
             LIMIT 1
-        """, (attempt_id, user_id))
+        """, (attempt_id,))
 
         result = cursor.fetchone()
 
         if not result:
             abort(404)
 
-        if result["status"] != "Submitted":
+        is_owner = int(result["user_id"]) == int(user_id)
+        is_creator = int(result["creator_user_id"]) == int(user_id)
+
+        if not is_owner and not is_creator:
+            abort(403)
+
+        if result["status"] not in ("Submitted", "Auto Submitted"):
             flash("This examination has not been submitted yet.", "warning")
             return redirect(url_for("mock_test_dashboard"))
 
@@ -2157,40 +2141,37 @@ def mock_test_result(attempt_id):
         return render_template(
             "mock_result.html",
             result=result,
-            answers=answers
+            answers=answers,
+            is_creator=is_creator
         )
 
     except Exception as e:
         import traceback
-        print("\n========== MOCK RESULT ERROR ==========")
         traceback.print_exc()
-        print("ERROR MESSAGE:", str(e))
-        print("=======================================\n")
+        print("MOCK RESULT ERROR:", str(e))
+
         flash("Result loading failed: " + str(e), "danger")
         return redirect(url_for("mock_test_dashboard"))
 
     finally:
         cursor.close()
         conn.close()
-@app.route("/mock-test/leaderboard/<share_token>")
+@app.route("/mock-test/<share_token>/leaderboard")
 def mock_test_leaderboard(share_token):
 
     if not mock_login_required():
         return redirect(url_for("login"))
 
+    user_id = get_mock_user_id()
     conn = get_db_connection()
     cursor = conn.cursor()
 
     try:
         cursor.execute("""
-            SELECT
-                id,
-                title,
-                question_count,
-                duration_minutes,
-                share_token
+            SELECT id, title, creator_user_id, share_token
             FROM mock_test_catalog
             WHERE share_token = %s
+            LIMIT 1
         """, (share_token,))
 
         test = cursor.fetchone()
@@ -2198,48 +2179,112 @@ def mock_test_leaderboard(share_token):
         if not test:
             abort(404)
 
+        if int(test["creator_user_id"]) != int(user_id):
+            abort(403)
+
         cursor.execute("""
             SELECT
-                ROW_NUMBER() OVER (
-                    ORDER BY
-                        a.percentage DESC,
-                        a.time_taken_seconds ASC,
-                        a.submitted_at ASC
-                ) AS rank_position,
+                p.user_id,
                 u.name,
-                a.correct_answers,
-                a.wrong_answers,
+                u.email,
+                p.status AS participant_status,
+                a.id AS attempt_id,
                 a.obtained_marks,
                 a.total_marks,
                 a.percentage,
-                a.time_taken_seconds,
-                a.submitted_at
-            FROM mock_attempts a
-            JOIN users u ON u.id = a.user_id
-            WHERE a.test_id = %s
-            AND a.status IN ('Submitted', 'Auto Submitted')
+                a.submitted_at,
+                a.status AS attempt_status
+            FROM mock_test_participants p
+            JOIN users u ON u.id = p.user_id
+            LEFT JOIN (
+                SELECT a1.*
+                FROM mock_attempts a1
+                INNER JOIN (
+                    SELECT
+                        user_id,
+                        MAX(id) AS latest_id
+                    FROM mock_attempts
+                    WHERE test_id = %s
+                    AND status IN ('Submitted', 'Auto Submitted')
+                    GROUP BY user_id
+                ) latest ON latest.latest_id = a1.id
+            ) a ON a.user_id = p.user_id
+            WHERE p.test_id = %s
             ORDER BY
+                CASE WHEN a.id IS NULL THEN 1 ELSE 0 END,
                 a.percentage DESC,
-                a.time_taken_seconds ASC,
+                a.obtained_marks DESC,
                 a.submitted_at ASC
-        """, (test["id"],))
+        """, (test["id"], test["id"]))
 
         leaderboard = cursor.fetchall()
 
+        current_rank = 0
+        previous_percentage = None
+        submitted_position = 0
+
+        for student in leaderboard:
+
+            if student["attempt_id"] is None:
+                student["rank"] = None
+                student["result_status"] = "Not Submitted"
+                continue
+
+            submitted_position += 1
+
+            percentage = float(student["percentage"] or 0)
+
+            if previous_percentage is None or percentage != previous_percentage:
+                current_rank = submitted_position
+
+            student["rank"] = current_rank
+            student["result_status"] = student["attempt_status"]
+
+            previous_percentage = percentage
+
+        total_participants = len(leaderboard)
+
+        submitted_count = sum(
+            1 for student in leaderboard
+            if student["attempt_id"] is not None
+        )
+
+        pending_count = total_participants - submitted_count
+
+        average_percentage = (
+            round(
+                sum(
+                    float(student["percentage"] or 0)
+                    for student in leaderboard
+                    if student["attempt_id"] is not None
+                ) / submitted_count,
+                2
+            )
+            if submitted_count else 0
+        )
+
         return render_template(
-            "mock_test/leaderboard.html",
+            "mock_test_leaderboard.html",
             test=test,
-            leaderboard=leaderboard
+            leaderboard=leaderboard,
+            total_participants=total_participants,
+            submitted_count=submitted_count,
+            pending_count=pending_count,
+            average_percentage=average_percentage
         )
 
     except Exception as e:
         import traceback
         traceback.print_exc()
-        return "Leaderboard Error: " + str(e), 500
+        print("MOCK LEADERBOARD ERROR:", str(e))
+
+        flash("Unable to load leaderboard.", "danger")
+        return redirect(url_for("mock_test_dashboard"))
 
     finally:
         cursor.close()
         conn.close()
+
 @app.route("/interview")
 @app.route("/interview_questions")
 def interview_questions():
@@ -4360,6 +4405,7 @@ def submit_coding():
 
 @app.route("/mock-test/submit/<int:attempt_id>", methods=["POST"])
 def submit_mock_test(attempt_id):
+
     if not mock_login_required():
         return redirect(url_for("login"))
 
@@ -4368,10 +4414,13 @@ def submit_mock_test(attempt_id):
     cursor = conn.cursor()
 
     try:
+        conn.begin()
+
         cursor.execute("""
             SELECT *
             FROM mock_attempts
-            WHERE id = %s AND user_id = %s
+            WHERE id = %s
+            AND user_id = %s
             LIMIT 1
             FOR UPDATE
         """, (attempt_id, user_id))
@@ -4379,9 +4428,11 @@ def submit_mock_test(attempt_id):
         attempt = cursor.fetchone()
 
         if not attempt:
+            conn.rollback()
             abort(404)
 
         if attempt["status"] != "In Progress":
+            conn.rollback()
             return redirect(url_for(
                 "mock_test_result",
                 attempt_id=attempt_id
@@ -4403,6 +4454,7 @@ def submit_mock_test(attempt_id):
         questions = cursor.fetchall()
 
         if not questions:
+            conn.rollback()
             flash("No questions found for this test.", "danger")
             return redirect(url_for("mock_test_dashboard"))
 
@@ -4415,6 +4467,7 @@ def submit_mock_test(attempt_id):
 
         for question in questions:
             question_id = question["id"]
+
             selected_option = request.form.get(
                 f"question_{question_id}"
             )
@@ -4472,7 +4525,7 @@ def submit_mock_test(attempt_id):
         total_questions = len(questions)
 
         percentage = (
-            (obtained_marks / total_marks) * 100
+            round((float(obtained_marks) / float(total_marks)) * 100, 2)
             if total_marks > 0 else 0
         )
 
@@ -4491,6 +4544,7 @@ def submit_mock_test(attempt_id):
                 status = 'Submitted'
             WHERE id = %s
             AND user_id = %s
+            AND status = 'In Progress'
         """, (
             attempted,
             correct,
@@ -4503,6 +4557,33 @@ def submit_mock_test(attempt_id):
             attempt_id,
             user_id
         ))
+
+        cursor.execute("""
+            SELECT id
+            FROM mock_test_participants
+            WHERE test_id = %s
+            AND user_id = %s
+            LIMIT 1
+        """, (attempt["test_id"], user_id))
+
+        participant = cursor.fetchone()
+
+        if participant:
+            cursor.execute("""
+                UPDATE mock_test_participants
+                SET status = 'Completed'
+                WHERE test_id = %s
+                AND user_id = %s
+            """, (attempt["test_id"], user_id))
+        else:
+            cursor.execute("""
+                INSERT INTO mock_test_participants (
+                    test_id,
+                    user_id,
+                    status
+                )
+                VALUES (%s, %s, 'Completed')
+            """, (attempt["test_id"], user_id))
 
         conn.commit()
 

@@ -1,0 +1,447 @@
+{% extends "layout.html" %}
+
+{% block title %}Leaderboard | {{ test.title }}{% endblock %}
+
+{% block content %}
+
+<style>
+    .leaderboard-wrapper {
+        max-width: 1350px;
+        margin: 30px auto;
+        padding: 0 20px 40px;
+    }
+
+    .leaderboard-header {
+        background: linear-gradient(120deg, #172554, #1d4ed8, #2563eb);
+        color: white;
+        border-radius: 22px;
+        padding: 35px;
+        margin-bottom: 25px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .leaderboard-header h2 {
+        font-size: 29px;
+        font-weight: 800;
+        margin-bottom: 8px;
+    }
+
+    .leaderboard-header p {
+        color: #dbeafe;
+        margin: 0;
+    }
+
+    .header-badge {
+        display: inline-block;
+        background: rgba(255,255,255,.15);
+        padding: 7px 14px;
+        border-radius: 30px;
+        font-size: 12px;
+        font-weight: 700;
+        margin-bottom: 15px;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        margin-bottom: 25px;
+    }
+
+    .stat-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 17px;
+        padding: 22px;
+        box-shadow: 0 5px 20px rgba(15,23,42,.04);
+    }
+
+    .stat-label {
+        color: #64748b;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .stat-value {
+        font-size: 27px;
+        font-weight: 800;
+        color: #0f172a;
+        margin-top: 8px;
+    }
+
+    .stat-icon {
+        font-size: 23px;
+        margin-bottom: 10px;
+    }
+
+    .leaderboard-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 5px 25px rgba(15,23,42,.04);
+    }
+
+    .table-heading {
+        padding: 23px 25px;
+        border-bottom: 1px solid #e5e7eb;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .table-heading h4 {
+        font-weight: 800;
+        margin: 0;
+        color: #0f172a;
+    }
+
+    .table-responsive {
+        overflow-x: auto;
+    }
+
+    .leaderboard-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 850px;
+    }
+
+    .leaderboard-table th {
+        background: #f8fafc;
+        color: #64748b;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: .6px;
+        padding: 16px;
+        text-align: left;
+        white-space: nowrap;
+    }
+
+    .leaderboard-table td {
+        padding: 17px 16px;
+        border-top: 1px solid #f1f5f9;
+        color: #334155;
+        font-size: 13px;
+        vertical-align: middle;
+    }
+
+    .leaderboard-table tbody tr:hover {
+        background: #f8fafc;
+    }
+
+    .student-name {
+        font-weight: 750;
+        color: #0f172a;
+        font-size: 14px;
+    }
+
+    .student-email {
+        font-size: 11px;
+        color: #94a3b8;
+        margin-top: 4px;
+    }
+
+    .rank-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 38px;
+        height: 38px;
+        border-radius: 12px;
+        background: #f1f5f9;
+        color: #334155;
+        font-weight: 800;
+    }
+
+    .rank-first {
+        background: #fef3c7;
+        color: #b45309;
+    }
+
+    .rank-second {
+        background: #e2e8f0;
+        color: #475569;
+    }
+
+    .rank-third {
+        background: #ffedd5;
+        color: #c2410c;
+    }
+
+    .score-value {
+        font-size: 15px;
+        font-weight: 800;
+        color: #0f172a;
+    }
+
+    .percentage-value {
+        font-weight: 800;
+        color: #2563eb;
+    }
+
+    .status-pill {
+        display: inline-block;
+        padding: 6px 11px;
+        border-radius: 30px;
+        font-size: 11px;
+        font-weight: 750;
+    }
+
+    .status-submitted {
+        background: #dcfce7;
+        color: #15803d;
+    }
+
+    .status-pending {
+        background: #fef3c7;
+        color: #a16207;
+    }
+
+    .view-result-btn {
+        display: inline-block;
+        background: #eff6ff;
+        color: #2563eb;
+        text-decoration: none;
+        padding: 8px 12px;
+        border-radius: 9px;
+        font-size: 11px;
+        font-weight: 750;
+    }
+
+    .view-result-btn:hover {
+        background: #2563eb;
+        color: white;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 65px 20px;
+    }
+
+    .empty-state-icon {
+        font-size: 48px;
+        margin-bottom: 15px;
+    }
+
+    .back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: white;
+        color: #1e293b;
+        border: 1px solid #e2e8f0;
+        border-radius: 11px;
+        padding: 11px 17px;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .back-btn:hover {
+        background: #f1f5f9;
+        color: #1d4ed8;
+    }
+
+    @media(max-width: 900px) {
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media(max-width: 550px) {
+        .leaderboard-header {
+            padding: 25px 20px;
+        }
+
+        .leaderboard-header h2 {
+            font-size: 23px;
+        }
+
+        .stats-grid {
+            gap: 10px;
+        }
+
+        .stat-card {
+            padding: 16px;
+        }
+
+        .stat-value {
+            font-size: 22px;
+        }
+
+        .table-heading {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+    }
+</style>
+
+<div class="leaderboard-wrapper">
+
+    <div style="margin-bottom:20px;">
+        <a href="{{ url_for('mock_test_dashboard') }}" class="back-btn">
+            ← Back to Dashboard
+        </a>
+    </div>
+
+    <div class="leaderboard-header">
+        <span class="header-badge">🏆 TEST LEADERBOARD</span>
+        <h2>{{ test.title }}</h2>
+        <p>Track participant performance, scores and rankings.</p>
+    </div>
+
+    <div class="stats-grid">
+
+        <div class="stat-card">
+            <div class="stat-icon">👥</div>
+            <div class="stat-label">Total Participants</div>
+            <div class="stat-value">{{ total_participants }}</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">✅</div>
+            <div class="stat-label">Submitted</div>
+            <div class="stat-value">{{ submitted_count }}</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">⏳</div>
+            <div class="stat-label">Pending</div>
+            <div class="stat-value">{{ pending_count }}</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">📊</div>
+            <div class="stat-label">Average Percentage</div>
+            <div class="stat-value">{{ average_percentage }}%</div>
+        </div>
+
+    </div>
+
+    <div class="leaderboard-card">
+
+        <div class="table-heading">
+            <div>
+                <h4>🏆 Student Rankings</h4>
+                <small style="color:#94a3b8;">
+                    Results are arranged according to submitted scores.
+                </small>
+            </div>
+
+            <span class="status-pill status-submitted">
+                {{ submitted_count }} Results Available
+            </span>
+        </div>
+
+        {% if leaderboard %}
+
+        <div class="table-responsive">
+
+            <table class="leaderboard-table">
+
+                <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Student</th>
+                    <th>Score</th>
+                    <th>Percentage</th>
+                    <th>Attempt Status</th>
+                    <th>Submitted At</th>
+                    <th>Result</th>
+                </tr>
+                </thead>
+
+                <tbody>
+
+                {% for student in leaderboard %}
+
+                <tr>
+
+                    <td>
+                        {% if student.rank == 1 %}
+                        <span class="rank-badge rank-first">🥇 1</span>
+                        {% elif student.rank == 2 %}
+                        <span class="rank-badge rank-second">🥈 2</span>
+                        {% elif student.rank == 3 %}
+                        <span class="rank-badge rank-third">🥉 3</span>
+                        {% elif student.rank %}
+                        <span class="rank-badge">{{ student.rank }}</span>
+                        {% else %}
+                        <span class="rank-badge">—</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="student-name">
+                            {{ student.name or 'Student' }}
+                        </div>
+                        <div class="student-email">
+                            {{ student.email or '' }}
+                        </div>
+                    </td>
+                    <td>
+                        {% if student.attempt_id %}
+                        <span class="score-value">
+                                    {{ student.obtained_marks }}/{{ student.total_marks }}
+                                </span>
+                        {% else %}
+                        —
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if student.attempt_id %}
+                        <span class="percentage-value">
+                                    {{ student.percentage }}%
+                                </span>
+                        {% else %}
+                        —
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if student.attempt_id %}
+                        <span class="status-pill status-submitted">
+                                    {{ student.result_status }}
+                                </span>
+                        {% else %}
+                        <span class="status-pill status-pending">
+                                    Not Submitted
+                                </span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if student.submitted_at %}
+                        {{ student.submitted_at.strftime('%d %b %Y, %I:%M %p') }}
+                        {% else %}
+                        —
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if student.attempt_id %}
+                        <a
+                                href="{{ url_for('mock_test_result', attempt_id=student.attempt_id) }}"
+                                class="view-result-btn"
+                        >
+                            View Result
+                        </a>
+                        {% else %}
+                        <span style="color:#94a3b8;">Unavailable</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-state-icon">📋</div>
+            <h4>No Participants Yet</h4>
+            <p style="color:#94a3b8;">
+                Participants will appear here when they join your test.
+            </p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
