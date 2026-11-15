@@ -39,6 +39,14 @@ from reportlab.platypus import (
 from reportlab.lib.styles import getSampleStyleSheet
 load_dotenv()
 app = Flask(__name__)
+from flask import send_from_directory
+
+@app.route('/google198ac2c96cde6243.html')
+def google_verification():
+    return send_from_directory(
+        app.root_path,
+        'google198ac2c96cde6243.html'
+    )
 SECRET_KEY = os.getenv("SECRET_KEY")
 if not SECRET_KEY:
     raise RuntimeError("SECRET_KEY not found.")
@@ -56,13 +64,6 @@ app.config.update(
     PERMANENT_SESSION_LIFETIME=timedelta(days=7),
     PREFERRED_URL_SCHEME="https"
 )
-bcrypt = Bcrypt(app)
-
-
-# =========================================================
-# DATABASE CONNECTION — LOCAL + RENDER
-# =========================================================
-
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DEFAULT_CA = os.path.join(BASE_DIR, "ca.pem")
 
