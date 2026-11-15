@@ -8,452 +8,844 @@
 
 <style>
     .users-page {
-        padding: 10px 0 30px;
-        color: #1e293b;
+        --users-primary: #4f46e5;
+        --users-primary-dark: #3730a3;
+        --users-text: #172033;
+        --users-muted: #718096;
+        --users-border: #e8edf5;
+        padding: 12px 0 35px;
+        color: var(--users-text);
     }
 
-    .users-header {
+    .users-hero {
+        position: relative;
+        overflow: hidden;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        flex-wrap: wrap;
-        gap: 15px;
+        gap: 20px;
+        padding: 30px;
         margin-bottom: 25px;
+        border-radius: 22px;
+        background: linear-gradient(120deg, #1e1b4b, #3730a3 55%, #6366f1);
+        color: #fff;
+        box-shadow: 0 12px 35px rgba(55, 48, 163, .19);
     }
 
-    .users-header h2 {
-        font-size: 27px;
-        font-weight: 750;
+    .users-hero::before,
+    .users-hero::after {
+        content: "";
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(255,255,255,.07);
+        pointer-events: none;
+    }
+
+    .users-hero::before {
+        width: 240px;
+        height: 240px;
+        right: 8%;
+        top: -150px;
+    }
+
+    .users-hero::after {
+        width: 180px;
+        height: 180px;
+        right: -40px;
+        bottom: -120px;
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 1;
+    }
+
+    .hero-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 7px 12px;
+        margin-bottom: 13px;
+        border: 1px solid rgba(255,255,255,.2);
+        border-radius: 30px;
+        background: rgba(255,255,255,.1);
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+
+    .users-hero h2 {
         margin: 0;
+        font-size: 29px;
+        font-weight: 800;
+        letter-spacing: -.7px;
+        color: #fff;
     }
 
-    .users-header p {
-        color: #64748b;
-        margin: 6px 0 0;
+    .users-hero p {
+        margin: 8px 0 0;
+        color: rgba(255,255,255,.76);
+        font-size: 13px;
     }
 
-    .stats-grid {
+    .hero-icon {
+        position: relative;
+        z-index: 1;
+        width: 75px;
+        height: 75px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid rgba(255,255,255,.22);
+        border-radius: 22px;
+        background: rgba(255,255,255,.13);
+        font-size: 31px;
+        color: white;
+        backdrop-filter: blur(10px);
+    }
+
+    .users-stats {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 18px;
         margin-bottom: 25px;
     }
 
-    .stat-card {
-        background: #fff;
-        border: 1px solid #e5e7eb;
-        border-radius: 16px;
-        padding: 22px;
+    .user-stat {
+        position: relative;
+        overflow: hidden;
         display: flex;
         align-items: center;
-        gap: 15px;
-        box-shadow: 0 4px 15px rgba(15,23,42,.04);
+        gap: 16px;
+        min-width: 0;
+        padding: 22px;
+        border: 1px solid var(--users-border);
+        border-radius: 18px;
+        background: #fff;
+        box-shadow: 0 5px 20px rgba(15,23,42,.035);
+        transition: transform .25s ease, box-shadow .25s ease;
+    }
+
+    .user-stat:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 28px rgba(15,23,42,.08);
     }
 
     .stat-icon {
-        width: 48px;
-        height: 48px;
-        border-radius: 14px;
+        width: 53px;
+        height: 53px;
+        flex-shrink: 0;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 20px;
-        background: #eef2ff;
-        color: #4f46e5;
-    }
-
-    .stat-card h3 {
-        font-size: 23px;
-        margin: 0;
-        font-weight: 750;
-    }
-
-    .stat-card p {
-        margin: 3px 0 0;
-        color: #64748b;
-        font-size: 13px;
-    }
-
-    .filter-box {
-        background: #fff;
-        border: 1px solid #e5e7eb;
         border-radius: 16px;
-        padding: 18px;
-        margin-bottom: 25px;
+        font-size: 21px;
+    }
+
+    .stat-total .stat-icon {
+        color: #4f46e5;
+        background: #eef2ff;
+    }
+
+    .stat-students .stat-icon {
+        color: #0891b2;
+        background: #ecfeff;
+    }
+
+    .stat-admins .stat-icon {
+        color: #d97706;
+        background: #fffbeb;
+    }
+
+    .stat-info {
+        min-width: 0;
+    }
+
+    .stat-info h3 {
+        margin: 0;
+        font-size: 27px;
+        line-height: 1.2;
+        font-weight: 800;
+        color: #172033;
+    }
+
+    .stat-info p {
+        margin: 5px 0 0;
+        color: var(--users-muted);
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .stat-decoration {
+        position: absolute;
+        right: -18px;
+        bottom: -27px;
+        font-size: 85px;
+        opacity: .035;
+    }
+
+    .users-toolbar {
+        padding: 20px;
+        margin-bottom: 22px;
+        border: 1px solid var(--users-border);
+        border-radius: 18px;
+        background: #fff;
+        box-shadow: 0 5px 20px rgba(15,23,42,.035);
+    }
+
+    .toolbar-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+
+    .toolbar-heading h3 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 750;
+        color: #1e293b;
+    }
+
+    .toolbar-heading span {
+        color: var(--users-muted);
+        font-size: 12px;
     }
 
     .filter-form {
-        display: flex;
-        gap: 12px;
-        flex-wrap: wrap;
+        display: grid;
+        grid-template-columns: minmax(200px, 1fr) 190px auto auto;
+        gap: 11px;
+    }
+
+    .search-wrapper {
+        position: relative;
+    }
+
+    .search-wrapper i {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #94a3b8;
+        font-size: 14px;
     }
 
     .filter-form input,
     .filter-form select {
-        flex: 1;
-        min-width: 180px;
-        padding: 12px 15px;
-        border: 1px solid #dbe1ea;
-        border-radius: 10px;
+        width: 100%;
+        height: 46px;
+        padding: 0 14px;
+        border: 1px solid #e2e8f0;
+        border-radius: 11px;
         outline: none;
-        font-size: 14px;
-        background: #fff;
+        background: #f8fafc;
+        color: #334155;
+        font-size: 13px;
+        transition: .2s ease;
+    }
+
+    .filter-form input {
+        padding-left: 42px;
     }
 
     .filter-form input:focus,
     .filter-form select:focus {
-        border-color: #6366f1;
+        border-color: #818cf8;
+        background: #fff;
+        box-shadow: 0 0 0 3px rgba(99,102,241,.1);
+    }
+
+    .filter-form select {
+        cursor: pointer;
+    }
+
+    .btn-search,
+    .btn-reset {
+        height: 46px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 0 19px;
+        border: none;
+        border-radius: 11px;
+        font-size: 13px;
+        font-weight: 700;
+        text-decoration: none;
+        cursor: pointer;
+        transition: .2s ease;
     }
 
     .btn-search {
-        border: none;
-        background: #4f46e5;
-        color: white;
-        border-radius: 10px;
-        padding: 12px 22px;
-        cursor: pointer;
-        font-weight: 600;
+        color: #fff;
+        background: linear-gradient(135deg, #4f46e5, #6366f1);
+        box-shadow: 0 4px 12px rgba(79,70,229,.2);
+    }
+
+    .btn-search:hover {
+        color: #fff;
+        transform: translateY(-2px);
+        box-shadow: 0 7px 17px rgba(79,70,229,.28);
     }
 
     .btn-reset {
-        display: flex;
-        align-items: center;
-        padding: 12px 18px;
-        border-radius: 10px;
-        background: #f1f5f9;
         color: #475569;
-        text-decoration: none;
-        font-weight: 600;
+        background: #f1f5f9;
+    }
+
+    .btn-reset:hover {
+        color: #1e293b;
+        background: #e2e8f0;
+    }
+
+    .users-section-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        margin: 28px 0 16px;
+    }
+
+    .users-section-heading h3 {
+        margin: 0;
+        font-size: 17px;
+        font-weight: 800;
+        color: #1e293b;
+    }
+
+    .users-section-heading p {
+        margin: 5px 0 0;
+        color: var(--users-muted);
+        font-size: 12px;
+    }
+
+    .result-count {
+        padding: 7px 12px;
+        border-radius: 30px;
+        color: #4338ca;
+        background: #eef2ff;
+        font-size: 11px;
+        font-weight: 750;
     }
 
     .users-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-        gap: 20px;
+        grid-template-columns: repeat(auto-fill, minmax(285px, 1fr));
+        gap: 18px;
     }
 
     .user-card {
+        position: relative;
+        min-width: 0;
+        padding: 20px;
+        overflow: hidden;
+        border: 1px solid var(--users-border);
+        border-radius: 19px;
         background: #fff;
-        border: 1px solid #e5e7eb;
-        border-radius: 18px;
-        padding: 21px;
-        cursor: pointer;
-        transition: .25s ease;
-        box-shadow: 0 4px 15px rgba(15,23,42,.04);
+        box-shadow: 0 5px 20px rgba(15,23,42,.035);
+        transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+        animation: userCardIn .4s ease both;
     }
 
     .user-card:hover {
         transform: translateY(-5px);
-        border-color: #818cf8;
-        box-shadow: 0 12px 28px rgba(79,70,229,.12);
+        border-color: #c7d2fe;
+        box-shadow: 0 15px 32px rgba(79,70,229,.1);
+    }
+
+    .user-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background: linear-gradient(90deg, #4f46e5, #818cf8, #06b6d4);
+        opacity: 0;
+        transition: opacity .2s ease;
+    }
+
+    .user-card:hover::before {
+        opacity: 1;
     }
 
     .user-card-header {
         display: flex;
         align-items: center;
         gap: 13px;
-        margin-bottom: 18px;
+        margin-bottom: 17px;
+        cursor: pointer;
+    }
+
+    .user-avatar,
+    .avatar-placeholder {
+        width: 57px;
+        height: 57px;
+        flex-shrink: 0;
+        border: 3px solid #eef2ff;
+        border-radius: 17px;
     }
 
     .user-avatar {
-        width: 58px;
-        height: 58px;
-        border-radius: 50%;
         object-fit: cover;
-        border: 3px solid #eef2ff;
-        flex-shrink: 0;
     }
 
     .avatar-placeholder {
-        width: 58px;
-        height: 58px;
-        flex-shrink: 0;
-        border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        background: #eef2ff;
+        background: linear-gradient(135deg, #eef2ff, #e0e7ff);
         color: #4f46e5;
-        font-size: 23px;
+        font-size: 22px;
     }
 
     .user-info {
         min-width: 0;
+        flex: 1;
     }
 
     .user-info h3 {
-        font-size: 16px;
-        font-weight: 700;
         margin: 0 0 5px;
         overflow-wrap: anywhere;
+        color: #172033;
+        font-size: 15px;
+        font-weight: 800;
     }
 
     .user-info p {
-        font-size: 12px;
-        color: #64748b;
         margin: 0;
         overflow-wrap: anywhere;
+        color: #8490a3;
+        font-size: 11px;
+    }
+
+    .profile-arrow {
+        width: 30px;
+        height: 30px;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 9px;
+        background: #f8fafc;
+        color: #94a3b8;
+        transition: .2s ease;
+    }
+
+    .user-card:hover .profile-arrow {
+        color: #4f46e5;
+        background: #eef2ff;
+        transform: translateX(3px);
     }
 
     .badges {
         display: flex;
-        gap: 7px;
         flex-wrap: wrap;
-        margin-bottom: 15px;
+        gap: 7px;
+        margin-bottom: 17px;
     }
 
     .badge {
-        display: inline-block;
-        padding: 5px 10px;
-        border-radius: 20px;
-        font-size: 11px;
-        font-weight: 700;
-        text-transform: capitalize;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 6px 10px;
+        border-radius: 30px;
+        font-size: 10px;
+        font-weight: 750;
     }
 
     .badge-admin {
-        background: #fef3c7;
         color: #92400e;
+        background: #fef3c7;
     }
 
     .badge-student {
-        background: #e0e7ff;
         color: #4338ca;
+        background: #eef2ff;
     }
 
     .badge-active {
+        color: #15803d;
         background: #dcfce7;
-        color: #166534;
     }
 
     .badge-inactive {
+        color: #b91c1c;
         background: #fee2e2;
-        color: #991b1b;
     }
 
     .user-metrics {
         display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
-        margin-bottom: 15px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 9px;
+        margin-bottom: 16px;
     }
 
     .metric {
-        background: #f8fafc;
-        border-radius: 11px;
         padding: 12px;
+        border: 1px solid #edf1f7;
+        border-radius: 12px;
+        background: #f8fafc;
+        transition: .2s ease;
+    }
+
+    .user-card:hover .metric {
+        background: #fafaff;
     }
 
     .metric small {
-        color: #64748b;
-        font-size: 11px;
         display: block;
-        margin-bottom: 5px;
+        margin-bottom: 7px;
+        color: #8792a5;
+        font-size: 10px;
+        font-weight: 650;
     }
 
     .metric strong {
-        font-size: 16px;
-        font-weight: 750;
+        display: block;
+        color: #243047;
+        font-size: 17px;
+        font-weight: 800;
+    }
+
+    .metric strong.score-value {
+        color: #059669;
     }
 
     .user-extra {
-        border-top: 1px solid #edf0f4;
-        padding-top: 13px;
+        padding: 12px 0;
+        border-top: 1px solid #edf1f7;
+        border-bottom: 1px solid #edf1f7;
     }
 
     .user-extra p {
-        font-size: 12px;
-        color: #64748b;
+        display: flex;
+        align-items: flex-start;
+        gap: 9px;
         margin: 8px 0;
         overflow-wrap: anywhere;
+        color: #7b8799;
+        font-size: 11px;
     }
 
     .user-extra i {
-        width: 18px;
+        width: 15px;
+        flex-shrink: 0;
+        margin-top: 2px;
         color: #6366f1;
     }
 
+    .user-extra strong {
+        color: #475569;
+        font-weight: 650;
+    }
+
     .card-footer {
-        border-top: 1px solid #edf0f4;
-        padding-top: 14px;
-        margin-top: 14px;
         display: flex;
         justify-content: space-between;
         align-items: center;
+        gap: 8px;
+        margin-top: 13px;
         color: #4f46e5;
-        font-size: 13px;
-        font-weight: 700;
+        font-size: 12px;
+        font-weight: 750;
+        cursor: pointer;
+    }
+
+    .card-footer i {
+        transition: transform .2s ease;
+    }
+
+    .user-card:hover .card-footer i {
+        transform: translateX(4px);
     }
 
     .card-actions {
-        display: flex;
-        gap: 8px;
-        margin-top: 14px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 9px;
+        margin-top: 15px;
     }
 
     .card-actions form {
-        flex: 1;
+        min-width: 0;
+        margin: 0;
     }
 
     .action-btn {
         width: 100%;
-        padding: 9px 10px;
-        border: none;
-        border-radius: 9px;
+        min-height: 38px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        padding: 8px 10px;
+        border: 1px solid transparent;
+        border-radius: 10px;
+        font-size: 11px;
+        font-weight: 750;
         cursor: pointer;
-        font-size: 12px;
-        font-weight: 600;
+        transition: .2s ease;
     }
 
     .role-btn {
-        background: #eef2ff;
         color: #4338ca;
+        background: #eef2ff;
+        border-color: #e0e7ff;
+    }
+
+    .role-btn:hover {
+        color: #fff;
+        background: #4f46e5;
     }
 
     .delete-btn {
-        background: #fee2e2;
         color: #b91c1c;
+        background: #fff1f2;
+        border-color: #ffe4e6;
+    }
+
+    .delete-btn:hover {
+        color: #fff;
+        background: #dc2626;
     }
 
     .empty-state {
-        background: white;
+        padding: 65px 20px;
         border: 1px dashed #cbd5e1;
-        border-radius: 16px;
+        border-radius: 19px;
+        background: #fff;
         text-align: center;
-        padding: 55px 20px;
-        color: #64748b;
     }
 
-    .empty-state i {
-        font-size: 38px;
-        margin-bottom: 12px;
+    .empty-icon {
+        width: 75px;
+        height: 75px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 17px;
+        border-radius: 23px;
+        background: #f1f5f9;
         color: #94a3b8;
+        font-size: 29px;
     }
 
-    @media(max-width: 700px) {
-        .stats-grid {
+    .empty-state h3 {
+        margin: 0 0 8px;
+        color: #334155;
+        font-size: 19px;
+        font-weight: 800;
+    }
+
+    .empty-state p {
+        margin: 0;
+        color: #94a3b8;
+        font-size: 13px;
+    }
+
+    @keyframes userCardIn {
+        from {
+            opacity: 0;
+            transform: translateY(12px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @media(max-width: 900px) {
+        .filter-form {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .users-stats {
+            gap: 12px;
+        }
+
+        .user-stat {
+            padding: 17px;
+        }
+    }
+
+    @media(max-width: 650px) {
+        .users-page {
+            padding-top: 5px;
+        }
+
+        .users-hero {
+            padding: 23px 19px;
+            border-radius: 17px;
+        }
+
+        .users-hero h2 {
+            font-size: 23px;
+        }
+
+        .hero-icon {
+            width: 55px;
+            height: 55px;
+            border-radius: 15px;
+            font-size: 23px;
+        }
+
+        .users-stats {
             grid-template-columns: 1fr;
         }
 
-        .users-header h2 {
-            font-size: 22px;
+        .user-stat {
+            padding: 17px;
         }
 
         .filter-form {
+            grid-template-columns: 1fr;
+        }
+
+        .toolbar-heading {
+            align-items: flex-start;
             flex-direction: column;
         }
 
-        .filter-form input,
-        .filter-form select {
-            width: 100%;
+        .users-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media(prefers-reduced-motion: reduce) {
+        .user-card,
+        .user-stat {
+            animation: none;
+            transition: none;
         }
     }
 </style>
 
-
 <div class="users-page">
 
-    <!-- Header -->
-    <div class="users-header">
-        <div>
-            <h2><i class="fas fa-users"></i> Manage Users</h2>
-            <p>Manage and monitor all registered users.</p>
+    <div class="users-hero">
+        <div class="hero-content">
+            <div class="hero-eyebrow">
+                <i class="fas fa-shield-alt"></i>
+                Administration Center
+            </div>
+            <h2>Manage Users</h2>
+            <p>Monitor user accounts, subscriptions, performance and access permissions.</p>
+        </div>
+        <div class="hero-icon">
+            <i class="fas fa-users-cog"></i>
         </div>
     </div>
 
+    <div class="users-stats">
 
-    <!-- Statistics -->
-    <div class="stats-grid">
-
-        <div class="stat-card">
+        <div class="user-stat stat-total">
             <div class="stat-icon">
                 <i class="fas fa-users"></i>
             </div>
-            <div>
+            <div class="stat-info">
                 <h3>{{ total_users|default(0) }}</h3>
-                <p>Total Users</p>
+                <p>Total Registered Users</p>
             </div>
+            <i class="fas fa-users stat-decoration"></i>
         </div>
 
-        <div class="stat-card">
+        <div class="user-stat stat-students">
             <div class="stat-icon">
                 <i class="fas fa-user-graduate"></i>
             </div>
-            <div>
+            <div class="stat-info">
                 <h3>{{ students_count|default(0) }}</h3>
-                <p>Students</p>
+                <p>Student Accounts</p>
             </div>
+            <i class="fas fa-graduation-cap stat-decoration"></i>
         </div>
 
-        <div class="stat-card">
+        <div class="user-stat stat-admins">
             <div class="stat-icon">
                 <i class="fas fa-user-shield"></i>
             </div>
-            <div>
+            <div class="stat-info">
                 <h3>{{ admins_count|default(0) }}</h3>
-                <p>Administrators</p>
+                <p>Administrator Accounts</p>
             </div>
+            <i class="fas fa-shield-alt stat-decoration"></i>
         </div>
 
     </div>
 
+    <div class="users-toolbar">
+        <div class="toolbar-heading">
+            <div>
+                <h3><i class="fas fa-sliders-h"></i> Search & Filters</h3>
+                <span>Find and manage registered accounts.</span>
+            </div>
+        </div>
 
-    <!-- Search and Filter -->
-    <div class="filter-box">
+        <form method="GET" action="{{ url_for('admin_users') }}" class="filter-form">
 
-        <form method="GET"
-              action="{{ url_for('admin_users') }}"
-              class="filter-form">
-
-            <input type="text"
-                   name="search"
-                   placeholder="Search by name or email..."
-                   value="{{ search|default('') }}">
+            <div class="search-wrapper">
+                <i class="fas fa-search"></i>
+                <input
+                        type="text"
+                        name="search"
+                        placeholder="Search by name or email..."
+                        value="{{ search|default('') }}"
+                >
+            </div>
 
             <select name="role">
                 <option value="">All Roles</option>
-
-                <option value="student"
-                        {% if role_filter == 'student' %}selected{% endif %}>
-                Students
-                </option>
-
-                <option value="admin"
-                        {% if role_filter == 'admin' %}selected{% endif %}>
-                Admins
-                </option>
+                <option value="student" {% if role_filter == 'student' %}selected{% endif %}>Students</option>
+                <option value="admin" {% if role_filter == 'admin' %}selected{% endif %}>Administrators</option>
             </select>
 
             <button type="submit" class="btn-search">
-                <i class="fas fa-search"></i> Search
+                <i class="fas fa-search"></i>
+                Search
             </button>
 
             <a href="{{ url_for('admin_users') }}" class="btn-reset">
+                <i class="fas fa-undo"></i>
                 Reset
             </a>
 
         </form>
-
     </div>
 
+    <div class="users-section-heading">
+        <div>
+            <h3><i class="fas fa-user-friends"></i> Registered Accounts</h3>
+            <p>Account details and individual performance overview.</p>
+        </div>
+        <span class="result-count">
+            {{ users|length if users else 0 }} Results
+        </span>
+    </div>
 
-    <!-- User Cards -->
     {% if users %}
 
     <div class="users-grid">
 
         {% for user in users %}
 
-        <div class="user-card"
-             onclick="window.location.href='{{ url_for('admin_user_profile', user_id=user.id) }}'">
+        <div class="user-card">
 
-            <!-- User Header -->
-            <div class="user-card-header">
+            <div
+                    class="user-card-header"
+                    onclick="window.location.href='{{ url_for('admin_user_profile', user_id=user.id) }}'"
+            >
 
                 {% if user.profile_pic %}
-                <img src="{{ user.profile_pic }}"
-                     class="user-avatar"
-                     alt="Profile">
+                <img
+                        src="{{ user.profile_pic }}"
+                        class="user-avatar"
+                        alt="Profile"
+                >
                 {% else %}
                 <div class="avatar-placeholder">
                     <i class="fas fa-user"></i>
@@ -461,119 +853,134 @@
                 {% endif %}
 
                 <div class="user-info">
-                    <h3>{{ user.name }}</h3>
-                    <p>{{ user.email }}</p>
+                    <h3>{{ user.name|default('Unknown User') }}</h3>
+                    <p>{{ user.email|default('No email available') }}</p>
+                </div>
+
+                <div class="profile-arrow">
+                    <i class="fas fa-arrow-right"></i>
                 </div>
 
             </div>
 
-
-            <!-- Badges -->
             <div class="badges">
 
                 {% if user.role == 'admin' %}
                 <span class="badge badge-admin">
-                        <i class="fas fa-shield-alt"></i> Admin
-                    </span>
+                    <i class="fas fa-shield-alt"></i>
+                    Administrator
+                </span>
                 {% else %}
                 <span class="badge badge-student">
-                        <i class="fas fa-user-graduate"></i> Student
-                    </span>
+                    <i class="fas fa-user-graduate"></i>
+                    Student
+                </span>
                 {% endif %}
 
                 {% if user.subscription_status|default('inactive') == 'active' %}
-                <span class="badge badge-active">Subscribed</span>
+                <span class="badge badge-active">
+                    <i class="fas fa-check-circle"></i>
+                    Subscribed
+                </span>
                 {% else %}
-                <span class="badge badge-inactive">No Subscription</span>
+                <span class="badge badge-inactive">
+                    <i class="fas fa-times-circle"></i>
+                    No Subscription
+                </span>
                 {% endif %}
 
             </div>
 
-
-            <!-- Statistics -->
             <div class="user-metrics">
 
                 <div class="metric">
-                    <small>Mock Attempts</small>
+                    <small><i class="fas fa-file-alt"></i> Mock Attempts</small>
                     <strong>{{ user.total_attempts|default(0) }}</strong>
                 </div>
 
                 <div class="metric">
-                    <small>Average Score</small>
+                    <small><i class="fas fa-chart-line"></i> Average Score</small>
                     <strong>{{ user.average_percentage|default(0) }}%</strong>
                 </div>
 
                 <div class="metric">
-                    <small>Best Score</small>
-                    <strong>{{ user.best_percentage|default(0) }}%</strong>
+                    <small><i class="fas fa-trophy"></i> Best Score</small>
+                    <strong class="score-value">{{ user.best_percentage|default(0) }}%</strong>
                 </div>
 
                 <div class="metric">
-                    <small>Active Time</small>
+                    <small><i class="fas fa-clock"></i> Active Time</small>
                     <strong>{{ user.activity_time_display|default('0h 0m') }}</strong>
                 </div>
 
             </div>
 
-
-            <!-- Additional Details -->
             <div class="user-extra">
 
                 <p>
                     <i class="fas fa-calendar-alt"></i>
-                    Joined:
-                    {{ user.created_at.strftime('%d %b %Y') if user.created_at and user.created_at.strftime is defined else user.created_at|default('N/A') }}
+                    <span>
+                        Joined:
+                        <strong>
+                            {{ user.created_at.strftime('%d %b %Y') if user.created_at and user.created_at.strftime is defined else user.created_at|default('N/A') }}
+                        </strong>
+                    </span>
                 </p>
 
                 <p>
-                    <i class="fas fa-clock"></i>
-                    Last Active:
-                    {% if user.last_active and user.last_active != 'Never' %}
-                    {{ user.last_active }}
-                    {% else %}
-                    Never
-                    {% endif %}
+                    <i class="fas fa-history"></i>
+                    <span>
+                        Last Active:
+                        <strong>
+                            {% if user.last_active and user.last_active != 'Never' %}
+                                {{ user.last_active }}
+                            {% else %}
+                                Never
+                            {% endif %}
+                        </strong>
+                    </span>
                 </p>
 
             </div>
 
-
-            <!-- View Profile -->
-            <div class="card-footer">
+            <div
+                    class="card-footer"
+                    onclick="window.location.href='{{ url_for('admin_user_profile', user_id=user.id) }}'"
+            >
                 <span>View Full Profile</span>
                 <i class="fas fa-arrow-right"></i>
             </div>
 
+            <div class="card-actions">
 
-            <!-- Actions: stop card click -->
-            <div class="card-actions"
-                 onclick="event.stopPropagation();">
+                <form
+                        method="POST"
+                        action="{{ url_for('admin_change_role') }}"
+                        onclick="event.stopPropagation();"
+                        onsubmit="return confirm('Are you sure you want to change this user role?');"
+                >
 
-                <form method="POST"
-                      action="{{ url_for('admin_change_role') }}"
-                      onsubmit="event.stopPropagation(); return confirm('Are you sure you want to change this user role?');">
-
-                    <input type="hidden"
-                           name="user_id"
-                           value="{{ user.id }}">
+                    <input type="hidden" name="user_id" value="{{ user.id }}">
 
                     <button type="submit" class="action-btn role-btn">
-                        <i class="fas fa-user-cog"></i> Change Role
+                        <i class="fas fa-user-cog"></i>
+                        Change Role
                     </button>
 
                 </form>
 
+                <form
+                        method="POST"
+                        action="{{ url_for('admin_delete_user') }}"
+                        onclick="event.stopPropagation();"
+                        onsubmit="return confirm('Are you sure you want to delete this user? This action cannot be undone.');"
+                >
 
-                <form method="POST"
-                      action="{{ url_for('admin_delete_user') }}"
-                      onsubmit="event.stopPropagation(); return confirm('Are you sure you want to delete this user?');">
-
-                    <input type="hidden"
-                           name="user_id"
-                           value="{{ user.id }}">
+                    <input type="hidden" name="user_id" value="{{ user.id }}">
 
                     <button type="submit" class="action-btn delete-btn">
-                        <i class="fas fa-trash"></i> Delete
+                        <i class="fas fa-trash-alt"></i>
+                        Delete
                     </button>
 
                 </form>
@@ -589,9 +996,11 @@
     {% else %}
 
     <div class="empty-state">
-        <i class="fas fa-user-slash"></i>
+        <div class="empty-icon">
+            <i class="fas fa-user-slash"></i>
+        </div>
         <h3>No Users Found</h3>
-        <p>No users match your search or filter.</p>
+        <p>No accounts match your current search or filter.</p>
     </div>
 
     {% endif %}
