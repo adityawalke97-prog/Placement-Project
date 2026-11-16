@@ -1,1805 +1,1125 @@
+
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>
-        {% block title %}
-        Placement Training Portal
-        {% endblock %}
-    </title>
-
-    <meta name="description"
-          content="Placement Training Portal for Mock Tests, Interview Preparation, Resume Builder and Courses">
-
-    <meta name="theme-color" content="#2563eb">
-
-    <link rel="icon"
-          href="{{ url_for('static', filename='images/favicon.ico') }}">
-
-    <!-- CSS -->
-
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='css/layout.css') }}">
-
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='css/dashboard.css') }}">
-
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='css/course.css') }}">
-
-    {% block css %}
-    {% endblock %}
-
-    <!-- GOOGLE FONTS -->
+    <meta name="theme-color" content="#101a35">
+    <title>{% block title %}Placement Training Portal{% endblock %}</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
-    <link rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossorigin>
-
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
-          rel="stylesheet">
-
-    <!-- FONT AWESOME -->
-
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/course.css') }}">
 
     <style>
+        :root {
+            --primary: #3157e8;
+            --primary-dark: #2443c5;
+            --accent: #7958ef;
+            --navy: #101a35;
+            --text: #19243c;
+            --muted: #7a859b;
+            --bg: #f5f7fc;
+            --white: #ffffff;
+            --border: #e8ecf5;
+            --shadow: 0 12px 35px rgba(26,43,88,.08);
+            --radius: 16px;
+        }
 
-        /* ================= NAVBAR ================= */
+        * {
+            box-sizing: border-box;
+        }
 
-        .navbar {
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: Inter, sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        button, input {
+            font: inherit;
+        }
+
+        .top-navbar {
             position: sticky;
             top: 0;
-            z-index: 9999;
-            min-height: 72px;
-            display: flex;
-            align-items: center;
-            padding: 10px 25px;
+            z-index: 1000;
+            width: 100%;
             background: rgba(255,255,255,.95);
             backdrop-filter: blur(18px);
-            -webkit-backdrop-filter: blur(18px);
-            border-bottom: 1px solid rgba(0,0,0,.08);
-            box-shadow: 0 8px 30px rgba(0,0,0,.06);
+            border-bottom: 1px solid var(--border);
+            box-shadow: 0 5px 25px rgba(20,35,75,.04);
         }
 
-        /* LOGO */
-
-        .nav-left {
-            flex-shrink: 0;
+        .nav-container {
+            max-width: 1500px;
+            min-height: 76px;
+            margin: auto;
+            padding: 0 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 25px;
         }
 
-        .logo {
+        .brand {
             display: flex;
             align-items: center;
             gap: 12px;
-            text-decoration: none;
-            color: inherit;
+            flex-shrink: 0;
         }
 
-        .logo > i {
-            width: 44px;
-            height: 44px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .brand-logo {
+            width: 43px;
+            height: 43px;
+            display: grid;
+            place-items: center;
             border-radius: 13px;
-            background: linear-gradient(135deg,#2563eb,#7c3aed);
             color: white;
-            font-size: 21px;
-            box-shadow: 0 8px 20px rgba(37,99,235,.25);
+            font-size: 19px;
+            background: linear-gradient(135deg, #3157e8, #7958ef);
+            box-shadow: 0 7px 18px rgba(49,87,232,.25);
         }
 
-        .logo h2 {
-            margin: 0;
-            font-size: 18px;
-            font-weight: 700;
+        .brand-name {
+            font-size: 17px;
+            font-weight: 800;
+            letter-spacing: -.5px;
+            color: var(--navy);
         }
 
-        .logo span {
-            display: block;
-            margin-top: 1px;
-            font-size: 10px;
-            opacity: .6;
+        .brand-name span {
+            color: var(--primary);
         }
-
-        /* SEARCH */
-
-        .nav-search {
-            position: relative;
-            width: min(250px,20vw);
-            margin-left: auto;
-            margin-right: 12px;
-        }
-
-        .nav-search i {
-            position: absolute;
-            left: 14px;
-            top: 50%;
-            transform: translateY(-50%);
-            opacity: .5;
-        }
-
-        .nav-search input {
-            width: 100%;
-            box-sizing: border-box;
-            padding: 11px 15px 11px 42px;
-            border: 1px solid rgba(0,0,0,.1);
-            border-radius: 14px;
-            outline: none;
-            background: rgba(255,255,255,.7);
-            font-family: inherit;
-            transition: .25s;
-        }
-
-        .nav-search input:focus {
-            border-color: #2563eb;
-            box-shadow: 0 0 0 4px rgba(37,99,235,.1);
-        }
-
-        /* NAV LINKS */
 
         .nav-links {
             display: flex;
             align-items: center;
-            gap: 3px;
-            margin: 0;
-            padding: 0;
-            list-style: none;
+            gap: 5px;
         }
 
-        .nav-links > li {
-            position: relative;
-        }
-
-        .nav-links > li > a {
-            display: flex;
-            align-items: center;
-            gap: 7px;
-            padding: 10px 9px;
-            border-radius: 11px;
-            text-decoration: none;
-            color: inherit;
-            font-size: 12px;
-            font-weight: 500;
-            white-space: nowrap;
-            transition: .2s;
-        }
-
-        .nav-links > li > a:hover,
-        .nav-links > li > a.active {
-            background: rgba(37,99,235,.09);
-            color: #2563eb;
-        }
-
-        .nav-links > li > a.active {
-            font-weight: 700;
-        }
-
-        /* NAV ACTIONS */
-
-        .nav-action {
-            position: relative;
-            width: 39px;
-            height: 39px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 3px;
-            border: 1px solid rgba(0,0,0,.07);
-            border-radius: 12px;
-            background: rgba(37,99,235,.06);
-            color: #334155;
-            font-size: 16px;
-            cursor: pointer;
-            transition: .25s;
-        }
-
-        .nav-action:hover {
-            background: #2563eb;
-            color: white;
-            transform: translateY(-2px);
-        }
-
-        /* NOTIFICATIONS */
-
-        .notification-dropdown {
-            position: relative;
-        }
-
-        .notification-badge {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            min-width: 17px;
-            height: 17px;
-            padding: 0 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 2px solid white;
-            border-radius: 20px;
-            background: #ef4444;
-            color: white;
-            font-size: 9px;
-            font-weight: 700;
-        }
-
-        .notification-panel {
-            position: absolute;
-            top: calc(100% + 13px);
-            right: 0;
-            width: 330px;
-            background: white;
-            border: 1px solid rgba(0,0,0,.08);
-            border-radius: 17px;
-            box-shadow: 0 18px 45px rgba(0,0,0,.15);
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(-8px);
-            transition: .2s;
-            z-index: 10001;
-        }
-
-        .notification-dropdown.open .notification-panel {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-        }
-
-        .notification-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 16px;
-            border-bottom: 1px solid #eef0f4;
-        }
-
-        .notification-header h3 {
-            margin: 0;
-            font-size: 15px;
-        }
-
-        .notification-header a {
-            font-size: 11px;
-            color: #2563eb;
-            text-decoration: none;
-        }
-
-        .notification-empty {
-            padding: 30px 18px;
-            text-align: center;
-            color: #64748b;
-        }
-
-        .notification-empty i {
-            display: block;
-            margin-bottom: 12px;
-            font-size: 30px;
-            color: #94a3b8;
-        }
-
-        .notification-empty h4 {
-            margin: 0 0 6px;
-            color: #334155;
-            font-size: 14px;
-        }
-
-        .notification-empty p {
-            margin: 0;
-            font-size: 12px;
-        }
-
-        /* PROFILE */
-
-        .profile-dropdown {
-            margin-left: 5px;
-        }
-
-        .profile-btn {
-            border: none;
+        .nav-link {
             display: flex;
             align-items: center;
             gap: 8px;
-            padding: 5px 9px 5px 5px;
-            border-radius: 30px;
-            background: rgba(37,99,235,.07);
-            cursor: pointer;
-            font-family: inherit;
+            padding: 11px 13px;
+            border-radius: 10px;
+            color: #64718a;
             font-size: 13px;
             font-weight: 600;
-            color: inherit;
-            transition: .25s;
+            transition: .2s ease;
         }
 
-        .profile-btn:hover {
-            background: rgba(37,99,235,.13);
-        }
-
-        .nav-profile-image,
-        .nav-profile-placeholder {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            flex-shrink: 0;
-        }
-
-        .nav-profile-image {
-            display: block;
-            object-fit: cover;
-            border: 2px solid white;
-            box-shadow: 0 3px 10px rgba(0,0,0,.15);
-        }
-
-        .nav-profile-placeholder {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg,#2563eb,#7c3aed);
-            color: white;
-            font-size: 15px;
-            font-weight: 700;
-        }
-
-        .nav-profile-name {
-            max-width: 100px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .profile-btn > .fa-chevron-down {
-            font-size: 10px;
-            opacity: .55;
-        }
-
-        /* DROPDOWN */
-
-        .dropdown-menu {
-            position: absolute;
-            top: calc(100% + 12px);
-            right: 0;
-            width: 245px;
-            padding: 9px;
-            background: rgba(255,255,255,.98);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(0,0,0,.08);
-            border-radius: 18px;
-            box-shadow: 0 20px 50px rgba(0,0,0,.15);
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(-8px);
-            transition: .2s;
-            z-index: 10000;
-        }
-
-        .profile-dropdown:hover .dropdown-menu,
-        .profile-dropdown:focus-within .dropdown-menu {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-        }
-
-        .dropdown-profile {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px;
-            margin-bottom: 7px;
-            border-radius: 13px;
-            background: rgba(37,99,235,.06);
-        }
-
-        .dropdown-profile img,
-        .dropdown-profile-placeholder {
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-            object-fit: cover;
-            flex-shrink: 0;
-        }
-
-        .dropdown-profile-placeholder {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg,#2563eb,#7c3aed);
-            color: white;
-            font-weight: 700;
-        }
-
-        .dropdown-user-info {
-            min-width: 0;
-        }
-
-        .dropdown-user-name {
-            font-weight: 700;
+        .nav-link i {
             font-size: 14px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
         }
 
-        .dropdown-user-email {
-            margin-top: 2px;
-            font-size: 11px;
-            opacity: .6;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
+        .nav-link:hover,
+        .nav-link.active {
+            background: #eff3ff;
+            color: var(--primary);
         }
 
-        .dropdown-menu a {
+        .nav-actions {
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 11px 12px;
+        }
+
+        .global-search {
+            position: relative;
+            width: 210px;
+        }
+
+        .global-search input {
+            width: 100%;
+            height: 41px;
+            padding: 0 14px 0 38px;
+            background: #f6f8fc;
+            border: 1px solid var(--border);
             border-radius: 11px;
-            color: inherit;
-            text-decoration: none;
-            font-size: 13px;
+            outline: none;
+            font-size: 12px;
             transition: .2s;
         }
 
-        .dropdown-menu a i {
-            width: 20px;
-            text-align: center;
-            opacity: .7;
+        .global-search input:focus {
+            background: white;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(49,87,232,.09);
         }
 
-        .dropdown-menu a:hover {
-            background: rgba(37,99,235,.08);
-            color: #2563eb;
+        .global-search i {
+            position: absolute;
+            top: 14px;
+            left: 14px;
+            color: #8994a9;
+            font-size: 13px;
         }
 
-        .dropdown-divider {
-            height: 1px;
-            margin: 7px 4px;
-            background: rgba(0,0,0,.08);
-        }
-
-        .dropdown-menu a.logout {
-            color: #dc2626;
-        }
-
-        .dropdown-menu a.logout:hover {
-            background: rgba(220,38,38,.08);
-        }
-
-        /* MOBILE MENU */
-
-        .menu-toggle {
-            display: none;
-            width: 42px;
-            height: 42px;
-            align-items: center;
-            justify-content: center;
+        .nav-icon-btn {
+            width: 41px;
+            height: 41px;
+            display: grid;
+            place-items: center;
+            position: relative;
+            background: white;
+            color: #65718a;
+            border: 1px solid var(--border);
             border-radius: 12px;
             cursor: pointer;
-            background: rgba(37,99,235,.08);
-            color: #2563eb;
-            border: none;
-            font-size: 17px;
+            transition: .2s;
         }
 
-        /* FLASH */
-
-        .flash {
-            transition: opacity .5s ease;
+        .nav-icon-btn:hover {
+            color: var(--primary);
+            background: #eff3ff;
         }
 
-        /* RESPONSIVE */
-
-        @media (max-width: 1250px) {
-
-            .navbar {
-                padding: 10px 15px;
-            }
-
-            .nav-links > li > a {
-                padding: 9px 6px;
-                font-size: 11px;
-            }
-
-            .nav-search {
-                width: 180px;
-            }
-
-            .nav-profile-name {
-                max-width: 70px;
-            }
+        .notification-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            min-width: 18px;
+            height: 18px;
+            padding: 0 4px;
+            display: grid;
+            place-items: center;
+            background: #ef4444;
+            color: white;
+            border: 2px solid white;
+            border-radius: 20px;
+            font-size: 9px;
+            font-weight: 800;
         }
 
-        @media (max-width: 1050px) {
-
-            .nav-search {
-                display: none;
-            }
-
-            .menu-toggle {
-                display: flex;
-                margin-left: auto;
-            }
-
-            .nav-links {
-                position: absolute;
-                top: 100%;
-                left: 15px;
-                right: 15px;
-                display: none;
-                flex-direction: column;
-                align-items: stretch;
-                gap: 4px;
-                padding: 12px;
-                background: rgba(255,255,255,.99);
-                backdrop-filter: blur(20px);
-                border: 1px solid rgba(0,0,0,.08);
-                border-radius: 18px;
-                box-shadow: 0 20px 50px rgba(0,0,0,.14);
-                max-height: 80vh;
-                overflow-y: auto;
-            }
-
-            .nav-links.active {
-                display: flex;
-            }
-
-            .nav-links > li > a {
-                padding: 12px 14px;
-                font-size: 13px;
-            }
-
-            .profile-dropdown {
-                margin-left: 0;
-            }
-
-            .profile-btn {
-                width: 100%;
-                justify-content: flex-start;
-                padding: 6px 10px;
-            }
-
-            .nav-profile-name {
-                max-width: none;
-            }
-
-            .dropdown-menu {
-                position: static;
-                width: auto;
-                margin-top: 7px;
-                display: none;
-                opacity: 1;
-                visibility: visible;
-                transform: none;
-                box-shadow: none;
-            }
-
-            .profile-dropdown:focus-within .dropdown-menu {
-                display: block;
-            }
-
-            .profile-dropdown:hover .dropdown-menu {
-                display: none;
-            }
-
-            .notification-dropdown {
-                width: 100%;
-            }
-
-            .nav-action {
-                width: 100%;
-                height: 44px;
-                justify-content: flex-start;
-                gap: 12px;
-                margin: 0;
-                padding: 12px 14px;
-                border: none;
-                background: transparent;
-            }
-
-            .notification-panel {
-                position: static;
-                display: none;
-                width: auto;
-                margin: 5px 0 10px;
-                opacity: 1;
-                visibility: visible;
-                transform: none;
-                box-shadow: none;
-            }
-
-            .notification-dropdown.open .notification-panel {
-                display: block;
-            }
-
+        .dropdown-wrapper {
+            position: relative;
         }
 
-           .notification-item {
-               display: flex;
-               align-items: flex-start;
-               gap: 11px;
-               padding: 13px 15px;
-               text-decoration: none;
-               color: #334155;
-               border-bottom: 1px solid #f1f5f9;
-               transition: .2s;
-           }
+        .dropdown-panel {
+            display: none;
+            position: absolute;
+            top: calc(100% + 13px);
+            right: 0;
+            width: 320px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 17px;
+            box-shadow: 0 18px 55px rgba(20,35,75,.15);
+            overflow: hidden;
+            z-index: 1100;
+        }
+
+        .dropdown-panel.show {
+            display: block;
+            animation: dropdownIn .2s ease;
+        }
+
+        @keyframes dropdownIn {
+            from { opacity: 0; transform: translateY(-7px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .dropdown-heading {
+            padding: 17px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .dropdown-heading strong {
+            font-size: 14px;
+        }
+
+        .dropdown-heading a {
+            color: var(--primary);
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .notification-list {
+            max-height: 350px;
+            overflow-y: auto;
+        }
+
+        .notification-item {
+            display: flex;
+            gap: 12px;
+            padding: 14px 16px;
+            border-bottom: 1px solid #f0f2f7;
+            transition: .2s;
+        }
 
         .notification-item:hover {
-            background: #eff6ff;
+            background: #f7f8ff;
         }
 
-        .notification-icon {
+        .notification-item.unread {
+            background: #f3f6ff;
+        }
+
+        .notification-symbol {
             width: 36px;
             height: 36px;
             flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 10px;
-            background: #dbeafe;
-            color: #2563eb;
+            display: grid;
+            place-items: center;
+            border-radius: 11px;
+            background: #edf1ff;
+            color: var(--primary);
         }
 
         .notification-content {
-            flex: 1;
             min-width: 0;
         }
 
-        .notification-content h4 {
-            margin: 0 0 4px;
+        .notification-content strong {
+            display: block;
             font-size: 12px;
-            color: #1e293b;
+            margin-bottom: 4px;
         }
 
         .notification-content p {
             margin: 0;
+            color: var(--muted);
             font-size: 11px;
-            color: #64748b;
             line-height: 1.5;
-            overflow-wrap: anywhere;
         }
 
         .notification-content small {
             display: block;
-            margin-top: 5px;
+            margin-top: 6px;
+            color: #9aa3b5;
             font-size: 10px;
-            color: #94a3b8;
         }
 
-        .notification-item.unread {
-            background: #f0f7ff;
-        }
-
-        .notification-dot {
-            width: 8px;
-            height: 8px;
-            margin-top: 5px;
-            border-radius: 50%;
-            background: #2563eb;
-            flex-shrink: 0;
-        }
-
-        .notification-footer {
-            padding: 12px;
+        .empty-notifications {
+            padding: 30px 15px;
             text-align: center;
+            color: var(--muted);
+            font-size: 12px;
         }
 
-        .notification-footer a {
-            color: #2563eb;
+        .profile-trigger {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            padding: 5px 9px 5px 5px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            cursor: pointer;
+        }
+
+        .profile-avatar {
+            width: 34px;
+            height: 34px;
+            display: grid;
+            place-items: center;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #3157e8, #7958ef);
+            color: white;
+            font-size: 13px;
+            font-weight: 800;
+            overflow: hidden;
+        }
+
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-info {
+            text-align: left;
+        }
+
+        .profile-info strong {
+            display: block;
+            max-width: 115px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            color: var(--text);
+            font-size: 11px;
+        }
+
+        .profile-info small {
+            display: block;
+            margin-top: 3px;
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        .profile-menu {
+            width: 220px;
+        }
+
+        .profile-menu a {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            padding: 12px 16px;
+            color: #56627a;
             font-size: 12px;
             font-weight: 600;
-            text-decoration: none;
         }
 
-        .notification-footer a:hover {
-            text-decoration: underline;
+        .profile-menu a:hover {
+            color: var(--primary);
+            background: #f3f6ff;
         }
 
-        @media (max-width: 600px) {
-
-            .navbar {
-                padding: 9px 12px;
-            }
-
-            .logo h2 {
-                font-size: 16px;
-            }
-
-            .logo span {
-                font-size: 8px;
-            }
-
-            .logo > i {
-                width: 40px;
-                height: 40px;
-            }
-
+        .profile-menu a i {
+            width: 17px;
         }
 
+        .profile-menu .logout-link {
+            color: #e34c59;
+            border-top: 1px solid var(--border);
+        }
+
+        .mobile-toggle {
+            display: none;
+            width: 42px;
+            height: 42px;
+            border: 1px solid var(--border);
+            border-radius: 11px;
+            background: white;
+            color: var(--navy);
+            cursor: pointer;
+        }
+
+        .mobile-nav {
+            display: none;
+            padding: 12px 20px 20px;
+            background: white;
+            border-top: 1px solid var(--border);
+        }
+
+        .mobile-nav.show {
+            display: block;
+        }
+
+        .mobile-nav a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 13px 14px;
+            border-radius: 10px;
+            color: #64718a;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .mobile-nav a:hover {
+            background: #eff3ff;
+            color: var(--primary);
+        }
+
+        .mobile-search {
+            margin-bottom: 10px;
+            position: relative;
+        }
+
+        .mobile-search input {
+            width: 100%;
+            height: 43px;
+            padding: 0 15px 0 40px;
+            border: 1px solid var(--border);
+            border-radius: 11px;
+            outline: none;
+        }
+
+        .mobile-search i {
+            position: absolute;
+            left: 14px;
+            top: 15px;
+            color: var(--muted);
+        }
+
+        .page-content {
+            min-height: calc(100vh - 200px);
+        }
+
+        .flash-container {
+            max-width: 1450px;
+            margin: 15px auto 0;
+            padding: 0 25px;
+        }
+
+        .flash-message {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+            padding: 14px 17px;
+            background: white;
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--primary);
+            border-radius: 11px;
+            box-shadow: 0 6px 20px rgba(20,35,75,.05);
+            font-size: 13px;
+        }
+
+        .flash-message.success {
+            border-left-color: #16a36a;
+        }
+
+        .flash-message.danger,
+        .flash-message.error {
+            border-left-color: #e34c59;
+        }
+
+        .flash-message.warning {
+            border-left-color: #e5a12b;
+        }
+
+        .flash-close {
+            border: 0;
+            background: transparent;
+            color: #8a94a8;
+            cursor: pointer;
+        }
+
+        .site-footer {
+            margin-top: 55px;
+            padding: 45px 30px 20px;
+            background: var(--navy);
+            color: #dce4fa;
+        }
+
+        .footer-inner {
+            max-width: 1450px;
+            margin: auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 35px;
+        }
+
+        .footer-brand {
+            color: white;
+            font-size: 18px;
+            font-weight: 800;
+            margin-bottom: 14px;
+        }
+
+        .footer-description {
+            max-width: 330px;
+            color: #9eaccb;
+            font-size: 12px;
+            line-height: 1.8;
+        }
+
+        .footer-column h4 {
+            margin: 0 0 16px;
+            color: white;
+            font-size: 13px;
+        }
+
+        .footer-column a {
+            display: block;
+            margin: 11px 0;
+            color: #aebbd6;
+            font-size: 12px;
+            transition: .2s;
+        }
+
+        .footer-column a:hover {
+            color: white;
+            transform: translateX(3px);
+        }
+
+        .footer-bottom {
+            max-width: 1450px;
+            margin: 35px auto 0;
+            padding-top: 18px;
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            border-top: 1px solid rgba(255,255,255,.1);
+            color: #8d9bb9;
+            font-size: 11px;
+        }
+
+        #scrollTop {
+            position: fixed;
+            right: 23px;
+            bottom: 23px;
+            width: 43px;
+            height: 43px;
+            display: none;
+            place-items: center;
+            z-index: 900;
+            border: 0;
+            border-radius: 13px;
+            background: linear-gradient(135deg, #3157e8, #7958ef);
+            color: white;
+            box-shadow: 0 8px 25px rgba(49,87,232,.3);
+            cursor: pointer;
+        }
+
+        #scrollTop.show {
+            display: grid;
+        }
+
+        #pageLoader {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            display: grid;
+            place-items: center;
+            background: rgba(255,255,255,.96);
+            transition: opacity .3s, visibility .3s;
+        }
+
+        #pageLoader.hide {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loader-logo {
+            width: 55px;
+            height: 55px;
+            display: grid;
+            place-items: center;
+            border-radius: 17px;
+            background: linear-gradient(135deg, #3157e8, #7958ef);
+            color: white;
+            font-size: 22px;
+            animation: loaderPulse 1s infinite alternate;
+        }
+
+        @keyframes loaderPulse {
+            from { transform: scale(.92); }
+            to { transform: scale(1.06); }
+        }
+
+        @media(max-width: 1250px) {
+            .nav-container {
+                padding: 0 20px;
+                gap: 12px;
+            }
+
+            .nav-link {
+                padding: 10px 9px;
+                font-size: 12px;
+            }
+
+            .global-search {
+                width: 165px;
+            }
+        }
+
+        @media(max-width: 1050px) {
+            .nav-links,
+            .nav-actions .global-search {
+                display: none;
+            }
+
+            .mobile-toggle {
+                display: grid;
+                place-items: center;
+            }
+
+            .nav-container {
+                min-height: 68px;
+            }
+
+            .nav-actions {
+                margin-left: auto;
+            }
+
+            .footer-inner {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media(max-width: 600px) {
+            .nav-container {
+                padding: 0 14px;
+                gap: 9px;
+            }
+
+            .brand-name {
+                font-size: 14px;
+            }
+
+            .brand-logo {
+                width: 39px;
+                height: 39px;
+            }
+
+            .profile-info,
+            .profile-trigger > i {
+                display: none;
+            }
+
+            .profile-trigger {
+                padding: 4px;
+                border: none;
+            }
+
+            .nav-actions {
+                gap: 7px;
+            }
+
+            .nav-icon-btn {
+                width: 38px;
+                height: 38px;
+            }
+
+            .dropdown-panel {
+                position: fixed;
+                top: 67px;
+                right: 10px;
+                width: min(340px, calc(100vw - 20px));
+            }
+
+            .flash-container {
+                padding: 0 12px;
+            }
+
+            .footer-inner {
+                grid-template-columns: 1fr 1fr;
+                gap: 25px 15px;
+            }
+
+            .site-footer {
+                padding: 35px 18px 18px;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+            }
+        }
     </style>
 
+    {% block css %}{% endblock %}
 </head>
-
 
 <body>
 
-
-<!-- PAGE LOADER -->
-
-<div class="page-loader" id="pageLoader">
-
-    <div class="loader-box">
-
-        <div class="loader-circle"></div>
-
-        <h2>Placement Portal</h2>
-
-        <p>Loading...</p>
-
+<div id="pageLoader">
+    <div class="loader-logo">
+        <i class="fa-solid fa-graduation-cap"></i>
     </div>
-
 </div>
 
+<header class="top-navbar">
+    <div class="nav-container">
 
-<!-- NAVBAR -->
-
-<nav class="navbar">
-
-    <!-- LOGO -->
-
-    <div class="nav-left">
-
-        <a href="/" class="logo">
-
-            <i class="fas fa-graduation-cap"></i>
-
-            <div>
-
-                <h2>Placement Portal</h2>
-
-                <span>Train • Practice • Get Placed</span>
-
+        <a href="/" class="brand">
+            <div class="brand-logo">
+                <i class="fa-solid fa-graduation-cap"></i>
             </div>
-
+            <div class="brand-name">Placement<span>Pro</span></div>
         </a>
-
-    </div>
-
-
-    <!-- SEARCH -->
-
-    {% if session.get("user_id") %}
-
-    <div class="nav-search">
-
-        <i class="fas fa-search"></i>
-
-        <input
-                type="text"
-                placeholder="Search Courses, Mock Tests..."
-                id="globalSearch"
-                autocomplete="off">
-
-    </div>
-
-    {% endif %}
-
-
-    <!-- MOBILE BUTTON -->
-
-    <button
-            class="menu-toggle"
-            id="menu-toggle"
-            type="button"
-            aria-label="Toggle navigation">
-
-        <i class="fas fa-bars"></i>
-
-    </button>
-
-
-    <!-- NAVIGATION -->
-
-    <ul class="nav-links" id="nav-links">
-
-        <!-- HOME -->
-
-        <li>
-            <a href="/"
-               class="{% if request.path == '/' %}active{% endif %}">
-                <i class="fas fa-house"></i>
-                Home
-            </a>
-        </li>
-
 
         {% if session.get("user_id") %}
 
-
-        <!-- DASHBOARD -->
-
-        <li>
-            <a href="/dashboard">
-                <i class="fas fa-chart-line"></i>
-                Dashboard
+        <nav class="nav-links">
+            <a href="/dashboard" class="nav-link" data-path="/dashboard">
+                <i class="fa-solid fa-house"></i> Dashboard
             </a>
-        </li>
-
-
-        <!-- COURSES -->
-
-        <li>
-            <a href="/courses">
-                <i class="fas fa-book-open"></i>
-                Courses
+            <a href="/courses" class="nav-link" data-path="/courses">
+                <i class="fa-solid fa-book-open"></i> Courses
             </a>
-        </li>
-
-
-        <!-- MOCK TEST -->
-
-        <li>
-            <a href="{{ url_for('mock_test_dashboard') }}">
-                <i class="fas fa-file-circle-question"></i>
-                Mock Test
+            <a href="{{ url_for('mock_test_dashboard') }}" class="nav-link">
+                <i class="fa-solid fa-file-circle-check"></i> Mock Tests
             </a>
-        </li>
-
-
-        <!-- INTERVIEW -->
-
-        <li>
-            <a href="/interview_questions">
-                <i class="fas fa-user-tie"></i>
-                Interview
+            <a href="/interview_questions" class="nav-link" data-path="/interview_questions">
+                <i class="fa-solid fa-comments"></i> Interview
             </a>
-        </li>
-
-
-        <!-- COMMUNICATION -->
-
-        <li>
-            <a href="/communication">
-                <i class="fas fa-comments"></i>
-                Communication
+            <a href="/communication" class="nav-link" data-path="/communication">
+                <i class="fa-solid fa-microphone"></i> Practice
             </a>
-        </li>
-
-
-        <!-- RESUME -->
-
-        <li>
-            <a href="/resume_builder">
-                <i class="fas fa-file-lines"></i>
-                Resume
+            <a href="/leaderboard" class="nav-link" data-path="/leaderboard">
+                <i class="fa-solid fa-trophy"></i> Leaderboard
             </a>
-        </li>
+        </nav>
 
+        <div class="nav-actions">
 
-        <!-- LEADERBOARD -->
+            <form class="global-search" id="globalSearchForm">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="search" id="globalSearchInput" placeholder="Search courses...">
+            </form>
 
-        <li>
-            <a href="/leaderboard">
-                <i class="fas fa-trophy"></i>
-                Leaderboard
-            </a>
-        </li>
+            <div class="dropdown-wrapper">
+                <button class="nav-icon-btn" id="notificationButton" type="button" aria-label="Notifications">
+                    <i class="fa-regular fa-bell"></i>
+                    <span class="notification-count" id="notificationCount" style="display:none">0</span>
+                </button>
 
-
-        <!-- FRIENDS -->
-
-        <li>
-            <a href="/friends">
-                <i class="fas fa-user-group"></i>
-                Friends
-            </a>
-        </li>
-
-
-        <!-- MESSAGES -->
-
-        <li>
-            <a href="/messages">
-                <i class="fas fa-message"></i>
-                Messages
-            </a>
-        </li>
-
-
-        <!-- NOTIFICATIONS -->
-
-        <li class="notification-dropdown" id="notificationDropdown">
-
-            <button
-                    type="button"
-                    class="nav-action notification-btn"
-                    id="notificationToggle"
-                    aria-label="Notifications"
-                    aria-expanded="false">
-
-                <i class="fas fa-bell"></i>
-
-                <span
-                        class="notification-badge"
-                        id="notificationBadge"
-                        style="display:none;">0</span>
-
-            </button>
-
-
-            <div class="notification-panel">
-
-                <div class="notification-header">
-
-                    <h3>
-                        <i class="fas fa-bell"></i>
-                        Notifications
-                    </h3>
-
-                    <a href="/notifications">
-                        View All
-                    </a>
-
-                </div>
-
-                <div id="navbarNotifications">
-
-                    <div class="notification-empty">
-                        <i class="fas fa-spinner fa-spin"></i>
-                        <p>Loading notifications...</p>
+                <div class="dropdown-panel" id="notificationDropdown">
+                    <div class="dropdown-heading">
+                        <strong>Notifications</strong>
+                        <a href="/notifications">View all</a>
                     </div>
-
+                    <div class="notification-list" id="notificationList">
+                        <div class="empty-notifications">Loading notifications...</div>
+                    </div>
                 </div>
-
             </div>
 
-
-        </li>
-
-
-        <!-- PROFILE -->
-
-        <li class="profile-dropdown">
-
-            <button
-                    type="button"
-                    class="profile-btn"
-                    aria-label="Open profile menu">
-
-                {% if session.get("picture") %}
-
-                <img
-                        src="{{ session.get('picture') }}"
-                        alt="{{ session.get('name', 'Student') }}"
-                        class="nav-profile-image"
-                        referrerpolicy="no-referrer">
-
-                {% else %}
-
-                <span class="nav-profile-placeholder">
-                    {{ session.get("name", "Student")[0]|upper }}
-                </span>
-
-                {% endif %}
-
-                <span class="nav-profile-name">
-                    {{ session.get("name", "Student") }}
-                </span>
-
-                <i class="fas fa-chevron-down"></i>
-
-            </button>
-
-
-            <!-- PROFILE DROPDOWN -->
-
-            <div class="dropdown-menu">
-
-                <div class="dropdown-profile">
-
-                    {% if session.get("picture") %}
-
-                    <img
-                            src="{{ session.get('picture') }}"
-                            alt="{{ session.get('name', 'Student') }}"
-                            referrerpolicy="no-referrer">
-
-                    {% else %}
-
-                    <div class="dropdown-profile-placeholder">
-                        {{ session.get("name", "Student")[0]|upper }}
+            <div class="dropdown-wrapper">
+                <button class="profile-trigger" id="profileButton" type="button">
+                    <div class="profile-avatar">
+                        {% if session.get("picture") %}
+                            <img src="{{ session.get('picture') }}" alt="Profile">
+                        {% else %}
+                            {{ session.get("name", "U")[:1]|upper }}
+                        {% endif %}
                     </div>
-
-                    {% endif %}
-
-                    <div class="dropdown-user-info">
-
-                        <div class="dropdown-user-name">
-                            {{ session.get("name", "Student") }}
-                        </div>
-
-                        <div class="dropdown-user-email">
-                            {{ session.get("email", "No email available") }}
-                        </div>
-
+                    <div class="profile-info">
+                        <strong>{{ session.get("name", "Student") }}</strong>
+                        <small>Student Account</small>
                     </div>
+                    <i class="fa-solid fa-chevron-down" style="font-size:10px;color:#8792a8"></i>
+                </button>
 
+                <div class="dropdown-panel profile-menu" id="profileDropdown">
+                    <div class="dropdown-heading">
+                        <strong>My Account</strong>
+                    </div>
+                    <a href="/profile"><i class="fa-regular fa-user"></i> My Profile</a>
+                    <a href="/resume_builder"><i class="fa-regular fa-file-lines"></i> Resume Builder</a>
+                    <a href="/friends"><i class="fa-solid fa-user-group"></i> Friends</a>
+                    <a href="/messages"><i class="fa-regular fa-message"></i> Messages</a>
+                    <a href="/settings"><i class="fa-solid fa-gear"></i> Settings</a>
+                    <a href="/logout" class="logout-link"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
                 </div>
-
-
-                <div class="dropdown-divider"></div>
-
-
-                <a href="/dashboard">
-                    <i class="fas fa-chart-line"></i>
-                    Dashboard
-                </a>
-
-                <a href="/profile">
-                    <i class="fas fa-user"></i>
-                    My Profile
-                </a>
-
-                <a href="/settings">
-                    <i class="fas fa-gear"></i>
-                    Settings
-                </a>
-
-                <a href="/friends">
-                    <i class="fas fa-user-group"></i>
-                    My Friends
-                </a>
-
-                <a href="/messages">
-                    <i class="fas fa-message"></i>
-                    Messages
-                </a>
-
-
-                <div class="dropdown-divider"></div>
-
-
-                <a href="/logout" class="logout">
-                    <i class="fas fa-right-from-bracket"></i>
-                    Logout
-                </a>
-
             </div>
 
-        </li>
+        </div>
 
+        <button class="mobile-toggle" id="mobileToggle" type="button" aria-label="Open menu">
+            <i class="fa-solid fa-bars"></i>
+        </button>
 
         {% else %}
 
-
-        <!-- LOGIN -->
-
-        <li>
-            <a href="/login">
-                <i class="fas fa-right-to-bracket"></i>
-                Login
-            </a>
-        </li>
-
-
-        <!-- SIGNUP -->
-
-        <li>
-            <a href="/signup" class="signup-btn">
-                <i class="fas fa-user-plus"></i>
-                Sign Up
-            </a>
-        </li>
-
+        <div class="nav-actions">
+            <a href="/login" class="nav-link">Login</a>
+            <a href="/signup" class="nav-link" style="background:linear-gradient(135deg,#3157e8,#7958ef);color:white;padding:11px 19px">Get Started</a>
+        </div>
 
         {% endif %}
+    </div>
 
-    </ul>
+    {% if session.get("user_id") %}
+    <div class="mobile-nav" id="mobileNav">
 
-</nav>
+        <form class="mobile-search" id="mobileSearchForm">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="search" id="mobileSearchInput" placeholder="Search courses...">
+        </form>
 
-
-<!-- HERO -->
-
-<header class="hero">
+        <a href="/dashboard"><i class="fa-solid fa-house"></i> Dashboard</a>
+        <a href="/courses"><i class="fa-solid fa-book-open"></i> Courses</a>
+        <a href="{{ url_for('mock_test_dashboard') }}"><i class="fa-solid fa-file-circle-check"></i> Mock Tests</a>
+        <a href="/interview_questions"><i class="fa-solid fa-comments"></i> Interview Preparation</a>
+        <a href="/communication"><i class="fa-solid fa-microphone"></i> Communication Practice</a>
+        <a href="/resume_builder"><i class="fa-regular fa-file-lines"></i> Resume Builder</a>
+        <a href="/leaderboard"><i class="fa-solid fa-trophy"></i> Leaderboard</a>
+        <a href="/friends"><i class="fa-solid fa-user-group"></i> Friends</a>
+        <a href="/messages"><i class="fa-regular fa-message"></i> Messages</a>
+        <a href="/notifications"><i class="fa-regular fa-bell"></i> Notifications</a>
+        <a href="/profile"><i class="fa-regular fa-user"></i> My Profile</a>
+        <a href="/settings"><i class="fa-solid fa-gear"></i> Settings</a>
+        <a href="/logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+    </div>
+    {% endif %}
 </header>
 
-
-<!-- MAIN CONTENT -->
-
-<main class="main-container">
-
-
-    <!-- FLASH MESSAGES -->
-
-    {% with messages = get_flashed_messages(with_categories=true) %}
-
-    {% if messages %}
-
-    <div class="flash-wrapper">
-
-        {% for category, message in messages %}
-
-        <div class="flash flash-{{ category }}">
-
-            <span>
-
-                {% if category == "success" %}
-                    <i class="fas fa-circle-check"></i>
-
-                {% elif category == "danger" %}
-                    <i class="fas fa-circle-xmark"></i>
-
-                {% elif category == "warning" %}
-                    <i class="fas fa-triangle-exclamation"></i>
-
-                {% else %}
-                    <i class="fas fa-circle-info"></i>
-
-                {% endif %}
-
-            </span>
-
-            <p>{{ message }}</p>
-
-            <button
-                    class="flash-close"
-                    type="button"
-                    aria-label="Close">
-
-                <i class="fas fa-times"></i>
-
-            </button>
-
-        </div>
-
-        {% endfor %}
-
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div class="flash-container">
+    {% for category, message in messages %}
+    <div class="flash-message {{ category }}">
+        <span>{{ message }}</span>
+        <button class="flash-close" type="button" aria-label="Close">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
     </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endwith %}
 
-    {% endif %}
-
-    {% endwith %}
-
-
-    <!-- PAGE CONTENT -->
-
-    <div class="container">
-
-        {% block content %}
-        {% endblock %}
-
-    </div>
-
+<main class="page-content">
+    {% block content %}{% endblock %}
 </main>
 
+<footer class="site-footer">
+    <div class="footer-inner">
 
-<!-- FOOTER -->
-
-<footer class="footer">
-
-    <div class="footer-container">
-
-
-        <!-- ABOUT -->
-
-        <div class="footer-column">
-
-            <div class="footer-logo">
-
-                <i class="fas fa-graduation-cap"></i>
-
-                <h2>Placement Portal</h2>
-
+        <div>
+            <div class="footer-brand">
+                <i class="fa-solid fa-graduation-cap"></i> PlacementPro
             </div>
-
-            <p>
-                A complete Placement Preparation Portal built with Flask
-                & MySQL. Practice Mock Tests, prepare for Interviews,
-                build Resume, improve Communication Skills and track
-                your learning journey.
+            <p class="footer-description">
+                Your complete placement preparation platform. Learn new skills,
+                practice interviews, improve communication and get ready for your dream career.
             </p>
-
-            <div class="social-icons">
-
-                <a href="#"
-                   title="GitHub">
-                    <i class="fab fa-github"></i>
-                </a>
-
-                <a href="#"
-                   title="LinkedIn">
-                    <i class="fab fa-linkedin"></i>
-                </a>
-
-                <a href="#"
-                   title="Instagram">
-                    <i class="fab fa-instagram"></i>
-                </a>
-
-                <a href="#"
-                   title="YouTube">
-                    <i class="fab fa-youtube"></i>
-                </a>
-
-            </div>
-
         </div>
 
-
-        <!-- QUICK LINKS -->
-
         <div class="footer-column">
-
-            <h3>Quick Links</h3>
-
-            <ul>
-
-                <li><a href="/dashboard">Home</a></li>
-
-                <li><a href="/courses">Courses</a></li>
-
-                <li><a href="/mock_test">Mock Test</a></li>
-
-                <li><a href="/resume_builder">Resume Builder</a></li>
-
-                <li><a href="/leaderboard">Leaderboard</a></li>
-
-                <li><a href="/friends">Friends</a></li>
-
-                <li><a href="/messages">Messages</a></li>
-
-            </ul>
-
+            <h4>Platform</h4>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/courses">Courses</a>
+            <a href="/leaderboard">Leaderboard</a>
+            <a href="/resume_builder">Resume Builder</a>
         </div>
 
-
-        <!-- RESOURCES -->
-
         <div class="footer-column">
-
-            <h3>Resources</h3>
-
-            <ul>
-
-                <li>
-                    <a href="/communication">
-                        Communication
-                    </a>
-                </li>
-
-                <li>
-                    <a href="/interview_questions">
-                        Interview Questions
-                    </a>
-                </li>
-
-                <li>
-                    <a href="/contact">
-                        Contact
-                    </a>
-                </li>
-
-                <li>
-                    <a href="/about">
-                        About
-                    </a>
-                </li>
-
-                <li>
-                    <a href="/privacy">
-                        Privacy Policy
-                    </a>
-                </li>
-
-                <li>
-                    <a href="/terms">
-                        Terms & Conditions
-                    </a>
-                </li>
-
-            </ul>
-
+            <h4>Preparation</h4>
+            <a href="{{ url_for('mock_test_dashboard') }}">Mock Tests</a>
+            <a href="/interview_questions">Interview Questions</a>
+            <a href="/communication">Communication</a>
+            <a href="/notifications">Notifications</a>
         </div>
 
-
-        <!-- CONTACT -->
-
         <div class="footer-column">
-
-            <h3>Contact</h3>
-
-            <p>
-                <i class="fas fa-envelope"></i>
-                adityawakle97@gmail.com
-            </p>
-
-            <p>
-                <i class="fas fa-phone"></i>
-                +91 8446170818
-            </p>
-
-            <p>
-                <i class="fas fa-location-dot"></i>
-                Pune, Maharashtra
-            </p>
-
+            <h4>Account</h4>
+            <a href="/profile">My Profile</a>
+            <a href="/settings">Settings</a>
+            <a href="/friends">Friends</a>
+            <a href="/messages">Messages</a>
         </div>
 
     </div>
-
 
     <div class="footer-bottom">
-
-        <p>
-            © 2026 Placement Training Portal |
-            Built with ❤️ using Flask, MySQL, HTML, CSS & JavaScript
-        </p>
-
+        <span>© {{ now().year if now is defined else 2026 }} PlacementPro. All rights reserved.</span>
+        <span>Built for your career success <i class="fa-solid fa-heart" style="color:#ef6475"></i></span>
     </div>
-
 </footer>
 
-
-<!-- SCROLL TOP -->
-
-<button
-        id="scrollTop"
-        class="scroll-top"
-        type="button"
-        aria-label="Scroll to top">
-
-    <i class="fas fa-arrow-up"></i>
-
+<button id="scrollTop" type="button" aria-label="Scroll to top">
+    <i class="fa-solid fa-arrow-up"></i>
 </button>
 
-
-<!-- PAGE JAVASCRIPT BLOCK -->
-
-{% block js %}
-{% endblock %}
-
-
-<!-- GLOBAL JAVASCRIPT -->
-
 <script>
+document.addEventListener("DOMContentLoaded", function () {
+    const loader = document.getElementById("pageLoader");
 
-
-    /* ================= MOBILE MENU ================= */
-
-    const menuToggle =
-        document.getElementById("menu-toggle");
-
-    const navLinks =
-        document.getElementById("nav-links");
-
-
-    if (menuToggle && navLinks) {
-
-        menuToggle.addEventListener("click", function () {
-
-            navLinks.classList.toggle("active");
-
-            const icon =
-                menuToggle.querySelector("i");
-
-            if (navLinks.classList.contains("active")) {
-
-                icon.classList.remove("fa-bars");
-                icon.classList.add("fa-xmark");
-
-            } else {
-
-                icon.classList.remove("fa-xmark");
-                icon.classList.add("fa-bars");
-
-            }
-
-        });
-
+    if (loader) {
+        loader.classList.add("hide");
+        setTimeout(() => loader.remove(), 400);
     }
 
+    const mobileToggle = document.getElementById("mobileToggle");
+    const mobileNav = document.getElementById("mobileNav");
 
-    /* ================= CLOSE MOBILE MENU ================= */
-
-    document.querySelectorAll("#nav-links a").forEach(function (link) {
-
-        link.addEventListener("click", function () {
-
-            if (window.innerWidth <= 1050 && navLinks) {
-
-                navLinks.classList.remove("active");
-
-                const icon =
-                    menuToggle.querySelector("i");
-
-                if (icon) {
-
-                    icon.classList.remove("fa-xmark");
-                    icon.classList.add("fa-bars");
-
-                }
-
-            }
-
+    if (mobileToggle && mobileNav) {
+        mobileToggle.addEventListener("click", function () {
+            mobileNav.classList.toggle("show");
+            const icon = mobileToggle.querySelector("i");
+            icon.classList.toggle("fa-bars");
+            icon.classList.toggle("fa-xmark");
         });
-
-    });
-
-
-    /* ================= NOTIFICATION DROPDOWN ================= */
-
-    const notificationToggle =
-        document.getElementById("notificationToggle");
-
-    const notificationDropdown =
-        document.getElementById("notificationDropdown");
-
-
-    if (notificationToggle && notificationDropdown) {
-
-        notificationToggle.addEventListener("click", function (event) {
-
-            event.stopPropagation();
-
-            const isOpen =
-                notificationDropdown.classList.toggle("open");
-
-            notificationToggle.setAttribute(
-                "aria-expanded",
-                isOpen ? "true" : "false"
-            );
-
-        });
-
-
-        document.addEventListener("click", function (event) {
-
-            if (!notificationDropdown.contains(event.target)) {
-
-                notificationDropdown.classList.remove("open");
-
-                notificationToggle.setAttribute(
-                    "aria-expanded",
-                    "false"
-                );
-
-            }
-
-        });
-
     }
 
+    const notificationButton = document.getElementById("notificationButton");
+    const notificationDropdown = document.getElementById("notificationDropdown");
+    const profileButton = document.getElementById("profileButton");
+    const profileDropdown = document.getElementById("profileDropdown");
 
-    /* ================= ACTIVE NAVIGATION ================= */
+    function closeDropdowns() {
+        notificationDropdown?.classList.remove("show");
+        profileDropdown?.classList.remove("show");
+    }
 
-    document.querySelectorAll("#nav-links > li > a").forEach(function (link) {
+    notificationButton?.addEventListener("click", function (event) {
+        event.stopPropagation();
+        const shouldOpen = !notificationDropdown.classList.contains("show");
+        closeDropdowns();
+        if (shouldOpen) notificationDropdown.classList.add("show");
+    });
 
-        const linkPath =
-            new URL(link.href, window.location.origin).pathname;
+    profileButton?.addEventListener("click", function (event) {
+        event.stopPropagation();
+        const shouldOpen = !profileDropdown.classList.contains("show");
+        closeDropdowns();
+        if (shouldOpen) profileDropdown.classList.add("show");
+    });
 
-        if (
-            linkPath !== "/" &&
-            window.location.pathname === linkPath
-        ) {
-
-            link.classList.add("active");
-
+    document.addEventListener("click", function (event) {
+        if (!event.target.closest(".dropdown-wrapper")) {
+            closeDropdowns();
         }
-
     });
 
-
-    /* ================= FLASH CLOSE ================= */
-
-    document.querySelectorAll(".flash-close").forEach(function (btn) {
-
-        btn.addEventListener("click", function () {
-
-            const flash =
-                this.closest(".flash");
-
-            if (flash) {
-
-                flash.style.opacity = "0";
-
-                setTimeout(function () {
-
-                    flash.remove();
-
-                }, 300);
-
-            }
-
+    document.querySelectorAll(".flash-close").forEach(button => {
+        button.addEventListener("click", function () {
+            button.closest(".flash-message")?.remove();
         });
-
     });
 
-
-    /* ================= AUTO HIDE FLASH ================= */
-
-    setTimeout(function () {
-
-        document.querySelectorAll(".flash").forEach(function (item) {
-
-            item.style.opacity = "0";
-
-            setTimeout(function () {
-
-                item.remove();
-
-            }, 500);
-
-        });
-
-    }, 4000);
-
-
-    /* ================= PAGE LOADER ================= */
-
-    const loader =
-        document.getElementById("pageLoader");
-
-
-    window.addEventListener("load", function () {
-
-        if (loader) {
-
-            loader.style.opacity = "0";
-
-            setTimeout(function () {
-
-                loader.style.display = "none";
-
-            }, 500);
-
-        }
-
+    document.querySelectorAll(".flash-message").forEach(message => {
+        setTimeout(() => {
+            message.style.opacity = "0";
+            message.style.transform = "translateY(-8px)";
+            setTimeout(() => message.remove(), 300);
+        }, 5000);
     });
 
-
-    /* ================= SCROLL TOP ================= */
-
-    const topBtn =
-        document.getElementById("scrollTop");
-
+    const scrollTop = document.getElementById("scrollTop");
 
     window.addEventListener("scroll", function () {
+        scrollTop?.classList.toggle("show", window.scrollY > 350);
+    });
 
-        if (!topBtn) return;
+    scrollTop?.addEventListener("click", function () {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    });
 
-        if (window.scrollY > 300) {
+    document.querySelectorAll(".nav-link[data-path]").forEach(link => {
+        const path = window.location.pathname;
+        const target = link.dataset.path;
 
-            topBtn.classList.add("show");
+        if (path === target || (target !== "/dashboard" && path.startsWith(target + "/"))) {
+            link.classList.add("active");
+        }
+    });
 
-        } else {
+    function setupSearch(formId, inputId) {
+        const form = document.getElementById(formId);
+        const input = document.getElementById(inputId);
 
-            topBtn.classList.remove("show");
+        form?.addEventListener("submit", function (event) {
+            event.preventDefault();
+            const query = input?.value.trim();
 
+            if (query) {
+                window.location.href = "/courses?search=" + encodeURIComponent(query);
+            }
+        });
+    }
+
+    setupSearch("globalSearchForm", "globalSearchInput");
+    setupSearch("mobileSearchForm", "mobileSearchInput");
+
+    loadNotifications();
+    setInterval(loadNotifications, 30000);
+});
+
+async function loadNotifications() {
+    const list = document.getElementById("notificationList");
+    const count = document.getElementById("notificationCount");
+
+    if (!list || !count) return;
+
+    try {
+        const response = await fetch("/api/notifications/summary", {
+            method: "GET",
+            headers: { "Accept": "application/json" }
+        });
+
+        if (!response.ok) return;
+
+        const data = await response.json();
+
+        if (!data.success) return;
+
+        const unread = Number(data.unread_count || 0);
+
+        count.textContent = unread > 99 ? "99+" : unread;
+        count.style.display = unread > 0 ? "grid" : "none";
+
+        const notifications = Array.isArray(data.notifications)
+            ? data.notifications
+            : [];
+
+        if (!notifications.length) {
+            list.innerHTML = '<div class="empty-notifications"><i class="fa-regular fa-bell" style="font-size:25px;margin-bottom:10px"></i><br>No notifications yet</div>';
+            return;
         }
 
-    });
+        const icons = {
+            message: "fa-message",
+            friend_request: "fa-user-plus",
+            friend_accepted: "fa-user-check",
+            general: "fa-bell"
+        };
 
+        list.innerHTML = notifications.map(item => {
+            const icon = icons[item.type] || icons.general;
+            const title = escapeNotificationText(item.title || "Notification");
+            const message = escapeNotificationText(item.message || "");
+            const created = escapeNotificationText(item.created_at || "");
+            const link = safeNotificationLink(item.link);
+            const unreadClass = item.is_read ? "" : "unread";
 
-    if (topBtn) {
-
-        topBtn.addEventListener("click", function () {
-
-            window.scrollTo({
-
-                top: 0,
-
-                behavior: "smooth"
-
-            });
-
-        });
-
-    }
-
-
-    /* ================= PROFILE IMAGE ERROR ================= */
-
-    document.querySelectorAll(
-        ".nav-profile-image, .dropdown-profile img"
-    ).forEach(function (image) {
-
-        image.addEventListener("error", function () {
-
-            this.style.display = "none";
-
-        });
-
-    });
-
-
-    /* ================= GLOBAL SEARCH ================= */
-
-    const globalSearch =
-        document.getElementById("globalSearch");
-
-
-    if (globalSearch) {
-
-        globalSearch.addEventListener("keydown", function (event) {
-
-            if (event.key === "Enter") {
-
-                const query =
-                    this.value.trim();
-
-                if (query.length > 0) {
-
-                    window.location.href =
-                        "/courses?search=" +
-                        encodeURIComponent(query);
-                }
-            }
-        });
-    }
-    /* ================= LIVE NOTIFICATIONS ================= */
-
-    async function loadNavbarNotifications() {
-
-        const badge = document.getElementById("notificationBadge");
-        const container = document.getElementById("navbarNotifications");
-
-        if (!badge || !container) return;
-
-        try {
-
-            const response = await fetch("/api/notifications/summary", {
-                method: "GET",
-                headers: {
-                    "X-Requested-With": "XMLHttpRequest"
-                },
-                cache: "no-store"
-            });
-
-            if (!response.ok) return;
-
-            const data = await response.json();
-
-            if (!data.success) return;
-
-            // Update unread badge
-
-            if (data.unread_count > 0) {
-
-                badge.textContent =
-                    data.unread_count > 99 ? "99+" : data.unread_count;
-
-                badge.style.display = "flex";
-
-            } else {
-
-                badge.style.display = "none";
-
-            }
-
-            // Empty state
-
-            if (!data.notifications.length) {
-
-                container.innerHTML = `
-                <div class="notification-empty">
-                    <i class="far fa-bell-slash"></i>
-                    <h4>You're all caught up!</h4>
-                    <p>New notifications will appear here.</p>
-                </div>
+            return `
+                <a class="notification-item ${unreadClass}" href="${link}">
+                    <div class="notification-symbol">
+                        <i class="fa-solid ${icon}"></i>
+                    </div>
+                    <div class="notification-content">
+                        <strong>${title}</strong>
+                        <p>${message}</p>
+                        <small>${created}</small>
+                    </div>
+                </a>
             `;
+        }).join("");
 
-                return;
-            }
-
-            // Notification icons
-
-            function getNotificationIcon(type) {
-
-                const icons = {
-                    message: "fa-comment-dots",
-                    friend_request: "fa-user-plus",
-                    friend_accepted: "fa-user-check",
-                    general: "fa-bell"
-                };
-
-                return icons[type] || "fa-bell";
-            }
-
-            // Build notification list safely
-
-            container.replaceChildren();
-
-            data.notifications.forEach(function (item) {
-
-                const link = document.createElement("a");
-
-                link.className =
-                    "notification-item" +
-                    (Number(item.is_read) === 0 ? " unread" : "");
-
-                link.href = item.link || "/notifications";
-
-                const icon = document.createElement("div");
-                icon.className = "notification-icon";
-
-                const iconElement = document.createElement("i");
-                iconElement.className =
-                    "fas " + getNotificationIcon(item.type);
-
-                icon.appendChild(iconElement);
-
-                const content = document.createElement("div");
-                content.className = "notification-content";
-
-                const title = document.createElement("h4");
-                title.textContent = item.title;
-
-                const message = document.createElement("p");
-                message.textContent = item.message;
-
-                const time = document.createElement("small");
-                time.textContent = item.created_at;
-
-                content.appendChild(title);
-                content.appendChild(message);
-                content.appendChild(time);
-
-                link.appendChild(icon);
-                link.appendChild(content);
-
-                if (Number(item.is_read) === 0) {
-
-                    const dot = document.createElement("span");
-                    dot.className = "notification-dot";
-
-                    link.appendChild(dot);
-
-                }
-
-                container.appendChild(link);
-
-            });
-
-            // View all button
-
-            const footer = document.createElement("div");
-            footer.className = "notification-footer";
-
-            const viewAll = document.createElement("a");
-            viewAll.href = "/notifications";
-            viewAll.textContent = "View All Notifications";
-
-            footer.appendChild(viewAll);
-            container.appendChild(footer);
-
-        }
-
-        catch (error) {
-
-            console.error("Notification loading error:", error);
-
-        }
-
+    } catch (error) {
+        list.innerHTML = '<div class="empty-notifications">Unable to load notifications</div>';
     }
+}
 
+function escapeNotificationText(value) {
+    return String(value).replace(/[&<>"']/g, function (character) {
+        return {
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;"
+        }[character];
+    });
+}
 
-    // Load immediately
+function safeNotificationLink(value) {
+    const fallback = "/notifications";
 
-    loadNavbarNotifications();
+    if (!value) return fallback;
 
+    try {
+        const url = new URL(value, window.location.origin);
 
-    // Refresh every 30 seconds
+        if (url.origin !== window.location.origin) return fallback;
 
-    setInterval(loadNavbarNotifications, 30000);
+        return url.pathname + url.search + url.hash;
+    } catch (error) {
+        return fallback;
+    }
+}
 </script>
+
+{% block js %}{% endblock %}
+
 </body>
 </html>
