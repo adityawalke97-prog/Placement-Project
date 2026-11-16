@@ -1,36 +1,806 @@
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
-     <meta name="google-site-verification" content="x9osS5mlkjyJ9NZoGuq9mANPeLDoAFkGXgqN5vWZlsg" />
+    <meta name="google-site-verification" content="x9osS5mlkjyJ9NZoGuq9mANPeLDoAFkGXgqN5vWZlsg">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#080f2e">
 
     <title>Login | Placement Training Portal</title>
 
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-          rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-    <!-- Font Awesome -->
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
-    <!-- Login CSS -->
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='css/login.css') }}">
+    <style>
+        :root {
+            --navy: #07112f;
+            --navy-light: #101d4b;
+            --blue: #2563eb;
+            --cyan: #22d3ee;
+            --purple: #8055f6;
+            --text: #111a35;
+            --muted: #71809d;
+            --border: #e6eaf2;
+            --white: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f2f5fb;
+            min-height: 100vh;
+            color: var(--text);
+        }
+
+        .login-page {
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: 1.08fr 0.92fr;
+            overflow: hidden;
+        }
+
+        .login-left {
+            position: relative;
+            min-height: 100vh;
+            overflow: hidden;
+            padding: 42px 7%;
+            color: white;
+            background:
+                radial-gradient(circle at 15% 15%, rgba(49, 102, 255, .4), transparent 35%),
+                radial-gradient(circle at 85% 80%, rgba(113, 61, 255, .35), transparent 35%),
+                linear-gradient(140deg, #07112f 0%, #101e50 55%, #101447 100%);
+        }
+
+        .login-left::before,
+        .login-left::after {
+            content: "";
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+            filter: blur(2px);
+        }
+
+        .login-left::before {
+            width: 430px;
+            height: 430px;
+            border: 1px solid rgba(91, 159, 255, .17);
+            top: -190px;
+            right: -130px;
+            box-shadow: 0 0 0 45px rgba(91, 159, 255, .025), 0 0 0 90px rgba(91, 159, 255, .02);
+        }
+
+        .login-left::after {
+            width: 340px;
+            height: 340px;
+            border: 1px solid rgba(155, 115, 255, .18);
+            bottom: -180px;
+            left: -100px;
+            box-shadow: 0 0 0 45px rgba(155, 115, 255, .025), 0 0 0 90px rgba(155, 115, 255, .02);
+        }
+
+        .left-overlay {
+            position: absolute;
+            inset: 0;
+            opacity: .15;
+            pointer-events: none;
+            background-image: radial-gradient(rgba(255,255,255,.5) .7px, transparent .7px);
+            background-size: 25px 25px;
+        }
+
+        .left-content {
+            position: relative;
+            z-index: 2;
+            max-width: 700px;
+            min-height: calc(100vh - 84px);
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+        }
+
+        .brand-logo {
+            width: 51px;
+            height: 51px;
+            display: grid;
+            place-items: center;
+            border-radius: 15px;
+            font-size: 25px;
+            color: white;
+            background: linear-gradient(135deg, #3289ff, #6550f5);
+            box-shadow: 0 8px 25px rgba(47, 112, 255, .4);
+        }
+
+        .brand h2,
+        .mobile-brand h2 {
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: -.8px;
+        }
+
+        .brand h2 span,
+        .mobile-brand h2 span {
+            color: #52d8ff;
+        }
+
+        .brand p {
+            font-size: 9px;
+            letter-spacing: 2px;
+            font-weight: 700;
+            color: #a5b9e9;
+            margin-top: 4px;
+        }
+
+        .hero-content {
+            margin: auto 0;
+            padding: 55px 0 35px;
+        }
+
+        .hero-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            padding: 10px 15px;
+            border: 1px solid rgba(119, 168, 255, .3);
+            border-radius: 30px;
+            color: #a9dfff;
+            background: rgba(58, 112, 255, .13);
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+        }
+
+        .hero-tag i {
+            color: #ffcf64;
+        }
+
+        .hero-content h1 {
+            font-size: clamp(38px, 4.2vw, 64px);
+            line-height: 1.13;
+            letter-spacing: -2.5px;
+            font-weight: 900;
+            margin: 25px 0 19px;
+        }
+
+        .hero-content h1 span {
+            background: linear-gradient(90deg, #42d5ff, #a18bff, #e0a5ff);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .hero-description {
+            max-width: 480px;
+            font-size: 14px;
+            line-height: 1.9;
+            color: #bac8e7;
+        }
+
+        .feature-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 13px;
+            margin-top: 32px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            padding: 15px 13px;
+            border: 1px solid rgba(148, 178, 255, .13);
+            background: rgba(255, 255, 255, .045);
+            border-radius: 13px;
+            transition: .3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .feature-item:hover {
+            transform: translateY(-4px);
+            background: rgba(255, 255, 255, .1);
+            border-color: rgba(85, 181, 255, .5);
+        }
+
+        .feature-icon {
+            width: 40px;
+            height: 40px;
+            flex-shrink: 0;
+            display: grid;
+            place-items: center;
+            border-radius: 11px;
+            background: linear-gradient(135deg, rgba(43, 132, 255, .3), rgba(118, 79, 255, .25));
+            color: #65d8ff;
+            font-size: 17px;
+        }
+
+        .feature-item h4 {
+            font-size: 12px;
+            font-weight: 800;
+            margin-bottom: 5px;
+            color: #fff;
+        }
+
+        .feature-item p {
+            color: #aebde0;
+            font-size: 10px;
+            line-height: 1.5;
+        }
+
+        .left-highlight {
+            margin-top: 28px;
+            padding: 18px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            border: 1px solid rgba(114, 167, 255, .22);
+            border-radius: 15px;
+            background: linear-gradient(110deg, rgba(48, 107, 255, .19), rgba(123, 78, 255, .12));
+        }
+
+        .left-highlight h4 {
+            font-size: 13px;
+            margin-bottom: 5px;
+        }
+
+        .left-highlight p {
+            color: #b7c5e5;
+            font-size: 11px;
+        }
+
+        .left-highlight i {
+            font-size: 27px;
+            color: #ffd36e;
+        }
+
+        .left-footer {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            padding-top: 22px;
+            border-top: 1px solid rgba(255,255,255,.12);
+            color: #9aabd0;
+            font-size: 10px;
+        }
+
+        .login-right {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 45px 7%;
+            background:
+                radial-gradient(circle at 90% 10%, rgba(94, 137, 255, .09), transparent 32%),
+                radial-gradient(circle at 10% 90%, rgba(137, 99, 255, .07), transparent 30%),
+                #f7f9fd;
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 465px;
+            padding: 43px 39px;
+            background: rgba(255,255,255,.96);
+            border: 1px solid rgba(220, 228, 243, .9);
+            border-radius: 23px;
+            box-shadow: 0 25px 80px rgba(28, 49, 95, .10);
+            animation: cardEnter .7s ease both;
+        }
+
+        @keyframes cardEnter {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .mobile-brand {
+            display: none;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        .mobile-brand .brand-logo {
+            width: 43px;
+            height: 43px;
+            font-size: 21px;
+        }
+
+        .login-heading {
+            margin-bottom: 28px;
+        }
+
+        .welcome-label {
+            color: #386cf5;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 2px;
+        }
+
+        .login-heading h1 {
+            margin-top: 12px;
+            font-size: 29px;
+            font-weight: 900;
+            letter-spacing: -1.1px;
+            color: #101a38;
+        }
+
+        .login-heading p {
+            margin-top: 10px;
+            color: #8290a9;
+            font-size: 12px;
+            line-height: 1.7;
+        }
+
+        .flash-container {
+            margin-bottom: 20px;
+        }
+
+        .flash-message {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 13px 14px;
+            margin-bottom: 9px;
+            border-radius: 10px;
+            font-size: 12px;
+            line-height: 1.5;
+            background: #eff6ff;
+            color: #2454b7;
+            border: 1px solid #d7e7ff;
+        }
+
+        .flash-message.error,
+        .flash-message.danger {
+            background: #fff1f2;
+            border-color: #fecdd3;
+            color: #be123c;
+        }
+
+        .flash-message.success {
+            background: #ecfdf5;
+            border-color: #bbf7d0;
+            color: #047857;
+        }
+
+        .flash-message.warning {
+            background: #fffbeb;
+            border-color: #fde68a;
+            color: #a16207;
+        }
+
+        .google-btn {
+            height: 51px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            border: 1px solid #dfe5ef;
+            border-radius: 11px;
+            text-decoration: none;
+            color: #26334f;
+            font-size: 12px;
+            font-weight: 700;
+            transition: .25s ease;
+            background: white;
+        }
+
+        .google-btn img {
+            width: 19px;
+            height: 19px;
+        }
+
+        .google-btn:hover {
+            border-color: #8eafff;
+            background: #f8faff;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(38, 99, 235, .08);
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            margin: 25px 0;
+        }
+
+        .divider span {
+            flex: 1;
+            height: 1px;
+            background: #e8ecf3;
+        }
+
+        .divider p {
+            font-size: 9px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            white-space: nowrap;
+            color: #9ba7bc;
+        }
+
+        .input-group {
+            margin-bottom: 19px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 9px;
+            color: #293650;
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .input-box {
+            height: 51px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 15px;
+            border: 1px solid #e0e6f0;
+            border-radius: 10px;
+            background: #fbfcff;
+            transition: .25s ease;
+        }
+
+        .input-box:focus-within {
+            border-color: #5785ff;
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(59, 111, 246, .09);
+        }
+
+        .input-box > i {
+            font-size: 14px;
+            color: #8795af;
+        }
+
+        .input-box input,
+        .input-box select {
+            width: 100%;
+            height: 100%;
+            border: none;
+            outline: none;
+            background: transparent;
+            color: #24324e;
+            font-family: inherit;
+            font-size: 12px;
+            min-width: 0;
+        }
+
+        .input-box input::placeholder {
+            color: #a9b3c5;
+        }
+
+        .input-box select {
+            cursor: pointer;
+        }
+
+        .toggle-password {
+            border: none;
+            background: transparent;
+            color: #8795af;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 5px;
+        }
+
+        .toggle-password:hover {
+            color: #3268ec;
+        }
+
+        .login-options {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin: 5px 0 23px;
+        }
+
+        .remember {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #6f7d96;
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        .remember input {
+            accent-color: #356cf2;
+            width: 14px;
+            height: 14px;
+            cursor: pointer;
+        }
+
+        .forgot-link {
+            font-size: 11px;
+            font-weight: 700;
+            color: #356cf2;
+            text-decoration: none;
+        }
+
+        .forgot-link:hover,
+        .bottom-links a:hover {
+            color: #7146e9;
+            text-decoration: underline;
+        }
+
+        .login-btn {
+            position: relative;
+            width: 100%;
+            height: 53px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            border: none;
+            border-radius: 11px;
+            color: white;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 800;
+            cursor: pointer;
+            background: linear-gradient(100deg, #2563eb, #5145e8 65%, #7650ed);
+            box-shadow: 0 9px 22px rgba(57, 91, 229, .25);
+            transition: .3s ease;
+        }
+
+        .login-btn i {
+            position: absolute;
+            right: 20px;
+            transition: .3s ease;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 13px 28px rgba(57, 91, 229, .35);
+        }
+
+        .login-btn:hover i {
+            transform: translateX(5px);
+        }
+
+        .login-btn:active {
+            transform: scale(.98);
+        }
+
+        .login-btn:disabled {
+            opacity: .7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .bottom-links {
+            text-align: center;
+            margin-top: 25px;
+        }
+
+        .bottom-links p {
+            color: #8290a6;
+            font-size: 11px;
+        }
+
+        .bottom-links a {
+            color: #3268ed;
+            text-decoration: none;
+            font-weight: 800;
+        }
+
+        .security-note {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-top: 27px;
+            padding-top: 20px;
+            border-top: 1px solid #edf0f5;
+            color: #9aa6b8;
+            font-size: 10px;
+        }
+
+        .security-note i {
+            color: #20a779;
+            font-size: 13px;
+        }
+
+        @media (min-width: 1500px) {
+            .login-left {
+                padding-left: 9%;
+                padding-right: 9%;
+            }
+
+            .login-card {
+                max-width: 490px;
+                padding: 48px;
+            }
+        }
+
+        @media (max-width: 1050px) {
+            .login-page {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .login-left {
+                padding: 35px 6%;
+            }
+
+            .feature-list {
+                grid-template-columns: 1fr;
+                gap: 9px;
+            }
+
+            .feature-item {
+                padding: 11px;
+            }
+
+            .hero-content h1 {
+                font-size: 42px;
+            }
+
+            .login-right {
+                padding: 30px;
+            }
+
+            .login-card {
+                padding: 35px 27px;
+            }
+        }
+
+        @media (max-width: 760px) {
+            .login-page {
+                grid-template-columns: 1fr;
+                min-height: 100vh;
+            }
+
+            .login-left {
+                min-height: auto;
+                padding: 27px 25px 32px;
+            }
+
+            .left-content {
+                min-height: auto;
+            }
+
+            .hero-content {
+                padding: 40px 0 10px;
+            }
+
+            .hero-content h1 {
+                font-size: 39px;
+            }
+
+            .hero-description {
+                font-size: 13px;
+            }
+
+            .feature-list {
+                grid-template-columns: 1fr 1fr;
+                gap: 9px;
+            }
+
+            .feature-item {
+                padding: 11px 9px;
+                gap: 9px;
+            }
+
+            .feature-icon {
+                width: 34px;
+                height: 34px;
+                font-size: 14px;
+            }
+
+            .feature-item h4 {
+                font-size: 10px;
+            }
+
+            .feature-item p {
+                font-size: 9px;
+            }
+
+            .left-highlight {
+                margin-top: 18px;
+            }
+
+            .left-footer {
+                margin-top: 25px;
+                font-size: 9px;
+            }
+
+            .login-right {
+                min-height: auto;
+                padding: 35px 20px 45px;
+            }
+
+            .login-card {
+                max-width: 480px;
+                padding: 35px 28px;
+                border-radius: 19px;
+            }
+
+            .mobile-brand {
+                display: flex;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .login-left {
+                padding: 24px 19px 27px;
+            }
+
+            .hero-content h1 {
+                font-size: 34px;
+            }
+
+            .feature-list {
+                grid-template-columns: 1fr;
+            }
+
+            .feature-item {
+                padding: 12px;
+            }
+
+            .feature-item h4 {
+                font-size: 11px;
+            }
+
+            .feature-item p {
+                font-size: 10px;
+            }
+
+            .login-right {
+                padding: 25px 13px 35px;
+            }
+
+            .login-card {
+                padding: 29px 20px;
+            }
+
+            .login-heading h1 {
+                font-size: 25px;
+            }
+
+            .left-footer {
+                flex-direction: column;
+                gap: 7px;
+            }
+
+            .login-options {
+                align-items: flex-start;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: .01ms !important;
+                transition-duration: .01ms !important;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
 <div class="login-page">
 
-    <!-- LEFT SECTION -->
     <section class="login-left">
-
         <div class="left-overlay"></div>
 
         <div class="left-content">
@@ -39,7 +809,6 @@
                 <div class="brand-logo">
                     <i class="fas fa-graduation-cap"></i>
                 </div>
-
                 <div>
                     <h2>Placement<span>Portal</span></h2>
                     <p>YOUR CAREER STARTS HERE</p>
@@ -116,7 +885,26 @@
                         </div>
                     </div>
 
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                        <div>
+                            <h4>Leaderboard</h4>
+                            <p>Challenge yourself and climb the ranks</p>
+                        </div>
+                    </div>
+
                 </div>
+
+                <div class="left-highlight">
+                    <div>
+                        <h4>Dream. Prepare. Get Placed.</h4>
+                        <p>Your journey towards a successful career starts here.</p>
+                    </div>
+                    <i class="fas fa-award"></i>
+                </div>
+
             </div>
 
             <div class="left-footer">
@@ -127,13 +915,10 @@
         </div>
     </section>
 
-
-    <!-- RIGHT SECTION -->
     <section class="login-right">
 
         <div class="login-card">
 
-            <!-- MOBILE BRAND -->
             <div class="mobile-brand">
                 <div class="brand-logo">
                     <i class="fas fa-graduation-cap"></i>
@@ -141,208 +926,95 @@
                 <h2>Placement<span>Portal</span></h2>
             </div>
 
-            <!-- HEADING -->
             <div class="login-heading">
-
                 <span class="welcome-label">WELCOME BACK</span>
-
                 <h1>Sign in to your account</h1>
-
-                <p>
-                    Enter your credentials to access your placement dashboard.
-                </p>
-
+                <p>Enter your credentials to access your placement dashboard.</p>
             </div>
 
-
-            <!-- FLASH MESSAGES -->
             {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
             <div class="flash-container">
-
                 {% for category, message in messages %}
-
                 <div class="flash-message {{ category }}">
-
                     <i class="fas fa-info-circle"></i>
-
                     <span>{{ message }}</span>
-
                 </div>
-
                 {% endfor %}
-
             </div>
             {% endif %}
             {% endwith %}
 
-
-            <!-- GOOGLE LOGIN -->
             <a href="{{ url_for('google_login') }}" class="google-btn">
-
-                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
-                     alt="Google">
-
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
                 <span>Continue with Google</span>
-
             </a>
 
-
-            <!-- DIVIDER -->
             <div class="divider">
                 <span></span>
                 <p>OR CONTINUE WITH EMAIL</p>
                 <span></span>
             </div>
 
+            <form action="{{ url_for('login') }}" method="POST" id="loginForm">
 
-            <!-- LOGIN FORM -->
-            <form action="{{ url_for('login') }}"
-                  method="POST"
-                  id="loginForm">
-
-
-                <!-- ROLE SELECTION -->
                 <div class="input-group">
-
                     <label for="role">Login As</label>
-
                     <div class="input-box">
-
                         <i class="fas fa-user-shield"></i>
-
-                        <select name="role"
-                                id="role"
-                                required>
-
-                            <option value="" disabled selected>
-                                Select your role
-                            </option>
-
-                            <option value="student">
-                                Student
-                            </option>
-
-                            <option value="admin">
-                                Administrator
-                            </option>
-
+                        <select name="role" id="role" required>
+                            <option value="" disabled selected>Select your role</option>
+                            <option value="student">Student</option>
+                            <option value="admin">Administrator</option>
                         </select>
-
                     </div>
-
                 </div>
 
-
-                <!-- EMAIL -->
                 <div class="input-group">
-
                     <label for="email">Email Address</label>
-
                     <div class="input-box">
-
                         <i class="far fa-envelope"></i>
-
-                        <input type="email"
-                               id="email"
-                               name="email"
-                               placeholder="Enter your email address"
-                               autocomplete="email"
-                               required>
-
+                        <input type="email" id="email" name="email" placeholder="Enter your email address" autocomplete="email" required>
                     </div>
-
                 </div>
 
-
-                <!-- PASSWORD -->
                 <div class="input-group">
-
                     <label for="password">Password</label>
-
                     <div class="input-box">
-
                         <i class="fas fa-lock"></i>
-
-                        <input type="password"
-                               id="password"
-                               name="password"
-                               placeholder="Enter your password"
-                               autocomplete="current-password"
-                               required>
-
-                        <button type="button"
-                                class="toggle-password"
-                                id="togglePassword"
-                                aria-label="Show password">
-
+                        <input type="password" id="password" name="password" placeholder="Enter your password" autocomplete="current-password" required>
+                        <button type="button" class="toggle-password" id="togglePassword" aria-label="Show password">
                             <i class="fas fa-eye"></i>
-
                         </button>
-
                     </div>
-
                 </div>
 
-
-                <!-- REMEMBER + FORGOT -->
                 <div class="login-options">
-
                     <label class="remember">
-
-                        <input type="checkbox"
-                               name="remember"
-                               value="on">
-
+                        <input type="checkbox" name="remember" value="on">
                         <span>Remember me</span>
-
                     </label>
 
-                    <a href="/forgot_password"
-                       class="forgot-link">
-
-                        Forgot password?
-
-                    </a>
-
+                    <a href="/forgot_password" class="forgot-link">Forgot password?</a>
                 </div>
 
-
-                <!-- LOGIN BUTTON -->
-                <button type="submit"
-                        class="login-btn"
-                        id="loginButton">
-
+                <button type="submit" class="login-btn" id="loginButton">
                     <span>Sign In</span>
-
                     <i class="fas fa-arrow-right"></i>
-
                 </button>
 
             </form>
 
-
-            <!-- SIGNUP -->
             <div class="bottom-links">
-
                 <p>
                     Don't have an account?
-
-                    <a href="{{ url_for('signup') }}">
-                        Create Account
-                    </a>
+                    <a href="{{ url_for('signup') }}">Create Account</a>
                 </p>
-
             </div>
 
-
-            <!-- SECURITY -->
             <div class="security-note">
-
                 <i class="fas fa-shield-alt"></i>
-
                 <span>Your information is protected and secure.</span>
-
             </div>
 
         </div>
@@ -351,8 +1023,6 @@
 
 </div>
 
-
-<!-- LOGIN JAVASCRIPT -->
 <script src="{{ url_for('static', filename='js/login.js') }}"></script>
 
 </body>
