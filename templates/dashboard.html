@@ -1,123 +1,272 @@
-
 {% extends "layout.html" %}
 
 {% block title %}Student Dashboard | Placement Training Portal{% endblock %}
 
 {% block css %}
 <style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap');
+
 .dashboard-page {
-    max-width: 1500px;
-    margin: auto;
+    --primary: #5146e5;
+    --primary-dark: #3730a3;
+    --text: #172033;
+    --muted: #8992a6;
+    --border: #e9ecf3;
+    --surface: #ffffff;
+    max-width: 1580px;
+    margin: 0 auto;
     padding: 30px;
-    color: #17233d;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+}
+
+.dashboard-page * {
+    box-sizing: border-box;
+}
+
+.dashboard-page a {
+    text-decoration: none;
+}
+
+.dashboard-page button {
+    font-family: inherit;
+}
+
+.dashboard-topline {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.dashboard-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    color: #929bad;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.dashboard-breadcrumb i {
+    font-size: 10px;
+}
+
+.dashboard-breadcrumb strong {
+    color: #343d52;
+}
+
+.dashboard-date {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 9px 13px;
+    border: 1px solid var(--border);
+    background: white;
+    color: #707b91;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.dashboard-date i {
+    color: var(--primary);
 }
 
 .dashboard-welcome {
     position: relative;
+    isolation: isolate;
     overflow: hidden;
-    padding: 38px;
-    border-radius: 24px;
-    background: linear-gradient(120deg,#14244b,#3157e8 65%,#7856e9);
-    color: white;
+    min-height: 285px;
+    padding: 38px 42px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 25px;
-    box-shadow: 0 15px 40px rgba(49,87,232,.2);
+    gap: 30px;
+    border-radius: 25px;
+    background: linear-gradient(115deg, #151b3d 0%, #252d68 48%, #5146e5 100%);
+    color: white;
+    box-shadow: 0 18px 45px rgba(54, 54, 130, .18);
 }
 
-.dashboard-welcome:after {
+.dashboard-welcome::before {
     content: "";
     position: absolute;
-    width: 300px;
-    height: 300px;
-    right: 12%;
-    top: -180px;
+    z-index: -1;
+    width: 430px;
+    height: 430px;
+    right: 10%;
+    top: -290px;
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 50%;
+    box-shadow:
+        0 0 0 35px rgba(255,255,255,.025),
+        0 0 0 75px rgba(255,255,255,.025);
+}
+
+.dashboard-welcome::after {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    width: 260px;
+    height: 260px;
+    right: 27%;
+    bottom: -200px;
     border-radius: 50%;
     background: rgba(255,255,255,.08);
+    filter: blur(2px);
 }
 
 .welcome-content {
     position: relative;
-    z-index: 1;
+    z-index: 2;
+    max-width: 650px;
 }
 
 .welcome-label {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 9px;
     padding: 8px 13px;
-    border: 1px solid rgba(255,255,255,.2);
+    border: 1px solid rgba(255,255,255,.18);
+    background: rgba(255,255,255,.09);
     border-radius: 30px;
-    background: rgba(255,255,255,.1);
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 1px;
+    color: #dfe2ff;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.1px;
+}
+
+.welcome-label i {
+    color: #f6cf75;
 }
 
 .welcome-content h1 {
-    margin: 20px 0 10px;
-    font-size: clamp(25px,3vw,37px);
+    margin: 22px 0 12px;
+    font-family: 'Manrope', sans-serif;
+    font-size: clamp(27px, 3.3vw, 42px);
+    line-height: 1.2;
     font-weight: 800;
-    letter-spacing: -1px;
+    letter-spacing: -1.6px;
+}
+
+.welcome-content h1 span {
+    color: #c5c3ff;
 }
 
 .welcome-content p {
-    max-width: 540px;
+    max-width: 560px;
     margin: 0;
-    color: #dce5ff;
-    font-size: 14px;
-    line-height: 1.8;
+    color: #c7cce8;
+    font-size: 13px;
+    line-height: 1.9;
 }
 
 .welcome-actions {
     display: flex;
+    align-items: center;
     flex-wrap: wrap;
     gap: 12px;
-    margin-top: 25px;
+    margin-top: 27px;
 }
 
 .welcome-btn {
+    min-height: 44px;
+    padding: 0 18px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 9px;
-    padding: 13px 19px;
+    gap: 10px;
     border-radius: 11px;
     background: white;
-    color: #3157e8;
-    font-size: 12px;
+    color: #3935a9;
+    font-size: 11px;
     font-weight: 800;
-    transition: .2s;
+    transition: .25s ease;
 }
 
 .welcome-btn:hover {
+    color: #3935a9;
     transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(0,0,0,.15);
+    box-shadow: 0 9px 22px rgba(0,0,0,.2);
 }
 
 .welcome-btn.secondary {
-    background: rgba(255,255,255,.12);
     color: white;
     border: 1px solid rgba(255,255,255,.25);
+    background: rgba(255,255,255,.09);
+    backdrop-filter: blur(10px);
 }
 
-.welcome-illustration {
+.welcome-btn.secondary:hover {
+    color: white;
+    background: rgba(255,255,255,.17);
+}
+
+.welcome-art {
     position: relative;
     z-index: 1;
-    width: 180px;
-    height: 180px;
-    flex-shrink: 0;
+    width: 235px;
+    min-width: 235px;
+    height: 215px;
     display: grid;
     place-items: center;
-    border-radius: 50%;
-    background: rgba(255,255,255,.12);
-    border: 1px solid rgba(255,255,255,.2);
 }
 
-.welcome-illustration i {
-    font-size: 85px;
+.welcome-art-circle {
+    width: 165px;
+    height: 165px;
+    display: grid;
+    place-items: center;
+    border: 1px solid rgba(255,255,255,.2);
+    border-radius: 50%;
+    background: linear-gradient(145deg, rgba(255,255,255,.19), rgba(255,255,255,.045));
+    box-shadow: 0 20px 60px rgba(0,0,0,.12);
+    backdrop-filter: blur(12px);
+}
+
+.welcome-art-circle i {
+    font-size: 76px;
+    color: #fff;
+    filter: drop-shadow(0 10px 15px rgba(0,0,0,.2));
+}
+
+.art-floating {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 47px;
+    height: 47px;
+    border: 1px solid rgba(255,255,255,.2);
+    border-radius: 14px;
+    background: rgba(255,255,255,.15);
+    backdrop-filter: blur(10px);
     color: white;
+    box-shadow: 0 10px 25px rgba(0,0,0,.12);
+}
+
+.art-floating.one {
+    top: 10px;
+    right: 30px;
+    transform: rotate(10deg);
+}
+
+.art-floating.two {
+    bottom: 17px;
+    left: 5px;
+    transform: rotate(-10deg);
+}
+
+.art-floating.three {
+    bottom: 22px;
+    right: 4px;
+    transform: rotate(8deg);
+}
+
+.dashboard-section {
+    margin-top: 34px;
 }
 
 .section-heading {
@@ -125,49 +274,120 @@
     align-items: center;
     justify-content: space-between;
     gap: 15px;
-    margin: 35px 0 18px;
+    margin-bottom: 17px;
 }
 
-.section-heading h2 {
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.section-title-icon {
+    width: 39px;
+    height: 39px;
+    display: grid;
+    place-items: center;
+    border-radius: 12px;
+    background: #f0efff;
+    color: var(--primary);
+    font-size: 15px;
+}
+
+.section-title h2 {
     margin: 0;
-    font-size: 19px;
+    color: #202940;
+    font-family: 'Manrope', sans-serif;
+    font-size: 17px;
     font-weight: 800;
-    color: #18233d;
+    letter-spacing: -.4px;
 }
 
-.section-heading p {
-    margin: 6px 0 0;
-    color: #8792a7;
-    font-size: 12px;
+.section-title p {
+    margin: 4px 0 0;
+    color: var(--muted);
+    font-size: 11px;
 }
 
 .section-link {
-    color: #3157e8;
-    font-size: 12px;
-    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--primary);
+    font-size: 11px;
+    font-weight: 800;
+    transition: .2s;
+}
+
+.section-link:hover {
+    gap: 12px;
+    color: var(--primary-dark);
 }
 
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(4,minmax(0,1fr));
-    gap: 18px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 17px;
 }
 
 .stat-card {
-    padding: 23px;
-    background: white;
-    border: 1px solid #e9edf5;
+    position: relative;
+    overflow: hidden;
+    min-width: 0;
+    padding: 21px;
+    border: 1px solid var(--border);
     border-radius: 17px;
-    box-shadow: 0 6px 22px rgba(25,40,80,.045);
-    transition: .25s;
+    background: var(--surface);
+    box-shadow: 0 4px 18px rgba(25,35,70,.035);
+    transition: .28s ease;
+}
+
+.stat-card::after {
+    content: "";
+    position: absolute;
+    width: 105px;
+    height: 105px;
+    right: -55px;
+    top: -55px;
+    border-radius: 50%;
+    background: var(--stat-soft);
+    opacity: .7;
+    transition: .3s;
 }
 
 .stat-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 15px 30px rgba(25,40,80,.09);
+    border-color: #d9dcf8;
+    box-shadow: 0 15px 30px rgba(25,35,70,.085);
+}
+
+.stat-card:hover::after {
+    transform: scale(1.6);
+}
+
+.stat-card.blue {
+    --stat-color: #4d63e9;
+    --stat-soft: #e8ecff;
+}
+
+.stat-card.purple {
+    --stat-color: #8958dc;
+    --stat-soft: #f1eaff;
+}
+
+.stat-card.green {
+    --stat-color: #0da77b;
+    --stat-soft: #e3f8f0;
+}
+
+.stat-card.orange {
+    --stat-color: #e39a38;
+    --stat-soft: #fff2df;
 }
 
 .stat-top {
+    position: relative;
+    z-index: 1;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -179,347 +399,714 @@
     display: grid;
     place-items: center;
     border-radius: 13px;
-    font-size: 18px;
+    background: var(--stat-soft);
+    color: var(--stat-color);
+    font-size: 17px;
 }
 
-.stat-icon.blue {
-    color: #3157e8;
-    background: #edf1ff;
-}
-
-.stat-icon.purple {
-    color: #8057e9;
-    background: #f2edff;
-}
-
-.stat-icon.green {
-    color: #0eaa79;
-    background: #e8f9f2;
-}
-
-.stat-icon.orange {
-    color: #e89b32;
-    background: #fff5e8;
+.stat-label {
+    color: #9aa3b4;
+    font-size: 10px;
+    font-weight: 700;
 }
 
 .stat-card h3 {
-    margin: 23px 0 5px;
-    font-size: 29px;
+    position: relative;
+    z-index: 1;
+    margin: 20px 0 4px;
+    color: #202940;
+    font-family: 'Manrope', sans-serif;
+    font-size: 31px;
     font-weight: 800;
-    color: #18233d;
+    letter-spacing: -1px;
 }
 
 .stat-card p {
+    position: relative;
+    z-index: 1;
     margin: 0;
-    color: #8590a5;
-    font-size: 12px;
+    color: #8490a5;
+    font-size: 11px;
     font-weight: 600;
 }
 
 .stat-bottom {
+    position: relative;
+    z-index: 1;
     display: flex;
     align-items: center;
-    gap: 6px;
-    margin-top: 15px;
-    padding-top: 13px;
-    border-top: 1px solid #f0f2f7;
-    color: #8a95a9;
+    gap: 7px;
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid #f0f1f6;
+    color: #8993a6;
     font-size: 10px;
+    font-weight: 600;
 }
 
 .stat-bottom i {
-    color: #14a77b;
+    color: var(--stat-color);
 }
 
 .quick-grid {
     display: grid;
-    grid-template-columns: repeat(3,minmax(0,1fr));
-    gap: 18px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 17px;
 }
 
 .quick-card {
+    --quick-color: #4d63e9;
+    --quick-soft: #edf0ff;
     position: relative;
     overflow: hidden;
-    min-height: 185px;
-    padding: 24px;
+    min-height: 180px;
+    padding: 22px;
+    display: block;
+    border: 1px solid var(--border);
+    border-radius: 17px;
     background: white;
-    border: 1px solid #e9edf5;
-    border-radius: 18px;
-    box-shadow: 0 6px 22px rgba(25,40,80,.045);
-    transition: .25s;
+    box-shadow: 0 4px 18px rgba(25,35,70,.035);
+    transition: .28s ease;
+}
+
+.quick-card::before {
+    content: "";
+    position: absolute;
+    width: 135px;
+    height: 135px;
+    right: -70px;
+    bottom: -80px;
+    border-radius: 50%;
+    background: var(--quick-soft);
+    opacity: .75;
+    transition: .35s;
 }
 
 .quick-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 15px 30px rgba(25,40,80,.1);
+    border-color: var(--quick-color);
+    box-shadow: 0 14px 30px rgba(25,35,70,.09);
+}
+
+.quick-card:hover::before {
+    transform: scale(1.5);
+}
+
+.quick-card.blue {
+    --quick-color: #4d63e9;
+    --quick-soft: #edf0ff;
+}
+
+.quick-card.purple {
+    --quick-color: #8958dc;
+    --quick-soft: #f2edff;
+}
+
+.quick-card.green {
+    --quick-color: #0da77b;
+    --quick-soft: #e7f8f1;
+}
+
+.quick-card.orange {
+    --quick-color: #df9732;
+    --quick-soft: #fff4e5;
+}
+
+.quick-card.pink {
+    --quick-color: #df5b91;
+    --quick-soft: #fff0f6;
+}
+
+.quick-card.cyan {
+    --quick-color: #1397b7;
+    --quick-soft: #e8f8fc;
+}
+
+.quick-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .quick-icon {
-    width: 48px;
-    height: 48px;
+    width: 47px;
+    height: 47px;
     display: grid;
     place-items: center;
     border-radius: 14px;
-    font-size: 20px;
-    margin-bottom: 17px;
+    background: var(--quick-soft);
+    color: var(--quick-color);
+    font-size: 19px;
+    transition: .25s;
+}
+
+.quick-card:hover .quick-icon {
+    transform: scale(1.08) rotate(-5deg);
+}
+
+.quick-badge {
+    padding: 6px 9px;
+    border-radius: 20px;
+    background: var(--quick-soft);
+    color: var(--quick-color);
+    font-size: 9px;
+    font-weight: 800;
 }
 
 .quick-card h3 {
-    margin: 0 0 8px;
-    font-size: 15px;
+    position: relative;
+    z-index: 1;
+    margin: 18px 0 7px;
+    color: #202940;
+    font-family: 'Manrope', sans-serif;
+    font-size: 14px;
     font-weight: 800;
 }
 
 .quick-card p {
+    position: relative;
+    z-index: 1;
+    max-width: 290px;
     margin: 0;
-    color: #8994a8;
+    color: #8993a6;
     font-size: 11px;
-    line-height: 1.7;
+    line-height: 1.8;
 }
 
 .quick-arrow {
     position: absolute;
-    right: 23px;
-    bottom: 23px;
-    color: #3157e8;
-    font-size: 14px;
+    z-index: 2;
+    right: 21px;
+    bottom: 21px;
+    width: 31px;
+    height: 31px;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--quick-soft);
+    border-radius: 10px;
+    background: white;
+    color: var(--quick-color);
+    font-size: 11px;
+    transition: .25s;
 }
 
-.quick-card.blue .quick-icon {
-    color: #3157e8;
-    background: #edf1ff;
-}
-
-.quick-card.purple .quick-icon {
-    color: #7958ef;
-    background: #f2edff;
-}
-
-.quick-card.green .quick-icon {
-    color: #12a77b;
-    background: #e9f9f2;
-}
-
-.quick-card.orange .quick-icon {
-    color: #e89b32;
-    background: #fff5e8;
-}
-
-.quick-card.pink .quick-icon {
-    color: #e45d91;
-    background: #fff0f6;
-}
-
-.quick-card.cyan .quick-icon {
-    color: #1599bb;
-    background: #e9f8fc;
+.quick-card:hover .quick-arrow {
+    background: var(--quick-color);
+    border-color: var(--quick-color);
+    color: white;
+    transform: translateX(3px);
 }
 
 .dashboard-bottom {
     display: grid;
-    grid-template-columns: 1.4fr 1fr;
-    gap: 20px;
-    margin-top: 35px;
+    grid-template-columns: 1.35fr .85fr;
+    gap: 18px;
+    margin-top: 34px;
 }
 
 .dashboard-panel {
-    padding: 25px;
-    background: white;
-    border: 1px solid #e9edf5;
+    min-width: 0;
+    padding: 24px;
+    border: 1px solid var(--border);
     border-radius: 18px;
-    box-shadow: 0 6px 22px rgba(25,40,80,.045);
+    background: white;
+    box-shadow: 0 4px 18px rgba(25,35,70,.035);
 }
 
 .panel-heading {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 22px;
+    gap: 12px;
+    margin-bottom: 18px;
 }
 
 .panel-heading h3 {
     margin: 0;
+    color: #202940;
+    font-family: 'Manrope', sans-serif;
     font-size: 15px;
     font-weight: 800;
 }
 
 .panel-heading span {
-    color: #8994a8;
-    font-size: 11px;
+    padding: 6px 10px;
+    border-radius: 20px;
+    background: #f3f2ff;
+    color: var(--primary);
+    font-size: 9px;
+    font-weight: 800;
 }
 
 .learning-item {
     display: flex;
     align-items: center;
     gap: 14px;
-    padding: 15px 0;
-    border-bottom: 1px solid #f0f2f7;
+    padding: 14px 10px;
+    border-bottom: 1px solid #f0f1f6;
+    border-radius: 11px;
+    transition: .2s;
 }
 
 .learning-item:last-child {
     border-bottom: 0;
 }
 
+.learning-item:hover {
+    padding-left: 15px;
+    background: #fafaff;
+}
+
 .learning-icon {
-    width: 42px;
-    height: 42px;
+    width: 43px;
+    height: 43px;
     flex-shrink: 0;
     display: grid;
     place-items: center;
     border-radius: 12px;
-    background: #edf1ff;
-    color: #3157e8;
+    background: #f0efff;
+    color: var(--primary);
+    font-size: 15px;
 }
 
 .learning-info {
     flex: 1;
+    min-width: 0;
 }
 
 .learning-info strong {
     display: block;
-    font-size: 12px;
+    overflow: hidden;
+    color: #303a50;
+    font-size: 11px;
+    font-weight: 800;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .learning-info small {
     display: block;
     margin-top: 5px;
-    color: #8994a8;
+    color: #929bad;
     font-size: 10px;
 }
 
 .learning-arrow {
-    color: #9aa5b8;
+    color: #aab1c0;
+    font-size: 11px;
+    transition: .2s;
+}
+
+.learning-item:hover .learning-arrow {
+    color: var(--primary);
+    transform: translateX(3px);
+}
+
+.placement-panel {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(145deg, #f8f7ff, #ffffff 75%);
+}
+
+.placement-panel::after {
+    content: "";
+    position: absolute;
+    width: 170px;
+    height: 170px;
+    top: -105px;
+    right: -75px;
+    border-radius: 50%;
+    background: #eeecff;
 }
 
 .placement-box {
+    position: relative;
+    z-index: 1;
+    padding: 18px 10px 12px;
     text-align: center;
-    padding: 20px 10px;
 }
 
-.placement-box .placement-icon {
-    width: 65px;
-    height: 65px;
-    margin: 0 auto 17px;
+.placement-icon {
+    width: 69px;
+    height: 69px;
+    margin: 0 auto 18px;
     display: grid;
     place-items: center;
-    border-radius: 20px;
-    background: linear-gradient(135deg,#3157e8,#7958ef);
+    border-radius: 21px;
+    background: linear-gradient(135deg, #5146e5, #8069f3);
     color: white;
     font-size: 27px;
+    box-shadow: 0 12px 25px rgba(81,70,229,.23);
 }
 
 .placement-box h3 {
     margin: 0 0 10px;
+    color: #202940;
+    font-family: 'Manrope', sans-serif;
     font-size: 17px;
+    font-weight: 800;
 }
 
 .placement-box p {
-    max-width: 310px;
+    max-width: 320px;
     margin: 0 auto 20px;
-    color: #8994a8;
-    font-size: 12px;
-    line-height: 1.8;
+    color: #8993a6;
+    font-size: 11px;
+    line-height: 1.9;
 }
 
-.placement-btn {
+.placement-features {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.placement-features span {
     display: inline-flex;
     align-items: center;
-    gap: 9px;
-    padding: 12px 19px;
-    background: #3157e8;
-    color: white;
-    border-radius: 10px;
-    font-size: 11px;
+    gap: 6px;
+    padding: 7px 10px;
+    border: 1px solid #e9e7ff;
+    border-radius: 20px;
+    background: white;
+    color: #6d6b9b;
+    font-size: 9px;
     font-weight: 700;
 }
 
-@media(max-width:1100px) {
-    .stats-grid {
-        grid-template-columns: repeat(2,minmax(0,1fr));
-    }
+.placement-features i {
+    color: #5146e5;
+}
 
-    .quick-grid {
-        grid-template-columns: repeat(2,minmax(0,1fr));
+.placement-btn {
+    min-height: 43px;
+    padding: 0 19px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border-radius: 11px;
+    background: linear-gradient(110deg, #5146e5, #7062ed);
+    color: white;
+    font-size: 11px;
+    font-weight: 800;
+    box-shadow: 0 7px 17px rgba(81,70,229,.19);
+    transition: .25s;
+}
+
+.placement-btn:hover {
+    color: white;
+    transform: translateY(-3px);
+    box-shadow: 0 12px 23px rgba(81,70,229,.27);
+}
+
+.dashboard-footer-note {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 27px;
+    padding: 14px;
+    color: #a0a8b7;
+    font-size: 10px;
+    text-align: center;
+}
+
+.dashboard-footer-note i {
+    color: #e6a947;
+}
+
+@keyframes dashboardFadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(13px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
 
-@media(max-width:750px) {
+.dashboard-page .dashboard-welcome,
+.dashboard-page .stat-card,
+.dashboard-page .quick-card,
+.dashboard-page .dashboard-panel {
+    animation: dashboardFadeUp .55s ease both;
+}
+
+.dashboard-page .stat-card:nth-child(2),
+.dashboard-page .quick-card:nth-child(2) {
+    animation-delay: .06s;
+}
+
+.dashboard-page .stat-card:nth-child(3),
+.dashboard-page .quick-card:nth-child(3) {
+    animation-delay: .12s;
+}
+
+.dashboard-page .stat-card:nth-child(4),
+.dashboard-page .quick-card:nth-child(4) {
+    animation-delay: .18s;
+}
+
+@media (min-width: 1500px) {
     .dashboard-page {
-        padding: 20px 15px;
+        padding: 35px 40px;
     }
 
     .dashboard-welcome {
-        padding: 27px 22px;
+        min-height: 305px;
+        padding: 45px 50px;
+    }
+}
+
+@media (max-width: 1100px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .welcome-illustration {
-        width: 110px;
-        height: 110px;
+    .quick-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .welcome-illustration i {
-        font-size: 50px;
+    .welcome-art {
+        width: 190px;
+        min-width: 190px;
+    }
+
+    .dashboard-bottom {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 760px) {
+    .dashboard-page {
+        padding: 22px 16px;
+    }
+
+    .dashboard-welcome {
+        min-height: 260px;
+        padding: 30px 25px;
+    }
+
+    .welcome-art {
+        width: 130px;
+        min-width: 130px;
+    }
+
+    .welcome-art-circle {
+        width: 115px;
+        height: 115px;
+    }
+
+    .welcome-art-circle i {
+        font-size: 53px;
+    }
+
+    .art-floating {
+        width: 36px;
+        height: 36px;
+        font-size: 12px;
     }
 
     .dashboard-bottom {
         grid-template-columns: 1fr;
     }
+
+    .dashboard-section {
+        margin-top: 28px;
+    }
 }
 
-@media(max-width:500px) {
-    .dashboard-welcome {
-        padding: 25px 19px;
+@media (max-width: 540px) {
+    .dashboard-page {
+        padding: 17px 12px;
     }
 
-    .welcome-illustration {
+    .dashboard-topline {
+        align-items: flex-start;
+    }
+
+    .dashboard-date {
+        padding: 8px 9px;
+        font-size: 9px;
+    }
+
+    .dashboard-breadcrumb {
+        font-size: 10px;
+    }
+
+    .dashboard-welcome {
+        min-height: auto;
+        padding: 27px 20px;
+        border-radius: 19px;
+    }
+
+    .welcome-art {
         display: none;
     }
 
     .welcome-content h1 {
-        font-size: 25px;
+        margin-top: 19px;
+        font-size: 27px;
+        letter-spacing: -1px;
     }
 
     .welcome-content p {
-        font-size: 12px;
+        font-size: 11px;
+        line-height: 1.8;
     }
 
     .welcome-actions {
-        flex-direction: column;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 9px;
+        margin-top: 21px;
     }
 
     .welcome-btn {
         width: 100%;
+        min-height: 43px;
+    }
+
+    .section-title {
+        gap: 9px;
+    }
+
+    .section-title-icon {
+        width: 34px;
+        height: 34px;
+        font-size: 13px;
+    }
+
+    .section-title h2 {
+        font-size: 14px;
+    }
+
+    .section-title p {
+        font-size: 9px;
+    }
+
+    .section-link {
+        font-size: 9px;
     }
 
     .stats-grid {
-        gap: 11px;
+        gap: 10px;
     }
 
     .stat-card {
-        padding: 16px;
-    }
-
-    .stat-card h3 {
-        font-size: 24px;
-        margin-top: 17px;
+        padding: 15px;
+        border-radius: 14px;
     }
 
     .stat-icon {
-        width: 39px;
-        height: 39px;
+        width: 38px;
+        height: 38px;
+        border-radius: 11px;
+        font-size: 15px;
+    }
+
+    .stat-label {
+        font-size: 8px;
+    }
+
+    .stat-card h3 {
+        margin-top: 16px;
+        font-size: 25px;
+    }
+
+    .stat-card p {
+        font-size: 9px;
+    }
+
+    .stat-bottom {
+        margin-top: 12px;
+        padding-top: 10px;
+        font-size: 8px;
     }
 
     .quick-grid {
         grid-template-columns: 1fr;
-        gap: 12px;
+        gap: 11px;
     }
 
     .quick-card {
         min-height: 155px;
+        padding: 18px;
+        border-radius: 15px;
     }
 
-    .section-heading h2 {
-        font-size: 16px;
+    .quick-icon {
+        width: 42px;
+        height: 42px;
+        font-size: 17px;
+    }
+
+    .quick-card h3 {
+        margin-top: 14px;
+        font-size: 13px;
+    }
+
+    .quick-card p {
+        max-width: 85%;
+        font-size: 10px;
+    }
+
+    .quick-arrow {
+        right: 17px;
+        bottom: 17px;
+    }
+
+    .dashboard-panel {
+        padding: 18px 15px;
+    }
+
+    .panel-heading h3 {
+        font-size: 13px;
+    }
+
+    .learning-item {
+        gap: 10px;
+        padding: 12px 5px;
+    }
+
+    .learning-icon {
+        width: 38px;
+        height: 38px;
+        font-size: 13px;
+    }
+
+    .learning-info strong {
+        font-size: 10px;
+    }
+
+    .learning-info small {
+        font-size: 9px;
+    }
+
+    .placement-box h3 {
+        font-size: 15px;
+    }
+
+    .placement-box p {
+        font-size: 10px;
+    }
+
+    .dashboard-footer-note {
+        font-size: 9px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dashboard-page *,
+    .dashboard-page *::before,
+    .dashboard-page *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
     }
 }
 </style>
@@ -529,234 +1116,427 @@
 
 <div class="dashboard-page">
 
+    <div class="dashboard-topline">
+        <div class="dashboard-breadcrumb">
+            <i class="fa-solid fa-house"></i>
+            <i class="fa-solid fa-chevron-right"></i>
+            <strong>Student Dashboard</strong>
+        </div>
+
+        <div class="dashboard-date">
+            <i class="fa-regular fa-calendar"></i>
+            Your Learning Dashboard
+        </div>
+    </div>
+
     <section class="dashboard-welcome">
+
         <div class="welcome-content">
+
             <span class="welcome-label">
                 <i class="fa-solid fa-sparkles"></i>
                 STUDENT LEARNING SPACE
             </span>
 
-            <h1>Welcome back, {{ session.get('name', session.get('username', 'Student')) }}!</h1>
+            <h1>
+                Welcome back,<br>
+                <span>{{ session.get('name', session.get('username', 'Student')) }}!</span>
+            </h1>
 
             <p>
-                Your placement journey continues here. Build your skills,
-                practice mock tests, prepare for interviews and move closer
-                to your dream career.
+                Your placement journey continues here. Build your technical
+                skills, practice assessments, prepare for interviews and take
+                the next step towards your dream career.
             </p>
 
             <div class="welcome-actions">
+
                 <a href="/courses" class="welcome-btn">
                     <i class="fa-solid fa-book-open"></i>
                     Explore Courses
+                    <i class="fa-solid fa-arrow-right"></i>
                 </a>
 
                 <a href="{{ url_for('mock_test_dashboard') }}" class="welcome-btn secondary">
                     <i class="fa-solid fa-file-circle-check"></i>
                     Start Mock Test
                 </a>
+
             </div>
+
         </div>
 
-        <div class="welcome-illustration">
-            <i class="fa-solid fa-graduation-cap"></i>
-        </div>
-    </section>
+        <div class="welcome-art">
 
-    <div class="section-heading">
-        <div>
-            <h2>Dashboard Overview</h2>
-            <p>Your learning activity at a glance</p>
-        </div>
-    </div>
-
-    <section class="stats-grid">
-
-        <div class="stat-card">
-            <div class="stat-top">
-                <div>
-                    <div class="stat-icon blue">
-                        <i class="fa-solid fa-book-open"></i>
-                    </div>
-                </div>
+            <div class="welcome-art-circle">
+                <i class="fa-solid fa-graduation-cap"></i>
             </div>
-            <h3>{{ total_courses|default(0) }}</h3>
-            <p>Available Courses</p>
-            <div class="stat-bottom">
-                <i class="fa-solid fa-circle-check"></i>
-                Learning resources
-            </div>
-        </div>
 
-        <div class="stat-card">
-            <div class="stat-top">
-                <div class="stat-icon purple">
-                    <i class="fa-solid fa-file-circle-check"></i>
-                </div>
+            <div class="art-floating one">
+                <i class="fa-solid fa-code"></i>
             </div>
-            <h3>{{ total_mock_tests|default(0) }}</h3>
-            <p>Available Mock Tests</p>
-            <div class="stat-bottom">
-                <i class="fa-solid fa-chart-line"></i>
-                Test preparation
+
+            <div class="art-floating two">
+                <i class="fa-solid fa-book"></i>
             </div>
-        </div>
 
-        <div class="stat-card">
-            <div class="stat-top">
-                <div class="stat-icon green">
-                    <i class="fa-solid fa-circle-question"></i>
-                </div>
-            </div>
-            <h3>{{ total_questions|default(0) }}</h3>
-            <p>Practice Questions</p>
-            <div class="stat-bottom">
-                <i class="fa-solid fa-brain"></i>
-                Knowledge building
-            </div>
-        </div>
-
-        <div class="stat-card">
-            <div class="stat-top">
-                <div class="stat-icon orange">
-                    <i class="fa-solid fa-file-lines"></i>
-                </div>
-            </div>
-            <h3>{{ resume_score|default(0) }}%</h3>
-            <p>Resume Score</p>
-            <div class="stat-bottom">
-                <i class="fa-solid fa-arrow-up"></i>
-                Resume readiness
-            </div>
-        </div>
-
-    </section>
-
-    <div class="section-heading">
-        <div>
-            <h2>Explore Your Platform</h2>
-            <p>Everything you need for placement preparation</p>
-        </div>
-        <a href="/courses" class="section-link">Explore all <i class="fa-solid fa-arrow-right"></i></a>
-    </div>
-
-    <section class="quick-grid">
-
-        <a href="/courses" class="quick-card blue">
-            <div class="quick-icon">
-                <i class="fa-solid fa-book-open"></i>
-            </div>
-            <h3>Learning Courses</h3>
-            <p>Explore programming courses, technical subjects and structured learning materials.</p>
-            <i class="fa-solid fa-arrow-right quick-arrow"></i>
-        </a>
-
-        <a href="{{ url_for('mock_test_dashboard') }}" class="quick-card purple">
-            <div class="quick-icon">
-                <i class="fa-solid fa-file-circle-check"></i>
-            </div>
-            <h3>Mock Test Center</h3>
-            <p>Attempt practice tests, improve accuracy and prepare for placement examinations.</p>
-            <i class="fa-solid fa-arrow-right quick-arrow"></i>
-        </a>
-
-        <a href="/interview_questions" class="quick-card green">
-            <div class="quick-icon">
-                <i class="fa-solid fa-comments"></i>
-            </div>
-            <h3>Interview Preparation</h3>
-            <p>Prepare technical and HR interview questions with structured practice.</p>
-            <i class="fa-solid fa-arrow-right quick-arrow"></i>
-        </a>
-
-        <a href="/communication" class="quick-card orange">
-            <div class="quick-icon">
-                <i class="fa-solid fa-microphone"></i>
-            </div>
-            <h3>Communication Practice</h3>
-            <p>Improve your communication skills and develop interview confidence.</p>
-            <i class="fa-solid fa-arrow-right quick-arrow"></i>
-        </a>
-
-        <a href="/resume_builder" class="quick-card pink">
-            <div class="quick-icon">
-                <i class="fa-solid fa-file-lines"></i>
-            </div>
-            <h3>Resume Builder</h3>
-            <p>Create and improve your professional resume for placement opportunities.</p>
-            <i class="fa-solid fa-arrow-right quick-arrow"></i>
-        </a>
-
-        <a href="/leaderboard" class="quick-card cyan">
-            <div class="quick-icon">
+            <div class="art-floating three">
                 <i class="fa-solid fa-trophy"></i>
             </div>
-            <h3>Leaderboard</h3>
-            <p>Explore student rankings and track your competitive learning journey.</p>
-            <i class="fa-solid fa-arrow-right quick-arrow"></i>
-        </a>
+
+        </div>
+
+    </section>
+
+    <section class="dashboard-section">
+
+        <div class="section-heading">
+
+            <div class="section-title">
+                <div class="section-title-icon">
+                    <i class="fa-solid fa-chart-pie"></i>
+                </div>
+
+                <div>
+                    <h2>Dashboard Overview</h2>
+                    <p>Your learning resources at a glance</p>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="stats-grid">
+
+            <div class="stat-card blue">
+
+                <div class="stat-top">
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-book-open"></i>
+                    </div>
+                    <span class="stat-label">LEARNING</span>
+                </div>
+
+                <h3>{{ total_courses|default(0) }}</h3>
+
+                <p>Available Courses</p>
+
+                <div class="stat-bottom">
+                    <i class="fa-solid fa-circle-check"></i>
+                    Learning resources
+                </div>
+
+            </div>
+
+            <div class="stat-card purple">
+
+                <div class="stat-top">
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-file-circle-check"></i>
+                    </div>
+                    <span class="stat-label">ASSESSMENT</span>
+                </div>
+
+                <h3>{{ total_mock_tests|default(0) }}</h3>
+
+                <p>Available Mock Tests</p>
+
+                <div class="stat-bottom">
+                    <i class="fa-solid fa-chart-line"></i>
+                    Test preparation
+                </div>
+
+            </div>
+
+            <div class="stat-card green">
+
+                <div class="stat-top">
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-circle-question"></i>
+                    </div>
+                    <span class="stat-label">PRACTICE</span>
+                </div>
+
+                <h3>{{ total_questions|default(0) }}</h3>
+
+                <p>Practice Questions</p>
+
+                <div class="stat-bottom">
+                    <i class="fa-solid fa-brain"></i>
+                    Knowledge building
+                </div>
+
+            </div>
+
+            <div class="stat-card orange">
+
+                <div class="stat-top">
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-file-lines"></i>
+                    </div>
+                    <span class="stat-label">CAREER</span>
+                </div>
+
+                <h3>{{ resume_score|default(0) }}%</h3>
+
+                <p>Resume Score</p>
+
+                <div class="stat-bottom">
+                    <i class="fa-solid fa-arrow-up"></i>
+                    Resume readiness
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <section class="dashboard-section">
+
+        <div class="section-heading">
+
+            <div class="section-title">
+                <div class="section-title-icon">
+                    <i class="fa-solid fa-grid-2"></i>
+                </div>
+
+                <div>
+                    <h2>Explore Your Platform</h2>
+                    <p>Everything you need for placement preparation</p>
+                </div>
+            </div>
+
+            <a href="/courses" class="section-link">
+                Explore all
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
+
+        </div>
+
+        <div class="quick-grid">
+
+            <a href="/courses" class="quick-card blue">
+
+                <div class="quick-card-top">
+                    <div class="quick-icon">
+                        <i class="fa-solid fa-book-open"></i>
+                    </div>
+
+                    <span class="quick-badge">LEARN</span>
+                </div>
+
+                <h3>Learning Courses</h3>
+
+                <p>
+                    Explore programming courses, technical subjects and
+                    structured learning materials.
+                </p>
+
+                <span class="quick-arrow">
+                    <i class="fa-solid fa-arrow-right"></i>
+                </span>
+
+            </a>
+
+            <a href="{{ url_for('mock_test_dashboard') }}" class="quick-card purple">
+
+                <div class="quick-card-top">
+                    <div class="quick-icon">
+                        <i class="fa-solid fa-file-circle-check"></i>
+                    </div>
+
+                    <span class="quick-badge">PRACTICE</span>
+                </div>
+
+                <h3>Mock Test Center</h3>
+
+                <p>
+                    Attempt practice tests, improve accuracy and prepare
+                    for placement examinations.
+                </p>
+
+                <span class="quick-arrow">
+                    <i class="fa-solid fa-arrow-right"></i>
+                </span>
+
+            </a>
+
+            <a href="/interview_questions" class="quick-card green">
+
+                <div class="quick-card-top">
+                    <div class="quick-icon">
+                        <i class="fa-solid fa-comments"></i>
+                    </div>
+
+                    <span class="quick-badge">PREPARE</span>
+                </div>
+
+                <h3>Interview Preparation</h3>
+
+                <p>
+                    Prepare technical and HR interview questions with
+                    structured practice.
+                </p>
+
+                <span class="quick-arrow">
+                    <i class="fa-solid fa-arrow-right"></i>
+                </span>
+
+            </a>
+
+            <a href="/communication" class="quick-card orange">
+
+                <div class="quick-card-top">
+                    <div class="quick-icon">
+                        <i class="fa-solid fa-microphone"></i>
+                    </div>
+
+                    <span class="quick-badge">IMPROVE</span>
+                </div>
+
+                <h3>Communication Practice</h3>
+
+                <p>
+                    Improve your communication skills and develop
+                    interview confidence.
+                </p>
+
+                <span class="quick-arrow">
+                    <i class="fa-solid fa-arrow-right"></i>
+                </span>
+
+            </a>
+
+            <a href="/resume_builder" class="quick-card pink">
+
+                <div class="quick-card-top">
+                    <div class="quick-icon">
+                        <i class="fa-solid fa-file-lines"></i>
+                    </div>
+
+                    <span class="quick-badge">BUILD</span>
+                </div>
+
+                <h3>Resume Builder</h3>
+
+                <p>
+                    Create and improve your professional resume for
+                    placement opportunities.
+                </p>
+
+                <span class="quick-arrow">
+                    <i class="fa-solid fa-arrow-right"></i>
+                </span>
+
+            </a>
+
+            <a href="/leaderboard" class="quick-card cyan">
+
+                <div class="quick-card-top">
+                    <div class="quick-icon">
+                        <i class="fa-solid fa-trophy"></i>
+                    </div>
+
+                    <span class="quick-badge">COMPETE</span>
+                </div>
+
+                <h3>Leaderboard</h3>
+
+                <p>
+                    Explore student rankings and track your competitive
+                    learning journey.
+                </p>
+
+                <span class="quick-arrow">
+                    <i class="fa-solid fa-arrow-right"></i>
+                </span>
+
+            </a>
+
+        </div>
 
     </section>
 
     <section class="dashboard-bottom">
 
         <div class="dashboard-panel">
+
             <div class="panel-heading">
                 <h3>Continue Your Journey</h3>
-                <span>Quick access</span>
+                <span>QUICK ACCESS</span>
             </div>
 
             <a href="/courses" class="learning-item">
+
                 <div class="learning-icon">
-                    <i class="fa-solid fa-book"></i>
+                    <i class="fa-solid fa-book-open"></i>
                 </div>
+
                 <div class="learning-info">
                     <strong>Explore Learning Materials</strong>
                     <small>Continue developing your technical skills</small>
                 </div>
+
                 <i class="fa-solid fa-chevron-right learning-arrow"></i>
+
             </a>
 
             <a href="/interview_questions" class="learning-item">
+
                 <div class="learning-icon">
                     <i class="fa-solid fa-code"></i>
                 </div>
+
                 <div class="learning-info">
                     <strong>Practice Interview Questions</strong>
                     <small>Prepare for technical interviews</small>
                 </div>
+
                 <i class="fa-solid fa-chevron-right learning-arrow"></i>
+
             </a>
 
             <a href="/communication" class="learning-item">
+
                 <div class="learning-icon">
                     <i class="fa-solid fa-microphone"></i>
                 </div>
+
                 <div class="learning-info">
                     <strong>Improve Communication</strong>
                     <small>Develop confidence and speaking skills</small>
                 </div>
+
                 <i class="fa-solid fa-chevron-right learning-arrow"></i>
+
             </a>
 
             <a href="/resume_builder" class="learning-item">
+
                 <div class="learning-icon">
                     <i class="fa-solid fa-file-lines"></i>
                 </div>
+
                 <div class="learning-info">
                     <strong>Build Your Resume</strong>
                     <small>Create your professional career profile</small>
                 </div>
+
                 <i class="fa-solid fa-chevron-right learning-arrow"></i>
+
             </a>
+
         </div>
 
-        <div class="dashboard-panel">
+        <div class="dashboard-panel placement-panel">
+
             <div class="panel-heading">
                 <h3>Placement Readiness</h3>
-                <span>Your next step</span>
+                <span>NEXT STEP</span>
             </div>
 
             <div class="placement-box">
+
                 <div class="placement-icon">
                     <i class="fa-solid fa-rocket"></i>
                 </div>
@@ -768,14 +1548,40 @@
                     and improve your interview performance.
                 </p>
 
+                <div class="placement-features">
+
+                    <span>
+                        <i class="fa-solid fa-check"></i>
+                        Technical Skills
+                    </span>
+
+                    <span>
+                        <i class="fa-solid fa-check"></i>
+                        Mock Tests
+                    </span>
+
+                    <span>
+                        <i class="fa-solid fa-check"></i>
+                        Interview Prep
+                    </span>
+
+                </div>
+
                 <a href="{{ url_for('mock_test_dashboard') }}" class="placement-btn">
                     Start Preparation
                     <i class="fa-solid fa-arrow-right"></i>
                 </a>
+
             </div>
+
         </div>
 
     </section>
+
+    <div class="dashboard-footer-note">
+        <i class="fa-solid fa-lightbulb"></i>
+        Every skill you build today brings you closer to your career goals.
+    </div>
 
 </div>
 
