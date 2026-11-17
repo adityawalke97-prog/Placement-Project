@@ -107,13 +107,13 @@
             color: var(--primary);
         }
 
-        .nav-links {
+        .portal-nav-links {
             display: flex;
             align-items: center;
             gap: 5px;
         }
 
-        .nav-link {
+        .portal-nav-link {
             display: flex;
             align-items: center;
             gap: 8px;
@@ -125,12 +125,12 @@
             transition: .2s ease;
         }
 
-        .nav-link i {
+        .portal-nav-link i {
             font-size: 14px;
         }
 
-        .nav-link:hover,
-        .nav-link.active {
+        .portal-nav-link:hover,
+        .portal-nav-link.active {
             background: #eff3ff;
             color: var(--primary);
         }
@@ -613,13 +613,31 @@
             to { transform: scale(1.06); }
         }
 
+        .portal-nav-links {
+            flex: 1 1 auto;
+            min-width: 0;
+            justify-content: center;
+            white-space: nowrap;
+        }
+
+        .portal-nav-link {
+            flex: 0 0 auto;
+            white-space: nowrap;
+        }
+
+        .nav-container > .portal-nav-links {
+            display: flex;
+            visibility: visible;
+            opacity: 1;
+        }
+
         @media(max-width: 1250px) {
             .nav-container {
                 padding: 0 20px;
                 gap: 12px;
             }
 
-            .nav-link {
+            .portal-nav-link {
                 padding: 10px 9px;
                 font-size: 12px;
             }
@@ -629,8 +647,8 @@
             }
         }
 
-        @media(max-width: 1050px) {
-            .nav-links,
+        @media(max-width: 1120px) {
+            .nav-container > .portal-nav-links,
             .nav-actions .global-search {
                 display: none;
             }
@@ -736,23 +754,26 @@
 
         {% if session.get("user_id") %}
 
-        <nav class="nav-links">
-            <a href="/dashboard" class="nav-link" data-path="/dashboard">
+        <nav class="portal-nav-links">
+            <a href="/dashboard" class="portal-nav-link" data-path="/dashboard">
                 <i class="fa-solid fa-house"></i> Dashboard
             </a>
-            <a href="/courses" class="nav-link" data-path="/courses">
+            <a href="/courses" class="portal-nav-link" data-path="/courses">
                 <i class="fa-solid fa-book-open"></i> Courses
             </a>
-            <a href="{{ url_for('mock_test_dashboard') }}" class="nav-link">
+            <a href="{{ url_for('mock_test_dashboard') }}" class="portal-nav-link" data-path="/mock-test">
                 <i class="fa-solid fa-file-circle-check"></i> Mock Tests
             </a>
-            <a href="/interview_questions" class="nav-link" data-path="/interview_questions">
+            <a href="/interview_questions" class="portal-nav-link" data-path="/interview_questions">
                 <i class="fa-solid fa-comments"></i> Interview
             </a>
-            <a href="/communication" class="nav-link" data-path="/communication">
+            <a href="/communication" class="portal-nav-link" data-path="/communication">
                 <i class="fa-solid fa-microphone"></i> Practice
             </a>
-            <a href="/leaderboard" class="nav-link" data-path="/leaderboard">
+            <a href="/resume_builder" class="portal-nav-link" data-path="/resume_builder">
+                <i class="fa-regular fa-file-lines"></i> Resume
+            </a>
+            <a href="/leaderboard" class="portal-nav-link" data-path="/leaderboard">
                 <i class="fa-solid fa-trophy"></i> Leaderboard
             </a>
         </nav>
@@ -819,8 +840,8 @@
         {% else %}
 
         <div class="nav-actions">
-            <a href="/login" class="nav-link">Login</a>
-            <a href="/signup" class="nav-link" style="background:linear-gradient(135deg,#3157e8,#7958ef);color:white;padding:11px 19px">Get Started</a>
+            <a href="/login" class="portal-nav-link">Login</a>
+            <a href="/signup" class="portal-nav-link" style="background:linear-gradient(135deg,#3157e8,#7958ef);color:white;padding:11px 19px">Get Started</a>
         </div>
 
         {% endif %}
