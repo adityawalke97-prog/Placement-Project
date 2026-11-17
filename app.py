@@ -8317,6 +8317,204 @@ def ai_communication_api():
             "success": False,
             "error": "Something went wrong while processing your question."
         }), 500
+
+@app.route("/settings", methods=["GET", "POST"])
+@login_required
+def settings():
+    user_id = session.get("user_id")
+    conn = None
+    cursor = None
+
+    defaults = {
+        "language": "English",
+        "timezone": "Asia/Kolkata",
+        "date_format": "DD-MM-YYYY",
+        "theme": "light",
+        "accent_color": "#6366f1",
+        "compact_layout": 0,
+        "email_notifications": 1,
+        "browser_notifications": 0,
+        "message_notifications": 1,
+        "friend_notifications": 1,
+        "mock_test_notifications": 1,
+        "interview_notifications": 1,
+        "placement_notifications": 1,
+        "profile_visibility": "public",
+        "show_online_status": 1,
+        "allow_friend_requests": 1
+    }
+
+    notification_fields = (
+        "email_notifications",
+        "browser_notifications",
+        "message_notifications",
+        "friend_notifications",
+        "mock_test_notifications",
+        "interview_notifications",
+        "placement_notifications"
+    )
+
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(pymysql.cursors.DictCursor)
+
+        cursor.execute(
+            "SELECT * FROM users WHERE id = %s LIMIT 1",
+            (user_id,)
+        )
+        user = cursor.fetchone()
+
+        if not user:
+            session.clear()
+            flash("Please login again.", "warning")
+            return redirect(url_for("login"))
+
+        cursor.execute(
+            "SELECT * FROM user_settings WHERE user_id = %s LIMIT 1",
+            (user_id,)
+        )
+        saved_settings = cursor.fetchone() or {}
+        current_settings = defaults.copy()
+        current_settings.update({
+            key: saved_settings.get(key, value)
+            for key, value in defaults.items()
+        })
+
+        if request.method == "POST":
+            section = request.form.get("section", "").strip().lower()
+
+            if section == "general":
+                language = request.form.get("language", "English").strip()
+                timezone = request.form.get("timezone", "Asia/Kolkata").strip()
+                date_format = request.form.get("date_format", "DD-MM-YYYY").strip()
+
+                if not language or len(language) > 30:
+                    return redirect(url_for("settings", error="Please select a valid language."))
+
+                try:
+                    ZoneInfo(timezone)
+                except Exception:
+                    return redirect(url_for("settings", error="Please select a valid timezone."))
+
+                if date_format not in ("DD-MM-YYYY", "MM-DD-YYYY", "YYYY-MM-DD"):
+                    return redirect(url_for("settings", error="Please select a valid date format."))
+
+                current_settings.update({
+                    "language": language,
+                    "timezone": timezone,
+                    "date_format": date_format
+                })
+
+            elif section == "appearance":
+                theme = request.form.get("theme", "light").strip().lower()
+                accent_color = request.form.get("accent_color", "#6366f1").strip()
+                compact_layout = 1 if request.form.get("compact_layout") in ("on", "1", "true") else 0
+
+                if theme not in ("light", "dark", "system"):
+                    return redirect(url_for("settings", error="Please select a valid theme."))
+
+                if len(accent_color) != 7 or not accent_color.startswith("#") or any(c not in "0123456789abcdefABCDEF" for c in accent_color[1:]):
+                    return redirect(url_for("settings", error="Please select a valid accent color."))
+
+                current_settings.update({
+                    "theme": theme,
+                    "accent_color": accent_color,
+                    "compact_layout": compact_layout
+                })
+
+            elif section == "notifications":
+                current_settings.update({
+                    field: 1 if request.form.get(field) in ("on", "1", "true") else 0
+                    for field in notification_fields
+                })
+
+            elif section == "privacy":
+                profile_visibility = request.form.get("profile_visibility", "public").strip().lower()
+                if profile_visibility not in ("public", "friends", "private"):
+                    return redirect(url_for("settings", error="Please select a valid profile visibility."))
+
+                current_settings.update({
+                    "profile_visibility": profile_visibility,
+                    "show_online_status": 1 if request.form.get("show_online_status") in ("on", "1", "true") else 0,
+                    "allow_friend_requests": 1 if request.form.get("allow_friend_requests") in ("on", "1", "true") else 0
+                })
+
+            elif section == "security":
+                if str(user.get("login_provider") or "").lower() == "google":
+                    return redirect(url_for("settings", error="Google account passwords must be changed through Google."))
+
+                current_password = request.form.get("current_password", "")
+                new_password = request.form.get("new_password", "")
+                confirm_password = request.form.get("confirm_password", "")
+
+                if not current_password or not new_password or not confirm_password:
+                    return redirect(url_for("settings", error="Please fill in all password fields."))
+
+                if len(new_password) < 8:
+                    return redirect(url_for("settings", error="New password must contain at least 8 characters."))
+
+                if new_password != confirm_password:
+                    return redirect(url_for("settings", error="New password and confirmation do not match."))
+
+                if not user.get("password") or not bcrypt.check_password_hash(user["password"], current_password):
+                    return redirect(url_for("settings", error="Your current password is incorrect."))
+
+                new_password_hash = bcrypt.generate_password_hash(new_password).decode("utf-8")
+                cursor.execute(
+                    "UPDATE users SET password = %s WHERE id = %s",
+                    (new_password_hash, user_id)
+                )
+                conn.commit()
+                return redirect(url_for("settings", success="Password updated successfully."))
+
+            else:
+                return redirect(url_for("settings", error="Invalid settings section."))
+
+            columns = list(defaults.keys())
+            values = [current_settings[column] for column in columns]
+            insert_columns = ["user_id"] + columns
+            placeholders = ", ".join(["%s"] * len(insert_columns))
+            update_clause = ", ".join(
+                f"{column}=VALUES({column})" for column in columns
+            )
+            sql = (
+                f"INSERT INTO user_settings ({', '.join(insert_columns)}) "
+                f"VALUES ({placeholders}) "
+                f"ON DUPLICATE KEY UPDATE {update_clause}"
+            )
+            cursor.execute(sql, [user_id] + values)
+            conn.commit()
+            return redirect(url_for("settings", success="Settings saved successfully."))
+
+        account_name = user.get("name") or session.get("name") or session.get("user_name", "")
+        account_email = user.get("email") or session.get("email") or session.get("user_email", "")
+        profile_pic = user.get("profile_pic") or user.get("picture") or session.get("profile_pic", "")
+        session["name"] = account_name
+        session["email"] = account_email
+        session["profile_pic"] = profile_pic
+        session["login_provider"] = user.get("login_provider") or session.get("login_provider", "email")
+
+        return render_template(
+            "settings.html",
+            settings=current_settings,
+            account_name=account_name,
+            account_email=account_email,
+            profile_pic=profile_pic,
+            login_provider=user.get("login_provider") or session.get("login_provider", "email")
+        )
+
+    except Exception:
+        if conn:
+            conn.rollback()
+        app.logger.exception("SETTINGS ROUTE ERROR")
+        return redirect(url_for("settings", error="Unable to load or save settings. Please try again."))
+
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
 @app.route("/profile")
 def profile():
     if "email" not in session:
