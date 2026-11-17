@@ -110,29 +110,62 @@
         .portal-nav-links {
             display: flex;
             align-items: center;
-            gap: 5px;
+            justify-content: center;
+            gap: 3px;
+            flex: 1 1 auto;
+            min-width: 0;
+            padding: 5px;
+            border: 1px solid #edf0f8;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #f8faff, #f5f6ff);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.9);
         }
 
         .portal-nav-link {
-            display: flex;
+            display: inline-flex;
             align-items: center;
-            gap: 8px;
-            padding: 11px 13px;
-            border-radius: 10px;
+            justify-content: center;
+            gap: 7px;
+            min-height: 39px;
+            padding: 9px 10px;
+            border: 1px solid transparent;
+            border-radius: 11px;
             color: #64718a;
-            font-size: 13px;
-            font-weight: 600;
-            transition: .2s ease;
+            font-size: 11.5px;
+            font-weight: 700;
+            white-space: nowrap;
+            flex: 0 0 auto;
+            transition: background .2s ease, color .2s ease, box-shadow .2s ease, transform .2s ease;
         }
 
         .portal-nav-link i {
-            font-size: 14px;
+            font-size: 13px;
+            color: #8290ad;
+            transition: color .2s ease;
         }
 
-        .portal-nav-link:hover,
-        .portal-nav-link.active {
-            background: #eff3ff;
+        .portal-nav-link:hover {
+            background: #ffffff;
             color: var(--primary);
+            border-color: #e8edff;
+            box-shadow: 0 5px 14px rgba(49,87,232,.08);
+            transform: translateY(-1px);
+        }
+
+        .portal-nav-link:hover i,
+        .portal-nav-link.active i {
+            color: var(--primary);
+        }
+
+        .portal-nav-link.active {
+            background: linear-gradient(135deg, #3157e8, #7958ef);
+            color: #ffffff;
+            border-color: transparent;
+            box-shadow: 0 6px 16px rgba(79,91,220,.24);
+        }
+
+        .portal-nav-link.active i {
+            color: #ffffff;
         }
 
         .nav-actions {
@@ -434,6 +467,12 @@
             color: var(--primary);
         }
 
+        .mobile-nav a i {
+            width: 18px;
+            text-align: center;
+            color: #8290ad;
+        }
+
         .mobile-search {
             margin-bottom: 10px;
             position: relative;
@@ -613,24 +652,6 @@
             to { transform: scale(1.06); }
         }
 
-        .portal-nav-links {
-            flex: 1 1 auto;
-            min-width: 0;
-            justify-content: center;
-            white-space: nowrap;
-        }
-
-        .portal-nav-link {
-            flex: 0 0 auto;
-            white-space: nowrap;
-        }
-
-        .nav-container > .portal-nav-links {
-            display: flex;
-            visibility: visible;
-            opacity: 1;
-        }
-
         @media(max-width: 1250px) {
             .nav-container {
                 padding: 0 20px;
@@ -638,8 +659,14 @@
             }
 
             .portal-nav-link {
-                padding: 10px 9px;
-                font-size: 12px;
+                padding: 9px 7px;
+                gap: 5px;
+                font-size: 10.5px;
+            }
+
+            .portal-nav-links {
+                gap: 1px;
+                padding: 4px;
             }
 
             .global-search {
@@ -647,8 +674,8 @@
             }
         }
 
-        @media(max-width: 1120px) {
-            .nav-container > .portal-nav-links,
+        @media(max-width: 1050px) {
+            .portal-nav-links,
             .nav-actions .global-search {
                 display: none;
             }
@@ -761,7 +788,7 @@
             <a href="/courses" class="portal-nav-link" data-path="/courses">
                 <i class="fa-solid fa-book-open"></i> Courses
             </a>
-            <a href="{{ url_for('mock_test_dashboard') }}" class="portal-nav-link" data-path="/mock-test">
+            <a href="{{ url_for('mock_test_dashboard') }}" class="portal-nav-link">
                 <i class="fa-solid fa-file-circle-check"></i> Mock Tests
             </a>
             <a href="/interview_questions" class="portal-nav-link" data-path="/interview_questions">
@@ -775,6 +802,15 @@
             </a>
             <a href="/leaderboard" class="portal-nav-link" data-path="/leaderboard">
                 <i class="fa-solid fa-trophy"></i> Leaderboard
+            </a>
+            <a href="/friends" class="portal-nav-link" data-path="/friends">
+                <i class="fa-solid fa-user-group"></i> Friends
+            </a>
+            <a href="/messages" class="portal-nav-link" data-path="/messages">
+                <i class="fa-regular fa-message"></i> Messages
+            </a>
+            <a href="/notifications" class="portal-nav-link" data-path="/notifications">
+                <i class="fa-regular fa-bell"></i> Notifications
             </a>
         </nav>
 
@@ -1015,7 +1051,7 @@ document.addEventListener("DOMContentLoaded", function () {
         window.scrollTo({ top: 0, behavior: "smooth" });
     });
 
-    document.querySelectorAll(".nav-link[data-path]").forEach(link => {
+    document.querySelectorAll(".portal-nav-link[data-path]").forEach(link => {
         const path = window.location.pathname;
         const target = link.dataset.path;
 
