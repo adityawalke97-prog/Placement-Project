@@ -1,14 +1,14 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#101a35">
+
     <title>{% block title %}Placement Training Portal{% endblock %}</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}">
@@ -17,17 +17,17 @@
 
     <style>
         :root {
-            --primary: #3157e8;
-            --primary-dark: #2443c5;
+            --primary: #4361ee;
+            --primary-dark: #304bd0;
             --accent: #7958ef;
             --navy: #101a35;
             --text: #19243c;
-            --muted: #7a859b;
+            --muted: #8290a8;
             --bg: #f5f7fc;
             --white: #ffffff;
-            --border: #e8ecf5;
+            --border: #e9edf5;
             --shadow: 0 12px 35px rgba(26,43,88,.08);
-            --radius: 16px;
+            --gradient: linear-gradient(135deg,#4361ee,#7958ef);
         }
 
         * {
@@ -42,7 +42,7 @@
             margin: 0;
             background: var(--bg);
             color: var(--text);
-            font-family: Inter, sans-serif;
+            font-family: Inter,sans-serif;
             -webkit-font-smoothing: antialiased;
         }
 
@@ -51,7 +51,7 @@
             text-decoration: none;
         }
 
-        button, input {
+        button,input {
             font: inherit;
         }
 
@@ -60,27 +60,27 @@
             top: 0;
             z-index: 1000;
             width: 100%;
-            background: rgba(255,255,255,.95);
-            backdrop-filter: blur(18px);
-            border-bottom: 1px solid var(--border);
-            box-shadow: 0 5px 25px rgba(20,35,75,.04);
+            background: rgba(255,255,255,.94);
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
+            border-bottom: 1px solid rgba(226,232,245,.9);
+            box-shadow: 0 5px 25px rgba(20,35,75,.045);
         }
 
         .nav-container {
-            max-width: 1500px;
-            min-height: 76px;
+            max-width: 1600px;
+            min-height: 78px;
             margin: auto;
             padding: 0 30px;
             display: flex;
             align-items: center;
-            justify-content: space-between;
             gap: 25px;
         }
 
         .brand {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 11px;
             flex-shrink: 0;
         }
 
@@ -89,18 +89,19 @@
             height: 43px;
             display: grid;
             place-items: center;
-            border-radius: 13px;
+            border-radius: 14px;
             color: white;
             font-size: 19px;
-            background: linear-gradient(135deg, #3157e8, #7958ef);
-            box-shadow: 0 7px 18px rgba(49,87,232,.25);
+            background: var(--gradient);
+            box-shadow: 0 7px 18px rgba(67,97,238,.25);
         }
 
         .brand-name {
-            font-size: 17px;
-            font-weight: 800;
-            letter-spacing: -.5px;
             color: var(--navy);
+            font-size: 18px;
+            font-weight: 900;
+            letter-spacing: -.7px;
+            white-space: nowrap;
         }
 
         .brand-name span {
@@ -112,97 +113,119 @@
             align-items: center;
             justify-content: center;
             gap: 3px;
-            flex: 1 1 auto;
+            flex: 1;
             min-width: 0;
             padding: 5px;
             border: 1px solid #edf0f8;
             border-radius: 15px;
-            background: linear-gradient(135deg, #f8faff, #f5f6ff);
-            box-shadow: inset 0 1px 0 rgba(255,255,255,.9);
+            background: #f8f9fd;
         }
 
         .portal-nav-link {
+            min-height: 41px;
+            padding: 10px 11px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 7px;
-            min-height: 39px;
-            padding: 9px 10px;
             border: 1px solid transparent;
             border-radius: 11px;
-            color: #64718a;
+            color: #68758d;
             font-size: 11.5px;
             font-weight: 700;
             white-space: nowrap;
-            flex: 0 0 auto;
-            transition: background .2s ease, color .2s ease, box-shadow .2s ease, transform .2s ease;
+            transition: .22s ease;
         }
 
         .portal-nav-link i {
             font-size: 13px;
-            color: #8290ad;
-            transition: color .2s ease;
+            color: #8a96ad;
+            transition: .22s ease;
         }
 
         .portal-nav-link:hover {
-            background: #ffffff;
             color: var(--primary);
-            border-color: #e8edff;
-            box-shadow: 0 5px 14px rgba(49,87,232,.08);
+            background: white;
+            border-color: #e9edff;
+            box-shadow: 0 5px 14px rgba(49,87,232,.07);
             transform: translateY(-1px);
         }
 
-        .portal-nav-link:hover i,
-        .portal-nav-link.active i {
+        .portal-nav-link:hover i {
             color: var(--primary);
         }
 
         .portal-nav-link.active {
-            background: linear-gradient(135deg, #3157e8, #7958ef);
-            color: #ffffff;
+            color: white;
+            background: var(--gradient);
             border-color: transparent;
-            box-shadow: 0 6px 16px rgba(79,91,220,.24);
+            box-shadow: 0 6px 16px rgba(67,97,238,.22);
         }
 
         .portal-nav-link.active i {
-            color: #ffffff;
+            color: white;
         }
 
         .nav-actions {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 9px;
+            flex-shrink: 0;
         }
 
         .global-search {
             position: relative;
-            width: 210px;
+            width: 175px;
         }
 
         .global-search input {
             width: 100%;
             height: 41px;
-            padding: 0 14px 0 38px;
-            background: #f6f8fc;
-            border: 1px solid var(--border);
-            border-radius: 11px;
+            padding: 0 13px 0 37px;
             outline: none;
-            font-size: 12px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: #f8f9fc;
+            color: var(--text);
+            font-size: 11px;
             transition: .2s;
         }
 
         .global-search input:focus {
             background: white;
             border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(49,87,232,.09);
+            box-shadow: 0 0 0 4px rgba(67,97,238,.09);
         }
 
-        .global-search i {
+        .global-search > i {
             position: absolute;
             top: 14px;
-            left: 14px;
-            color: #8994a9;
+            left: 13px;
+            color: #929db1;
             font-size: 13px;
+        }
+
+        .nav-icon-link {
+            width: 41px;
+            height: 41px;
+            display: grid;
+            place-items: center;
+            position: relative;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: white;
+            color: #68758d;
+            font-size: 15px;
+            transition: .22s ease;
+        }
+
+        .nav-icon-link:hover,
+        .nav-icon-btn:hover {
+            color: var(--primary);
+            background: #f1f4ff;
+            border-color: #dce4ff;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 14px rgba(67,97,238,.09);
         }
 
         .nav-icon-btn {
@@ -211,34 +234,30 @@
             display: grid;
             place-items: center;
             position: relative;
-            background: white;
-            color: #65718a;
             border: 1px solid var(--border);
             border-radius: 12px;
+            background: white;
+            color: #68758d;
+            font-size: 15px;
             cursor: pointer;
-            transition: .2s;
-        }
-
-        .nav-icon-btn:hover {
-            color: var(--primary);
-            background: #eff3ff;
+            transition: .22s ease;
         }
 
         .notification-count {
             position: absolute;
-            top: -5px;
-            right: -5px;
+            top: -6px;
+            right: -6px;
             min-width: 18px;
             height: 18px;
             padding: 0 4px;
             display: grid;
             place-items: center;
-            background: #ef4444;
-            color: white;
             border: 2px solid white;
             border-radius: 20px;
+            background: #ef4444;
+            color: white;
             font-size: 9px;
-            font-weight: 800;
+            font-weight: 900;
         }
 
         .dropdown-wrapper {
@@ -250,12 +269,12 @@
             position: absolute;
             top: calc(100% + 13px);
             right: 0;
-            width: 320px;
-            background: white;
+            width: 330px;
+            overflow: hidden;
             border: 1px solid var(--border);
             border-radius: 17px;
-            box-shadow: 0 18px 55px rgba(20,35,75,.15);
-            overflow: hidden;
+            background: white;
+            box-shadow: 0 20px 60px rgba(20,35,75,.16);
             z-index: 1100;
         }
 
@@ -265,12 +284,19 @@
         }
 
         @keyframes dropdownIn {
-            from { opacity: 0; transform: translateY(-7px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(-7px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .dropdown-heading {
-            padding: 17px;
+            min-height: 57px;
+            padding: 15px 17px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -278,7 +304,9 @@
         }
 
         .dropdown-heading strong {
-            font-size: 14px;
+            color: var(--navy);
+            font-size: 13px;
+            font-weight: 800;
         }
 
         .dropdown-heading a {
@@ -305,16 +333,16 @@
         }
 
         .notification-item.unread {
-            background: #f3f6ff;
+            background: #f2f5ff;
         }
 
         .notification-symbol {
-            width: 36px;
-            height: 36px;
+            width: 37px;
+            height: 37px;
             flex-shrink: 0;
             display: grid;
             place-items: center;
-            border-radius: 11px;
+            border-radius: 12px;
             background: #edf1ff;
             color: var(--primary);
         }
@@ -325,8 +353,9 @@
 
         .notification-content strong {
             display: block;
-            font-size: 12px;
             margin-bottom: 4px;
+            color: var(--text);
+            font-size: 12px;
         }
 
         .notification-content p {
@@ -351,27 +380,34 @@
         }
 
         .profile-trigger {
+            min-height: 47px;
+            padding: 5px 10px 5px 5px;
             display: flex;
             align-items: center;
             gap: 9px;
-            padding: 5px 9px 5px 5px;
-            background: white;
             border: 1px solid var(--border);
             border-radius: 13px;
+            background: white;
             cursor: pointer;
+            transition: .2s;
+        }
+
+        .profile-trigger:hover {
+            border-color: #dce4ff;
+            box-shadow: 0 5px 14px rgba(67,97,238,.07);
         }
 
         .profile-avatar {
-            width: 34px;
-            height: 34px;
+            width: 35px;
+            height: 35px;
             display: grid;
             place-items: center;
-            border-radius: 10px;
-            background: linear-gradient(135deg, #3157e8, #7958ef);
+            overflow: hidden;
+            border-radius: 11px;
+            background: var(--gradient);
             color: white;
             font-size: 13px;
-            font-weight: 800;
-            overflow: hidden;
+            font-weight: 900;
         }
 
         .profile-avatar img {
@@ -386,12 +422,13 @@
 
         .profile-info strong {
             display: block;
-            max-width: 115px;
+            max-width: 110px;
             overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
             color: var(--text);
             font-size: 11px;
+            font-weight: 800;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         .profile-info small {
@@ -402,17 +439,18 @@
         }
 
         .profile-menu {
-            width: 220px;
+            width: 225px;
         }
 
         .profile-menu a {
+            padding: 12px 16px;
             display: flex;
             align-items: center;
             gap: 11px;
-            padding: 12px 16px;
             color: #56627a;
             font-size: 12px;
             font-weight: 600;
+            transition: .2s;
         }
 
         .profile-menu a:hover {
@@ -425,72 +463,97 @@
         }
 
         .profile-menu .logout-link {
-            color: #e34c59;
+            margin-top: 5px;
             border-top: 1px solid var(--border);
+            color: #e34c59;
         }
 
         .mobile-toggle {
-            display: none;
             width: 42px;
             height: 42px;
+            display: none;
+            place-items: center;
             border: 1px solid var(--border);
-            border-radius: 11px;
+            border-radius: 12px;
             background: white;
             color: var(--navy);
             cursor: pointer;
+            font-size: 16px;
         }
 
         .mobile-nav {
             display: none;
-            padding: 12px 20px 20px;
-            background: white;
+            padding: 15px 20px 20px;
             border-top: 1px solid var(--border);
+            background: white;
+            box-shadow: 0 15px 25px rgba(20,35,75,.05);
         }
 
         .mobile-nav.show {
             display: block;
+            animation: dropdownIn .2s ease;
         }
 
         .mobile-nav a {
+            min-height: 44px;
+            padding: 12px 14px;
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 13px 14px;
-            border-radius: 10px;
+            border-radius: 11px;
             color: #64718a;
             font-size: 13px;
-            font-weight: 600;
-        }
-
-        .mobile-nav a:hover {
-            background: #eff3ff;
-            color: var(--primary);
+            font-weight: 650;
+            transition: .2s;
         }
 
         .mobile-nav a i {
-            width: 18px;
+            width: 19px;
+            color: #8996ad;
             text-align: center;
-            color: #8290ad;
+        }
+
+        .mobile-nav a:hover,
+        .mobile-nav a.active {
+            color: var(--primary);
+            background: #f1f4ff;
+        }
+
+        .mobile-nav a.active i {
+            color: var(--primary);
+        }
+
+        .mobile-nav-divider {
+            height: 1px;
+            margin: 9px 5px;
+            background: var(--border);
         }
 
         .mobile-search {
-            margin-bottom: 10px;
             position: relative;
+            margin-bottom: 12px;
         }
 
         .mobile-search input {
             width: 100%;
-            height: 43px;
-            padding: 0 15px 0 40px;
-            border: 1px solid var(--border);
-            border-radius: 11px;
+            height: 44px;
+            padding: 0 15px 0 41px;
             outline: none;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: #f8f9fc;
+            font-size: 12px;
+        }
+
+        .mobile-search input:focus {
+            border-color: var(--primary);
+            background: white;
         }
 
         .mobile-search i {
             position: absolute;
-            left: 14px;
             top: 15px;
+            left: 15px;
             color: var(--muted);
         }
 
@@ -506,17 +569,18 @@
 
         .flash-message {
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: space-between;
             gap: 12px;
             margin-bottom: 10px;
             padding: 14px 17px;
-            background: white;
             border: 1px solid var(--border);
             border-left: 4px solid var(--primary);
             border-radius: 11px;
+            background: white;
             box-shadow: 0 6px 20px rgba(20,35,75,.05);
             font-size: 13px;
+            transition: .3s;
         }
 
         .flash-message.success {
@@ -555,10 +619,10 @@
         }
 
         .footer-brand {
+            margin-bottom: 14px;
             color: white;
             font-size: 18px;
             font-weight: 800;
-            margin-bottom: 14px;
         }
 
         .footer-description {
@@ -610,7 +674,7 @@
             z-index: 900;
             border: 0;
             border-radius: 13px;
-            background: linear-gradient(135deg, #3157e8, #7958ef);
+            background: var(--gradient);
             color: white;
             box-shadow: 0 8px 25px rgba(49,87,232,.3);
             cursor: pointer;
@@ -627,7 +691,7 @@
             display: grid;
             place-items: center;
             background: rgba(255,255,255,.96);
-            transition: opacity .3s, visibility .3s;
+            transition: opacity .3s,visibility .3s;
         }
 
         #pageLoader.hide {
@@ -641,7 +705,7 @@
             display: grid;
             place-items: center;
             border-radius: 17px;
-            background: linear-gradient(135deg, #3157e8, #7958ef);
+            background: var(--gradient);
             color: white;
             font-size: 22px;
             animation: loaderPulse 1s infinite alternate;
@@ -652,41 +716,38 @@
             to { transform: scale(1.06); }
         }
 
-        @media(max-width: 1250px) {
+        @media(max-width:1450px) {
             .nav-container {
                 padding: 0 20px;
-                gap: 12px;
+                gap: 13px;
             }
 
             .portal-nav-link {
-                padding: 9px 7px;
-                gap: 5px;
+                padding: 9px 8px;
                 font-size: 10.5px;
-            }
-
-            .portal-nav-links {
-                gap: 1px;
-                padding: 4px;
+                gap: 5px;
             }
 
             .global-search {
-                width: 165px;
+                width: 145px;
+            }
+
+            .nav-actions {
+                gap: 7px;
             }
         }
 
-        @media(max-width: 1050px) {
-            .portal-nav-links,
-            .nav-actions .global-search {
+        @media(max-width:1150px) {
+            .portal-nav-links {
                 display: none;
             }
 
             .mobile-toggle {
                 display: grid;
-                place-items: center;
             }
 
             .nav-container {
-                min-height: 68px;
+                min-height: 70px;
             }
 
             .nav-actions {
@@ -698,19 +759,39 @@
             }
         }
 
-        @media(max-width: 600px) {
+        @media(max-width:700px) {
             .nav-container {
-                padding: 0 14px;
-                gap: 9px;
+                padding: 0 13px;
+                gap: 7px;
+            }
+
+            .brand {
+                gap: 8px;
             }
 
             .brand-name {
-                font-size: 14px;
+                font-size: 15px;
             }
 
             .brand-logo {
                 width: 39px;
                 height: 39px;
+                border-radius: 12px;
+            }
+
+            .global-search {
+                display: none;
+            }
+
+            .nav-actions {
+                gap: 6px;
+            }
+
+            .nav-icon-link,
+            .nav-icon-btn {
+                width: 37px;
+                height: 37px;
+                font-size: 14px;
             }
 
             .profile-info,
@@ -719,15 +800,17 @@
             }
 
             .profile-trigger {
-                padding: 4px;
+                min-height: auto;
+                padding: 3px;
                 border: none;
             }
 
-            .nav-actions {
-                gap: 7px;
+            .profile-avatar {
+                width: 35px;
+                height: 35px;
             }
 
-            .nav-icon-btn {
+            .mobile-toggle {
                 width: 38px;
                 height: 38px;
             }
@@ -736,7 +819,7 @@
                 position: fixed;
                 top: 67px;
                 right: 10px;
-                width: min(340px, calc(100vw - 20px));
+                width: min(340px,calc(100vw - 20px));
             }
 
             .flash-container {
@@ -754,6 +837,27 @@
 
             .footer-bottom {
                 flex-direction: column;
+            }
+        }
+
+        @media(max-width:390px) {
+            .brand-name {
+                font-size: 13px;
+            }
+
+            .nav-actions {
+                gap: 4px;
+            }
+
+            .nav-icon-link,
+            .nav-icon-btn {
+                width: 34px;
+                height: 34px;
+            }
+
+            .mobile-toggle {
+                width: 35px;
+                height: 35px;
             }
         }
     </style>
@@ -782,36 +886,42 @@
         {% if session.get("user_id") %}
 
         <nav class="portal-nav-links">
+
             <a href="/dashboard" class="portal-nav-link" data-path="/dashboard">
-                <i class="fa-solid fa-house"></i> Dashboard
+                <i class="fa-solid fa-house"></i>
+                Dashboard
             </a>
+
             <a href="/courses" class="portal-nav-link" data-path="/courses">
-                <i class="fa-solid fa-book-open"></i> Courses
+                <i class="fa-solid fa-book-open"></i>
+                Courses
             </a>
-            <a href="{{ url_for('mock_test_dashboard') }}" class="portal-nav-link">
-                <i class="fa-solid fa-file-circle-check"></i> Mock Tests
+
+            <a href="{{ url_for('mock_test_dashboard') }}" class="portal-nav-link" data-path="/mock">
+                <i class="fa-solid fa-file-circle-check"></i>
+                Mock Tests
             </a>
+
             <a href="/interview_questions" class="portal-nav-link" data-path="/interview_questions">
-                <i class="fa-solid fa-comments"></i> Interview
+                <i class="fa-solid fa-comments"></i>
+                Interview
             </a>
+
             <a href="/communication" class="portal-nav-link" data-path="/communication">
-                <i class="fa-solid fa-microphone"></i> Practice
+                <i class="fa-solid fa-microphone"></i>
+                Practice
             </a>
+
             <a href="/resume_builder" class="portal-nav-link" data-path="/resume_builder">
-                <i class="fa-regular fa-file-lines"></i> Resume
+                <i class="fa-regular fa-file-lines"></i>
+                Resume
             </a>
+
             <a href="/leaderboard" class="portal-nav-link" data-path="/leaderboard">
-                <i class="fa-solid fa-trophy"></i> Leaderboard
+                <i class="fa-solid fa-trophy"></i>
+                Leaderboard
             </a>
-            <a href="/friends" class="portal-nav-link" data-path="/friends">
-                <i class="fa-solid fa-user-group"></i> Friends
-            </a>
-            <a href="/messages" class="portal-nav-link" data-path="/messages">
-                <i class="fa-regular fa-message"></i> Messages
-            </a>
-            <a href="/notifications" class="portal-nav-link" data-path="/notifications">
-                <i class="fa-regular fa-bell"></i> Notifications
-            </a>
+
         </nav>
 
         <div class="nav-actions">
@@ -820,6 +930,14 @@
                 <i class="fa-solid fa-magnifying-glass"></i>
                 <input type="search" id="globalSearchInput" placeholder="Search courses...">
             </form>
+
+            <a href="/friends" class="nav-icon-link" title="Friends" aria-label="Friends">
+                <i class="fa-solid fa-user-group"></i>
+            </a>
+
+            <a href="/messages" class="nav-icon-link" title="Messages" aria-label="Messages">
+                <i class="fa-regular fa-message"></i>
+            </a>
 
             <div class="dropdown-wrapper">
                 <button class="nav-icon-btn" id="notificationButton" type="button" aria-label="Notifications">
@@ -832,6 +950,7 @@
                         <strong>Notifications</strong>
                         <a href="/notifications">View all</a>
                     </div>
+
                     <div class="notification-list" id="notificationList">
                         <div class="empty-notifications">Loading notifications...</div>
                     </div>
@@ -840,6 +959,7 @@
 
             <div class="dropdown-wrapper">
                 <button class="profile-trigger" id="profileButton" type="button">
+
                     <div class="profile-avatar">
                         {% if session.get("picture") %}
                             <img src="{{ session.get('picture') }}" alt="Profile">
@@ -847,23 +967,56 @@
                             {{ session.get("name", "U")[:1]|upper }}
                         {% endif %}
                     </div>
+
                     <div class="profile-info">
                         <strong>{{ session.get("name", "Student") }}</strong>
                         <small>Student Account</small>
                     </div>
+
                     <i class="fa-solid fa-chevron-down" style="font-size:10px;color:#8792a8"></i>
                 </button>
 
                 <div class="dropdown-panel profile-menu" id="profileDropdown">
+
                     <div class="dropdown-heading">
                         <strong>My Account</strong>
                     </div>
-                    <a href="/profile"><i class="fa-regular fa-user"></i> My Profile</a>
-                    <a href="/resume_builder"><i class="fa-regular fa-file-lines"></i> Resume Builder</a>
-                    <a href="/friends"><i class="fa-solid fa-user-group"></i> Friends</a>
-                    <a href="/messages"><i class="fa-regular fa-message"></i> Messages</a>
-                    <a href="/settings"><i class="fa-solid fa-gear"></i> Settings</a>
-                    <a href="/logout" class="logout-link"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+
+                    <a href="/profile">
+                        <i class="fa-regular fa-user"></i>
+                        My Profile
+                    </a>
+
+                    <a href="/resume_builder">
+                        <i class="fa-regular fa-file-lines"></i>
+                        Resume Builder
+                    </a>
+
+                    <a href="/friends">
+                        <i class="fa-solid fa-user-group"></i>
+                        Friends
+                    </a>
+
+                    <a href="/messages">
+                        <i class="fa-regular fa-message"></i>
+                        Messages
+                    </a>
+
+                    <a href="/notifications">
+                        <i class="fa-regular fa-bell"></i>
+                        Notifications
+                    </a>
+
+                    <a href="/settings">
+                        <i class="fa-solid fa-gear"></i>
+                        Settings
+                    </a>
+
+                    <a href="/logout" class="logout-link">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                        Logout
+                    </a>
+
                 </div>
             </div>
 
@@ -877,13 +1030,17 @@
 
         <div class="nav-actions">
             <a href="/login" class="portal-nav-link">Login</a>
-            <a href="/signup" class="portal-nav-link" style="background:linear-gradient(135deg,#3157e8,#7958ef);color:white;padding:11px 19px">Get Started</a>
+            <a href="/signup" class="portal-nav-link" style="background:linear-gradient(135deg,#4361ee,#7958ef);color:white;padding:11px 19px">
+                Get Started
+            </a>
         </div>
 
         {% endif %}
+
     </div>
 
     {% if session.get("user_id") %}
+
     <div class="mobile-nav" id="mobileNav">
 
         <form class="mobile-search" id="mobileSearchForm">
@@ -891,21 +1048,79 @@
             <input type="search" id="mobileSearchInput" placeholder="Search courses...">
         </form>
 
-        <a href="/dashboard"><i class="fa-solid fa-house"></i> Dashboard</a>
-        <a href="/courses"><i class="fa-solid fa-book-open"></i> Courses</a>
-        <a href="{{ url_for('mock_test_dashboard') }}"><i class="fa-solid fa-file-circle-check"></i> Mock Tests</a>
-        <a href="/interview_questions"><i class="fa-solid fa-comments"></i> Interview Preparation</a>
-        <a href="/communication"><i class="fa-solid fa-microphone"></i> Communication Practice</a>
-        <a href="/resume_builder"><i class="fa-regular fa-file-lines"></i> Resume Builder</a>
-        <a href="/leaderboard"><i class="fa-solid fa-trophy"></i> Leaderboard</a>
-        <a href="/friends"><i class="fa-solid fa-user-group"></i> Friends</a>
-        <a href="/messages"><i class="fa-regular fa-message"></i> Messages</a>
-        <a href="/notifications"><i class="fa-regular fa-bell"></i> Notifications</a>
-        <a href="/profile"><i class="fa-regular fa-user"></i> My Profile</a>
-        <a href="/settings"><i class="fa-solid fa-gear"></i> Settings</a>
-        <a href="/logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+        <a href="/dashboard" data-path="/dashboard">
+            <i class="fa-solid fa-house"></i>
+            Dashboard
+        </a>
+
+        <a href="/courses" data-path="/courses">
+            <i class="fa-solid fa-book-open"></i>
+            Courses
+        </a>
+
+        <a href="{{ url_for('mock_test_dashboard') }}">
+            <i class="fa-solid fa-file-circle-check"></i>
+            Mock Tests
+        </a>
+
+        <a href="/interview_questions" data-path="/interview_questions">
+            <i class="fa-solid fa-comments"></i>
+            Interview Preparation
+        </a>
+
+        <a href="/communication" data-path="/communication">
+            <i class="fa-solid fa-microphone"></i>
+            Communication Practice
+        </a>
+
+        <a href="/resume_builder" data-path="/resume_builder">
+            <i class="fa-regular fa-file-lines"></i>
+            Resume Builder
+        </a>
+
+        <a href="/leaderboard" data-path="/leaderboard">
+            <i class="fa-solid fa-trophy"></i>
+            Leaderboard
+        </a>
+
+        <div class="mobile-nav-divider"></div>
+
+        <a href="/friends" data-path="/friends">
+            <i class="fa-solid fa-user-group"></i>
+            Friends
+        </a>
+
+        <a href="/messages" data-path="/messages">
+            <i class="fa-regular fa-message"></i>
+            Messages
+        </a>
+
+        <a href="/notifications" data-path="/notifications">
+            <i class="fa-regular fa-bell"></i>
+            Notifications
+        </a>
+
+        <div class="mobile-nav-divider"></div>
+
+        <a href="/profile">
+            <i class="fa-regular fa-user"></i>
+            My Profile
+        </a>
+
+        <a href="/settings">
+            <i class="fa-solid fa-gear"></i>
+            Settings
+        </a>
+
+        <a href="/logout">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            Logout
+        </a>
+
     </div>
+
     {% endif %}
+
 </header>
 
 {% with messages = get_flashed_messages(with_categories=true) %}
@@ -928,12 +1143,15 @@
 </main>
 
 <footer class="site-footer">
+
     <div class="footer-inner">
 
         <div>
             <div class="footer-brand">
-                <i class="fa-solid fa-graduation-cap"></i> PlacementPro
+                <i class="fa-solid fa-graduation-cap"></i>
+                PlacementPro
             </div>
+
             <p class="footer-description">
                 Your complete placement preparation platform. Learn new skills,
                 practice interviews, improve communication and get ready for your dream career.
@@ -970,6 +1188,7 @@
         <span>© {{ now().year if now is defined else 2026 }} PlacementPro. All rights reserved.</span>
         <span>Built for your career success <i class="fa-solid fa-heart" style="color:#ef6475"></i></span>
     </div>
+
 </footer>
 
 <button id="scrollTop" type="button" aria-label="Scroll to top">
@@ -978,6 +1197,7 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
+
     const loader = document.getElementById("pageLoader");
 
     if (loader) {
@@ -991,7 +1211,9 @@ document.addEventListener("DOMContentLoaded", function () {
     if (mobileToggle && mobileNav) {
         mobileToggle.addEventListener("click", function () {
             mobileNav.classList.toggle("show");
+
             const icon = mobileToggle.querySelector("i");
+
             icon.classList.toggle("fa-bars");
             icon.classList.toggle("fa-xmark");
         });
@@ -1009,16 +1231,26 @@ document.addEventListener("DOMContentLoaded", function () {
 
     notificationButton?.addEventListener("click", function (event) {
         event.stopPropagation();
+
         const shouldOpen = !notificationDropdown.classList.contains("show");
+
         closeDropdowns();
-        if (shouldOpen) notificationDropdown.classList.add("show");
+
+        if (shouldOpen) {
+            notificationDropdown.classList.add("show");
+        }
     });
 
     profileButton?.addEventListener("click", function (event) {
         event.stopPropagation();
+
         const shouldOpen = !profileDropdown.classList.contains("show");
+
         closeDropdowns();
-        if (shouldOpen) profileDropdown.classList.add("show");
+
+        if (shouldOpen) {
+            profileDropdown.classList.add("show");
+        }
     });
 
     document.addEventListener("click", function (event) {
@@ -1037,6 +1269,7 @@ document.addEventListener("DOMContentLoaded", function () {
         setTimeout(() => {
             message.style.opacity = "0";
             message.style.transform = "translateY(-8px)";
+
             setTimeout(() => message.remove(), 300);
         }, 5000);
     });
@@ -1048,14 +1281,21 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     scrollTop?.addEventListener("click", function () {
-        window.scrollTo({ top: 0, behavior: "smooth" });
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
     });
 
-    document.querySelectorAll(".portal-nav-link[data-path]").forEach(link => {
-        const path = window.location.pathname;
+    const currentPath = window.location.pathname;
+
+    document.querySelectorAll(".portal-nav-link[data-path], .mobile-nav a[data-path]").forEach(link => {
         const target = link.dataset.path;
 
-        if (path === target || (target !== "/dashboard" && path.startsWith(target + "/"))) {
+        if (
+            currentPath === target ||
+            (target !== "/dashboard" && currentPath.startsWith(target + "/"))
+        ) {
             link.classList.add("active");
         }
     });
@@ -1066,6 +1306,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         form?.addEventListener("submit", function (event) {
             event.preventDefault();
+
             const query = input?.value.trim();
 
             if (query) {
@@ -1078,19 +1319,25 @@ document.addEventListener("DOMContentLoaded", function () {
     setupSearch("mobileSearchForm", "mobileSearchInput");
 
     loadNotifications();
+
     setInterval(loadNotifications, 30000);
+
 });
 
 async function loadNotifications() {
+
     const list = document.getElementById("notificationList");
     const count = document.getElementById("notificationCount");
 
     if (!list || !count) return;
 
     try {
+
         const response = await fetch("/api/notifications/summary", {
             method: "GET",
-            headers: { "Accept": "application/json" }
+            headers: {
+                "Accept": "application/json"
+            }
         });
 
         if (!response.ok) return;
@@ -1109,7 +1356,13 @@ async function loadNotifications() {
             : [];
 
         if (!notifications.length) {
-            list.innerHTML = '<div class="empty-notifications"><i class="fa-regular fa-bell" style="font-size:25px;margin-bottom:10px"></i><br>No notifications yet</div>';
+            list.innerHTML = `
+                <div class="empty-notifications">
+                    <i class="fa-regular fa-bell" style="font-size:25px;margin-bottom:10px"></i>
+                    <br>
+                    No notifications yet
+                </div>
+            `;
             return;
         }
 
@@ -1121,6 +1374,7 @@ async function loadNotifications() {
         };
 
         list.innerHTML = notifications.map(item => {
+
             const icon = icons[item.type] || icons.general;
             const title = escapeNotificationText(item.title || "Notification");
             const message = escapeNotificationText(item.message || "");
@@ -1133,6 +1387,7 @@ async function loadNotifications() {
                     <div class="notification-symbol">
                         <i class="fa-solid ${icon}"></i>
                     </div>
+
                     <div class="notification-content">
                         <strong>${title}</strong>
                         <p>${message}</p>
@@ -1140,10 +1395,17 @@ async function loadNotifications() {
                     </div>
                 </a>
             `;
+
         }).join("");
 
     } catch (error) {
-        list.innerHTML = '<div class="empty-notifications">Unable to load notifications</div>';
+
+        list.innerHTML = `
+            <div class="empty-notifications">
+                Unable to load notifications
+            </div>
+        `;
+
     }
 }
 
@@ -1160,18 +1422,25 @@ function escapeNotificationText(value) {
 }
 
 function safeNotificationLink(value) {
+
     const fallback = "/notifications";
 
     if (!value) return fallback;
 
     try {
+
         const url = new URL(value, window.location.origin);
 
-        if (url.origin !== window.location.origin) return fallback;
+        if (url.origin !== window.location.origin) {
+            return fallback;
+        }
 
         return url.pathname + url.search + url.hash;
+
     } catch (error) {
+
         return fallback;
+
     }
 }
 </script>
