@@ -1,1088 +1,1109 @@
+```html
 {% extends "layout.html" %}
 
-{% block title %}Placement Mock Test{% endblock %}
+{% block title %}Student Dashboard | Placement Training Portal{% endblock %}
 
 {% block content %}
 
 <style>
-    :root {
-        --mt-primary:#6366f1;
-        --mt-purple:#8b5cf6;
-        --mt-success:#10b981;
-        --mt-warning:#f59e0b;
-        --mt-danger:#ef4444;
-        --mt-bg:#f5f7fb;
-        --mt-card:#ffffff;
-        --mt-border:#e5e7eb;
-        --mt-text:#111827;
-        --mt-muted:#64748b;
-        --mt-shadow:0 12px 35px rgba(15,23,42,.07);
-        --mt-radius:18px;
-    }
-
-    .exam-container {
-        width:100%;
-        min-height:calc(100vh - 80px);
-        padding:24px;
-        background:
-                radial-gradient(circle at 5% 5%,rgba(99,102,241,.07),transparent 25%),
-                radial-gradient(circle at 95% 15%,rgba(139,92,246,.06),transparent 25%),
-                var(--mt-bg);
-        color:var(--mt-text);
-        font-family:Inter,system-ui,sans-serif;
-    }
-
-    .exam-header {
-        position:sticky;
-        top:0;
-        z-index:100;
-        display:flex;
-        align-items:center;
-        justify-content:space-between;
-        gap:20px;
-        padding:18px 24px;
-        margin-bottom:20px;
-        background:rgba(255,255,255,.96);
-        border:1px solid var(--mt-border);
-        border-radius:20px;
-        box-shadow:var(--mt-shadow);
-        backdrop-filter:blur(15px);
-    }
-
-    .left-header h2 {
-        margin:0;
-        font-size:21px;
-        font-weight:900;
-        color:var(--mt-text);
-    }
-
-    .left-header p {
-        margin:5px 0 0;
-        color:var(--mt-muted);
-        font-size:12px;
-    }
-
-    .right-header {
-        display:flex;
-        align-items:center;
-        gap:9px;
-        flex-wrap:wrap;
-    }
-
-    .timer-box {
-        padding:11px 15px;
-        background:#fff7ed;
-        border:1px solid #fed7aa;
-        border-radius:11px;
-        color:#92400e;
-        font-size:12px;
-        font-weight:800;
-    }
-
-    #timer {
-        margin-left:6px;
-        color:#dc2626;
-        font-size:17px;
-        font-weight:950;
-        font-variant-numeric:tabular-nums;
-    }
-
-    .history-btn,.view-btn,.icon-btn {
-        min-height:44px;
-        display:inline-flex;
-        align-items:center;
-        justify-content:center;
-        padding:0 13px;
-        border-radius:11px;
-        font-size:12px;
-        font-weight:750;
-        text-decoration:none;
-        cursor:pointer;
-        background:#fff;
-        border:1px solid var(--mt-border);
-        color:#475569;
-    }
-
-    .history-btn:hover,.view-btn:hover,.icon-btn:hover {
-        background:#eef2ff;
-        border-color:#c7d2fe;
-        color:#4f46e5;
-    }
-
-    .exam-layout {
-        display:grid;
-        grid-template-columns:230px minmax(0,1fr) 250px;
-        gap:18px;
-        align-items:start;
-    }
-
-    .question-sidebar,.summary-card,.progress-card {
-        padding:20px;
-        background:#fff;
-        border:1px solid var(--mt-border);
-        border-radius:var(--mt-radius);
-        box-shadow:var(--mt-shadow);
-    }
-
-    .question-sidebar {
-        position:sticky;
-        top:120px;
-    }
-
-    .question-sidebar h3,.summary-card h3,.progress-card h3 {
-        margin:0 0 17px;
-        font-size:15px;
-        font-weight:850;
-        color:#111827;
-    }
-
-    .question-grid {
-        display:grid;
-        grid-template-columns:repeat(4,1fr);
-        gap:8px;
-        max-height:390px;
-        overflow-y:auto;
-    }
-
-    .palette-btn {
-        width:100%;
-        aspect-ratio:1;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        border-radius:9px;
-        border:1px solid #e2e8f0;
-        background:#f8fafc;
-        color:#475569;
-        font-size:11px;
-        font-weight:800;
-        cursor:pointer;
-    }
-
-    .palette-btn.answered {
-        background:#dcfce7;
-        border-color:#86efac;
-        color:#166534;
-    }
-
-    .palette-btn.review {
-        background:#fef3c7;
-        border-color:#fcd34d;
-        color:#92400e;
-    }
-
-    .palette-btn.active {
-        background:linear-gradient(135deg,#6366f1,#8b5cf6);
-        border-color:transparent;
-        color:white;
-    }
-
-    .legend {
-        display:grid;
-        grid-template-columns:1fr 1fr;
-        gap:9px;
-        margin-top:18px;
-        padding-top:16px;
-        border-top:1px solid #eef2f7;
-    }
-
-    .legend div {
-        display:flex;
-        align-items:center;
-        gap:7px;
-        color:#64748b;
-        font-size:10px;
-    }
-
-    .dot {
-        width:9px;
-        height:9px;
-        border-radius:50%;
-    }
-
-    .dot.answered {background:#22c55e}
-    .dot.review {background:#f59e0b}
-    .dot.active {background:#6366f1}
-
-    .question-area {min-width:0}
-
-    .question-card {
-        padding:30px;
-        background:linear-gradient(145deg,#fff,#fbfcff);
-        border:1px solid var(--mt-border);
-        border-radius:22px;
-        box-shadow:var(--mt-shadow);
-        animation:questionEnter .3s ease;
-    }
-
-    @keyframes questionEnter {
-        from {opacity:0;transform:translateY(8px)}
-        to {opacity:1;transform:translateY(0)}
-    }
-
-    .question-header {
-        display:flex;
-        align-items:center;
-        justify-content:space-between;
-        gap:15px;
-        margin-bottom:25px;
-    }
-
-    .question-header h3 {
-        margin:0;
-        font-size:14px;
-        font-weight:850;
-        color:#111827;
-    }
-
-    .category {
-        padding:7px 11px;
-        background:#eef2ff;
-        border:1px solid #c7d2fe;
-        border-radius:999px;
-        color:#4f46e5;
-        font-size:10px;
-        font-weight:850;
-    }
-
-    .question-text {
-        margin-bottom:28px;
-        color:#172033;
-        font-size:20px;
-        line-height:1.65;
-        font-weight:750;
-    }
-
-    .options {
-        display:flex;
-        flex-direction:column;
-        gap:12px;
-    }
-
-    .option-item {
-        display:flex;
-        align-items:center;
-        gap:14px;
-        min-height:60px;
-        padding:14px 17px;
-        background:#fff;
-        border:1.5px solid #e2e8f0;
-        border-radius:14px;
-        cursor:pointer;
-        transition:.2s;
-    }
-
-    .option-item:hover {
-        background:#f8faff;
-        border-color:#a5b4fc;
-    }
-
-    .option-item input {
-        width:18px;
-        height:18px;
-        accent-color:#6366f1;
-    }
-
-    .option-item span {
-        color:#334155;
-        font-size:14px;
-        font-weight:600;
-    }
-
-    .option-item:has(input:checked) {
-        background:#eef2ff;
-        border-color:#818cf8;
-    }
-
-    .option-item:has(input:checked) span {
-        color:#3730a3;
-        font-weight:800;
-    }
-
-    .question-actions {
-        display:flex;
-        justify-content:space-between;
-        gap:12px;
-        margin-top:24px;
-        padding-top:20px;
-        border-top:1px solid #eef2f7;
-    }
-
-    .clear-btn,.review-btn {
-        min-height:42px;
-        padding:9px 14px;
-        border-radius:10px;
-        font-size:11px;
-        font-weight:750;
-        cursor:pointer;
-    }
-
-    .clear-btn {
-        background:#fff;
-        border:1px solid #fecaca;
-        color:#dc2626;
-    }
-
-    .review-btn {
-        background:#fffbeb;
-        border:1px solid #fde68a;
-        color:#b45309;
-    }
-
-    .navigation {
-        display:flex;
-        justify-content:space-between;
-        gap:12px;
-        margin-top:18px;
-    }
-
-    .nav-btn {
-        min-width:130px;
-        min-height:45px;
-        padding:10px 17px;
-        border:1px solid #e2e8f0;
-        border-radius:11px;
-        background:#fff;
-        color:#475569;
-        font-size:12px;
-        font-weight:800;
-        cursor:pointer;
-    }
-
-    .submit-area {
-        display:flex;
-        justify-content:center;
-        margin-top:18px;
-    }
-
-    .submit-btn,.modal-btn {
-        min-height:47px;
-        padding:11px 20px;
-        border:0;
-        border-radius:12px;
-        background:linear-gradient(135deg,#6366f1,#8b5cf6);
-        color:white;
-        font-size:13px;
-        font-weight:850;
-        cursor:pointer;
-        box-shadow:0 10px 25px rgba(99,102,241,.25);
-    }
-
-    .submit-btn {min-width:190px}
-
-    .right-sidebar {
-        position:sticky;
-        top:120px;
-        display:flex;
-        flex-direction:column;
-        gap:16px;
-    }
-
-    .summary-item {
-        display:flex;
-        align-items:center;
-        justify-content:space-between;
-        padding:12px 0;
-        border-bottom:1px solid #f1f5f9;
-    }
-
-    .summary-item:last-child {border-bottom:none}
-
-    .summary-item span {
-        color:#64748b;
-        font-size:12px;
-    }
-
-    .summary-item strong {
-        min-width:31px;
-        height:31px;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        border-radius:9px;
-        background:#eef2ff;
-        color:#4f46e5;
-    }
-
-    .progress-bg {
-        width:100%;
-        height:10px;
-        overflow:hidden;
-        background:#e2e8f0;
-        border-radius:999px;
-    }
-
-    .progress-fill {
-        width:0%;
-        height:100%;
-        background:linear-gradient(90deg,#6366f1,#8b5cf6);
-        transition:width .4s;
-    }
-
-    #progressText {
-        margin:12px 0 0;
-        color:#6366f1;
-        font-size:12px;
-        font-weight:800;
-        text-align:center;
-    }
-
-    .modal {
-        position:fixed;
-        inset:0;
-        z-index:10000;
-        display:none;
-        align-items:center;
-        justify-content:center;
-        padding:20px;
-        background:rgba(15,23,42,.65);
-        backdrop-filter:blur(8px);
-    }
-
-    .modal-box {
-        position:relative;
-        width:min(530px,100%);
-        max-height:85vh;
-        overflow-y:auto;
-        padding:30px;
-        background:#fff;
-        border-radius:22px;
-        box-shadow:0 30px 90px rgba(15,23,42,.25);
-    }
-
-    .close-modal {
-        position:absolute;
-        top:15px;
-        right:15px;
-        width:35px;
-        height:35px;
-        border:0;
-        border-radius:9px;
-        background:#f1f5f9;
-        cursor:pointer;
-    }
-
-    .modal-box h2 {
-        margin:0 0 18px;
-        color:#111827;
-        font-size:22px;
-    }
-
-    .modal-box p,.modal-box li {
-        color:#475569;
-        font-size:13px;
-        line-height:1.7;
-    }
-
-    .modal-box li {margin-bottom:9px}
-
-    .submit-summary {
-        margin:20px 0;
-        padding:15px;
-        background:#f8fafc;
-        border:1px solid #e2e8f0;
-        border-radius:13px;
-    }
-
-    .submit-summary p {
-        display:flex;
-        justify-content:space-between;
-    }
-
-    .modal-actions {
-        display:flex;
-        justify-content:flex-end;
-        gap:10px;
-        margin-top:20px;
-    }
-
-    .modal-actions button {
-        min-height:42px;
-        padding:9px 16px;
-        border:1px solid #e2e8f0;
-        border-radius:10px;
-        background:#fff;
-        cursor:pointer;
-    }
-
-    .autosave-box {
-        position:fixed;
-        right:22px;
-        bottom:22px;
-        z-index:9000;
-        padding:11px 16px;
-        background:#111827;
-        border-radius:11px;
-        color:#fff;
-        font-size:11px;
-        opacity:0;
-        transform:translateY(10px);
-        pointer-events:none;
-        transition:.25s;
-    }
-
-    .autosave-box.show {
-        opacity:1;
-        transform:translateY(0);
-    }
-
-    .mobile-navigation {
-        display:none;
-        position:fixed;
-        left:12px;
-        right:12px;
-        bottom:12px;
-        z-index:8000;
-        height:57px;
-        padding:6px;
-        background:rgba(255,255,255,.96);
-        border:1px solid #e2e8f0;
-        border-radius:17px;
-        box-shadow:0 15px 40px rgba(15,23,42,.16);
-    }
-
-    .mobile-navigation button {
-        flex:1;
-        border:0;
-        background:transparent;
-        border-radius:11px;
-        font-size:18px;
-        cursor:pointer;
-    }
-
-    .shortcut-box {
-        position:fixed;
-        left:20px;
-        bottom:20px;
-        z-index:400;
-        width:185px;
-        padding:15px;
-        background:#fff;
-        border:1px solid #e2e8f0;
-        border-radius:14px;
-        box-shadow:var(--mt-shadow);
-    }
-
-    .shortcut-box h3 {font-size:12px;margin:0 0 9px}
-    .shortcut-box p {font-size:10px;color:#64748b;margin:5px 0}
-
-    @media(max-width:1200px) {
-        .exam-layout {grid-template-columns:200px minmax(0,1fr) 220px}
-        .shortcut-box {display:none}
-    }
-
-    @media(max-width:950px) {
-        .exam-container {padding:15px}
-        .exam-header {position:relative;flex-direction:column;align-items:stretch}
-        .exam-layout {grid-template-columns:190px minmax(0,1fr)}
-        .right-sidebar {display:none}
-    }
-
-    @media(max-width:700px) {
-        .exam-container {padding:10px;padding-bottom:85px}
-        .right-header {display:grid;grid-template-columns:repeat(2,1fr);width:100%}
-        .exam-layout {display:block}
-        .question-sidebar {position:relative;margin-bottom:15px}
-        .question-grid {grid-template-columns:repeat(8,1fr);max-height:150px}
-        .question-card {padding:20px}
-        .question-text {font-size:17px}
-        .question-actions {flex-direction:column}
-        .clear-btn,.review-btn {width:100%}
-        .navigation {position:sticky;bottom:70px;z-index:100;padding:8px;background:rgba(245,247,251,.92)}
-        .nav-btn {flex:1;min-width:0}
-        .submit-btn {width:100%}
-        .mobile-navigation {display:flex}
-    }
-
-    @media(max-width:450px) {
-        .right-header {grid-template-columns:1fr}
-        .question-grid {grid-template-columns:repeat(6,1fr)}
-        .question-header {flex-direction:column;align-items:flex-start}
-        .question-text {font-size:16px}
-        .option-item {min-height:55px;padding:12px}
-        .option-item span {font-size:13px}
-        .modal-box {padding:23px}
-    }
+:root {
+    --p-primary:#6366f1;
+    --p-purple:#8b5cf6;
+    --p-success:#10b981;
+    --p-warning:#f59e0b;
+    --p-danger:#ef4444;
+    --p-bg:#f5f7fb;
+    --p-card:#ffffff;
+    --p-border:#e5e7eb;
+    --p-text:#111827;
+    --p-muted:#64748b;
+    --p-shadow:0 12px 35px rgba(15,23,42,.07);
+    --p-radius:18px;
+}
+
+.dashboard-wrapper {
+    min-height:calc(100vh - 80px);
+    padding:25px;
+    background:
+        radial-gradient(circle at 5% 5%,rgba(99,102,241,.07),transparent 25%),
+        radial-gradient(circle at 95% 15%,rgba(139,92,246,.06),transparent 25%),
+        var(--p-bg);
+    color:var(--p-text);
+    font-family:Inter,system-ui,sans-serif;
+}
+
+.dashboard-container {
+    max-width:1550px;
+    margin:auto;
+}
+
+.dashboard-header {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:20px;
+    padding:19px 23px;
+    margin-bottom:22px;
+    background:rgba(255,255,255,.96);
+    border:1px solid var(--p-border);
+    border-radius:20px;
+    box-shadow:var(--p-shadow);
+}
+
+.header-title h1 {
+    margin:0;
+    font-size:23px;
+    font-weight:900;
+}
+
+.header-title p {
+    margin:6px 0 0;
+    color:var(--p-muted);
+    font-size:12px;
+}
+
+.header-actions {
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.header-icon {
+    width:43px;
+    height:43px;
+    display:grid;
+    place-items:center;
+    background:#fff;
+    border:1px solid var(--p-border);
+    border-radius:12px;
+    color:#475569;
+    text-decoration:none;
+    position:relative;
+}
+
+.header-icon:hover {
+    background:#eef2ff;
+    color:var(--p-primary);
+}
+
+.profile-pill {
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:5px 13px 5px 5px;
+    background:#fff;
+    border:1px solid var(--p-border);
+    border-radius:30px;
+    text-decoration:none;
+    color:var(--p-text);
+}
+
+.profile-avatar {
+    width:35px;
+    height:35px;
+    display:grid;
+    place-items:center;
+    border-radius:50%;
+    background:linear-gradient(135deg,#6366f1,#a78bfa);
+    color:white;
+    font-weight:900;
+}
+
+.profile-name {
+    font-size:12px;
+    font-weight:800;
+}
+
+.welcome-banner {
+    position:relative;
+    overflow:hidden;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:25px;
+    padding:32px;
+    margin-bottom:22px;
+    border-radius:22px;
+    color:white;
+    background:linear-gradient(115deg,#29245f 0%,#5148c9 55%,#8178ff 100%);
+    box-shadow:0 15px 35px rgba(82,72,201,.18);
+}
+
+.welcome-banner:before,
+.welcome-banner:after {
+    content:"";
+    position:absolute;
+    border:1px solid rgba(255,255,255,.13);
+    border-radius:50%;
+}
+
+.welcome-banner:before {
+    width:300px;
+    height:300px;
+    right:100px;
+    top:-190px;
+}
+
+.welcome-banner:after {
+    width:230px;
+    height:230px;
+    right:-60px;
+    bottom:-170px;
+}
+
+.welcome-content {
+    position:relative;
+    z-index:2;
+}
+
+.welcome-label {
+    font-size:10px;
+    font-weight:900;
+    letter-spacing:2px;
+    color:#cfccff;
+    margin-bottom:12px;
+}
+
+.welcome-content h2 {
+    margin:0 0 10px;
+    font-size:29px;
+    font-weight:900;
+}
+
+.welcome-content p {
+    max-width:570px;
+    margin:0;
+    color:#e2e0ff;
+    font-size:13px;
+    line-height:1.8;
+}
+
+.welcome-button {
+    display:inline-flex;
+    align-items:center;
+    gap:9px;
+    margin-top:20px;
+    padding:12px 18px;
+    background:white;
+    color:#5148c9;
+    border-radius:11px;
+    font-size:12px;
+    font-weight:900;
+    text-decoration:none;
+    transition:.2s;
+}
+
+.welcome-button:hover {
+    transform:translateY(-3px);
+    color:#29245f;
+}
+
+.welcome-visual {
+    position:relative;
+    z-index:2;
+    width:135px;
+    height:135px;
+    min-width:135px;
+    display:grid;
+    place-items:center;
+    border-radius:50%;
+    background:rgba(255,255,255,.13);
+    border:1px solid rgba(255,255,255,.22);
+}
+
+.welcome-visual i {
+    font-size:57px;
+}
+
+.dashboard-section {
+    margin-top:25px;
+}
+
+.section-heading {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:15px;
+    margin-bottom:15px;
+}
+
+.section-heading h3 {
+    margin:0;
+    font-size:16px;
+    font-weight:900;
+}
+
+.section-heading p {
+    margin:5px 0 0;
+    color:var(--p-muted);
+    font-size:11px;
+}
+
+.section-link {
+    color:var(--p-primary);
+    font-size:11px;
+    font-weight:850;
+    text-decoration:none;
+}
+
+.stats-grid {
+    display:grid;
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    gap:15px;
+}
+
+.stat-card {
+    padding:20px;
+    background:var(--p-card);
+    border:1px solid var(--p-border);
+    border-radius:var(--p-radius);
+    box-shadow:var(--p-shadow);
+    transition:.25s;
+}
+
+.stat-card:hover {
+    transform:translateY(-4px);
+    box-shadow:0 17px 38px rgba(15,23,42,.10);
+}
+
+.stat-top {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.stat-icon {
+    width:44px;
+    height:44px;
+    display:grid;
+    place-items:center;
+    border-radius:13px;
+    font-size:17px;
+}
+
+.purple {background:#efedff;color:#7065ee}
+.green {background:#e5f8f0;color:#10a879}
+.orange {background:#fff3e4;color:#ed9637}
+.blue {background:#e8f3ff;color:#3195ee}
+
+.stat-label {
+    margin-top:17px;
+    color:var(--p-muted);
+    font-size:11px;
+    font-weight:700;
+}
+
+.stat-value {
+    margin-top:5px;
+    font-size:28px;
+    font-weight:950;
+    letter-spacing:-1px;
+}
+
+.stat-description {
+    margin-top:6px;
+    color:var(--p-muted);
+    font-size:10px;
+}
+
+.dashboard-grid {
+    display:grid;
+    grid-template-columns:minmax(0,1.5fr) minmax(280px,1fr);
+    gap:18px;
+    align-items:start;
+}
+
+.dashboard-card {
+    min-width:0;
+    padding:21px;
+    background:white;
+    border:1px solid var(--p-border);
+    border-radius:var(--p-radius);
+    box-shadow:var(--p-shadow);
+}
+
+.quick-grid {
+    display:grid;
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    gap:12px;
+}
+
+.quick-card {
+    padding:16px 13px;
+    background:white;
+    border:1px solid var(--p-border);
+    border-radius:14px;
+    text-decoration:none;
+    color:var(--p-text);
+    transition:.2s;
+}
+
+.quick-card:hover {
+    transform:translateY(-3px);
+    border-color:#a5b4fc;
+    background:#f8faff;
+    color:var(--p-primary);
+}
+
+.quick-icon {
+    width:40px;
+    height:40px;
+    display:grid;
+    place-items:center;
+    border-radius:11px;
+    margin-bottom:12px;
+    font-size:16px;
+}
+
+.quick-card h4 {
+    margin:0;
+    font-size:11px;
+    font-weight:900;
+}
+
+.quick-card p {
+    margin:5px 0 0;
+    color:var(--p-muted);
+    font-size:10px;
+    line-height:1.5;
+}
+
+.activity-list {
+    display:flex;
+    flex-direction:column;
+}
+
+.activity-item {
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:13px 0;
+    border-bottom:1px solid #f1f5f9;
+}
+
+.activity-item:last-child {
+    border-bottom:0;
+}
+
+.activity-icon {
+    width:39px;
+    height:39px;
+    display:grid;
+    place-items:center;
+    flex-shrink:0;
+    background:#eef2ff;
+    color:var(--p-primary);
+    border-radius:11px;
+}
+
+.activity-info {
+    flex:1;
+    min-width:0;
+}
+
+.activity-name {
+    font-size:12px;
+    font-weight:850;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+}
+
+.activity-date {
+    margin-top:4px;
+    color:var(--p-muted);
+    font-size:10px;
+}
+
+.activity-score {
+    color:var(--p-success);
+    font-size:12px;
+    font-weight:900;
+}
+
+.progress-list {
+    display:flex;
+    flex-direction:column;
+    gap:17px;
+}
+
+.progress-heading {
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    margin-bottom:8px;
+    font-size:11px;
+    font-weight:800;
+}
+
+.progress-heading span:last-child {
+    color:var(--p-muted);
+}
+
+.progress-track {
+    height:8px;
+    overflow:hidden;
+    background:#eef0f7;
+    border-radius:20px;
+}
+
+.progress-fill {
+    height:100%;
+    border-radius:20px;
+    background:linear-gradient(90deg,#6366f1,#a78bfa);
+}
+
+.goal-item,
+.company-item,
+.leaderboard-item {
+    display:flex;
+    align-items:center;
+    gap:11px;
+    padding:12px 0;
+    border-bottom:1px solid #f1f5f9;
+}
+
+.goal-item:last-child,
+.company-item:last-child,
+.leaderboard-item:last-child {
+    border-bottom:0;
+}
+
+.item-icon {
+    width:34px;
+    height:34px;
+    display:grid;
+    place-items:center;
+    flex-shrink:0;
+    border-radius:10px;
+    background:#eef2ff;
+    color:var(--p-primary);
+}
+
+.item-content {
+    flex:1;
+    min-width:0;
+}
+
+.item-title {
+    font-size:11px;
+    font-weight:850;
+    overflow-wrap:anywhere;
+}
+
+.item-subtitle {
+    margin-top:4px;
+    color:var(--p-muted);
+    font-size:10px;
+}
+
+.item-badge {
+    padding:6px 9px;
+    border-radius:20px;
+    background:#eef2ff;
+    color:#5148c9;
+    font-size:9px;
+    font-weight:850;
+}
+
+.leaderboard-rank {
+    width:29px;
+    height:29px;
+    display:grid;
+    place-items:center;
+    background:#f1f5f9;
+    border-radius:9px;
+    font-size:11px;
+    font-weight:900;
+}
+
+.leaderboard-score {
+    color:var(--p-success);
+    font-size:12px;
+    font-weight:900;
+}
+
+.recommendation {
+    padding:19px;
+    border:1px solid #e5e2ff;
+    border-radius:15px;
+    background:linear-gradient(135deg,#f0efff,#faf9ff);
+}
+
+.recommendation-label {
+    color:var(--p-primary);
+    font-size:10px;
+    font-weight:900;
+    letter-spacing:1px;
+}
+
+.recommendation h4 {
+    margin:11px 0 8px;
+    font-size:16px;
+    font-weight:900;
+}
+
+.recommendation-message {
+    color:#687087;
+    font-size:11px;
+    line-height:1.8;
+}
+
+.recommendation-task {
+    display:flex;
+    gap:9px;
+    margin-top:12px;
+    color:#4e566b;
+    font-size:11px;
+}
+
+.recommendation-task i {
+    color:var(--p-success);
+}
+
+.chart-container {
+    height:245px;
+    position:relative;
+}
+
+.empty-state {
+    padding:28px 12px;
+    text-align:center;
+    color:var(--p-muted);
+    font-size:11px;
+}
+
+.empty-state i {
+    display:block;
+    margin-bottom:10px;
+    color:#c4c9d5;
+    font-size:27px;
+}
+
+.dashboard-footer {
+    padding:27px 0 10px;
+    text-align:center;
+    color:var(--p-muted);
+    font-size:10px;
+}
+
+@media(max-width:1100px) {
+    .stats-grid {grid-template-columns:repeat(2,minmax(0,1fr))}
+    .quick-grid {grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+
+@media(max-width:850px) {
+    .dashboard-grid {grid-template-columns:1fr}
+    .dashboard-wrapper {padding:16px}
+}
+
+@media(max-width:550px) {
+    .dashboard-wrapper {padding:10px}
+    .dashboard-header {padding:14px;align-items:flex-start}
+    .header-title h1 {font-size:19px}
+    .header-actions {gap:6px}
+    .header-icon {width:36px;height:36px}
+    .profile-name {display:none}
+    .welcome-banner {padding:23px 18px}
+    .welcome-content h2 {font-size:21px}
+    .welcome-content p {font-size:11px}
+    .welcome-visual {width:70px;height:70px;min-width:70px}
+    .welcome-visual i {font-size:30px}
+    .stat-card {padding:14px}
+    .stat-value {font-size:23px}
+    .dashboard-card {padding:15px}
+    .quick-grid {gap:9px}
+}
 </style>
 
-<div class="exam-container">
+<div class="dashboard-wrapper">
+<div class="dashboard-container">
 
-    <header class="exam-header">
-        <div class="left-header">
-            <h2>🚀 Placement Mock Test</h2>
-            <p>Practice • Learn • Crack Your Placement</p>
+    <header class="dashboard-header">
+        <div class="header-title">
+            <h1>Student Dashboard</h1>
+            <p>Workspace / Placement Preparation / Overview</p>
         </div>
 
-        <div class="right-header">
-            <div class="timer-box">
-                ⏱ Time Left: <span id="timer">20:00</span>
-            </div>
+        <div class="header-actions">
+            <a href="/notifications" class="header-icon" title="Notifications">
+                <i class="fa-regular fa-bell"></i>
+            </a>
 
-            <a href="{{ url_for('my_mock_tests') }}" class="history-btn">📊 History</a>
-            <a href="{{ url_for('mock_test_dashboard') }}" class="history-btn">📚 Categories</a>
+            <a href="/messages" class="header-icon" title="Messages">
+                <i class="fa-regular fa-message"></i>
+            </a>
 
-            <button type="button" class="icon-btn" onclick="showInstruction()">ℹ Instructions</button>
-            <button type="button" class="icon-btn" onclick="toggleFullscreen()">⛶ Full Screen</button>
+            <a href="/profile" class="profile-pill">
+                <div class="profile-avatar">
+                    {{ (user.name if user and user.name else session.get('name','S'))[:1]|upper }}
+                </div>
+                <span class="profile-name">
+                    {{ user.name if user and user.name else session.get('name','Student') }}
+                </span>
+                <i class="fa-solid fa-chevron-down" style="font-size:9px"></i>
+            </a>
         </div>
     </header>
 
-    {% if not questions %}
-    <div class="question-card" style="text-align:center;padding:50px 20px">
-        <h2>No Questions Available</h2>
-        <p>This mock test does not have any assigned questions yet.</p>
-        <a href="{{ url_for('mock_test_dashboard') }}" class="history-btn">Back to Mock Tests</a>
-    </div>
-    {% else %}
+    <section class="welcome-banner">
+        <div class="welcome-content">
+            <div class="welcome-label">YOUR PLACEMENT JOURNEY</div>
+            <h2>Welcome back, {{ user.name if user and user.name else session.get('name','Student') }}! 👋</h2>
+            <p>
+                Your next opportunity starts with preparation.
+                Continue learning, practice your skills and get ready to crack your dream placement.
+            </p>
+            <a href="/courses" class="welcome-button">
+                Continue Learning <i class="fa-solid fa-arrow-right"></i>
+            </a>
+        </div>
 
-    <div class="exam-layout">
+        <div class="welcome-visual">
+            <i class="fa-solid fa-graduation-cap"></i>
+        </div>
+    </section>
 
-        <aside class="question-sidebar">
-            <h3>Question Palette</h3>
+    <section class="dashboard-section">
+        <div class="section-heading">
+            <div>
+                <h3>Performance Overview</h3>
+                <p>Your preparation statistics</p>
+            </div>
+        </div>
 
-            <div class="question-grid">
-                {% for q in questions %}
-                <button type="button"
-                        id="palette-{{ loop.index }}"
-                        class="palette-btn"
-                        onclick="openQuestion({{ loop.index }})">
-                    {{ loop.index }}
-                </button>
-                {% endfor %}
+        <div class="stats-grid">
+
+            <div class="stat-card">
+                <div class="stat-top">
+                    <div class="stat-icon purple"><i class="fa-solid fa-file-circle-check"></i></div>
+                </div>
+                <div class="stat-label">Tests Attempted</div>
+                <div class="stat-value">{{ total_tests|default(0) }}</div>
+                <div class="stat-description">Total test attempts</div>
             </div>
 
-            <div class="legend">
-                <div><span class="dot answered"></span>Answered</div>
-                <div><span class="dot review"></span>Marked</div>
-                <div><span class="dot active"></span>Current</div>
+            <div class="stat-card">
+                <div class="stat-top">
+                    <div class="stat-icon green"><i class="fa-solid fa-chart-line"></i></div>
+                </div>
+                <div class="stat-label">Average Score</div>
+                <div class="stat-value">{{ avg_score|default(0) }}%</div>
+                <div class="stat-description">Overall test average</div>
             </div>
-        </aside>
 
-        <main class="question-area">
+            <div class="stat-card">
+                <div class="stat-top">
+                    <div class="stat-icon orange"><i class="fa-solid fa-trophy"></i></div>
+                </div>
+                <div class="stat-label">Best Score</div>
+                <div class="stat-value">{{ best_score|default(0) }}%</div>
+                <div class="stat-description">Your highest performance</div>
+            </div>
 
-            <form id="mockTestForm" method="POST" action="{{ url_for('submit_mock_test') }}">
+            <div class="stat-card">
+                <div class="stat-top">
+                    <div class="stat-icon blue"><i class="fa-solid fa-bolt"></i></div>
+                </div>
+                <div class="stat-label">Experience Points</div>
+                <div class="stat-value">{{ xp|default(0) }} XP</div>
+                <div class="stat-description">Level {{ level|default(1) }}</div>
+            </div>
 
-                {% for q in questions %}
-                <div class="question-card"
-                     id="question-{{ loop.index }}"
-                     {% if not loop.first %}style="display:none"{% endif %}>
+        </div>
+    </section>
 
-                    <div class="question-header">
-                        <h3>Question {{ loop.index }} / {{ questions|length }}</h3>
-                        <span class="category">{{ q.category|default(q.difficulty|default('General'),true) }}</span>
+    <section class="dashboard-section">
+        <div class="section-heading">
+            <div>
+                <h3>Quick Actions</h3>
+                <p>Everything you need for placement preparation</p>
+            </div>
+        </div>
+
+        <div class="dashboard-card">
+            <div class="quick-grid">
+
+                <a href="/courses" class="quick-card">
+                    <div class="quick-icon purple"><i class="fa-solid fa-book-open"></i></div>
+                    <h4>Explore Courses</h4>
+                    <p>Improve technical skills</p>
+                </a>
+
+                <a href="{{ url_for('mock_test_dashboard') }}" class="quick-card">
+                    <div class="quick-icon green"><i class="fa-solid fa-laptop-code"></i></div>
+                    <h4>Mock Tests</h4>
+                    <p>Practice and evaluate</p>
+                </a>
+
+                <a href="/interview_questions" class="quick-card">
+                    <div class="quick-icon orange"><i class="fa-solid fa-comments"></i></div>
+                    <h4>Interview Practice</h4>
+                    <p>Prepare for interviews</p>
+                </a>
+
+                <a href="/communication" class="quick-card">
+                    <div class="quick-icon blue"><i class="fa-solid fa-microphone-lines"></i></div>
+                    <h4>Communication</h4>
+                    <p>Improve speaking skills</p>
+                </a>
+
+                <a href="/resume_builder" class="quick-card">
+                    <div class="quick-icon purple"><i class="fa-solid fa-file-lines"></i></div>
+                    <h4>Resume Builder</h4>
+                    <p>Create your resume</p>
+                </a>
+
+                <a href="/leaderboard" class="quick-card">
+                    <div class="quick-icon green"><i class="fa-solid fa-ranking-star"></i></div>
+                    <h4>Leaderboard</h4>
+                    <p>Check your ranking</p>
+                </a>
+
+                <a href="/companies" class="quick-card">
+                    <div class="quick-icon orange"><i class="fa-solid fa-building"></i></div>
+                    <h4>Companies</h4>
+                    <p>Explore opportunities</p>
+                </a>
+
+                <a href="/profile" class="quick-card">
+                    <div class="quick-icon blue"><i class="fa-solid fa-user-gear"></i></div>
+                    <h4>My Profile</h4>
+                    <p>Manage your account</p>
+                </a>
+
+            </div>
+        </div>
+    </section>
+
+    <section class="dashboard-section">
+        <div class="dashboard-grid">
+
+            <div class="dashboard-card">
+                <div class="section-heading">
+                    <div>
+                        <h3>Recent Test Activity</h3>
+                        <p>Your latest performance</p>
                     </div>
+                    <a href="{{ url_for('mock_test_dashboard') }}" class="section-link">View Tests →</a>
+                </div>
 
-                    <div class="question-text">
-                        {{ q.question|default(q.question_text|default('Question unavailable'),true) }}
-                    </div>
+                <div class="activity-list">
+                    {% if recent_tests %}
+                        {% for test in recent_tests %}
+                        <div class="activity-item">
+                            <div class="activity-icon">
+                                <i class="fa-solid fa-file-circle-check"></i>
+                            </div>
 
-                    <div class="options">
-                        {% set opts = [
-                        ('A', q.option1|default(q.option_a|default('',true),true)),
-                        ('B', q.option2|default(q.option_b|default('',true),true)),
-                        ('C', q.option3|default(q.option_c|default('',true),true)),
-                        ('D', q.option4|default(q.option_d|default('',true),true))
-                        ] %}
+                            <div class="activity-info">
+                                <div class="activity-name">
+                                    {{ test.test_type|default(test.category|default('Mock Test')) }}
+                                </div>
+                                <div class="activity-date">
+                                    {{ test.test_date|default(test.submitted_at|default('')) }}
+                                </div>
+                            </div>
 
-                        {% for letter, option in opts %}
-                        {% if option %}
-                        <label class="option-item">
-                            <input type="radio"
-                                   name="question_{{ q.id }}"
-                                   value="{{ letter }}"
-                                   onclick="answerSelected({{ loop.index0 if false else loop.parent.loop.index }})">
-                            <span>{{ letter }}. {{ option }}</span>
-                        </label>
-                        {% endif %}
+                            <div class="activity-score">
+                                {{ test.percentage|default(test.score|default(0)) }}%
+                            </div>
+                        </div>
                         {% endfor %}
-                    </div>
-
-                    <div class="question-actions">
-                        <button type="button" class="clear-btn" onclick="clearAnswer({{ loop.index }})">❌ Clear Answer</button>
-                        <button type="button" class="review-btn" onclick="markQuestion({{ loop.index }})">⭐ Mark for Review</button>
-                    </div>
+                    {% else %}
+                        <div class="empty-state">
+                            <i class="fa-solid fa-clipboard-list"></i>
+                            No test attempts available yet.
+                        </div>
+                    {% endif %}
                 </div>
-                {% endfor %}
-
-                <div class="navigation">
-                    <button type="button" class="nav-btn" onclick="previousQuestion()">⬅ Previous</button>
-                    <button type="button" class="nav-btn" onclick="nextQuestion()">Next ➜</button>
-                </div>
-
-                <div class="submit-area">
-                    <button type="button" class="submit-btn" onclick="openSubmitModal()">Submit Now</button>
-                </div>
-
-            </form>
-        </main>
-
-        <aside class="right-sidebar">
-            <div class="summary-card">
-                <h3>📊 Test Summary</h3>
-                <div class="summary-item"><span>Answered</span><strong id="answeredCount">0</strong></div>
-                <div class="summary-item"><span>Marked</span><strong id="markedCount">0</strong></div>
-                <div class="summary-item"><span>Remaining</span><strong id="remainingCount">{{ questions|length }}</strong></div>
             </div>
 
-            <div class="progress-card">
-                <h3>📈 Progress</h3>
-                <div class="progress-bg"><div id="progressFill" class="progress-fill"></div></div>
-                <p id="progressText">0% Completed</p>
+            <div class="dashboard-card">
+                <div class="section-heading">
+                    <div>
+                        <h3>Learning Progress</h3>
+                        <p>Skill development overview</p>
+                    </div>
+                </div>
+
+                <div class="progress-list">
+                    {% if skills %}
+                        {% for skill in skills %}
+                        <div>
+                            <div class="progress-heading">
+                                <span><i class="{{ skill.icon }}"></i> {{ skill.subject }}</span>
+                                <span>{{ skill.progress }}%</span>
+                            </div>
+                            <div class="progress-track">
+                                <div class="progress-fill" style="width:{{ skill.progress }}%"></div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="empty-state">No skill progress available.</div>
+                    {% endif %}
+                </div>
             </div>
-        </aside>
 
-    </div>
-    {% endif %}
-</div>
-
-<div class="modal" id="instructionModal">
-    <div class="modal-box">
-        <button class="close-modal" onclick="closeInstruction()">✖</button>
-        <h2>📋 Test Instructions</h2>
-        <ul>
-            <li>Total Questions: <strong>{{ questions|length }}</strong></li>
-            <li>Each question carries 1 mark.</li>
-            <li>No negative marking.</li>
-            <li>Timer will automatically submit the test.</li>
-            <li>You can mark questions for review.</li>
-            <li>Click Submit after completing all questions.</li>
-        </ul>
-        <button class="modal-btn" onclick="startTest()">🚀 Start Test</button>
-    </div>
-</div>
-
-<div class="modal" id="submitModal">
-    <div class="modal-box">
-        <h2>✅ Submit Test</h2>
-        <p>Are you sure you want to submit your test?</p>
-
-        <div class="submit-summary">
-            <p>Answered: <strong id="submitAnswered">0</strong></p>
-            <p>Remaining: <strong id="submitNotAnswered">{{ questions|length }}</strong></p>
-            <p>Marked: <strong id="submitMarked">0</strong></p>
         </div>
+    </section>
 
-        <div class="modal-actions">
-            <button type="button" onclick="closeSubmitModal()">Cancel</button>
-            <button type="button" class="submit-btn" onclick="finalSubmit()">Submit Now</button>
+    <section class="dashboard-section">
+        <div class="dashboard-grid">
+
+            <div class="dashboard-card">
+                <div class="section-heading">
+                    <div>
+                        <h3>Weekly Performance</h3>
+                        <p>Weekly preparation overview</p>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="weeklyChart"></canvas>
+                </div>
+            </div>
+
+            <div class="dashboard-card">
+                <div class="section-heading">
+                    <div>
+                        <h3>Subject Performance</h3>
+                        <p>Subject-wise score overview</p>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="subjectChart"></canvas>
+                </div>
+            </div>
+
         </div>
-    </div>
+    </section>
+
+    <section class="dashboard-section">
+        <div class="dashboard-grid">
+
+            <div class="dashboard-card">
+                <div class="section-heading">
+                    <div>
+                        <h3>Daily Goals</h3>
+                        <p>Your preparation targets</p>
+                    </div>
+                </div>
+
+                {% if goals %}
+                    {% for goal in goals %}
+                    <div class="goal-item">
+                        <div class="item-icon"><i class="fa-solid fa-bullseye"></i></div>
+                        <div class="item-content">
+                            <div class="item-title">
+                                {{ goal.title|default(goal.goal_title|default(goal.goal|default('Daily Goal'))) }}
+                            </div>
+                            <div class="item-subtitle">{{ goal.status|default('In progress') }}</div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state">
+                        <i class="fa-solid fa-calendar-check"></i>
+                        No daily goals available.
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="dashboard-card">
+                <div class="section-heading">
+                    <div>
+                        <h3>Placement Companies</h3>
+                        <p>Company preparation overview</p>
+                    </div>
+                    <span class="section-link">{{ companies }} Companies</span>
+                </div>
+
+                {% if company_progress %}
+                    {% for company in company_progress %}
+                    <div class="company-item">
+                        <div class="item-icon"><i class="fa-solid fa-building"></i></div>
+                        <div class="item-content">
+                            <div class="item-title">{{ company.company_name }}</div>
+                            <div class="item-subtitle">Placement company</div>
+                        </div>
+                        <span class="item-badge">{{ company.status|default('Available') }}</span>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state">
+                        <i class="fa-solid fa-building"></i>
+                        No company records available.
+                    </div>
+                {% endif %}
+            </div>
+
+        </div>
+    </section>
+
+    <section class="dashboard-section">
+        <div class="dashboard-grid">
+
+            <div class="dashboard-card">
+                <div class="section-heading">
+                    <div>
+                        <h3>Student Leaderboard</h3>
+                        <p>Top performers by average score</p>
+                    </div>
+                    <a href="/leaderboard" class="section-link">View All →</a>
+                </div>
+
+                {% if leaderboard %}
+                    {% for student in leaderboard %}
+                    <div class="leaderboard-item">
+                        <div class="leaderboard-rank">{{ loop.index }}</div>
+                        <div class="item-content">
+                            <div class="item-title">{{ student.name }}</div>
+                            <div class="item-subtitle">Student performance</div>
+                        </div>
+                        <div class="leaderboard-score">{{ student.percentage }}%</div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state">
+                        <i class="fa-solid fa-ranking-star"></i>
+                        Leaderboard data is not available.
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="dashboard-card">
+                <div class="section-heading">
+                    <div>
+                        <h3>AI Learning Assistant</h3>
+                        <p>Your preparation recommendation</p>
+                    </div>
+                    <i class="fa-solid fa-wand-magic-sparkles" style="color:var(--p-primary)"></i>
+                </div>
+
+                <div class="recommendation">
+                    <div class="recommendation-label">
+                        <i class="fa-solid fa-sparkles"></i> PERSONALIZED GUIDANCE
+                    </div>
+
+                    <h4>{{ ai_title }}</h4>
+
+                    <div class="recommendation-message">{{ ai_message }}</div>
+
+                    {% for task in ai_tasks %}
+                    <div class="recommendation-task">
+                        <i class="fa-solid fa-circle-check"></i>
+                        <span>{{ task }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <footer class="dashboard-footer">
+        Placement Training Portal · Learn · Practice · Prepare · Get Placed
+    </footer>
+
+</div>
 </div>
 
-<div class="modal" id="timeModal">
-    <div class="modal-box">
-        <h2>⏰ Time Running Out!</h2>
-        <p>Only one minute remaining.</p>
-        <button class="modal-btn" onclick="closeTimeModal()">Continue Test</button>
-    </div>
-</div>
-
-<div class="autosave-box" id="autosaveBox">💾 Progress Saved</div>
-
-<div class="mobile-navigation">
-    <button type="button" onclick="previousQuestion()">⬅</button>
-    <button type="button" onclick="openPaletteMobile()">☰</button>
-    <button type="button" onclick="nextQuestion()">➡</button>
-</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-    window.totalQuestions = {{ questions|length }};
-    window.questionIds = [
-        {% for q in questions %}
-    "{{ q.id }}"{% if not loop.last %},{% endif %}
-    {% endfor %}
-    ];
+document.addEventListener("DOMContentLoaded", function() {
 
-    window.currentQuestion = 1;
+    const weeklyLabels = {{ weekly_chart.labels|tojson }};
+    const weeklyScores = {{ weekly_chart.scores|tojson }};
 
-    let currentQuestion = 1;
-    let answeredQuestions = new Set();
-    let markedQuestions = new Set();
-    let testStarted = false;
-    let testSubmitted = false;
-    let remainingSeconds = {{ (duration_minutes|default(20)|int) * 60 }};
-    let timerInterval = null;
+    const subjectLabels = {{ subject_chart.labels|tojson }};
+    const subjectScores = {{ subject_chart.scores|tojson }};
 
-    function showInstruction() {
-        document.getElementById("instructionModal").style.display = "flex";
-    }
+    if (typeof Chart === "undefined") return;
 
-    function closeInstruction() {
-        document.getElementById("instructionModal").style.display = "none";
-    }
+    const weeklyCanvas = document.getElementById("weeklyChart");
 
-    function startTest() {
-        if (testStarted) {
-            closeInstruction();
-            return;
-        }
-
-        testStarted = true;
-        closeInstruction();
-
-        if (!timerInterval) {
-            updateTimer();
-            timerInterval = setInterval(updateTimer, 1000);
-        }
-    }
-
-    function updateTimer() {
-        if (testSubmitted) return;
-
-        const timer = document.getElementById("timer");
-        if (!timer) return;
-
-        if (remainingSeconds <= 0) {
-            timer.innerText = "00:00";
-            clearInterval(timerInterval);
-            alert("Time is over. Your test is being submitted.");
-            finalSubmit();
-            return;
-        }
-
-        const minutes = Math.floor(remainingSeconds / 60);
-        const seconds = remainingSeconds % 60;
-
-        timer.innerText =
-            String(minutes).padStart(2, "0") + ":" +
-            String(seconds).padStart(2, "0");
-
-        if (remainingSeconds === 60) {
-            document.getElementById("timeModal").style.display = "flex";
-        }
-
-        remainingSeconds--;
-    }
-
-    function openQuestion(number) {
-        if (number < 1 || number > window.totalQuestions) return;
-
-        document.querySelectorAll(".question-card").forEach(card => {
-            card.style.display = "none";
-        });
-
-        const selected = document.getElementById("question-" + number);
-        if (selected) selected.style.display = "block";
-
-        currentQuestion = number;
-        window.currentQuestion = number;
-
-        updatePalette();
-    }
-
-    function nextQuestion() {
-        if (currentQuestion < window.totalQuestions) {
-            openQuestion(currentQuestion + 1);
-        }
-    }
-
-    function previousQuestion() {
-        if (currentQuestion > 1) {
-            openQuestion(currentQuestion - 1);
-        }
-    }
-
-    function answerSelected(number) {
-        answeredQuestions.add(number);
-        updateSummary();
-        updatePalette();
-        saveProgress();
-    }
-
-    function clearAnswer(number) {
-        const card = document.getElementById("question-" + number);
-        if (!card) return;
-
-        card.querySelectorAll('input[type="radio"]').forEach(input => {
-            input.checked = false;
-        });
-
-        answeredQuestions.delete(number);
-        updateSummary();
-        updatePalette();
-        saveProgress();
-    }
-
-    function markQuestion(number) {
-        if (markedQuestions.has(number)) {
-            markedQuestions.delete(number);
-        } else {
-            markedQuestions.add(number);
-        }
-
-        updateSummary();
-        updatePalette();
-    }
-
-    function updatePalette() {
-        for (let i = 1; i <= window.totalQuestions; i++) {
-            const button = document.getElementById("palette-" + i);
-            if (!button) continue;
-
-            button.className = "palette-btn";
-
-            if (answeredQuestions.has(i)) button.classList.add("answered");
-            if (markedQuestions.has(i)) button.classList.add("review");
-            if (i === currentQuestion) button.classList.add("active");
-        }
-    }
-
-    function updateSummary() {
-        const answered = answeredQuestions.size;
-        const marked = markedQuestions.size;
-        const remaining = window.totalQuestions - answered;
-        const percentage = window.totalQuestions
-            ? Math.round((answered / window.totalQuestions) * 100)
-            : 0;
-
-        document.getElementById("answeredCount").innerText = answered;
-        document.getElementById("markedCount").innerText = marked;
-        document.getElementById("remainingCount").innerText = remaining;
-
-        document.getElementById("progressFill").style.width = percentage + "%";
-        document.getElementById("progressText").innerText = percentage + "% Completed";
-    }
-
-    function openSubmitModal() {
-        document.getElementById("submitAnswered").innerText = answeredQuestions.size;
-        document.getElementById("submitMarked").innerText = markedQuestions.size;
-        document.getElementById("submitNotAnswered").innerText =
-            window.totalQuestions - answeredQuestions.size;
-
-        document.getElementById("submitModal").style.display = "flex";
-    }
-
-    function closeSubmitModal() {
-        document.getElementById("submitModal").style.display = "none";
-    }
-
-    function finalSubmit() {
-        if (testSubmitted) return;
-
-        testSubmitted = true;
-        clearInterval(timerInterval);
-
-        const form = document.getElementById("mockTestForm");
-
-        if (!form) return;
-
-        const markedInput = document.createElement("input");
-        markedInput.type = "hidden";
-        markedInput.name = "marked_questions";
-        markedInput.value = JSON.stringify(Array.from(markedQuestions));
-        form.appendChild(markedInput);
-
-        form.submit();
-    }
-
-    function closeTimeModal() {
-        document.getElementById("timeModal").style.display = "none";
-    }
-
-    function toggleFullscreen() {
-        if (!document.fullscreenElement) {
-            document.documentElement.requestFullscreen?.();
-        } else {
-            document.exitFullscreen?.();
-        }
-    }
-
-    function openPaletteMobile() {
-        const sidebar = document.querySelector(".question-sidebar");
-        if (!sidebar) return;
-
-        sidebar.scrollIntoView({behavior:"smooth", block:"center"});
-    }
-
-    function saveProgress() {
-        const box = document.getElementById("autosaveBox");
-        if (!box) return;
-
-        box.classList.add("show");
-        clearTimeout(window.saveMessageTimer);
-
-        window.saveMessageTimer = setTimeout(() => {
-            box.classList.remove("show");
-        }, 1200);
-
-        const answers = {};
-
-        document.querySelectorAll('#mockTestForm input[type="radio"]:checked')
-            .forEach(input => {
-                answers[input.name] = input.value;
-            });
-
-        try {
-            localStorage.setItem(
-                "mock_test_answers_" + window.location.pathname,
-                JSON.stringify(answers)
-            );
-        } catch (error) {
-            console.warn("Local autosave unavailable", error);
-        }
-    }
-
-    function restoreProgress() {
-        try {
-            const saved = localStorage.getItem(
-                "mock_test_answers_" + window.location.pathname
-            );
-
-            if (!saved) return;
-
-            const answers = JSON.parse(saved);
-
-            Object.entries(answers).forEach(([name, value]) => {
-                const input = document.querySelector(
-                    `input[name="${CSS.escape(name)}"][value="${CSS.escape(value)}"]`
-                );
-
-                if (input) {
-                    input.checked = true;
-
-                    const card = input.closest(".question-card");
-                    const number = Number(card.id.replace("question-", ""));
-
-                    answeredQuestions.add(number);
+    if (weeklyCanvas) {
+        new Chart(weeklyCanvas, {
+            type:"line",
+            data:{
+                labels:weeklyLabels,
+                datasets:[{
+                    label:"Performance",
+                    data:weeklyScores,
+                    borderColor:"#6366f1",
+                    backgroundColor:"rgba(99,102,241,.10)",
+                    fill:true,
+                    tension:.4,
+                    borderWidth:3,
+                    pointRadius:4,
+                    pointBackgroundColor:"#6366f1"
+                }]
+            },
+            options:{
+                responsive:true,
+                maintainAspectRatio:false,
+                plugins:{
+                    legend:{display:false}
+                },
+                scales:{
+                    y:{
+                        beginAtZero:true,
+                        max:100,
+                        grid:{color:"#f1f5f9"}
+                    },
+                    x:{
+                        grid:{display:false}
+                    }
                 }
-            });
-
-            updateSummary();
-            updatePalette();
-        } catch (error) {
-            console.warn("Could not restore answers", error);
-        }
+            }
+        });
     }
 
-    document.addEventListener("keydown", function(event) {
-        if (event.target.matches("input,textarea")) return;
+    const subjectCanvas = document.getElementById("subjectChart");
 
-        if (event.key === "ArrowRight") nextQuestion();
-        if (event.key === "ArrowLeft") previousQuestion();
+    if (subjectCanvas) {
+        new Chart(subjectCanvas, {
+            type:"bar",
+            data:{
+                labels:subjectLabels,
+                datasets:[{
+                    label:"Score",
+                    data:subjectScores,
+                    backgroundColor:[
+                        "#6366f1",
+                        "#10b981",
+                        "#f59e0b",
+                        "#3195ee",
+                        "#8b5cf6"
+                    ],
+                    borderRadius:7,
+                    maxBarThickness:35
+                }]
+            },
+            options:{
+                responsive:true,
+                maintainAspectRatio:false,
+                plugins:{
+                    legend:{display:false}
+                },
+                scales:{
+                    y:{
+                        beginAtZero:true,
+                        max:100,
+                        grid:{color:"#f1f5f9"}
+                    },
+                    x:{
+                        grid:{display:false}
+                    }
+                }
+            }
+        });
+    }
 
-        if (event.key.toLowerCase() === "f") toggleFullscreen();
-
-        if (event.key.toLowerCase() === "m") markQuestion(currentQuestion);
-
-        if (event.key.toLowerCase() === "c") clearAnswer(currentQuestion);
-    });
-
-    document.addEventListener("DOMContentLoaded", function() {
-        restoreProgress();
-        updatePalette();
-        updateSummary();
-
-        if (window.totalQuestions > 0) {
-            openQuestion(1);
-            showInstruction();
-        }
-    });
-
-    window.addEventListener("beforeunload", function(event) {
-        if (testStarted && !testSubmitted) {
-            event.preventDefault();
-            event.returnValue = "";
-        }
-    });
+});
 </script>
 
 {% endblock %}
+```
