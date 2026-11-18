@@ -2175,16 +2175,12 @@ def mock_test_result(attempt_id):
 
             if result.get("share_token"):
                 cursor.execute("""
-                    SELECT DISTINCT a.id AS attempt_id, a.user_id, u.name,
+                    SELECT a.id AS attempt_id, a.user_id, u.name,
                            a.obtained_marks, a.total_marks, a.percentage,
                            a.correct_answers, a.wrong_answers,
                            a.unanswered_questions, a.submitted_at
                     FROM mock_attempts a
                     JOIN users u ON u.id = a.user_id
-                    JOIN mock_test_participants p
-                      ON p.test_id = a.test_id
-                     AND p.user_id = a.user_id
-                     AND p.status <> 'Left'
                     JOIN (
                         SELECT user_id, MAX(id) AS latest_id
                         FROM mock_attempts
