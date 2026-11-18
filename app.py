@@ -2269,7 +2269,7 @@ def mock_test_result(attempt_id):
         )
 
         return render_template(
-            "mock_result.html",
+            "result.html",
             result=result,
             answers=answers,
             is_creator=is_creator,
