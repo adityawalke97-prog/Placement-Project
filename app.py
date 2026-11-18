@@ -2134,47 +2134,19 @@ def mock_test_result(attempt_id):
             flash("This examination has not been submitted yet.", "warning")
             return redirect(url_for("mock_test_dashboard"))
 
-        results_released = True
         participants_total = 0
         participants_completed = 0
-        pending_count = 0
+        participants_pending = 0
         leaderboard = []
         rank = None
+        results_released = True
 
         if result.get("share_token"):
             cursor.execute("""
-                SELECT COUNT(DISTINCT p.user_id) AS total,
-                       COUNT(DISTINCT CASE
-                           WHEN a.id IS NOT NULL THEN p.user_id
-                       END) AS completed
-                FROM mock_test_participants p
-                LEFT JOIN (
-                    SELECT user_id, MAX(id) AS latest_id
-                    FROM mock_attempts
-                    WHERE test_id = %s
-                      AND status IN ('Submitted', 'Auto Submitted')
-                    GROUP BY user_id
-                ) latest ON latest.user_id = p.user_id
-                LEFT JOIN mock_attempts a ON a.id = latest.latest_id
-                WHERE p.test_id = %s
-                  AND p.status <> 'Left'
-            """, (result["test_id"], result["test_id"]))
-
-            stats = cursor.fetchone()
-            participants_total = int(stats["total"] or 0)
-            participants_completed = int(stats["completed"] or 0)
-            pending_count = max(0, participants_total - participants_completed)
-
-            results_released = (
-                participants_total > 0
-                and participants_completed == participants_total
-            )
-
-            cursor.execute("""
                 SELECT
                     p.user_id,
-                    p.status AS participant_status,
                     u.name,
+                    p.status AS participant_status,
                     a.id AS attempt_id,
                     a.obtained_marks,
                     a.total_marks,
@@ -2182,18 +2154,28 @@ def mock_test_result(attempt_id):
                     a.correct_answers,
                     a.wrong_answers,
                     a.unanswered_questions,
-                    a.submitted_at
+                    a.submitted_at,
+                    CASE
+                        WHEN a.id IS NULL THEN 'Pending'
+                        ELSE 'Submitted'
+                    END AS status
                 FROM mock_test_participants p
-                JOIN users u ON u.id = p.user_id
+                LEFT JOIN users u
+                    ON u.id = p.user_id
                 LEFT JOIN (
-                    SELECT user_id, MAX(id) AS latest_id
-                    FROM mock_attempts
-                    WHERE test_id = %s
-                      AND status IN ('Submitted', 'Auto Submitted')
-                    GROUP BY user_id
-                ) latest ON latest.user_id = p.user_id
-                LEFT JOIN mock_attempts a
-                    ON a.id = latest.latest_id
+                    SELECT latest_attempt.*
+                    FROM mock_attempts latest_attempt
+                    INNER JOIN (
+                        SELECT user_id, MAX(id) AS latest_id
+                        FROM mock_attempts
+                        WHERE test_id = %s
+                          AND status IN ('Submitted', 'Auto Submitted')
+                        GROUP BY user_id
+                    ) latest
+                        ON latest.latest_id = latest_attempt.id
+                ) a
+                    ON a.test_id = p.test_id
+                   AND a.user_id = p.user_id
                 WHERE p.test_id = %s
                   AND p.status <> 'Left'
                 ORDER BY
@@ -2201,82 +2183,99 @@ def mock_test_result(attempt_id):
                     a.obtained_marks DESC,
                     a.percentage DESC,
                     a.submitted_at ASC,
-                    u.name ASC
+                    p.id ASC
             """, (result["test_id"], result["test_id"]))
 
             leaderboard = cursor.fetchall()
-
-            current_rank = 0
-            previous_score = None
-            submitted_position = 0
+            participants_total = len(leaderboard)
 
             for student in leaderboard:
-                student["is_current_user"] = (
-                    int(student["user_id"]) == int(result["user_id"])
-                )
+                if student.get("status") == "Submitted":
+                    participants_completed += 1
 
-                if student["attempt_id"] is None:
+            participants_pending = max(
+                0,
+                participants_total - participants_completed
+            )
+
+            results_released = (
+                participants_total > 0
+                and participants_pending == 0
+            )
+
+            previous_score = None
+            current_rank = 0
+
+            for index, student in enumerate(leaderboard, start=1):
+                if student.get("status") == "Pending":
                     student["rank"] = None
-                    student["rank_title"] = "Not submitted"
-                    student["participant_status"] = "Pending"
+                    student["rank_title"] = "Pending"
                     continue
 
-                submitted_position += 1
-
                 score = (
-                    float(student["obtained_marks"] or 0),
-                    float(student["percentage"] or 0)
+                    float(student.get("obtained_marks") or 0),
+                    float(student.get("percentage") or 0)
                 )
 
                 if score != previous_score:
-                    current_rank = submitted_position
+                    current_rank = index
                     previous_score = score
 
                 student["rank"] = current_rank
 
                 if current_rank == 1:
-                    student["rank_title"] = "1st Place"
+                    student["rank_title"] = "🥇 1st Place"
                 elif current_rank == 2:
-                    student["rank_title"] = "2nd Place"
+                    student["rank_title"] = "🥈 2nd Place"
                 elif current_rank == 3:
-                    student["rank_title"] = "3rd Place"
+                    student["rank_title"] = "🥉 3rd Place"
                 else:
                     student["rank_title"] = f"{current_rank}th Place"
 
-                student["participant_status"] = "Submitted"
-
-                if int(student["attempt_id"]) == int(attempt_id):
+                if int(student.get("attempt_id") or 0) == int(attempt_id):
                     rank = current_rank
 
         answers = []
 
         if results_released:
             cursor.execute("""
-                SELECT aa.question_id, aa.selected_option, aa.correct_option,
-                       aa.is_correct, aa.marks_awarded, qb.question_text,
-                       qb.option_a, qb.option_b, qb.option_c, qb.option_d,
-                       qb.explanation
+                SELECT
+                    aa.question_id,
+                    aa.selected_option,
+                    aa.correct_option,
+                    aa.is_correct,
+                    aa.marks_awarded,
+                    qb.question_text,
+                    qb.option_a,
+                    qb.option_b,
+                    qb.option_c,
+                    qb.option_d,
+                    qb.explanation
                 FROM mock_attempt_answers aa
-                JOIN mock_question_bank qb ON qb.id = aa.question_id
+                JOIN mock_question_bank qb
+                    ON qb.id = aa.question_id
                 WHERE aa.attempt_id = %s
                 ORDER BY aa.id ASC
             """, (attempt_id,))
             answers = cursor.fetchall()
 
         leaderboard_url = (
-            url_for("mock_test_leaderboard", share_token=result["share_token"])
+            url_for(
+                "mock_test_leaderboard",
+                share_token=result["share_token"]
+            )
             if result.get("share_token") else None
         )
 
         return render_template(
-            "result.html",
+            "mock-test/result.html",
             result=result,
             answers=answers,
             is_creator=is_creator,
             results_released=results_released,
             participants_total=participants_total,
             participants_completed=participants_completed,
-            pending_count=pending_count,
+            participants_pending=participants_pending,
             leaderboard=leaderboard,
             rank=rank,
             leaderboard_url=leaderboard_url
@@ -2291,6 +2290,7 @@ def mock_test_result(attempt_id):
     finally:
         cursor.close()
         conn.close()
+
 @app.route("/mock-test/<share_token>/leaderboard")
 def mock_test_leaderboard(share_token):
     if not mock_login_required():
