@@ -543,7 +543,6 @@
 
                 <div class="action-area">
 
-                    {% if not is_host %}
                     <button
                             type="button"
                             class="action-btn ready-btn"
@@ -552,7 +551,6 @@
                     >
                         Mark as Ready
                     </button>
-                    {% endif %}
 
                     {% if is_host %}
                     <button
@@ -722,7 +720,7 @@
 
             renderParticipants(participants);
 
-            const total = participants.length;
+            const total = Number(data.total ?? participants.length);
 
             const ready = participants.filter(
                 participant => participant.status === "Ready"

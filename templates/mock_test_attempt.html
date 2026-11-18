@@ -50,6 +50,19 @@
         margin-bottom: 12px;
     }
 
+    .exam-progress {
+        position: sticky;
+        top: 76px;
+        z-index: 8;
+        margin-bottom: 18px;
+        padding: 12px 16px;
+        border-radius: 10px;
+        background: #eff6ff;
+        color: #1d4ed8;
+        font-weight: 700;
+        text-align: right;
+    }
+
     .question-card {
         background: white;
         padding: 25px;
@@ -139,7 +152,7 @@
 
 <div class="exam-wrapper">
 
-    <!-- EXAM HEADER -->
+
 
     <div class="exam-header">
 
@@ -154,7 +167,10 @@
             </span>
 
             <span>
-                Questions: {{ test.question_count }}
+                Questions: {{ question_count|default(test.question_count) }}
+            </span>
+            <span>
+                Total Marks: {{ total_marks|default(0) }}
             </span>
 
             <span>
@@ -166,7 +182,7 @@
     </div>
 
 
-    <!-- WAITING SCREEN -->
+
 
     {% if exam_state == 'waiting' %}
 
@@ -196,7 +212,7 @@
     </div>
 
 
-    <!-- CLOSED SCREEN -->
+
 
     {% elif exam_state == 'closed' %}
 
@@ -217,7 +233,7 @@
     </div>
 
 
-    <!-- ACTIVE EXAM -->
+
 
     {% elif exam_state == 'active' %}
 
@@ -233,9 +249,12 @@
     <form method="POST"
           action="{{ url_for('submit_mock_test', attempt_id=attempt_id) }}"
           id="examForm">
+        <div class="exam-progress" id="examProgress">
+            <span id="answeredCount">0</span> of {{ question_count|default(questions|length) }} answered
+        </div>
         {% for question in questions %}
 
-        <div class="question-card">
+        <div class="question-card" id="question-{{ loop.index }}">
 
             <div class="question-title">
 
@@ -320,18 +339,25 @@
 
     let submitted = false;
 
+    function updateAnsweredCount() {
+        const selected = examForm.querySelectorAll('input[type="radio"]:checked').length;
+        const counter = document.getElementById("answeredCount");
+        if (counter) counter.textContent = selected;
+    }
+
+    examForm.addEventListener("change", updateAnsweredCount);
+    updateAnsweredCount();
+
     function updateTimer() {
 
         if (remainingSeconds <= 0) {
-
             timerElement.innerText = "00:00";
-
             if (!submitted) {
                 submitted = true;
                 submitBtn.disabled = true;
-                examForm.submit();
+                submitBtn.innerText = "Time Over · Submitting...";
+                HTMLFormElement.prototype.submit.call(examForm);
             }
-
             return;
         }
 

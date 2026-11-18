@@ -377,7 +377,7 @@
                             {{ student.name or 'Student' }}
                         </div>
                         <div class="student-email">
-                            {{ student.email or '' }}
+                            {% if student.attempt_id %}Completed attempt{% else %}Awaiting submission{% endif %}
                         </div>
                     </td>
                     <td>
@@ -417,13 +417,10 @@
                         {% endif %}
                     </td>
                     <td>
-                        {% if student.attempt_id %}
-                        <a
-                                href="{{ url_for('mock_test_result', attempt_id=student.attempt_id) }}"
-                                class="view-result-btn"
-                        >
-                            View Result
-                        </a>
+                        {% if student.attempt_id and (session.get('user_id')|int == test.creator_user_id|int or session.get('user_id')|int == student.user_id|int) %}
+                        <a href="{{ url_for('mock_test_result', attempt_id=student.attempt_id) }}" class="view-result-btn">View Result</a>
+                        {% elif student.attempt_id %}
+                        <span style="color:#94a3b8;">Submitted</span>
                         {% else %}
                         <span style="color:#94a3b8;">Unavailable</span>
                         {% endif %}

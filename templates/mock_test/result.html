@@ -1,3 +1,294 @@
-{% extends 'mock_tests/base.html' %}{% block mock_title %}Mock Test Result{% endblock %}{% block mock_content %}
-<div class="mt-result"><span class="mt-kicker">TEST COMPLETED</span><h1>Your result</h1><div class="mt-score">{{ result.percentage }}<small>%</small></div><h2>{{ result.title }}</h2><p>{{ result.course_name }} · {{ result.subject_name }}</p><div class="mt-stats"><div><b>{{ result.score }}/{{ result.total_questions }}</b><small>Correct answers</small></div><div><b>#{{ rank }}</b><small>Your rank</small></div><div><b>{{ (result.time_taken_seconds or 0)//60 }}m {{ (result.time_taken_seconds or 0)%60 }}s</b><small>Time taken</small></div></div><a class="mt-btn" href="{{ leaderboard_url }}">View combined leaderboard →</a><a class="mt-btn ghost" href="{{ url_for('mock_tests.home') }}">Back to Mock Tests</a></div>
+{% extends "layout.html" %}
+
+{% block title %}Mock Test Result | {{ result.title }}{% endblock %}
+
+{% block content %}
+<div class="mt-result-page">
+    <div class="mt-result-card">
+        <div class="mt-result-header">
+            <div class="mt-success-icon">✓</div>
+            <span class="mt-kicker">TEST SUBMITTED</span>
+            <h1>{{ 'Congratulations!' if results_released else 'Submission Received' }}</h1>
+            <p>{{ 'Your mock test has been completed successfully.' if results_released else 'Your answers have been saved. Scores and answer review will appear after all participants submit.' }}</p>
+        </div>
+
+        <div class="mt-score-section">
+            <div class="mt-score-circle">
+                {% if results_released %}
+                <div class="mt-score-value">{{ result.percentage|default(0)|round|int }}<small>%</small></div>
+                <span>Overall Score</span>
+                {% else %}
+                <div class="mt-score-value">—</div>
+                <span>Score Locked</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="mt-test-info">
+            <h2>{{ result.title|default('Mock Test') }}</h2>
+            <p>Participant: {{ result.name|default('Student') }}</p>
+        </div>
+
+        <div class="mt-result-stats">
+            <div class="mt-stat-box"><span class="mt-stat-icon">✓</span><strong>{{ result.correct_answers|default(0) }}/{{ result.total_questions|default(0) }}</strong><small>Correct Answers</small></div>
+            <div class="mt-stat-box"><span class="mt-stat-icon">🏆</span><strong>{% if results_released and rank %}#{{ rank }}{% elif results_released %}—{% else %}Pending{% endif %}</strong><small>Your Rank</small></div>
+            <div class="mt-stat-box"><span class="mt-stat-icon">⏱</span><strong>{{ (result.time_taken_seconds|default(0)|int)//60 }}m {{ (result.time_taken_seconds|default(0)|int)%60 }}s</strong><small>Time Taken</small></div>
+            <div class="mt-stat-box"><span class="mt-stat-icon">🎯</span><strong>{{ result.obtained_marks|default(0) }}/{{ result.total_marks|default(0) }}</strong><small>Marks Obtained</small></div>
+            <div class="mt-stat-box"><span class="mt-stat-icon">✍</span><strong>{{ result.attempted_questions|default(0) }}</strong><small>Attempted</small></div>
+            <div class="mt-stat-box"><span class="mt-stat-icon">✕</span><strong>{{ result.wrong_answers|default(0) }}</strong><small>Incorrect</small></div>
+        </div>
+
+        {% if not results_released %}
+        <div class="mt-release-notice">
+            <strong>Results are not released yet</strong>
+            <p>{{ participants_completed }} of {{ participants_total }} participants have submitted. The result and answer review will unlock when everyone has finished.</p>
+        </div>
+        {% endif %}
+
+        <div class="mt-result-actions">
+            {% if leaderboard_url and results_released %}<a class="mt-btn" href="{{ leaderboard_url }}">View Leaderboard <span>→</span></a>{% endif %}
+            <a class="mt-btn ghost" href="{{ url_for('mock_test_dashboard') }}">Back to Mock Tests</a>
+        </div>
+
+        {% if results_released and answers %}
+        <section class="mt-review-section">
+            <h2>Answer Review</h2>
+            {% for answer in answers %}
+            <article class="mt-answer-card">
+                <h3>Question {{ loop.index }}. {{ answer.question_text }}</h3>
+                <div class="mt-answer-options">
+                    <p><strong>Your answer:</strong> {{ answer.selected_option or 'Not Attempted' }}{% if answer.selected_option %} — {{ answer['option_' ~ answer.selected_option|lower] }}{% endif %}</p>
+                    <p><strong>Correct answer:</strong> {{ answer.correct_option }} — {{ answer['option_' ~ answer.correct_option|lower] }}</p>
+                </div>
+                <span class="mt-answer-status {{ 'correct' if answer.is_correct else 'incorrect' }}">{{ 'Correct' if answer.is_correct else ('Not Attempted' if not answer.selected_option else 'Incorrect') }}</span>
+                {% if answer.explanation %}<p class="mt-explanation">{{ answer.explanation }}</p>{% endif %}
+            </article>
+            {% endfor %}
+        </section>
+        {% endif %}
+
+        <div class="mt-result-footer">Keep practicing. Every attempt brings you closer to success.</div>
+    </div>
+</div>
+<style>
+    .mt-result-page {
+        width: 100%;
+        max-width: 850px;
+        margin: 35px auto;
+        padding: 20px;
+    }
+
+    .mt-result-card {
+        background: var(--card-bg, #ffffff);
+        border: 1px solid var(--border-color, #e5e7eb);
+        border-radius: 24px;
+        padding: 40px;
+        box-shadow: 0 15px 45px rgba(0, 0, 0, 0.07);
+    }
+
+    .mt-result-header {
+        text-align: center;
+    }
+
+    .mt-success-icon {
+        width: 62px;
+        height: 62px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 18px;
+        border-radius: 50%;
+        background: #dcfce7;
+        color: #15803d;
+        font-size: 32px;
+        font-weight: 800;
+    }
+
+    .mt-kicker {
+        color: #16a34a;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 2px;
+    }
+
+    .mt-result-header h1 {
+        margin: 12px 0 8px;
+        font-size: clamp(28px, 5vw, 38px);
+        font-weight: 800;
+        color: var(--text-primary, #111827);
+    }
+
+    .mt-result-header p,
+    .mt-test-info p {
+        color: var(--text-secondary, #6b7280);
+    }
+
+    .mt-score-section {
+        display: flex;
+        justify-content: center;
+        margin: 35px 0;
+    }
+
+    .mt-score-circle {
+        width: 190px;
+        height: 190px;
+        border: 9px solid #dcfce7;
+        border-radius: 50%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background: #f0fdf4;
+    }
+
+    .mt-score-value {
+        font-size: 54px;
+        font-weight: 900;
+        color: #15803d;
+        line-height: 1.1;
+    }
+
+    .mt-score-value small {
+        font-size: 25px;
+    }
+
+    .mt-score-circle span {
+        margin-top: 8px;
+        color: #166534;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .mt-test-info {
+        text-align: center;
+        margin-bottom: 28px;
+    }
+
+    .mt-test-info h2 {
+        font-size: 23px;
+        font-weight: 800;
+        color: var(--text-primary, #111827);
+        margin-bottom: 8px;
+    }
+
+    .mt-test-info p {
+        font-size: 14px;
+    }
+
+    .mt-result-stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+        margin: 25px 0 32px;
+    }
+
+    .mt-stat-box {
+        padding: 22px 12px;
+        text-align: center;
+        border: 1px solid var(--border-color, #e5e7eb);
+        border-radius: 16px;
+        background: var(--surface-bg, #f9fafb);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .mt-stat-icon {
+        font-size: 22px;
+    }
+
+    .mt-stat-box strong {
+        font-size: 23px;
+        font-weight: 800;
+        color: var(--text-primary, #111827);
+    }
+
+    .mt-stat-box small {
+        color: var(--text-secondary, #6b7280);
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .mt-result-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .mt-btn {
+        width: 100%;
+        min-height: 50px;
+        padding: 14px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        border-radius: 12px;
+        background: #4f46e5;
+        color: #ffffff !important;
+        text-decoration: none !important;
+        font-weight: 700;
+        transition: 0.2s ease;
+    }
+
+    .mt-btn:hover {
+        background: #4338ca;
+        transform: translateY(-2px);
+    }
+
+    .mt-btn.ghost {
+        background: transparent;
+        color: var(--text-primary, #374151) !important;
+        border: 1px solid var(--border-color, #d1d5db);
+    }
+
+    .mt-btn.ghost:hover {
+        background: var(--surface-bg, #f3f4f6);
+    }
+
+    .mt-result-footer {
+        margin-top: 25px;
+        padding-top: 20px;
+        border-top: 1px solid var(--border-color, #e5e7eb);
+        text-align: center;
+        color: var(--text-secondary, #6b7280);
+        font-size: 13px;
+    }
+
+    @media (max-width: 600px) {
+        .mt-result-page {
+            padding: 10px;
+            margin: 15px auto;
+        }
+
+        .mt-result-card {
+            padding: 25px 16px;
+        }
+
+        .mt-result-stats {
+            grid-template-columns: 1fr;
+        }
+
+        .mt-stat-box {
+            flex-direction: row;
+            justify-content: space-between;
+            padding: 16px;
+        }
+    }
+</style>
+<style>
+    .mt-release-notice{margin:22px 0;padding:18px 20px;border:1px solid #fcd34d;background:#fffbeb;border-radius:14px;color:#92400e}
+    .mt-release-notice p{margin:7px 0 0;font-size:13px;line-height:1.6}
+    .mt-review-section{margin-top:35px}
+    .mt-review-section h2{font-size:22px;font-weight:800;margin-bottom:18px;color:var(--text-primary,#111827)}
+    .mt-answer-card{padding:20px;margin:14px 0;border:1px solid var(--border-color,#e5e7eb);border-radius:15px;background:var(--card-bg,#fff)}
+    .mt-answer-card h3{font-size:15px;line-height:1.6;color:var(--text-primary,#111827);margin:0 0 14px}
+    .mt-answer-options p{font-size:13px;color:var(--text-secondary,#475569);margin:8px 0}
+    .mt-answer-status{display:inline-block;margin-top:8px;padding:6px 11px;border-radius:20px;font-size:11px;font-weight:800}
+    .mt-answer-status.correct{background:#dcfce7;color:#15803d}
+    .mt-answer-status.incorrect{background:#fee2e2;color:#b91c1c}
+    .mt-explanation{margin:12px 0 0;padding:12px;background:var(--surface-bg,#f8fafc);border-radius:9px;color:var(--text-secondary,#475569);font-size:13px;line-height:1.6}
+    @media(max-width:600px){.mt-result-stats{grid-template-columns:1fr 1fr}.mt-answer-card{padding:15px}}
+</style>
 {% endblock %}
