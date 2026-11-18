@@ -7579,8 +7579,8 @@ def inject_global_data():
         )
 }
 @app.route('/courses')
+@login_required
 def courses():
-
     conn = None
     cursor = None
 
@@ -7588,7 +7588,6 @@ def courses():
         conn = get_db_connection()
         cursor = conn.cursor(pymysql.cursors.DictCursor)
 
-        # Fetch all uploaded materials
         cursor.execute("""
             SELECT
                 id,
@@ -7608,8 +7607,20 @@ def courses():
 
         pyq_papers = []
         study_materials = []
+        courses_list = []
+
+        course_names = set()
 
         for item in all_materials:
+            course_name = str(item.get('course_name') or '').strip()
+
+            if course_name and course_name not in course_names:
+                course_names.add(course_name)
+                courses_list.append({
+                    'name': course_name,
+                    'course_name': course_name,
+                    'slug': course_name.lower().replace(' ', '-')
+                })
 
             material_type = str(
                 item.get('material_type') or ''
@@ -7619,13 +7630,11 @@ def courses():
                 item.get('category') or ''
             ).strip().lower()
 
-            # PYQ / Question Bank separation
             if material_type in ['pyq', 'question_bank'] or category in ['pyq', 'question_bank']:
-
                 pyq_papers.append({
                     'id': item.get('id'),
                     'title': item.get('title'),
-                    'course_name': item.get('course_name'),
+                    'course_name': course_name,
                     'subject_name': item.get('subject_name'),
                     'semester': item.get('semester'),
                     'exam_year': '',
@@ -7633,7 +7642,6 @@ def courses():
                     'paper_pattern': 'SPPU',
                     'pdf_url': item.get('pdf_link')
                 })
-
             else:
                 study_materials.append({
                     'id': item.get('id'),
@@ -7645,7 +7653,6 @@ def courses():
                     'size': ''
                 })
 
-        # PYQ filters
         pyq_semesters = sorted({
             str(paper['semester'])
             for paper in pyq_papers
@@ -7658,13 +7665,10 @@ def courses():
             if paper.get('exam_year')
         }, reverse=True)
 
-        # IMPORTANT:
-        # Yahan apne existing route ka courses-list logic
-        # same rakho. Usko delete ya replace mat karna.
-
         return render_template(
             'courses.html',
             courses=courses_list,
+            courses_list=courses_list,
             pyq_papers=pyq_papers,
             pyq_semesters=pyq_semesters,
             pyq_years=pyq_years,
@@ -7672,7 +7676,7 @@ def courses():
         )
 
     except Exception as e:
-        print("Courses Route Error:", str(e))
+        app.logger.exception(f"Courses Route Error: {e}")
         flash("Unable to load courses. Please try again.", "danger")
         return redirect(url_for('dashboard'))
 
@@ -9385,9 +9389,6 @@ def send_message():
         conn.close()
 
     return redirect(url_for("messages", user=receiver_id))
-# ==========================================================
-# NOTIFICATIONS PAGE
-# ==========================================================
 
 @app.route("/notifications")
 def notifications():
