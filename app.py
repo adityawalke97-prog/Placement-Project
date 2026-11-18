@@ -2159,6 +2159,49 @@ def mock_test_result(attempt_id):
             participants_completed = int(stats["completed"] or 0)
             results_released = participants_total > 0 and participants_completed == participants_total
 
+            cursor.execute("""
+                SELECT a.id AS attempt_id, a.user_id, u.name,
+                       a.obtained_marks, a.total_marks, a.percentage,
+                       a.correct_answers, a.wrong_answers,
+                       a.unanswered_questions, a.submitted_at
+                FROM mock_attempts a
+                JOIN users u ON u.id = a.user_id
+                JOIN (
+                    SELECT user_id, MAX(id) AS latest_id
+                    FROM mock_attempts
+                    WHERE test_id = %s
+                      AND status IN ('Submitted', 'Auto Submitted')
+                    GROUP BY user_id
+                ) latest ON latest.latest_id = a.id
+                WHERE a.test_id = %s
+                  AND a.status IN ('Submitted', 'Auto Submitted')
+                ORDER BY a.obtained_marks DESC, a.percentage DESC,
+                         a.submitted_at ASC, a.id ASC
+            """, (result["test_id"], result["test_id"]))
+            leaderboard = cursor.fetchall()
+
+            previous_score = None
+            current_rank = 0
+            for index, student in enumerate(leaderboard, start=1):
+                score = (
+                    float(student["obtained_marks"] or 0),
+                    float(student["percentage"] or 0)
+                )
+                if score != previous_score:
+                    current_rank = index
+                    previous_score = score
+                student["rank"] = current_rank
+                if current_rank == 1:
+                    student["rank_title"] = "🥇 1st Place"
+                elif current_rank == 2:
+                    student["rank_title"] = "🥈 2nd Place"
+                elif current_rank == 3:
+                    student["rank_title"] = "🥉 3rd Place"
+                else:
+                    student["rank_title"] = f"{current_rank}th Place"
+                if int(student["attempt_id"]) == int(attempt_id):
+                    rank = current_rank
+
         answers = []
         if results_released:
             cursor.execute("""
@@ -2172,47 +2215,6 @@ def mock_test_result(attempt_id):
                 ORDER BY aa.id ASC
             """, (attempt_id,))
             answers = cursor.fetchall()
-
-            if result.get("share_token"):
-                cursor.execute("""
-                    SELECT a.id AS attempt_id, a.user_id, u.name,
-                           a.obtained_marks, a.total_marks, a.percentage,
-                           a.correct_answers, a.wrong_answers,
-                           a.unanswered_questions, a.submitted_at
-                    FROM mock_attempts a
-                    JOIN users u ON u.id = a.user_id
-                    JOIN (
-                        SELECT user_id, MAX(id) AS latest_id
-                        FROM mock_attempts
-                        WHERE test_id = %s
-                          AND status IN ('Submitted', 'Auto Submitted')
-                        GROUP BY user_id
-                    ) latest ON latest.latest_id = a.id
-                    WHERE a.test_id = %s
-                      AND a.status IN ('Submitted', 'Auto Submitted')
-                    ORDER BY a.obtained_marks DESC, a.percentage DESC,
-                             a.submitted_at ASC, a.id ASC
-                """, (result["test_id"], result["test_id"]))
-                leaderboard = cursor.fetchall()
-
-                previous_score = None
-                current_rank = 0
-                for index, student in enumerate(leaderboard, start=1):
-                    score = (float(student["obtained_marks"] or 0), float(student["percentage"] or 0))
-                    if score != previous_score:
-                        current_rank = index
-                        previous_score = score
-                    student["rank"] = current_rank
-                    if current_rank == 1:
-                        student["rank_title"] = "🥇 1st Place"
-                    elif current_rank == 2:
-                        student["rank_title"] = "🥈 2nd Place"
-                    elif current_rank == 3:
-                        student["rank_title"] = "🥉 3rd Place"
-                    else:
-                        student["rank_title"] = f"{current_rank}th Place"
-                    if int(student["attempt_id"]) == int(attempt_id):
-                        rank = current_rank
 
         leaderboard_url = url_for("mock_test_leaderboard", share_token=result["share_token"]) if result.get("share_token") else None
 
@@ -8033,7 +8035,7 @@ def notes():
             cursor.close()
         if conn:
             conn.close()
-                
+
 @app.route("/leaderboard")
 def leaderboard():
     return render_template("leaderboard.html")
