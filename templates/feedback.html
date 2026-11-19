@@ -1,0 +1,882 @@
+{% extends "layout.html" %}
+
+{% block title %}Feedback Center | Placement Training Portal{% endblock %}
+
+{% block content %}
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+
+<style>
+    .feedback-page {
+        font-family: 'DM Sans', sans-serif;
+        max-width: 1450px;
+        margin: 0 auto;
+        padding: 28px 22px 55px;
+        color: #172033;
+    }
+
+    .feedback-hero {
+        background: linear-gradient(120deg, #172554, #312e81 55%, #4f46e5);
+        border-radius: 24px;
+        padding: 36px;
+        color: white;
+        margin-bottom: 28px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .feedback-hero:after {
+        content: "";
+        position: absolute;
+        width: 260px;
+        height: 260px;
+        border-radius: 50%;
+        background: rgba(255,255,255,.07);
+        right: 5%;
+        top: -110px;
+    }
+
+    .feedback-hero h1 {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 30px;
+        font-weight: 800;
+        margin: 0 0 10px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .feedback-hero p {
+        color: #dbeafe;
+        margin: 0;
+        font-size: 14px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .feedback-hero-icon {
+        position: absolute;
+        right: 45px;
+        bottom: 25px;
+        font-size: 85px;
+        opacity: .15;
+    }
+
+    .feedback-grid {
+        display: grid;
+        grid-template-columns: minmax(320px, .85fr) minmax(0, 1.35fr);
+        gap: 24px;
+        align-items: start;
+    }
+
+    .feedback-card {
+        background: #fff;
+        border: 1px solid #e8edf5;
+        border-radius: 20px;
+        padding: 26px;
+        box-shadow: 0 8px 30px rgba(15,23,42,.045);
+    }
+
+    .feedback-card-header {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        margin-bottom: 24px;
+    }
+
+    .feedback-card-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 13px;
+        background: #eef2ff;
+        color: #4f46e5;
+        display: grid;
+        place-items: center;
+        font-size: 18px;
+        flex-shrink: 0;
+    }
+
+    .feedback-card-header h2 {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 19px;
+        font-weight: 800;
+        margin: 0;
+    }
+
+    .feedback-card-header p {
+        font-size: 12px;
+        color: #94a3b8;
+        margin: 4px 0 0;
+    }
+
+    .form-group {
+        margin-bottom: 19px;
+    }
+
+    .form-group label {
+        display: block;
+        font-size: 13px;
+        font-weight: 700;
+        margin-bottom: 8px;
+        color: #334155;
+    }
+
+    .form-group label span {
+        color: #ef4444;
+    }
+
+    .form-control {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 13px 14px;
+        border: 1px solid #dce3ed;
+        border-radius: 11px;
+        background: #fff;
+        color: #172033;
+        font-family: inherit;
+        font-size: 13px;
+        outline: none;
+        transition: .2s;
+    }
+
+    .form-control:focus {
+        border-color: #6366f1;
+        box-shadow: 0 0 0 3px rgba(99,102,241,.10);
+    }
+
+    select.form-control {
+        display: block;
+        min-height: 48px;
+        appearance: auto;
+        -webkit-appearance: menulist;
+        cursor: pointer;
+    }
+
+    select.form-control option {
+        color: #172033;
+        background: #fff;
+        padding: 10px;
+    }
+
+    textarea.form-control {
+        resize: vertical;
+        min-height: 130px;
+    }
+
+    .rating-container {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .rating-stars {
+        display: flex;
+        flex-direction: row-reverse;
+        gap: 7px;
+    }
+
+    .rating-stars input {
+        display: none;
+    }
+
+    .rating-stars label {
+        font-size: 29px;
+        color: #dbe2ec;
+        cursor: pointer;
+        margin: 0;
+        transition: .15s;
+    }
+
+    .rating-stars label:hover,
+    .rating-stars label:hover ~ label,
+    .rating-stars input:checked ~ label {
+        color: #f59e0b;
+    }
+
+    .rating-description {
+        color: #64748b;
+        font-size: 12px;
+    }
+
+    .anonymous-option {
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+        background: #f8fafc;
+        border: 1px solid #e8edf5;
+        padding: 14px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        cursor: pointer;
+    }
+
+    .anonymous-option input {
+        margin-top: 4px;
+        accent-color: #4f46e5;
+    }
+
+    .anonymous-option strong {
+        display: block;
+        font-size: 12px;
+        color: #334155;
+    }
+
+    .anonymous-option small {
+        display: block;
+        font-size: 11px;
+        color: #94a3b8;
+        margin-top: 3px;
+    }
+
+    .submit-feedback {
+        width: 100%;
+        border: 0;
+        border-radius: 12px;
+        padding: 14px;
+        color: white;
+        background: linear-gradient(120deg, #4f46e5, #6366f1);
+        font-family: inherit;
+        font-weight: 800;
+        font-size: 13px;
+        cursor: pointer;
+        transition: .2s;
+    }
+
+    .submit-feedback:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(79,70,229,.22);
+    }
+
+    .submit-feedback:disabled {
+        opacity: .7;
+        cursor: not-allowed;
+    }
+
+    .history-toolbar {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    .history-search {
+        flex: 1;
+        min-width: 0;
+        position: relative;
+    }
+
+    .history-search i {
+        position: absolute;
+        left: 13px;
+        top: 14px;
+        color: #94a3b8;
+    }
+
+    .history-search input {
+        padding-left: 38px;
+    }
+
+    .history-filter {
+        width: 145px;
+    }
+
+    .feedback-list {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .feedback-item {
+        border: 1px solid #e8edf5;
+        border-radius: 15px;
+        padding: 19px;
+        transition: .2s;
+    }
+
+    .feedback-item:hover {
+        border-color: #c7d2fe;
+        box-shadow: 0 7px 20px rgba(15,23,42,.04);
+    }
+
+    .feedback-item-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 12px;
+    }
+
+    .feedback-category {
+        font-size: 10px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: .6px;
+        color: #4f46e5;
+        background: #eef2ff;
+        padding: 6px 10px;
+        border-radius: 20px;
+    }
+
+    .status-badge {
+        font-size: 10px;
+        font-weight: 800;
+        padding: 6px 10px;
+        border-radius: 20px;
+        white-space: nowrap;
+    }
+
+    .status-pending {
+        color: #b45309;
+        background: #fef3c7;
+    }
+
+    .status-review {
+        color: #1d4ed8;
+        background: #dbeafe;
+    }
+
+    .status-resolved {
+        color: #047857;
+        background: #d1fae5;
+    }
+
+    .feedback-item h3 {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 16px;
+        font-weight: 800;
+        margin: 0 0 8px;
+        color: #1e293b;
+    }
+
+    .feedback-message {
+        font-size: 13px;
+        color: #64748b;
+        line-height: 1.7;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+    }
+
+    .feedback-meta {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+        margin-top: 14px;
+        padding-top: 12px;
+        border-top: 1px solid #f1f5f9;
+        font-size: 11px;
+        color: #94a3b8;
+    }
+
+    .feedback-meta i {
+        margin-right: 5px;
+    }
+
+    .feedback-rating {
+        color: #f59e0b;
+    }
+
+    .fb-reply {
+        margin-top: 15px;
+        padding: 15px;
+        background: #f0fdf4;
+        border: 1px solid #bbf7d0;
+        border-radius: 12px;
+    }
+
+    .fb-reply strong {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #047857;
+        font-size: 12px;
+        margin-bottom: 8px;
+    }
+
+    .fb-reply p {
+        color: #166534;
+        font-size: 13px;
+        line-height: 1.7;
+        margin: 0;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+    }
+
+    .fb-waiting {
+        margin-top: 15px;
+        padding: 12px;
+        border-radius: 10px;
+        background: #f8fafc;
+        color: #64748b;
+        font-size: 11px;
+    }
+
+    .empty-history {
+        text-align: center;
+        padding: 55px 20px;
+        border: 1px dashed #cbd5e1;
+        border-radius: 15px;
+    }
+
+    .empty-history i {
+        font-size: 38px;
+        color: #c7d2fe;
+        margin-bottom: 15px;
+    }
+
+    .empty-history h3 {
+        font-size: 16px;
+        margin: 0 0 7px;
+    }
+
+    .empty-history p {
+        color: #94a3b8;
+        font-size: 12px;
+        margin: 0;
+    }
+
+    .flash-message {
+        padding: 13px 16px;
+        border-radius: 10px;
+        margin-bottom: 18px;
+        font-size: 13px;
+    }
+
+    .flash-success {
+        color: #047857;
+        background: #d1fae5;
+    }
+
+    .flash-error {
+        color: #b91c1c;
+        background: #fee2e2;
+    }
+
+    @media(max-width: 900px) {
+        .feedback-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media(max-width: 550px) {
+        .feedback-page {
+            padding: 16px 12px 35px;
+        }
+
+        .feedback-hero {
+            padding: 25px 22px;
+        }
+
+        .feedback-hero h1 {
+            font-size: 23px;
+        }
+
+        .feedback-hero-icon {
+            font-size: 55px;
+            right: 20px;
+        }
+
+        .feedback-card {
+            padding: 19px;
+        }
+
+        .history-toolbar {
+            flex-direction: column;
+        }
+
+        .history-filter {
+            width: 100%;
+        }
+
+        .feedback-item-top {
+            flex-wrap: wrap;
+        }
+    }
+</style>
+
+<div class="feedback-page">
+
+    <section class="feedback-hero">
+        <div class="feedback-hero-icon">
+            <i class="fa-solid fa-comments"></i>
+        </div>
+
+        <h1>Feedback Center</h1>
+
+        <p>
+            Share your experience, suggest improvements and track responses from our administration team.
+        </p>
+    </section>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <div class="flash-message {% if category == 'success' %}flash-success{% else %}flash-error{% endif %}">
+        {{ message }}
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+    <div class="feedback-grid">
+
+        <!-- Feedback Form -->
+        <section class="feedback-card">
+
+            <div class="feedback-card-header">
+                <div class="feedback-card-icon">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                </div>
+
+                <div>
+                    <h2>Share Feedback</h2>
+                    <p>Your suggestions help us improve.</p>
+                </div>
+            </div>
+
+            <form method="POST"
+                  action="{{ url_for('student_feedback') }}"
+                  id="feedbackForm">
+
+                <div class="form-group">
+                    <label for="category">
+                        Feedback Category <span>*</span>
+                    </label>
+
+                    <select name="category" id="category" class="form-control" required>
+                        <option value="" selected disabled>Select Feedback Category</option>
+                        <option value="General Feedback">General Feedback</option>
+                        <option value="Feature Request">Feature Request</option>
+                        <option value="Bug Report">Bug Report</option>
+                        <option value="Course Content">Course Content</option>
+                        <option value="Mock Tests">Mock Tests</option>
+                        <option value="Interview Preparation">Interview Preparation</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Your Rating <span>*</span></label>
+
+                    <div class="rating-container">
+                        <div class="rating-stars">
+
+                            <input type="radio" name="rating" id="star5" value="5" required>
+                            <label for="star5"><i class="fa-solid fa-star"></i></label>
+
+                            <input type="radio" name="rating" id="star4" value="4">
+                            <label for="star4"><i class="fa-solid fa-star"></i></label>
+
+                            <input type="radio" name="rating" id="star3" value="3">
+                            <label for="star3"><i class="fa-solid fa-star"></i></label>
+
+                            <input type="radio" name="rating" id="star2" value="2">
+                            <label for="star2"><i class="fa-solid fa-star"></i></label>
+
+                            <input type="radio" name="rating" id="star1" value="1">
+                            <label for="star1"><i class="fa-solid fa-star"></i></label>
+
+                        </div>
+
+                        <span class="rating-description" id="ratingDescription">
+                            Select your rating
+                        </span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="subject">Subject <span>*</span></label>
+
+                    <input type="text"
+                           name="subject"
+                           id="subject"
+                           class="form-control"
+                           maxlength="180"
+                           placeholder="Enter feedback subject"
+                           required>
+                </div>
+
+                <div class="form-group">
+                    <label for="message">Your Message <span>*</span></label>
+
+                    <textarea name="message"
+                              id="message"
+                              class="form-control"
+                              maxlength="5000"
+                              placeholder="Write your feedback or suggestion..."
+                              required></textarea>
+
+                    <div style="text-align:right;font-size:11px;color:#94a3b8;margin-top:5px;">
+                        <span id="messageCount">0</span>/5000 characters
+                    </div>
+                </div>
+
+                <label class="anonymous-option">
+                    <input type="checkbox" name="is_anonymous" value="1">
+
+                    <span>
+                        <strong>Submit anonymously</strong>
+                        <small>Your identity will be hidden from the feedback display.</small>
+                    </span>
+                </label>
+
+                <button type="submit" class="submit-feedback" id="submitFeedback">
+                    <i class="fa-solid fa-paper-plane"></i>
+                    Submit Feedback
+                </button>
+
+            </form>
+        </section>
+
+        <!-- Feedback History -->
+        <section class="feedback-card">
+
+            <div class="feedback-card-header">
+                <div class="feedback-card-icon">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                </div>
+
+                <div>
+                    <h2>Feedback History</h2>
+                    <p>Track your submitted feedback and admin responses.</p>
+                </div>
+            </div>
+
+            <div class="history-toolbar">
+
+                <div class="history-search">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+
+                    <input type="text"
+                           id="historySearch"
+                           class="form-control"
+                           placeholder="Search your feedback...">
+                </div>
+
+                <select id="statusFilter" class="form-control history-filter">
+                    <option value="">All Status</option>
+                    <option value="pending">Pending</option>
+                    <option value="review">Under Review</option>
+                    <option value="resolved">Resolved</option>
+                </select>
+
+            </div>
+
+            <div class="feedback-list" id="feedbackList">
+
+                {% for feedback in feedback_history %}
+
+                {% set status_value = (feedback.status or 'Pending')|lower %}
+                {% set rating_value = feedback.rating|int %}
+
+                <article class="feedback-item"
+                         data-status="{% if status_value == 'under review' %}review{% else %}{{ status_value }}{% endif %}"
+                         data-search="{{ (feedback.subject ~ ' ' ~ feedback.category ~ ' ' ~ feedback.message)|lower }}">
+
+                    <div class="feedback-item-top">
+
+<span class="feedback-category">
+                                {{ feedback.category }}
+                            </span>
+
+                        {% if status_value == 'resolved' %}
+
+                        <span class="status-badge status-resolved">
+                                    Resolved
+                                </span>
+
+                        {% elif status_value == 'under review' %}
+
+                        <span class="status-badge status-review">
+                                    Under Review
+                                </span>
+
+                        {% else %}
+
+                        <span class="status-badge status-pending">
+                                    {{ feedback.status or 'Pending' }}
+                                </span>
+
+                        {% endif %}
+
+                    </div>
+
+                    <h3>{{ feedback.subject }}</h3>
+
+                    <div class="feedback-message">
+                        {{ feedback.message }}
+                    </div>
+
+                    <div class="feedback-meta">
+
+<span>
+                                <i class="fa-regular fa-calendar"></i>
+
+{{ feedback.created_at.strftime('%d %b %Y, %I:%M %p') if feedback.created_at else 'Date unavailable' }}
+                            </span>
+
+                        <span class="feedback-rating">
+
+{% for i in range(rating_value) %}
+                                    <i class="fa-solid fa-star"></i>
+                                {% endfor %}
+
+{% for i in range(5 - rating_value) %}
+                                    <i class="fa-regular fa-star"></i>
+                                {% endfor %}
+
+{{ rating_value }}/5
+                            </span>
+
+                        <span>
+                                <i class="fa-solid fa-hashtag"></i>
+                                Feedback #{{ feedback.id }}
+                            </span>
+
+                    </div>
+
+                    {% if feedback.admin_reply %}
+
+                    <div class="fb-reply">
+
+                        <strong>
+                            <i class="fa-solid fa-shield-halved"></i>
+                            Official Admin Response
+                        </strong>
+
+                        <p>{{ feedback.admin_reply }}</p>
+
+                    </div>
+
+                    {% else %}
+
+                    <div class="fb-waiting">
+                        <i class="fa-regular fa-clock"></i>
+                        Your feedback is awaiting an admin response.
+                    </div>
+
+                    {% endif %}
+
+                </article>
+
+                {% else %}
+
+                <div class="empty-history" id="emptyHistory">
+                    <i class="fa-regular fa-message"></i>
+                    <h3>No Feedback Submitted Yet</h3>
+                    <p>Your submitted feedback will appear here.</p>
+                </div>
+
+                {% endfor %}
+
+                <div class="empty-history" id="noSearchResults" style="display:none;">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <h3>No Matching Feedback</h3>
+                    <p>Try changing your search or status filter.</p>
+                </div>
+
+            </div>
+
+        </section>
+
+    </div>
+
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+// Rating description
+        const ratingDescriptions = {
+            1: "Very Poor",
+            2: "Poor",
+            3: "Average",
+            4: "Good",
+            5: "Excellent"
+        };
+
+        document.querySelectorAll('input[name="rating"]').forEach(input => {
+            input.addEventListener("change", function () {
+                const description = document.getElementById("ratingDescription");
+
+                if (description) {
+                    description.textContent = ratingDescriptions[this.value];
+                }
+            });
+        });
+
+// Character counter
+        const messageInput = document.getElementById("message");
+        const messageCount = document.getElementById("messageCount");
+
+        if (messageInput && messageCount) {
+            messageInput.addEventListener("input", function () {
+                messageCount.textContent = this.value.length;
+            });
+        }
+
+// Feedback search and status filter
+        const searchInput = document.getElementById("historySearch");
+        const statusFilter = document.getElementById("statusFilter");
+        const feedbackItems = document.querySelectorAll(".feedback-item");
+        const noSearchResults = document.getElementById("noSearchResults");
+
+        function filterFeedback() {
+
+            const searchValue = searchInput.value.toLowerCase().trim();
+            const statusValue = statusFilter.value;
+
+            let visibleCount = 0;
+
+            feedbackItems.forEach(item => {
+
+                const matchesSearch = item.dataset.search.includes(searchValue);
+
+                const matchesStatus =
+                    !statusValue || item.dataset.status === statusValue;
+
+                if (matchesSearch && matchesStatus) {
+                    item.style.display = "";
+                    visibleCount++;
+                } else {
+                    item.style.display = "none";
+                }
+
+            });
+
+            if (noSearchResults) {
+                noSearchResults.style.display =
+                    feedbackItems.length > 0 && visibleCount === 0
+                        ? "block"
+                        : "none";
+            }
+        }
+
+        if (searchInput && statusFilter) {
+            searchInput.addEventListener("input", filterFeedback);
+            statusFilter.addEventListener("change", filterFeedback);
+        }
+
+// Disable submit button after submission
+        const feedbackForm = document.getElementById("feedbackForm");
+
+        if (feedbackForm) {
+            feedbackForm.addEventListener("submit", function () {
+
+                const button = document.getElementById("submitFeedback");
+
+                if (button) {
+                    button.disabled = true;
+                    button.innerHTML =
+                        '<i class="fa-solid fa-spinner fa-spin"></i> Submitting...';
+                }
+
+            });
+        }
+
+    });
+</script>
+
+{% endblock %}

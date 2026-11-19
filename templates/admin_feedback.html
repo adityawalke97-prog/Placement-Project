@@ -1,0 +1,788 @@
+{% extends "admin_layout.html" %}
+
+{% block title %}Feedback Management | Admin Control Center{% endblock %}
+
+{% block admin_content %}
+
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+    .feedback-page {
+        font-family: 'DM Sans', sans-serif;
+        color: #172033;
+        padding: 8px 0 35px;
+    }
+
+    .feedback-page * {
+        box-sizing: border-box;
+    }
+
+    .feedback-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 26px;
+    }
+
+    .feedback-header h1 {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 28px;
+        font-weight: 800;
+        margin: 0 0 7px;
+        letter-spacing: -0.8px;
+    }
+
+    .feedback-header p {
+        color: #7b8497;
+        font-size: 14px;
+        margin: 0;
+    }
+
+    .feedback-header-badge {
+        padding: 10px 15px;
+        border-radius: 12px;
+        background: #eef2ff;
+        color: #4f46e5;
+        font-size: 12px;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .feedback-stats {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 17px;
+        margin-bottom: 26px;
+    }
+
+    .feedback-stat {
+        background: #fff;
+        border: 1px solid #edf0f5;
+        border-radius: 17px;
+        padding: 21px;
+        box-shadow: 0 5px 20px rgba(20, 35, 70, .035);
+    }
+
+    .stat-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 17px;
+    }
+
+    .stat-label {
+        font-size: 13px;
+        color: #7b8497;
+        font-weight: 600;
+    }
+
+    .stat-icon {
+        width: 39px;
+        height: 39px;
+        border-radius: 12px;
+        display: grid;
+        place-items: center;
+        font-size: 18px;
+    }
+
+    .stat-value {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 29px;
+        font-weight: 800;
+        letter-spacing: -1px;
+    }
+
+    .stat-description {
+        font-size: 12px;
+        color: #929bad;
+        margin-top: 5px;
+    }
+
+    .stat-purple .stat-icon { background: #f0edff; color: #7155e8; }
+    .stat-blue .stat-icon { background: #eaf3ff; color: #3181e8; }
+    .stat-orange .stat-icon { background: #fff3e6; color: #e58b31; }
+    .stat-green .stat-icon { background: #e8f9f0; color: #16a36a; }
+
+    .feedback-panel {
+        background: #fff;
+        border: 1px solid #edf0f5;
+        border-radius: 18px;
+        padding: 23px;
+        margin-bottom: 25px;
+        box-shadow: 0 5px 20px rgba(20, 35, 70, .035);
+    }
+
+    .panel-heading {
+        margin-bottom: 20px;
+    }
+
+    .panel-heading h2 {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 17px;
+        font-weight: 800;
+        margin: 0 0 6px;
+    }
+
+    .panel-heading p {
+        font-size: 13px;
+        color: #8791a3;
+        margin: 0;
+    }
+
+    .filter-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr auto;
+        gap: 15px;
+        align-items: end;
+    }
+
+    .filter-field label {
+        display: block;
+        font-size: 12px;
+        font-weight: 700;
+        color: #596579;
+        margin-bottom: 8px;
+    }
+
+    .filter-field select {
+        width: 100%;
+        height: 45px;
+        border: 1px solid #e4e8ef;
+        border-radius: 10px;
+        padding: 0 12px;
+        background: #fff;
+        color: #263248;
+        font-family: inherit;
+        outline: none;
+    }
+
+    .filter-field select:focus {
+        border-color: #7664ed;
+    }
+
+    .filter-actions {
+        display: flex;
+        gap: 9px;
+    }
+
+    .btn {
+        height: 45px;
+        padding: 0 17px;
+        border-radius: 10px;
+        border: none;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        gap: 7px;
+        font-family: inherit;
+        font-size: 12px;
+        font-weight: 800;
+        cursor: pointer;
+        text-decoration: none;
+        transition: .2s ease;
+    }
+
+    .btn-primary {
+        background: #5b4be8;
+        color: #fff;
+    }
+
+    .btn-primary:hover {
+        background: #4938d4;
+        transform: translateY(-1px);
+    }
+
+    .btn-light {
+        background: #f2f4f8;
+        color: #536075;
+    }
+
+    .btn-light:hover {
+        background: #e8ebf1;
+    }
+
+    .submissions-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 17px;
+    }
+
+    .submissions-heading h2 {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 19px;
+        font-weight: 800;
+        margin: 0 0 5px;
+    }
+
+    .submissions-heading p {
+        font-size: 13px;
+        color: #8791a3;
+        margin: 0;
+    }
+
+    .record-count {
+        background: #f0edff;
+        color: #624ce0;
+        padding: 8px 13px;
+        border-radius: 9px;
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    .feedback-card {
+        background: #fff;
+        border: 1px solid #e9edf3;
+        border-radius: 17px;
+        padding: 22px;
+        margin-bottom: 17px;
+        box-shadow: 0 5px 20px rgba(20, 35, 70, .035);
+        transition: .2s ease;
+    }
+
+    .feedback-card:hover {
+        border-color: #d8d2ff;
+        box-shadow: 0 10px 28px rgba(50, 40, 120, .07);
+    }
+
+    .feedback-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 15px;
+        padding-bottom: 17px;
+        border-bottom: 1px solid #f0f2f6;
+    }
+
+    .student-info {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        min-width: 0;
+    }
+
+    .student-avatar {
+        width: 47px;
+        height: 47px;
+        flex-shrink: 0;
+        border-radius: 14px;
+        display: grid;
+        place-items: center;
+        background: linear-gradient(135deg, #6554e9, #9278f5);
+        color: #fff;
+        font-size: 18px;
+        font-weight: 800;
+    }
+
+    .student-details {
+        min-width: 0;
+    }
+
+    .student-details strong {
+        display: block;
+        font-size: 14px;
+        font-weight: 800;
+        color: #202b40;
+        overflow-wrap: anywhere;
+    }
+
+    .student-details span {
+        display: block;
+        font-size: 12px;
+        color: #8993a4;
+        margin-top: 4px;
+        overflow-wrap: anywhere;
+    }
+
+    .feedback-date {
+        font-size: 12px;
+        color: #8791a3;
+        margin-top: 7px;
+    }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 7px 11px;
+        border-radius: 8px;
+        font-size: 11px;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .status-pending {
+        background: #fff4e5;
+        color: #d78322;
+    }
+
+    .status-under-review {
+        background: #edf3ff;
+        color: #3676d9;
+    }
+
+    .status-resolved {
+        background: #e8f8ef;
+        color: #15945b;
+    }
+
+    .feedback-meta {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 9px;
+        margin: 17px 0;
+    }
+
+    .meta-chip {
+        padding: 7px 10px;
+        border-radius: 8px;
+        background: #f5f6fa;
+        color: #687387;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .rating-stars {
+        color: #f3a629;
+        letter-spacing: 2px;
+        font-size: 15px;
+    }
+
+    .feedback-subject {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 19px;
+        font-weight: 800;
+        color: #202b40;
+        margin: 15px 0 9px;
+    }
+
+    .feedback-message {
+        color: #657187;
+        font-size: 13px;
+        line-height: 1.8;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+    }
+
+    .admin-response {
+        background: #f6f5ff;
+        border: 1px solid #e9e5ff;
+        border-radius: 12px;
+        padding: 14px;
+        margin-top: 18px;
+    }
+
+    .admin-response strong {
+        display: block;
+        color: #5848c9;
+        font-size: 12px;
+        margin-bottom: 7px;
+    }
+
+    .admin-response p {
+        margin: 0;
+        font-size: 13px;
+        color: #667085;
+        line-height: 1.7;
+        white-space: pre-wrap;
+    }
+
+    .feedback-update {
+        border-top: 1px solid #f0f2f6;
+        margin-top: 20px;
+        padding-top: 19px;
+    }
+
+    .feedback-update h3 {
+        font-size: 13px;
+        font-weight: 800;
+        margin: 0 0 13px;
+    }
+
+    .update-grid {
+        display: grid;
+        grid-template-columns: 1fr 2fr auto;
+        gap: 12px;
+        align-items: end;
+    }
+
+    .update-field label {
+        display: block;
+        color: #687387;
+        font-size: 11px;
+        font-weight: 800;
+        margin-bottom: 7px;
+    }
+
+    .update-field select,
+    .update-field textarea {
+        width: 100%;
+        border: 1px solid #e3e7ef;
+        border-radius: 10px;
+        padding: 11px 12px;
+        font-family: inherit;
+        font-size: 12px;
+        outline: none;
+        background: #fff;
+        color: #344054;
+    }
+
+    .update-field select {
+        height: 43px;
+    }
+
+    .update-field textarea {
+        min-height: 43px;
+        resize: vertical;
+    }
+
+    .update-field select:focus,
+    .update-field textarea:focus {
+        border-color: #7563e9;
+    }
+
+    .feedback-card-footer {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 16px;
+    }
+
+    .chat-button {
+        background: #17233d;
+        color: #fff;
+    }
+
+    .chat-button:hover {
+        background: #293b60;
+        transform: translateY(-1px);
+    }
+
+    .empty-state {
+        text-align: center;
+        background: #fff;
+        border: 1px dashed #dce1eb;
+        border-radius: 17px;
+        padding: 55px 20px;
+    }
+
+    .empty-icon {
+        font-size: 38px;
+        margin-bottom: 12px;
+    }
+
+    .empty-state h3 {
+        font-size: 17px;
+        margin: 0 0 7px;
+    }
+
+    .empty-state p {
+        font-size: 13px;
+        color: #8791a3;
+        margin: 0;
+    }
+
+    @media(max-width: 1000px) {
+        .feedback-stats {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .update-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .update-grid .update-submit {
+            grid-column: 1 / -1;
+        }
+    }
+
+    @media(max-width: 650px) {
+        .feedback-header {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .feedback-header h1 {
+            font-size: 23px;
+        }
+
+        .feedback-stats {
+            gap: 10px;
+        }
+
+        .feedback-stat {
+            padding: 15px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+        }
+
+        .filter-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .filter-actions {
+            width: 100%;
+        }
+
+        .filter-actions .btn {
+            flex: 1;
+        }
+
+        .feedback-panel {
+            padding: 17px;
+        }
+
+        .feedback-card {
+            padding: 16px;
+        }
+
+        .feedback-card-header {
+            flex-direction: column;
+        }
+
+        .update-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .update-grid .update-submit {
+            grid-column: auto;
+        }
+
+        .submissions-heading {
+            align-items: flex-start;
+            gap: 10px;
+        }
+    }
+</style>
+
+{% set ns = namespace(total=feedback_items|length, rating_total=0, pending=0, resolved=0) %}
+
+{% for item in feedback_items %}
+{% set ns.rating_total = ns.rating_total + (item.rating|int) %}
+{% if item.status == 'Pending' %}
+{% set ns.pending = ns.pending + 1 %}
+{% endif %}
+{% if item.status == 'Resolved' %}
+{% set ns.resolved = ns.resolved + 1 %}
+{% endif %}
+{% endfor %}
+
+{% set average_rating = (ns.rating_total / ns.total)|round(1) if ns.total else 0 %}
+
+<div class="feedback-page">
+
+    <div class="feedback-header">
+        <div>
+            <h1>Feedback Management</h1>
+            <p>Monitor student feedback, review suggestions and resolve reported issues.</p>
+        </div>
+        <div class="feedback-header-badge">ADMIN CONTROL CENTER</div>
+    </div>
+
+    <div class="feedback-stats">
+
+        <div class="feedback-stat stat-purple">
+            <div class="stat-top">
+                <span class="stat-label">Total Feedback</span>
+                <div class="stat-icon">▤</div>
+            </div>
+            <div class="stat-value">{{ ns.total }}</div>
+            <div class="stat-description">Submissions currently listed</div>
+        </div>
+
+        <div class="feedback-stat stat-blue">
+            <div class="stat-top">
+                <span class="stat-label">Average Rating</span>
+                <div class="stat-icon">★</div>
+            </div>
+            <div class="stat-value">{{ average_rating }} <span style="font-size:17px;color:#f3a629;">★</span></div>
+            <div class="stat-description">Average rating of listed feedback</div>
+        </div>
+
+        <div class="feedback-stat stat-orange">
+            <div class="stat-top">
+                <span class="stat-label">Pending</span>
+                <div class="stat-icon">◷</div>
+            </div>
+            <div class="stat-value">{{ ns.pending }}</div>
+            <div class="stat-description">Waiting for attention</div>
+        </div>
+
+        <div class="feedback-stat stat-green">
+            <div class="stat-top">
+                <span class="stat-label">Resolved</span>
+                <div class="stat-icon">✓</div>
+            </div>
+            <div class="stat-value">{{ ns.resolved }}</div>
+            <div class="stat-description">Successfully addressed</div>
+        </div>
+
+    </div>
+
+    <div class="feedback-panel">
+
+        <div class="panel-heading">
+            <h2>Filter Feedback</h2>
+            <p>Find submissions by status or category.</p>
+        </div>
+
+        <form method="GET" action="{{ url_for('admin_feedback') }}">
+            <div class="filter-grid">
+
+                <div class="filter-field">
+                    <label>Feedback Status</label>
+                    <select name="status">
+                        <option value="">All Statuses</option>
+                        <option value="Pending" {% if request.args.get('status') == 'Pending' %}selected{% endif %}>Pending</option>
+                        <option value="Under Review" {% if request.args.get('status') == 'Under Review' %}selected{% endif %}>Under Review</option>
+                        <option value="Resolved" {% if request.args.get('status') == 'Resolved' %}selected{% endif %}>Resolved</option>
+                    </select>
+                </div>
+
+                <div class="filter-field">
+                    <label>Feedback Category</label>
+                    <select name="category">
+                        <option value="">All Categories</option>
+                        {% for category in categories %}
+                        <option value="{{ category }}" {% if request.args.get('category') == category %}selected{% endif %}>
+                        {{ category }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="filter-actions">
+                    <button type="submit" class="btn btn-primary">Apply Filters</button>
+                    <a href="{{ url_for('admin_feedback') }}" class="btn btn-light">Reset</a>
+                </div>
+
+            </div>
+        </form>
+
+    </div>
+
+    <div class="submissions-heading">
+        <div>
+            <h2>Student Submissions</h2>
+            <p>Review feedback and respond directly to students.</p>
+        </div>
+        <span class="record-count">{{ feedback_items|length }} Records</span>
+    </div>
+
+    {% if feedback_items %}
+
+    {% for feedback in feedback_items %}
+
+    <div class="feedback-card">
+
+        <div class="feedback-card-header">
+
+            <div class="student-info">
+                <div class="student-avatar">
+                    {{ (feedback.student_name or 'S')[0]|upper }}
+                </div>
+
+                <div class="student-details">
+                    <strong>{{ feedback.student_name or 'Unknown Student' }}</strong>
+                    <span>{{ feedback.student_email or 'Email unavailable' }}</span>
+
+                    <div class="feedback-date">
+                        {{ feedback.created_at.strftime('%d %b %Y, %I:%M %p') if feedback.created_at else 'Date unavailable' }}
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                {% if feedback.status == 'Resolved' %}
+                <span class="status-badge status-resolved">✓ Resolved</span>
+                {% elif feedback.status == 'Under Review' %}
+                <span class="status-badge status-under-review">◷ Under Review</span>
+                {% else %}
+                <span class="status-badge status-pending">● Pending</span>
+                {% endif %}
+            </div>
+
+        </div>
+
+        <div class="feedback-meta">
+            <span class="meta-chip">{{ feedback.category }}</span>
+            <span class="meta-chip">Feedback #{{ feedback.id }}</span>
+            <span class="rating-stars">
+                        {% for star in range(1, 6) %}
+                            {% if star <= feedback.rating|int %}★{% else %}☆{% endif %}
+                        {% endfor %}
+                    </span>
+            <span class="meta-chip">{{ feedback.rating }}/5 Rating</span>
+        </div>
+
+        <h3 class="feedback-subject">{{ feedback.subject }}</h3>
+
+        <div class="feedback-message">{{ feedback.message }}</div>
+
+        {% if feedback.admin_reply %}
+        <div class="admin-response">
+            <strong>Previous Admin Response</strong>
+            <p>{{ feedback.admin_reply }}</p>
+        </div>
+        {% endif %}
+
+        <div class="feedback-update">
+
+            <h3>Update Feedback</h3>
+
+            <form method="POST" action="{{ url_for('admin_feedback') }}">
+
+                <input type="hidden" name="feedback_id" value="{{ feedback.id }}">
+                <input type="hidden" name="action" value="update_feedback">
+
+                <div class="update-grid">
+
+                    <div class="update-field">
+                        <label>Update Status</label>
+                        <select name="status" required>
+                            <option value="Pending" {% if feedback.status == 'Pending' %}selected{% endif %}>Pending</option>
+                            <option value="Under Review" {% if feedback.status == 'Under Review' %}selected{% endif %}>Under Review</option>
+                            <option value="Resolved" {% if feedback.status == 'Resolved' %}selected{% endif %}>Resolved</option>
+                        </select>
+                    </div>
+
+                    <div class="update-field">
+                        <label>Admin Reply</label>
+                        <textarea name="admin_reply" rows="1" maxlength="5000" placeholder="Write your response to the student...">{{ feedback.admin_reply or '' }}</textarea>
+                    </div>
+
+                    <div class="update-submit">
+                        <button type="submit" class="btn btn-primary">Save Update</button>
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+        <div class="feedback-card-footer">
+            <a href="{{ url_for('admin_feedback_chat', feedback_id=feedback.id) }}" class="btn chat-button">
+                Open Private Conversation →
+            </a>
+        </div>
+
+    </div>
+
+    {% endfor %}
+
+    {% else %}
+
+    <div class="empty-state">
+        <div class="empty-icon">📭</div>
+        <h3>No Feedback Found</h3>
+        <p>There are no feedback submissions matching your selected filters.</p>
+    </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}
