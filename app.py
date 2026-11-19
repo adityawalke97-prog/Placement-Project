@@ -5884,7 +5884,144 @@ def notes():
             conn.close()
 @app.route("/leaderboard")
 def leaderboard():
-    return render_template("leaderboard.html")
+
+    conn = None
+    cursor = None
+
+    leaderboard_data = []
+    my_stats = None
+
+    total_students = 0
+    total_tests = 0
+    average_score = 0
+    active_students = 0
+
+    current_user_id = session.get("user_id")
+
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(pymysql.cursors.DictCursor)
+
+        cursor.execute("""
+            SELECT
+                u.id,
+                u.name,
+                u.profile_pic,
+                u.created_at,
+                COALESCE(a.completed_tests, 0) AS completed_tests,
+                COALESCE(a.total_correct, 0) AS total_correct,
+                COALESCE(a.total_wrong, 0) AS total_wrong,
+                COALESCE(a.total_unanswered, 0) AS total_unanswered,
+                COALESCE(a.total_obtained_marks, 0) AS total_obtained_marks,
+                COALESCE(a.total_marks, 0) AS total_marks,
+                COALESCE(a.average_percentage, 0) AS average_percentage,
+                COALESCE(a.best_percentage, 0) AS best_percentage,
+                COALESCE(a.total_xp, 0) AS total_xp,
+                COALESCE(p.participation_count, 0) AS participation_count,
+                a.last_submission
+            FROM users u
+            LEFT JOIN (
+                SELECT
+                    user_id,
+                    COUNT(*) AS completed_tests,
+                    SUM(correct_answers) AS total_correct,
+                    SUM(wrong_answers) AS total_wrong,
+                    SUM(unanswered_questions) AS total_unanswered,
+                    SUM(obtained_marks) AS total_obtained_marks,
+                    SUM(total_marks) AS total_marks,
+                    AVG(percentage) AS average_percentage,
+                    MAX(percentage) AS best_percentage,
+                    SUM(correct_answers * 10) + COUNT(*) * 25 AS total_xp,
+                    MAX(submitted_at) AS last_submission
+                FROM mock_attempts
+                WHERE status IN ('Submitted', 'Auto Submitted')
+                  AND submitted_at IS NOT NULL
+                GROUP BY user_id
+            ) a ON a.user_id = u.id
+            LEFT JOIN (
+                SELECT
+                    user_id,
+                    COUNT(DISTINCT test_id) AS participation_count
+                FROM mock_test_participants
+                WHERE status != 'Left'
+                GROUP BY user_id
+            ) p ON p.user_id = u.id
+            WHERE u.role = 'student'
+            ORDER BY
+                total_xp DESC,
+                average_percentage DESC,
+                completed_tests DESC,
+                total_correct DESC
+        """)
+
+        students = cursor.fetchall() or []
+
+        for student in students:
+            student["total_xp"] = int(student["total_xp"] or 0)
+            student["average_percentage"] = round(float(student["average_percentage"] or 0), 2)
+            student["best_percentage"] = round(float(student["best_percentage"] or 0), 2)
+
+            student["total_correct"] = int(student["total_correct"] or 0)
+            student["total_wrong"] = int(student["total_wrong"] or 0)
+            student["completed_tests"] = int(student["completed_tests"] or 0)
+            student["participation_count"] = int(student["participation_count"] or 0)
+
+            if student["completed_tests"] > 0:
+                leaderboard_data.append(student)
+
+        for index, student in enumerate(leaderboard_data, start=1):
+            student["rank"] = index
+
+            if current_user_id and int(student["id"]) == int(current_user_id):
+                my_stats = student
+
+        total_students = len(leaderboard_data)
+
+        total_tests = sum(
+            student["completed_tests"] for student in leaderboard_data
+        )
+
+        active_students = sum(
+            1 for student in leaderboard_data
+            if student["completed_tests"] > 0
+        )
+
+        if total_students:
+            average_score = round(
+                sum(student["average_percentage"] for student in leaderboard_data)
+                / total_students,
+                2
+            )
+
+        return render_template(
+            "leaderboard.html",
+            leaderboard=leaderboard_data,
+            my_stats=my_stats,
+            total_students=total_students,
+            total_tests=total_tests,
+            average_score=average_score,
+            active_students=active_students
+        )
+
+    except Exception as e:
+        print("LEADERBOARD ERROR:", str(e))
+
+        return render_template(
+            "leaderboard.html",
+            leaderboard=[],
+            my_stats=None,
+            total_students=0,
+            total_tests=0,
+            average_score=0,
+            active_students=0
+        )
+
+    finally:
+        if cursor:
+            cursor.close()
+
+        if conn:
+            conn.close()
 @app.route("/results")
 def results():
     if "user_id" not in session:

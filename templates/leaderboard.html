@@ -1,1356 +1,930 @@
 {% extends "layout.html" %}
 
-{% block title %}Placement Leaderboard{% endblock %}
-
-{% block content %}
-
-<div class="leaderboard-page">
-
-    ```
-    <!-- ================= HEADER ================= -->
-
-    <div class="leaderboard-header">
-
-        <div class="header-icon">
-            🏆
-        </div>
-
-        <div>
-            <span class="eyebrow">PLACEMENT TRAINING</span>
-
-            <h1>Placement Leaderboard</h1>
-
-            <p>
-                Compete, improve your skills and become
-                placement ready.
-            </p>
-        </div>
-
-    </div>
-
-
-    <!-- ================= MY RANK ================= -->
-
-    <div class="my-rank-card">
-
-        <div class="my-profile">
-
-            <div class="avatar">
-                {{ user.name[0]|upper if user and user.name else "A" }}
-            </div>
-
-            <div>
-
-            <span class="small-label">
-                YOUR CURRENT RANK
-            </span>
-
-                <h2>
-                    #{{ my_rank or 12 }}
-                </h2>
-
-                <p>
-                    Keep practicing to reach the Top 10 🚀
-                </p>
-
-            </div>
-
-        </div>
-
-
-        <div class="rank-stats">
-
-            <div>
-                <strong>{{ my_xp or 1240 }}</strong>
-                <span>XP</span>
-            </div>
-
-            <div>
-                <strong>{{ my_score or 78 }}%</strong>
-                <span>Avg Score</span>
-            </div>
-
-            <div>
-                <strong>{{ my_streak or 7 }}</strong>
-                <span>Day Streak</span>
-            </div>
-
-            <div>
-                <strong>{{ my_badges or 8 }}</strong>
-                <span>Badges</span>
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <!-- ================= FILTERS ================= -->
-
-    <div class="filter-card">
-
-        <div class="filter-title">
-            <span>🔎</span>
-
-            <div>
-                <h3>Leaderboard Filters</h3>
-                <p>Compare placement performance.</p>
-            </div>
-        </div>
-
-        <div class="filters">
-
-            <button class="filter active">
-                🏆 Overall
-            </button>
-
-            <button class="filter">
-                💻 Technical
-            </button>
-
-            <button class="filter">
-                🧠 Aptitude
-            </button>
-
-            <button class="filter">
-                🗣️ Communication
-            </button>
-
-            <button class="filter">
-                🎤 Interview
-            </button>
-
-        </div>
-
-    </div>
-
-
-    <!-- ================= PODIUM ================= -->
-
-    <div class="podium-section">
-
-        <div class="section-title">
-
-            <span>🔥</span>
-
-            <div>
-                <h2>Top Performers</h2>
-                <p>This week's placement champions.</p>
-            </div>
-
-        </div>
-
-
-        <div class="podium">
-
-
-            <!-- SECOND -->
-
-            <div class="podium-user second">
-
-                <div class="podium-avatar">
-                    RS
-                </div>
-
-                <div class="crown">
-                    🥈
-                </div>
-
-                <h3>Rahul Sharma</h3>
-
-                <span>
-                Full Stack Developer
-            </span>
-
-                <strong>
-                    1860 XP
-                </strong>
-
-                <div class="podium-block">
-                    #2
-                </div>
-
-            </div>
-
-
-            <!-- FIRST -->
-
-            <div class="podium-user first">
-
-                <div class="podium-avatar">
-                    AP
-                </div>
-
-                <div class="crown">
-                    👑
-                </div>
-
-                <h3>Akash Patil</h3>
-
-                <span>
-                Java Developer
-            </span>
-
-                <strong>
-                    2150 XP
-                </strong>
-
-                <div class="podium-block">
-                    #1
-                </div>
-
-            </div>
-
-
-            <!-- THIRD -->
-
-            <div class="podium-user third">
-
-                <div class="podium-avatar">
-                    PS
-                </div>
-
-                <div class="crown">
-                    🥉
-                </div>
-
-                <h3>Priya Shah</h3>
-
-                <span>
-                Python Developer
-            </span>
-
-                <strong>
-                    1740 XP
-                </strong>
-
-                <div class="podium-block">
-                    #3
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <!-- ================= LEADERBOARD TABLE ================= -->
-
-    <div class="leaderboard-card">
-
-        <div class="table-header">
-
-            <div>
-
-            <span class="eyebrow">
-                TOP CANDIDATES
-            </span>
-
-                <h2>Placement Rankings</h2>
-
-            </div>
-
-            <span class="updated">
-            🟢 Updated Today
-        </span>
-
-        </div>
-
-
-        <div class="table-wrapper">
-
-            <table>
-
-                <thead>
-
-                <tr>
-
-                    <th>Rank</th>
-
-                    <th>Candidate</th>
-
-                    <th>XP</th>
-
-                    <th>Mock Score</th>
-
-                    <th>Technical</th>
-
-                    <th>Communication</th>
-
-                    <th>Interview</th>
-
-                    <th>Streak</th>
-
-                    <th>Readiness</th>
-
-                </tr>
-
-                </thead>
-
-
-                <tbody>
-
-
-                <!-- 1 -->
-
-                <tr class="top-row">
-
-                    <td>
-                        <span class="rank gold">1</span>
-                    </td>
-
-                    <td>
-
-                        <div class="candidate">
-
-                            <div class="table-avatar">
-                                AP
-                            </div>
-
-                            <div>
-                                <strong>Akash Patil</strong>
-                                <small>Java Developer</small>
-                            </div>
-
-                        </div>
-
-                    </td>
-
-                    <td>
-                        <strong>2150</strong>
-                    </td>
-
-                    <td>
-                        <strong>94%</strong>
-                    </td>
-
-                    <td>92%</td>
-
-                    <td>91%</td>
-
-                    <td>95%</td>
-
-                    <td>
-                        🔥 18
-                    </td>
-
-                    <td>
-                        <span class="ready excellent">
-                            94%
-                        </span>
-                    </td>
-
-                </tr>
-
-
-                <!-- 2 -->
-
-                <tr>
-
-                    <td>
-                        <span class="rank silver">2</span>
-                    </td>
-
-                    <td>
-
-                        <div class="candidate">
-
-                            <div class="table-avatar">
-                                RS
-                            </div>
-
-                            <div>
-                                <strong>Rahul Sharma</strong>
-                                <small>Full Stack Developer</small>
-                            </div>
-
-                        </div>
-
-                    </td>
-
-                    <td>1860</td>
-
-                    <td>89%</td>
-
-                    <td>90%</td>
-
-                    <td>86%</td>
-
-                    <td>88%</td>
-
-                    <td>🔥 14</td>
-
-                    <td>
-                        <span class="ready excellent">
-                            89%
-                        </span>
-                    </td>
-
-                </tr>
-
-
-                <!-- 3 -->
-
-                <tr>
-
-                    <td>
-                        <span class="rank bronze">3</span>
-                    </td>
-
-                    <td>
-
-                        <div class="candidate">
-
-                            <div class="table-avatar">
-                                PS
-                            </div>
-
-                            <div>
-                                <strong>Priya Shah</strong>
-                                <small>Python Developer</small>
-                            </div>
-
-                        </div>
-
-                    </td>
-
-                    <td>1740</td>
-
-                    <td>86%</td>
-
-                    <td>87%</td>
-
-                    <td>84%</td>
-
-                    <td>85%</td>
-
-                    <td>🔥 12</td>
-
-                    <td>
-                        <span class="ready good">
-                            86%
-                        </span>
-                    </td>
-
-                </tr>
-
-
-                <!-- 4 -->
-
-                <tr>
-
-                    <td>
-                        <span class="rank">
-                            4
-                        </span>
-                    </td>
-
-                    <td>
-
-                        <div class="candidate">
-
-                            <div class="table-avatar">
-                                VK
-                            </div>
-
-                            <div>
-                                <strong>Vikas Kumar</strong>
-                                <small>Backend Developer</small>
-                            </div>
-
-                        </div>
-
-                    </td>
-
-                    <td>1680</td>
-
-                    <td>84%</td>
-
-                    <td>85%</td>
-
-                    <td>79%</td>
-
-                    <td>82%</td>
-
-                    <td>🔥 10</td>
-
-                    <td>
-                        <span class="ready good">
-                            83%
-                        </span>
-                    </td>
-
-                </tr>
-
-
-                <!-- 5 -->
-
-                <tr>
-
-                    <td>
-                        <span class="rank">
-                            5
-                        </span>
-                    </td>
-
-                    <td>
-
-                        <div class="candidate">
-
-                            <div class="table-avatar">
-                                NM
-                            </div>
-
-                            <div>
-                                <strong>Neha More</strong>
-                                <small>Frontend Developer</small>
-                            </div>
-
-                        </div>
-
-                    </td>
-
-                    <td>1590</td>
-
-                    <td>81%</td>
-
-                    <td>82%</td>
-
-                    <td>85%</td>
-
-                    <td>78%</td>
-
-                    <td>🔥 9</td>
-
-                    <td>
-                        <span class="ready good">
-                            81%
-                        </span>
-                    </td>
-
-                </tr>
-
-
-                <!-- 6 -->
-
-                <tr>
-
-                    <td>
-                        <span class="rank">
-                            6
-                        </span>
-                    </td>
-
-                    <td>
-
-                        <div class="candidate">
-
-                            <div class="table-avatar">
-                                AD
-                            </div>
-
-                            <div>
-                                <strong>Aditya Deshmukh</strong>
-                                <small>Software Developer</small>
-                            </div>
-
-                        </div>
-
-                    </td>
-
-                    <td>1510</td>
-
-                    <td>79%</td>
-
-                    <td>80%</td>
-
-                    <td>77%</td>
-
-                    <td>75%</td>
-
-                    <td>🔥 8</td>
-
-                    <td>
-                        <span class="ready average">
-                            78%
-                        </span>
-                    </td>
-
-                </tr>
-
-
-                </tbody>
-
-            </table>
-
-        </div>
-
-    </div>
-
-
-    <!-- ================= PERFORMANCE BREAKDOWN ================= -->
-
-    <div class="performance-grid">
-
-
-        <div class="performance-card">
-
-            <div class="performance-header">
-
-                <div>
-                <span class="eyebrow">
-                    YOUR PERFORMANCE
-                </span>
-
-                    <h2>Skill Analysis</h2>
-                </div>
-
-                <span class="performance-score">
-                78%
-            </span>
-
-            </div>
-
-
-            <div class="skill-progress">
-
-                <div class="skill-name">
-                    <span>💻 Technical Skills</span>
-                    <strong>82%</strong>
-                </div>
-
-                <div class="bar">
-                    <div style="width:82%"></div>
-                </div>
-
-            </div>
-
-
-            <div class="skill-progress">
-
-                <div class="skill-name">
-                    <span>🧠 Aptitude</span>
-                    <strong>76%</strong>
-                </div>
-
-                <div class="bar">
-                    <div style="width:76%"></div>
-                </div>
-
-            </div>
-
-
-            <div class="skill-progress">
-
-                <div class="skill-name">
-                    <span>🗣️ Communication</span>
-                    <strong>74%</strong>
-                </div>
-
-                <div class="bar">
-                    <div style="width:74%"></div>
-                </div>
-
-            </div>
-
-
-            <div class="skill-progress">
-
-                <div class="skill-name">
-                    <span>🎤 Interview</span>
-                    <strong>79%</strong>
-                </div>
-
-                <div class="bar">
-                    <div style="width:79%"></div>
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- PLACEMENT READINESS -->
-
-        <div class="readiness-card">
-
-        <span class="eyebrow">
-            PLACEMENT READINESS
-        </span>
-
-            <h2>
-                You're Almost Ready 🚀
-            </h2>
-
-            <div class="readiness-circle">
-                82%
-            </div>
-
-            <p>
-                Improve your communication and interview skills
-                to reach the top placement level.
-            </p>
-
-            <div class="recommendation">
-
-                💡 <strong>Recommended:</strong>
-
-                Practice 2 mock tests and complete
-                today's communication challenge.
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <!-- ================= MOTIVATION ================= -->
-
-    <div class="motivation">
-
-        <div>
-            <span>💪 KEEP GOING</span>
-
-            <h2>
-                Every practice session moves you
-                closer to your dream job.
-            </h2>
-
-            <p>
-                Compete with your peers, improve your score
-                and become placement ready.
-            </p>
-        </div>
-
-        <div class="motivation-icon">
-            🚀
-        </div>
-
-    </div>
-    ```
-
-</div>
-
-{% endblock %}
+{% block title %}Leaderboard | Placement Training Portal{% endblock %}
 
 {% block css %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
-
-    .leaderboard-page{
-        max-width:1400px;
-        margin:auto;
-        padding:20px;
-    }
-
-
-    /* HEADER */
-
-    .leaderboard-header{
-        display:flex;
-        align-items:center;
-        gap:22px;
-        margin-bottom:30px;
-    }
-
-    .header-icon{
-        width:75px;
-        height:75px;
-        border-radius:22px;
-        background:#fef3c7;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        font-size:40px;
-    }
-
-    .eyebrow{
-        font-size:11px;
-        letter-spacing:2px;
-        color:#64748b;
-        font-weight:700;
-    }
-
-    .leaderboard-header h1{
-        margin:6px 0;
-        font-size:36px;
-        color:#0f172a;
-    }
-
-    .leaderboard-header p{
-        margin:0;
-        color:#64748b;
-    }
-
-
-    /* MY RANK */
-
-    .my-rank-card{
-        background:linear-gradient(135deg,#0f172a,#1e293b);
-        color:white;
-        padding:28px;
-        border-radius:24px;
-        display:flex;
-        justify-content:space-between;
-        align-items:center;
-        margin-bottom:25px;
-    }
-
-    .my-profile{
-        display:flex;
-        align-items:center;
-        gap:18px;
-    }
-
-    .avatar{
-        width:65px;
-        height:65px;
-        border-radius:20px;
-        background:#2563eb;
-        display:flex;
-        justify-content:center;
-        align-items:center;
-        font-size:25px;
-        font-weight:bold;
-    }
-
-    .small-label{
-        font-size:11px;
-        letter-spacing:1.5px;
-        opacity:.7;
-    }
-
-    .my-profile h2{
-        font-size:32px;
-        margin:3px 0;
-    }
-
-    .my-profile p{
-        margin:0;
-        color:#cbd5e1;
-    }
-
-    .rank-stats{
-        display:flex;
-        gap:35px;
-    }
-
-    .rank-stats div{
-        text-align:center;
-    }
-
-    .rank-stats strong{
-        display:block;
-        font-size:24px;
-    }
-
-    .rank-stats span{
-        color:#94a3b8;
-        font-size:12px;
-    }
-
-
-    /* FILTER */
-
-    .filter-card{
-        background:white;
-        padding:22px;
-        border-radius:20px;
-        box-shadow:0 5px 20px rgba(0,0,0,.06);
-        margin-bottom:30px;
+    .leaderboard-page {
+        --lb-primary: #635bff;
+        --lb-dark: #171b2e;
+        --lb-muted: #81879b;
+        --lb-border: #eaecf2;
+        --lb-surface: #ffffff;
+        font-family: 'DM Sans', sans-serif;
+        color: var(--lb-dark);
+        padding: 28px 0 55px;
+    }
+
+    .leaderboard-page * {
+        box-sizing: border-box;
+    }
+
+    .lb-container {
+        max-width: 1250px;
+        margin: auto;
+        padding: 0 22px;
+    }
+
+    .lb-hero {
+        position: relative;
+        overflow: hidden;
+        padding: 38px;
+        border-radius: 25px;
+        background: linear-gradient(120deg, #171b38, #3530a4 65%, #655cff);
+        color: white;
+        margin-bottom: 25px;
+    }
+
+    .lb-hero::before {
+        content: "";
+        position: absolute;
+        width: 320px;
+        height: 320px;
+        right: -65px;
+        top: -155px;
+        border-radius: 50%;
+        background: rgba(255,255,255,.08);
+    }
+
+    .lb-hero::after {
+        content: "";
+        position: absolute;
+        width: 210px;
+        height: 210px;
+        right: 150px;
+        bottom: -155px;
+        border-radius: 50%;
+        background: rgba(255,255,255,.07);
+    }
+
+    .lb-hero-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    .lb-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 1.5px;
+        color: #c9c7ff;
+        text-transform: uppercase;
+        margin-bottom: 13px;
     }
-
-    .filter-title{
-        display:flex;
-        align-items:center;
-        gap:12px;
-        margin-bottom:18px;
+
+    .lb-hero h1 {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: clamp(28px, 4vw, 42px);
+        font-weight: 800;
+        letter-spacing: -1.5px;
+        margin: 0 0 12px;
+        color: #fff;
+    }
+
+    .lb-hero p {
+        color: #d4d5f4;
+        font-size: 14px;
+        max-width: 570px;
+        line-height: 1.8;
+        margin: 0;
+    }
+
+    .lb-hero-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 22px;
+        padding: 9px 14px;
+        background: rgba(255,255,255,.12);
+        border: 1px solid rgba(255,255,255,.15);
+        border-radius: 30px;
+        font-size: 12px;
+        font-weight: 700;
     }
 
-    .filter-title > span{
-        font-size:25px;
+    .lb-stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        margin-bottom: 25px;
     }
 
-    .filter-title h3{
-        margin:0;
+    .lb-stat-card {
+        padding: 21px;
+        background: var(--lb-surface);
+        border: 1px solid var(--lb-border);
+        border-radius: 17px;
+        box-shadow: 0 5px 20px rgba(20,25,50,.035);
     }
 
-    .filter-title p{
-        margin:3px 0;
-        color:#64748b;
-        font-size:13px;
+    .lb-stat-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 17px;
     }
 
-    .filters{
-        display:flex;
-        gap:10px;
-        flex-wrap:wrap;
+    .lb-stat-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 13px;
+        display: grid;
+        place-items: center;
+        font-size: 18px;
+        background: #f0efff;
+        color: #635bff;
     }
 
-    .filter{
-        border:1px solid #e2e8f0;
-        background:#f8fafc;
-        padding:10px 18px;
-        border-radius:10px;
-        cursor:pointer;
-        font-weight:600;
+    .lb-stat-card:nth-child(2) .lb-stat-icon {
+        background: #e9f9f1;
+        color: #18a66b;
     }
 
-    .filter.active{
-        background:#2563eb;
-        color:white;
-        border-color:#2563eb;
+    .lb-stat-card:nth-child(3) .lb-stat-icon {
+        background: #fff5e8;
+        color: #e99b28;
     }
-
-
-    /* SECTION */
 
-    .section-title{
-        display:flex;
-        gap:12px;
-        align-items:center;
-        margin-bottom:20px;
+    .lb-stat-card:nth-child(4) .lb-stat-icon {
+        background: #eaf3ff;
+        color: #3987e8;
     }
 
-    .section-title > span{
-        font-size:30px;
+    .lb-stat-label {
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--lb-muted);
     }
 
-    .section-title h2{
-        margin:0;
+    .lb-stat-value {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 27px;
+        font-weight: 800;
+        letter-spacing: -.8px;
     }
 
-    .section-title p{
-        margin:4px 0;
-        color:#64748b;
+    .lb-stat-description {
+        margin-top: 5px;
+        font-size: 11px;
+        color: var(--lb-muted);
     }
 
-
-    /* PODIUM */
-
-    .podium-section{
-        background:white;
-        padding:30px;
-        border-radius:24px;
-        box-shadow:0 5px 20px rgba(0,0,0,.06);
-        margin-bottom:30px;
+    .lb-section {
+        background: white;
+        border: 1px solid var(--lb-border);
+        border-radius: 20px;
+        padding: 25px;
+        margin-bottom: 23px;
+        box-shadow: 0 5px 20px rgba(20,25,50,.035);
     }
 
-    .podium{
-        display:flex;
-        justify-content:center;
-        align-items:flex-end;
-        gap:20px;
+    .lb-section-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 22px;
     }
 
-    .podium-user{
-        text-align:center;
-        width:200px;
+    .lb-section-heading h2 {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 19px;
+        font-weight: 800;
+        margin: 0;
     }
 
-    .podium-avatar{
-        width:70px;
-        height:70px;
-        margin:auto;
-        border-radius:50%;
-        background:#e2e8f0;
-        display:flex;
-        justify-content:center;
-        align-items:center;
-        font-weight:bold;
-        font-size:22px;
+    .lb-section-heading p {
+        color: var(--lb-muted);
+        font-size: 12px;
+        margin: 6px 0 0;
     }
 
-    .first .podium-avatar{
-        width:90px;
-        height:90px;
-        background:#fef3c7;
-        border:5px solid #f59e0b;
+    .lb-period {
+        padding: 8px 12px;
+        border-radius: 9px;
+        background: #f2f1ff;
+        color: #635bff;
+        font-size: 11px;
+        font-weight: 800;
     }
 
-    .crown{
-        font-size:30px;
-        margin:5px;
+    .lb-podium {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+        align-items: end;
+        padding: 10px 0 0;
     }
 
-    .podium-user h3{
-        margin:5px 0;
+    .lb-podium-card {
+        text-align: center;
+        padding: 22px 12px;
+        background: #fafaff;
+        border: 1px solid #eeeefe;
+        border-radius: 17px;
+        position: relative;
     }
 
-    .podium-user span{
-        color:#64748b;
-        font-size:12px;
+    .lb-podium-card.first {
+        background: linear-gradient(180deg, #fff9e9, #fff);
+        border-color: #f6e6b7;
+        padding-top: 34px;
+        padding-bottom: 30px;
     }
 
-    .podium-user strong{
-        display:block;
-        margin:8px;
+    .lb-podium-card.second {
+        background: linear-gradient(180deg, #f4f7fb, #fff);
     }
 
-    .podium-block{
-        height:100px;
-        background:#e2e8f0;
-        display:flex;
-        justify-content:center;
-        align-items:center;
-        font-size:28px;
-        font-weight:bold;
-        border-radius:15px 15px 0 0;
+    .lb-podium-card.third {
+        background: linear-gradient(180deg, #fff5ef, #fff);
     }
 
-    .first .podium-block{
-        height:145px;
-        background:#fef3c7;
+    .lb-crown {
+        font-size: 25px;
+        margin-bottom: 9px;
     }
 
-    .second .podium-block{
-        height:115px;
+    .lb-podium-avatar {
+        width: 62px;
+        height: 62px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        margin: 0 auto 12px;
+        background: #e9e7ff;
+        color: #5d55e9;
+        font-size: 22px;
+        font-weight: 800;
+        border: 3px solid white;
+        box-shadow: 0 4px 15px rgba(30,30,70,.1);
+        overflow: hidden;
     }
-
-
-    /* TABLE */
 
-    .leaderboard-card{
-        background:white;
-        border-radius:24px;
-        padding:28px;
-        box-shadow:0 5px 20px rgba(0,0,0,.06);
-        margin-bottom:30px;
+    .lb-podium-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
     }
 
-    .table-header{
-        display:flex;
-        justify-content:space-between;
-        align-items:center;
-        margin-bottom:25px;
+    .lb-podium-name {
+        font-size: 14px;
+        font-weight: 800;
+        overflow-wrap: anywhere;
     }
 
-    .table-header h2{
-        margin:5px 0;
+    .lb-podium-xp {
+        font-size: 12px;
+        color: #777d90;
+        margin-top: 7px;
     }
 
-    .updated{
-        padding:8px 14px;
-        background:#ecfdf5;
-        color:#047857;
-        border-radius:20px;
-        font-size:12px;
-        font-weight:bold;
+    .lb-podium-rank {
+        display: inline-block;
+        margin-top: 12px;
+        padding: 6px 12px;
+        background: white;
+        border: 1px solid var(--lb-border);
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 800;
     }
 
-    .table-wrapper{
-        overflow-x:auto;
+    .lb-me-card {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        padding: 22px;
+        border-radius: 17px;
+        background: linear-gradient(110deg, #f0efff, #f8f8ff);
+        border: 1px solid #e5e3ff;
+        margin-bottom: 23px;
     }
 
-    table{
-        width:100%;
-        border-collapse:collapse;
-        min-width:1000px;
+    .lb-me-left {
+        display: flex;
+        align-items: center;
+        gap: 15px;
     }
 
-    th{
-        text-align:left;
-        padding:14px;
-        background:#f8fafc;
-        color:#64748b;
-        font-size:11px;
-        text-transform:uppercase;
+    .lb-me-icon {
+        width: 48px;
+        height: 48px;
+        flex-shrink: 0;
+        border-radius: 14px;
+        background: #635bff;
+        color: white;
+        display: grid;
+        place-items: center;
+        font-size: 20px;
     }
 
-    td{
-        padding:17px 14px;
-        border-bottom:1px solid #f1f5f9;
-        color:#334155;
+    .lb-me-title {
+        font-size: 14px;
+        font-weight: 800;
     }
 
-    .top-row{
-        background:#fffbeb;
+    .lb-me-subtitle {
+        color: #777d91;
+        font-size: 12px;
+        margin-top: 5px;
     }
 
-    .rank{
-        width:32px;
-        height:32px;
-        display:inline-flex;
-        justify-content:center;
-        align-items:center;
-        border-radius:9px;
-        background:#f1f5f9;
-        font-weight:bold;
+    .lb-me-rank {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        color: #635bff;
+        font-size: 27px;
+        font-weight: 800;
+        white-space: nowrap;
     }
 
-    .gold{
-        background:#fef3c7;
-        color:#b45309;
+    .lb-table-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-bottom: 20px;
     }
 
-    .silver{
-        background:#f1f5f9;
-        color:#475569;
+    .lb-table-header h2 {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 19px;
+        font-weight: 800;
+        margin: 0;
     }
 
-    .bronze{
-        background:#ffedd5;
-        color:#c2410c;
+    .lb-table-tools {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
     }
 
-    .candidate{
-        display:flex;
-        align-items:center;
-        gap:12px;
+    .lb-search {
+        height: 40px;
+        width: 220px;
+        border: 1px solid var(--lb-border);
+        border-radius: 10px;
+        padding: 0 13px;
+        font-family: inherit;
+        font-size: 12px;
+        outline: none;
     }
 
-    .table-avatar{
-        width:42px;
-        height:42px;
-        border-radius:12px;
-        background:#dbeafe;
-        color:#2563eb;
-        display:flex;
-        justify-content:center;
-        align-items:center;
-        font-weight:bold;
+    .lb-search:focus {
+        border-color: #635bff;
     }
 
-    .candidate strong{
-        display:block;
+    .lb-select {
+        height: 40px;
+        padding: 0 12px;
+        border: 1px solid var(--lb-border);
+        border-radius: 10px;
+        background: white;
+        font-family: inherit;
+        font-size: 12px;
+        outline: none;
     }
 
-    .candidate small{
-        color:#64748b;
+    .lb-table-wrap {
+        width: 100%;
+        overflow-x: auto;
     }
 
-    .ready{
-        padding:6px 10px;
-        border-radius:8px;
-        font-weight:bold;
-        font-size:12px;
+    .lb-table {
+        width: 100%;
+        min-width: 750px;
+        border-collapse: collapse;
     }
 
-    .excellent{
-        background:#dcfce7;
-        color:#15803d;
+    .lb-table th {
+        text-align: left;
+        padding: 14px 13px;
+        color: #8b90a2;
+        background: #fafaff;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: .7px;
+        text-transform: uppercase;
+        border-bottom: 1px solid var(--lb-border);
     }
 
-    .good{
-        background:#dbeafe;
-        color:#1d4ed8;
+    .lb-table td {
+        padding: 15px 13px;
+        border-bottom: 1px solid #f0f1f5;
+        font-size: 12px;
+        font-weight: 600;
     }
 
-    .average{
-        background:#fef3c7;
-        color:#a16207;
+    .lb-table tbody tr {
+        transition: background .2s;
     }
 
-
-    /* PERFORMANCE */
-
-    .performance-grid{
-        display:grid;
-        grid-template-columns:1.4fr 1fr;
-        gap:25px;
-        margin-bottom:30px;
+    .lb-table tbody tr:hover {
+        background: #fafaff;
     }
 
-    .performance-card,
-    .readiness-card{
-        background:white;
-        padding:30px;
-        border-radius:24px;
-        box-shadow:0 5px 20px rgba(0,0,0,.06);
+    .lb-table tbody tr.current-user {
+        background: #f3f2ff;
     }
 
-    .performance-header{
-        display:flex;
-        justify-content:space-between;
-        align-items:center;
-        margin-bottom:25px;
+    .lb-rank {
+        font-weight: 800;
+        font-size: 13px;
     }
 
-    .performance-header h2{
-        margin:5px 0;
+    .lb-student {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        min-width: 160px;
     }
 
-    .performance-score{
-        font-size:32px;
-        font-weight:bold;
-        color:#2563eb;
+    .lb-student-avatar {
+        width: 37px;
+        height: 37px;
+        border-radius: 11px;
+        display: grid;
+        place-items: center;
+        flex-shrink: 0;
+        background: #eeedff;
+        color: #625bdb;
+        font-size: 13px;
+        font-weight: 800;
+        overflow: hidden;
     }
 
-    .skill-progress{
-        margin-bottom:20px;
+    .lb-student-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
     }
 
-    .skill-name{
-        display:flex;
-        justify-content:space-between;
-        margin-bottom:8px;
+    .lb-student-name {
+        font-size: 12px;
+        font-weight: 800;
     }
 
-    .bar{
-        height:10px;
-        background:#e2e8f0;
-        border-radius:20px;
-        overflow:hidden;
+    .lb-student-tag {
+        font-size: 10px;
+        color: #999daf;
+        margin-top: 3px;
     }
 
-    .bar div{
-        height:100%;
-        background:#2563eb;
-        border-radius:20px;
+    .lb-xp {
+        color: #655cff;
+        font-weight: 800;
     }
 
-    .readiness-card{
-        text-align:center;
+    .lb-score {
+        display: flex;
+        align-items: center;
+        gap: 8px;
     }
 
-    .readiness-card h2{
-        margin:8px 0 20px;
+    .lb-score-track {
+        width: 65px;
+        height: 5px;
+        background: #ececf3;
+        border-radius: 10px;
+        overflow: hidden;
     }
 
-    .readiness-circle{
-        width:150px;
-        height:150px;
-        margin:auto;
-        border-radius:50%;
-        border:12px solid #dbeafe;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        font-size:35px;
-        font-weight:bold;
-        color:#2563eb;
+    .lb-score-fill {
+        height: 100%;
+        background: #635bff;
+        border-radius: 10px;
     }
 
-    .readiness-card p{
-        color:#64748b;
-        line-height:1.6;
+    .lb-score-value {
+        font-weight: 800;
+        font-size: 11px;
     }
 
-    .recommendation{
-        text-align:left;
-        padding:15px;
-        background:#eff6ff;
-        border-radius:12px;
-        color:#1e40af;
-        font-size:13px;
+    .lb-empty {
+        text-align: center;
+        padding: 55px 20px;
     }
-
 
-    /* MOTIVATION */
-
-    .motivation{
-        background:linear-gradient(135deg,#2563eb,#4f46e5);
-        color:white;
-        padding:35px;
-        border-radius:24px;
-        display:flex;
-        justify-content:space-between;
-        align-items:center;
+    .lb-empty-icon {
+        font-size: 38px;
+        margin-bottom: 12px;
     }
 
-    .motivation span{
-        font-size:11px;
-        letter-spacing:2px;
-        opacity:.8;
+    .lb-empty h3 {
+        font-size: 17px;
+        font-weight: 800;
+        margin: 0 0 8px;
     }
 
-    .motivation h2{
-        max-width:700px;
-        margin:10px 0;
+    .lb-empty p {
+        font-size: 12px;
+        color: var(--lb-muted);
+        margin: 0;
     }
 
-    .motivation p{
-        opacity:.85;
+    .lb-footer-note {
+        text-align: center;
+        color: #9297a8;
+        font-size: 11px;
+        line-height: 1.8;
+        margin-top: 18px;
     }
 
-    .motivation-icon{
-        font-size:80px;
+    @media(max-width: 900px) {
+        .lb-stats {
+            grid-template-columns: repeat(2, 1fr);
+        }
     }
-
-
-    /* MOBILE */
-
-    @media(max-width:1000px){
 
-        .my-rank-card{
-            flex-direction:column;
-            align-items:flex-start;
-            gap:25px;
+    @media(max-width: 600px) {
+        .lb-container {
+            padding: 0 13px;
         }
 
-        .rank-stats{
-            width:100%;
-            justify-content:space-between;
+        .lb-hero {
+            padding: 27px 21px;
+            border-radius: 19px;
         }
 
-        .performance-grid{
-            grid-template-columns:1fr;
+        .lb-stats {
+            gap: 10px;
         }
 
+        .lb-stat-card {
+            padding: 15px;
+        }
+
+        .lb-stat-value {
+            font-size: 22px;
+        }
+
+        .lb-section {
+            padding: 17px;
+        }
+
+        .lb-podium {
+            gap: 8px;
+        }
+
+        .lb-podium-card {
+            padding: 17px 7px;
+        }
+
+        .lb-podium-card.first {
+            padding-top: 25px;
+        }
+
+        .lb-podium-avatar {
+            width: 49px;
+            height: 49px;
+        }
+
+        .lb-podium-name {
+            font-size: 11px;
+        }
+
+        .lb-podium-xp {
+            font-size: 10px;
+        }
+
+        .lb-me-card {
+            padding: 15px;
+        }
+
+        .lb-me-rank {
+            font-size: 22px;
+        }
+
+        .lb-search {
+            width: 100%;
+        }
+
+        .lb-table-tools {
+            width: 100%;
+        }
+
+        .lb-select {
+            flex: 1;
+        }
     }
-
-    @media(max-width:700px){
-
-        .leaderboard-header h1{
-            font-size:28px;
-        }
-
-        .leaderboard-header{
-            align-items:flex-start;
-        }
-
-        .podium{
-            gap:5px;
-        }
-
-        .podium-user{
-            width:32%;
-        }
-
-        .podium-user h3{
-            font-size:13px;
-        }
-
-        .podium-user span{
-            display:none;
-        }
-
-        .podium-avatar{
-            width:55px;
-            height:55px;
-            font-size:16px;
-        }
-
-        .first .podium-avatar{
-            width:70px;
-            height:70px;
-        }
-
-        .rank-stats{
-            gap:10px;
-        }
-
-        .rank-stats strong{
-            font-size:18px;
-        }
-
-        .rank-stats span{
-            font-size:10px;
-        }
-
-        .motivation{
-            text-align:center;
-            flex-direction:column;
-        }
-
-        .motivation-icon{
-            font-size:55px;
-        }
-
-    }
-
 </style>
+{% endblock %}
 
+{% block content %}
+<div class="leaderboard-page">
+    <div class="lb-container">
+
+        <section class="lb-hero">
+            <div class="lb-hero-content">
+                <div class="lb-eyebrow">🏆 Student Performance Center</div>
+                <h1>Leaderboard</h1>
+                <p>
+                    Every test, every correct answer and every improvement counts.
+                    Track your performance and see where you stand among other students.
+                </p>
+                <div class="lb-hero-tag">
+                    <span>●</span> Live database rankings
+                </div>
+            </div>
+        </section>
+
+        <section class="lb-stats">
+            <div class="lb-stat-card">
+                <div class="lb-stat-top">
+                    <div class="lb-stat-label">Ranked Students</div>
+                    <div class="lb-stat-icon">👨‍🎓</div>
+                </div>
+                <div class="lb-stat-value">{{ total_students }}</div>
+                <div class="lb-stat-description">Students with submitted tests</div>
+            </div>
+
+            <div class="lb-stat-card">
+                <div class="lb-stat-top">
+                    <div class="lb-stat-label">Tests Completed</div>
+                    <div class="lb-stat-icon">📝</div>
+                </div>
+                <div class="lb-stat-value">{{ total_tests }}</div>
+                <div class="lb-stat-description">Total submitted attempts</div>
+            </div>
+
+            <div class="lb-stat-card">
+                <div class="lb-stat-top">
+                    <div class="lb-stat-label">Average Performance</div>
+                    <div class="lb-stat-icon">📊</div>
+                </div>
+                <div class="lb-stat-value">{{ average_score }}%</div>
+                <div class="lb-stat-description">Average student score</div>
+            </div>
+
+            <div class="lb-stat-card">
+                <div class="lb-stat-top">
+                    <div class="lb-stat-label">Active Participants</div>
+                    <div class="lb-stat-icon">⚡</div>
+                </div>
+                <div class="lb-stat-value">{{ active_students }}</div>
+                <div class="lb-stat-description">Students with test results</div>
+            </div>
+        </section>
+
+        {% if my_stats %}
+        <section class="lb-me-card">
+            <div class="lb-me-left">
+                <div class="lb-me-icon">🏅</div>
+                <div>
+                    <div class="lb-me-title">Your Leaderboard Position</div>
+                    <div class="lb-me-subtitle">
+                        {{ my_stats.completed_tests }} completed tests ·
+                        {{ my_stats.average_percentage }}% average score ·
+                        {{ my_stats.total_xp }} XP
+                    </div>
+                </div>
+            </div>
+            <div class="lb-me-rank">#{{ my_stats.rank }}</div>
+        </section>
+        {% endif %}
+
+        {% if leaderboard %}
+        <section class="lb-section">
+            <div class="lb-section-heading">
+                <div>
+                    <h2>🏆 Top Performers</h2>
+                    <p>Students leading the current rankings</p>
+                </div>
+                <span class="lb-period">TOP 3</span>
+            </div>
+
+            <div class="lb-podium">
+                {% if leaderboard|length >= 2 %}
+                {% set second = leaderboard[1] %}
+                <div class="lb-podium-card second">
+                    <div class="lb-crown">🥈</div>
+                    <div class="lb-podium-avatar">
+                        {% if second.profile_pic %}
+                        <img src="{{ second.profile_pic }}" alt="">
+                        {% else %}
+                        {{ (second.name or 'S')[0]|upper }}
+                        {% endif %}
+                    </div>
+                    <div class="lb-podium-name">{{ second.name }}</div>
+                    <div class="lb-podium-xp">{{ second.total_xp }} XP</div>
+                    <span class="lb-podium-rank">#2 · {{ second.average_percentage }}%</span>
+                </div>
+                {% endif %}
+
+                {% set first = leaderboard[0] %}
+                <div class="lb-podium-card first">
+                    <div class="lb-crown">👑</div>
+                    <div class="lb-podium-avatar">
+                        {% if first.profile_pic %}
+                        <img src="{{ first.profile_pic }}" alt="">
+                        {% else %}
+                        {{ (first.name or 'S')[0]|upper }}
+                        {% endif %}
+                    </div>
+                    <div class="lb-podium-name">{{ first.name }}</div>
+                    <div class="lb-podium-xp">{{ first.total_xp }} XP</div>
+                    <span class="lb-podium-rank">#1 · {{ first.average_percentage }}%</span>
+                </div>
+
+                {% if leaderboard|length >= 3 %}
+                {% set third = leaderboard[2] %}
+                <div class="lb-podium-card third">
+                    <div class="lb-crown">🥉</div>
+                    <div class="lb-podium-avatar">
+                        {% if third.profile_pic %}
+                        <img src="{{ third.profile_pic }}" alt="">
+                        {% else %}
+                        {{ (third.name or 'S')[0]|upper }}
+                        {% endif %}
+                    </div>
+                    <div class="lb-podium-name">{{ third.name }}</div>
+                    <div class="lb-podium-xp">{{ third.total_xp }} XP</div>
+                    <span class="lb-podium-rank">#3 · {{ third.average_percentage }}%</span>
+                </div>
+                {% endif %}
+            </div>
+        </section>
+
+        <section class="lb-section">
+            <div class="lb-table-header">
+                <div>
+                    <h2>All Student Rankings</h2>
+                    <p style="font-size:12px;color:#81879b;margin-top:6px;">
+                        Rankings are calculated from submitted mock-test results.
+                    </p>
+                </div>
+
+                <div class="lb-table-tools">
+                    <input
+                            type="text"
+                            id="studentSearch"
+                            class="lb-search"
+                            placeholder="Search student..."
+                    >
+
+                    <select id="rankingSort" class="lb-select">
+                        <option value="rank">Default Ranking</option>
+                        <option value="xp">Highest XP</option>
+                        <option value="score">Highest Average</option>
+                        <option value="tests">Most Tests</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="lb-table-wrap">
+                <table class="lb-table" id="leaderboardTable">
+                    <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Student</th>
+                        <th>Total XP</th>
+                        <th>Average Score</th>
+                        <th>Tests</th>
+                        <th>Correct</th>
+                        <th>Participation</th>
+                    </tr>
+                    </thead>
+
+                    <tbody id="leaderboardBody">
+                    {% for student in leaderboard %}
+                    <tr
+                            class="{% if my_stats and student.id == my_stats.id %}current-user{% endif %}"
+                            data-name="{{ student.name|lower }}"
+                            data-rank="{{ student.rank }}"
+                            data-xp="{{ student.total_xp }}"
+                            data-score="{{ student.average_percentage }}"
+                            data-tests="{{ student.completed_tests }}"
+                    >
+                        <td>
+                                <span class="lb-rank">
+                                    {% if student.rank == 1 %}🥇
+                                    {% elif student.rank == 2 %}🥈
+                                    {% elif student.rank == 3 %}🥉
+                                    {% else %}#{{ student.rank }}
+                                    {% endif %}
+                                </span>
+                        </td>
+
+                        <td>
+                            <div class="lb-student">
+                                <div class="lb-student-avatar">
+                                    {% if student.profile_pic %}
+                                    <img src="{{ student.profile_pic }}" alt="">
+                                    {% else %}
+                                    {{ (student.name or 'S')[0]|upper }}
+                                    {% endif %}
+                                </div>
+                                <div>
+                                    <div class="lb-student-name">
+                                        {{ student.name }}
+                                        {% if my_stats and student.id == my_stats.id %}
+                                        <span style="color:#635bff;">(You)</span>
+                                        {% endif %}
+                                    </div>
+                                    <div class="lb-student-tag">Student</div>
+                                </div>
+                            </div>
+                        </td>
+
+                        <td>
+                            <span class="lb-xp">{{ student.total_xp }} XP</span>
+                        </td>
+
+                        <td>
+                            <div class="lb-score">
+                                <div class="lb-score-track">
+                                    <div class="lb-score-fill" style="width:{{ [student.average_percentage, 100]|min }}%;"></div>
+                                </div>
+                                <span class="lb-score-value">{{ student.average_percentage }}%</span>
+                            </div>
+                        </td>
+
+                        <td>{{ student.completed_tests }}</td>
+                        <td>{{ student.total_correct }}</td>
+                        <td>{{ student.participation_count }}</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="lb-empty" id="noSearchResults" style="display:none;">
+                <div class="lb-empty-icon">🔎</div>
+                <h3>No matching students</h3>
+                <p>Try searching with a different student name.</p>
+            </div>
+        </section>
+
+        {% else %}
+        <section class="lb-section">
+            <div class="lb-empty">
+                <div class="lb-empty-icon">🏆</div>
+                <h3>Leaderboard is waiting for its first champions</h3>
+                <p>Once students submit mock tests, their actual performance will appear here.</p>
+            </div>
+        </section>
+        {% endif %}
+
+        <div class="lb-footer-note">
+            Rankings are based on submitted mock-test performance.
+            XP = 10 points per correct answer + 25 points per submitted test.
+        </div>
+
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const searchInput = document.getElementById("studentSearch");
+        const sortSelect = document.getElementById("rankingSort");
+        const tableBody = document.getElementById("leaderboardBody");
+        const noResults = document.getElementById("noSearchResults");
+
+        if (!tableBody) return;
+
+        const originalRows = Array.from(tableBody.querySelectorAll("tr"));
+
+        function updateTable() {
+            const searchValue = searchInput.value.trim().toLowerCase();
+            const sortValue = sortSelect.value;
+
+            let rows = originalRows.filter(row => {
+                return row.dataset.name.includes(searchValue);
+            });
+
+            rows.sort((a, b) => {
+                if (sortValue === "xp") {
+                    return Number(b.dataset.xp) - Number(a.dataset.xp);
+                }
+
+                if (sortValue === "score") {
+                    return Number(b.dataset.score) - Number(a.dataset.score);
+                }
+
+                if (sortValue === "tests") {
+                    return Number(b.dataset.tests) - Number(a.dataset.tests);
+                }
+
+                return Number(a.dataset.rank) - Number(b.dataset.rank);
+            });
+
+            tableBody.innerHTML = "";
+
+            rows.forEach(row => tableBody.appendChild(row));
+
+            noResults.style.display = rows.length ? "none" : "block";
+        }
+
+        searchInput.addEventListener("input", updateTable);
+        sortSelect.addEventListener("change", updateTable);
+    });
+</script>
 {% endblock %}

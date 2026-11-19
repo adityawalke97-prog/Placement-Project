@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+{% block title %}Interview History{% endblock %}
+{% block content %}
+<div style="max-width:1100px;margin:35px auto;padding:0 18px">
+    <h1>AI Interview History</h1>
+    <p style="color:#858ba3">Review your completed mock interviews and previous scores.</p>
+    <div style="background:white;border:1px solid #eceef5;border-radius:15px;padding:20px;overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;min-width:650px">
+            <thead><tr style="text-align:left;background:#f7f6ff"><th style="padding:13px">Role</th><th>Level</th><th>Score</th><th>Result</th><th>Date</th><th>Report</th></tr></thead>
+            <tbody>
+            {% for item in interviews %}
+                <tr style="border-bottom:1px solid #eee">
+                    <td style="padding:14px">{{ item.role }}</td><td>{{ item.difficulty }}</td><td><b>{{ item.overall_score if item.overall_score is not none else '--' }}/100</b></td><td>{{ item.performance_status or 'Evaluated' }}</td><td>{{ item.completed_at or item.created_at }}</td>
+                    <td><a href="{{ url_for('ai_interview.interview_result', token=item.session_token) }}">View Result</a></td>
+                </tr>
+            {% else %}
+                <tr><td colspan="6" style="padding:25px;text-align:center;color:#858ba3">No completed interviews yet.</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <p style="margin-top:20px"><a href="{{ url_for('ai_interview.interview_home') }}">Start a new interview</a></p>
+</div>
+{% endblock %}

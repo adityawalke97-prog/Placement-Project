@@ -1,0 +1,158 @@
+{% extends "layout.html" %}
+{% block title %}AI Live Mock Interview{% endblock %}
+{% block css %}
+<style>
+.aii{max-width:1150px;margin:35px auto;padding:0 18px;color:#20243a;font-family:Arial,sans-serif}.aii-head{margin-bottom:25px}.aii-head h1{font-size:30px;font-weight:800;margin:0 0 8px}.aii-head p{color:#858ba3;margin:0}.aii-card{background:#fff;border:1px solid #eceef5;border-radius:18px;padding:24px;margin-bottom:20px;box-shadow:0 8px 28px rgba(30,35,80,.04)}.aii-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.aii label{display:block;font-size:13px;font-weight:700;margin-bottom:8px}.aii select{width:100%;padding:13px;border:1px solid #e4e6ef;border-radius:10px;background:#fff}.aii-btn{border:0;background:#6956e8;color:#fff;border-radius:10px;padding:13px 20px;font-weight:700;cursor:pointer}.aii-btn:disabled{opacity:.5;cursor:not-allowed}.aii-stage{display:none}.aii-stage.active{display:block}.aii-top{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:#777d93;font-size:13px}.aii-question{font-size:22px;line-height:1.5;font-weight:800;margin:24px 0}.aii textarea{width:100%;min-height:150px;border:1px solid #e4e6ef;border-radius:12px;padding:15px;font:inherit;resize:vertical}.aii-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:15px}.aii-secondary{background:#f0edff;color:#5945ce}.aii-alert{padding:12px 15px;background:#f5f3ff;color:#5140b8;border-radius:10px;margin-top:14px;font-size:13px}.aii-error{background:#fff0ed;color:#b54737}.aii-progress{height:7px;background:#eeeef5;border-radius:20px;margin-top:18px;overflow:hidden}.aii-progress span{display:block;height:100%;background:#6956e8;width:0}.aii-muted{color:#858ba3;font-size:13px}@media(max-width:700px){.aii-grid{grid-template-columns:1fr}.aii-question{font-size:19px}}
+</style>
+{% endblock %}
+{% block content %}
+<div class="aii">
+    <div class="aii-head">
+        <h1>AI Live Mock Interview</h1>
+        <p>Practice with an AI interviewer, answer by voice or text, and receive a detailed performance report.</p>
+    </div>
+    <section class="aii-card" id="setup">
+        <h2>Configure Your Interview</h2>
+        <div class="aii-grid">
+            <div><label for="role">Job Role</label><select id="role">{% for role in roles %}<option>{{ role }}</option>{% endfor %}</select></div>
+            <div><label for="difficulty">Difficulty</label><select id="difficulty">{% for level in levels %}<option>{{ level }}</option>{% endfor %}</select></div>
+            <div><label for="language">Interview Language</label><select id="language">{% for language in languages %}<option>{{ language }}</option>{% endfor %}</select></div>
+        </div>
+        <div style="max-width:240px;margin-top:15px"><label for="duration">Duration</label><select id="duration"><option value="10">10 minutes</option><option value="15" selected>15 minutes</option><option value="20">20 minutes</option><option value="30">30 minutes</option></select></div>
+        <button class="aii-btn" id="startBtn" style="margin-top:20px" onclick="startInterview()">Start AI Interview <i class="fas fa-arrow-right"></i></button>
+        <div id="setupMessage" class="aii-alert" hidden></div>
+    </section>
+    <section class="aii-card aii-stage" id="stage">
+        <div class="aii-top"><span id="questionCount">Question 1</span><span id="timer">Interview in progress</span></div>
+        <div class="aii-progress"><span id="progress"></span></div>
+        <div class="aii-question" id="questionText"></div>
+        <div class="aii-muted" id="focusArea"></div>
+        <label for="answer" style="margin-top:22px">Your Answer</label>
+        <textarea id="answer" placeholder="Speak using the microphone or type your answer here..."></textarea>
+        <div class="aii-actions">
+            <button class="aii-btn aii-secondary" id="micBtn" onclick="toggleMic()"><i class="fas fa-microphone"></i> Start Speaking</button>
+            <button class="aii-btn" id="nextBtn" onclick="submitAnswer()">Submit Answer</button>
+            <button class="aii-btn aii-secondary" onclick="speakQuestion()">Repeat Question</button>
+        </div>
+        <div id="stageMessage" class="aii-alert" hidden></div>
+    </section>
+</div>
+<script>
+let interviewToken=null;
+let totalQuestions=0;
+let questionNumber=0;
+let recognition=null;
+let timerSeconds=0;
+let timerInterval=null;
+let interviewFinished=false;
+
+function message(id,text,error=false){
+    const el=document.getElementById(id);
+    el.textContent=text;
+    el.hidden=false;
+    el.classList.toggle('aii-error',error);
+}
+function speakQuestion(){
+    if(!('speechSynthesis' in window)) return;
+    speechSynthesis.cancel();
+    const utterance=new SpeechSynthesisUtterance(document.getElementById('questionText').textContent);
+    const language=document.getElementById('language').value;
+    utterance.lang=language==='Hindi'?'hi-IN':'en-IN';
+    speechSynthesis.speak(utterance);
+}
+function startTimer(){
+    timerInterval=setInterval(()=>{
+        timerSeconds++;
+        const m=String(Math.floor(timerSeconds/60)).padStart(2,'0');
+        const s=String(timerSeconds%60).padStart(2,'0');
+        document.getElementById('timer').textContent=`Elapsed ${m}:${s}`;
+    },1000);
+}
+function showQuestion(data){
+    questionNumber=data.question_number;
+    totalQuestions=data.total_questions;
+    document.getElementById('questionCount').textContent=`Question ${questionNumber} of ${totalQuestions}`;
+    document.getElementById('questionText').textContent=data.question;
+    document.getElementById('focusArea').textContent=data.focus_area?`Focus area: ${data.focus_area}`:'';
+    document.getElementById('answer').value='';
+    document.getElementById('progress').style.width=((questionNumber-1)/totalQuestions*100)+'%';
+    speakQuestion();
+}
+async function startInterview(){
+    const btn=document.getElementById('startBtn');
+    btn.disabled=true;
+    message('setupMessage','Generating your personalized interview questions...');
+    try{
+        const response=await fetch('/ai-interview/start',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+            role:document.getElementById('role').value,
+            difficulty:document.getElementById('difficulty').value,
+            language:document.getElementById('language').value,
+            duration:document.getElementById('duration').value
+        })});
+        const data=await response.json();
+        if(!response.ok) throw new Error(data.error||'Unable to start interview.');
+        interviewToken=data.token;
+        totalQuestions=data.total_questions;
+        document.getElementById('setup').style.display='none';
+        document.getElementById('stage').classList.add('active');
+        showQuestion(data);
+        startTimer();
+    }catch(error){message('setupMessage',error.message,true);btn.disabled=false;}
+}
+async function submitAnswer(){
+    if(interviewFinished)return;
+    const answer=document.getElementById('answer').value.trim();
+    if(!answer){message('stageMessage','Please enter or record your answer first.',true);return;}
+    const btn=document.getElementById('nextBtn');
+    btn.disabled=true;
+    try{
+        const response=await fetch('/ai-interview/answer',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:interviewToken,answer})});
+        const data=await response.json();
+        if(!response.ok)throw new Error(data.error||'Unable to save answer.');
+        if(data.complete){
+            document.getElementById('questionText').textContent='All questions completed. Your answers are ready for AI evaluation.';
+            document.getElementById('answer').style.display='none';
+            document.getElementById('micBtn').style.display='none';
+            document.getElementById('nextBtn').textContent='Generate My AI Result';
+            document.getElementById('nextBtn').onclick=finishInterview;
+            document.getElementById('progress').style.width='100%';
+        }else{
+            showQuestion(data);
+        }
+    }catch(error){message('stageMessage',error.message,true);}
+    finally{btn.disabled=false;}
+}
+async function finishInterview(){
+    if(interviewFinished)return;
+    const btn=document.getElementById('nextBtn');
+    btn.disabled=true;
+    btn.textContent='AI is evaluating your answers...';
+    try{
+        const response=await fetch('/ai-interview/finish',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:interviewToken})});
+        const data=await response.json();
+        if(!response.ok)throw new Error(data.error||'Evaluation failed.');
+        interviewFinished=true;
+        clearInterval(timerInterval);
+        window.location.href=data.redirect;
+    }catch(error){message('stageMessage',error.message,true);btn.disabled=false;btn.textContent='Retry AI Evaluation';}
+}
+function toggleMic(){
+    const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+    if(!SpeechRecognition){message('stageMessage','Speech recognition is not supported in this browser. Try Chrome or type your answer.',true);return;}
+    if(recognition){recognition.stop();recognition=null;document.getElementById('micBtn').innerHTML='<i class="fas fa-microphone"></i> Start Speaking';return;}
+    recognition=new SpeechRecognition();
+    recognition.lang=document.getElementById('language').value==='Hindi'?'hi-IN':'en-IN';
+    recognition.continuous=true;
+    recognition.interimResults=true;
+    recognition.onresult=event=>{
+        let text='';
+        for(let i=0;i<event.results.length;i++)text+=event.results[i][0].transcript+' ';
+        document.getElementById('answer').value=text.trim();
+    };
+    recognition.onerror=()=>message('stageMessage','Microphone recognition stopped. You can type your answer.',true);
+    recognition.onend=()=>{recognition=null;document.getElementById('micBtn').innerHTML='<i class="fas fa-microphone"></i> Start Speaking';};
+    recognition.start();
+    document.getElementById('micBtn').innerHTML='<i class="fas fa-stop"></i> Stop Speaking';
+}
+</script>
+{% endblock %}

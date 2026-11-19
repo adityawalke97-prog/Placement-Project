@@ -1,2454 +1,1654 @@
 {% extends "layout.html" %}
 
-{% block title %}Interview Preparation{% endblock %}
+{% block title %}AI Live Mock Interview | Placement Training Portal{% endblock %}
+
 {% block css %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
 <style>
+    :root {
+        --ai-bg: #090b14;
+        --ai-card: #111522;
+        --ai-card-2: #171c2d;
+        --ai-border: rgba(255,255,255,.08);
+        --ai-text: #f4f5ff;
+        --ai-muted: #929bb3;
+        --ai-purple: #8b5cf6;
+        --ai-blue: #6366f1;
+        --ai-green: #22c55e;
+        --ai-red: #ef4444;
+    }
 
-    /* =========================================================
-       INTERVIEW PAGE - PREMIUM INTERNAL CSS
-       ========================================================= */
+    .interview-page {
+        max-width: 1450px;
+        margin: 0 auto;
+        padding: 30px 22px 55px;
+        color: var(--ai-text);
+        font-family: 'DM Sans', sans-serif;
+    }
 
-    * {
+    .interview-page * {
         box-sizing: border-box;
     }
-
-    body {
-        margin: 0;
-        background: #f5f7fb !important;
-        color: #172033 !important;
-    }
-
-
-    /* ================= HERO ================= */
 
     .interview-hero {
         position: relative;
         overflow: hidden;
-
-        width: min(1280px, calc(100% - 40px));
-        margin: 30px auto 25px;
-        padding: 45px;
-
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 40px;
-
+        padding: 36px;
+        border: 1px solid rgba(139,92,246,.24);
+        border-radius: 25px;
         background:
-                radial-gradient(
-                        circle at 5% 10%,
-                        rgba(124,92,255,.18),
-                        transparent 30%
-                ),
-                radial-gradient(
-                        circle at 95% 5%,
-                        rgba(59,130,246,.15),
-                        transparent 28%
-                ),
-                linear-gradient(
-                        135deg,
-                        #ffffff,
-                        #f7f5ff,
-                        #eef2ff
-                );
-
-        border: 1px solid #e5e7eb;
-        border-radius: 28px;
-
-        box-shadow:
-                0 20px 60px rgba(15,23,42,.09);
-    }
-
-    .interview-hero::before {
-        content: "";
-        position: absolute;
-
-        width: 250px;
-        height: 250px;
-
-        right: -100px;
-        top: -120px;
-
-        border-radius: 50%;
-
-        background: rgba(99,102,241,.08);
+                radial-gradient(circle at 85% 20%, rgba(139,92,246,.23), transparent 35%),
+                radial-gradient(circle at 10% 100%, rgba(59,130,246,.12), transparent 35%),
+                linear-gradient(125deg,#151329,#111522 65%,#17142b);
+        margin-bottom: 27px;
     }
 
     .interview-hero::after {
         content: "";
         position: absolute;
-
-        width: 180px;
-        height: 180px;
-
-        left: -100px;
-        bottom: -100px;
-
+        width: 260px;
+        height: 260px;
+        border: 1px solid rgba(167,139,250,.13);
         border-radius: 50%;
-
-        background: rgba(59,130,246,.07);
+        right: -75px;
+        top: -120px;
+        box-shadow: 0 0 0 35px rgba(139,92,246,.035), 0 0 0 70px rgba(139,92,246,.025);
     }
 
     .hero-content {
         position: relative;
-        z-index: 2;
-        flex: 1;
+        z-index: 1;
+        max-width: 750px;
     }
 
     .hero-badge {
         display: inline-flex;
-        padding: 8px 14px;
-
-        border-radius: 999px;
-
-        background: #eef2ff;
-        border: 1px solid #c7d2fe;
-
-        color: #4f46e5 !important;
-
-        font-size: 13px;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 13px;
+        border-radius: 30px;
+        color: #c4b5fd;
+        background: rgba(139,92,246,.15);
+        border: 1px solid rgba(167,139,250,.22);
+        font-size: 11px;
         font-weight: 800;
+        letter-spacing: 1.2px;
+        text-transform: uppercase;
     }
 
-    .hero-content h1 {
-        margin: 17px 0 12px;
+    .hero-badge span {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #a78bfa;
+        box-shadow: 0 0 12px #a78bfa;
+    }
 
-        color: #111827 !important;
-
-        font-size: clamp(30px,4vw,48px);
-        line-height: 1.1;
-
-        font-weight: 900;
+    .interview-hero h1 {
+        margin: 19px 0 12px;
+        font-family: 'Plus Jakarta Sans',sans-serif;
+        font-size: clamp(28px,4vw,43px);
+        line-height: 1.2;
+        font-weight: 800;
         letter-spacing: -1.5px;
     }
 
-    .hero-content p {
-        max-width: 680px;
+    .interview-hero h1 span {
+        color: #a78bfa;
+    }
 
+    .interview-hero p {
+        max-width: 650px;
         margin: 0;
-
-        color: #64748b !important;
-
-        font-size: 16px;
-        line-height: 1.7;
+        color: #a8aec4;
+        line-height: 1.8;
+        font-size: 14px;
     }
 
-
-    /* HERO BUTTONS */
-
-    .hero-actions {
+    .hero-features {
         display: flex;
-        gap: 12px;
         flex-wrap: wrap;
-
-        margin-top: 25px;
+        gap: 19px;
+        margin-top: 24px;
     }
 
-    .hero-btn {
-        min-height: 46px;
-
-        padding: 11px 19px;
-
-        border-radius: 12px;
-
-        font-size: 14px;
-        font-weight: 750;
-
-        cursor: pointer;
-
-        transition: .25s ease;
-    }
-
-    .hero-btn.primary {
-        border: none;
-
-        background: linear-gradient(
-                135deg,
-                #6366f1,
-                #8b5cf6
-        );
-
-        color: #ffffff !important;
-
-        box-shadow:
-                0 10px 25px rgba(99,102,241,.28);
-    }
-
-    .hero-btn.primary:hover {
-        transform: translateY(-3px);
-    }
-
-    .hero-btn.secondary {
-        background: #ffffff;
-
-        border: 1px solid #c7d2fe;
-
-        color: #4f46e5 !important;
-    }
-
-    .hero-btn.secondary:hover {
-        background: #eef2ff;
-        transform: translateY(-2px);
-    }
-
-
-    /* ================= HERO STATS ================= */
-
-    .hero-stats {
-        position: relative;
-        z-index: 2;
-
-        width: 410px;
-
-        display: grid;
-        grid-template-columns: repeat(2,1fr);
-
-        gap: 14px;
-    }
-
-    .hero-stat {
-        min-height: 120px;
-
-        padding: 20px;
-
+    .hero-feature {
         display: flex;
-        flex-direction: column;
-        justify-content: center;
-
-        background: rgba(255,255,255,.82);
-
-        border: 1px solid #e2e8f0;
-
-        border-radius: 18px;
-
-        box-shadow:
-                0 10px 30px rgba(15,23,42,.06);
-
-        backdrop-filter: blur(10px);
-
-        transition: .25s ease;
-    }
-
-    .hero-stat:hover {
-        transform: translateY(-4px);
-
-        box-shadow:
-                0 18px 35px rgba(15,23,42,.11);
-    }
-
-    .hero-stat > span {
-        font-size: 22px;
-        margin-bottom: 8px;
-    }
-
-    .hero-stat strong {
-        color: #111827 !important;
-
-        font-size: 27px;
-        font-weight: 900;
-    }
-
-    .hero-stat small {
-        margin-top: 5px;
-
-        color: #64748b !important;
-
+        align-items: center;
+        gap: 8px;
+        color: #d3d5e4;
         font-size: 12px;
+        font-weight: 600;
     }
 
-
-    /* ================= SEARCH ================= */
-
-    .search-panel,
-    .filter-panel,
-    .dashboard-grid,
-    .progress-card,
-    .daily-goal-card,
-    .questions-section,
-    .pagination-section,
-    .tip-section {
-        width: min(1280px,calc(100% - 40px));
-
-        margin-left: auto;
-        margin-right: auto;
+    .hero-feature i {
+        color: #a78bfa;
     }
 
-    .search-panel {
-        margin-bottom: 18px;
+    .interview-layout {
+        display: grid;
+        grid-template-columns: minmax(0,1.35fr) minmax(300px,.65fr);
+        gap: 22px;
+        align-items: start;
     }
 
-    .search-wrapper {
-        min-height: 58px;
-
-        display: flex;
-        align-items: center;
-
-        background: #ffffff;
-
-        border: 1px solid #e2e8f0;
-
-        border-radius: 16px;
-
-        box-shadow:
-                0 8px 25px rgba(15,23,42,.05);
-    }
-
-    .search-wrapper i {
-        margin-left: 20px;
-
-        color: #94a3b8;
-
-        font-size: 17px;
-    }
-
-    .search-wrapper input {
-        flex: 1;
-
-        border: none;
-        outline: none;
-
-        padding: 0 15px;
-
-        background: transparent;
-
-        color: #172033 !important;
-
-        font-size: 14px;
-    }
-
-    .search-wrapper input::placeholder {
-        color: #94a3b8 !important;
-    }
-
-    .clear-search {
-        display: none;
-
-        width: 35px;
-        height: 35px;
-
-        margin-right: 10px;
-
-        border: none;
-        border-radius: 9px;
-
-        background: #f1f5f9;
-
-        color: #475569;
-
-        cursor: pointer;
-    }
-
-
-    /* ================= FILTER ================= */
-
-    .filter-panel {
+    .ai-card {
+        background: linear-gradient(145deg,#141827,#101421);
+        border: 1px solid var(--ai-border);
+        border-radius: 21px;
         padding: 25px;
-
-        background: #ffffff;
-
-        border: 1px solid #e5e7eb;
-
-        border-radius: 20px;
-
-        box-shadow:
-                0 8px 28px rgba(15,23,42,.05);
-    }
-
-    .filter-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-
         margin-bottom: 20px;
     }
 
-    .filter-header h3 {
-        margin: 0 0 5px;
-
-        color: #111827 !important;
-
-        font-size: 18px;
-        font-weight: 850;
-    }
-
-    .filter-header span {
-        color: #64748b !important;
-
-        font-size: 13px;
-    }
-
-    .reset-btn {
-        padding: 9px 14px;
-
-        border: 1px solid #e2e8f0;
-        border-radius: 10px;
-
-        background: #f8fafc;
-
-        color: #475569 !important;
-
-        font-weight: 700;
-
-        cursor: pointer;
-    }
-
-    .reset-btn:hover {
-        background: #eef2ff;
-        color: #4f46e5 !important;
-    }
-
-    .filter-grid {
-        display: grid;
-
-        grid-template-columns: repeat(5,1fr);
-
-        gap: 14px;
-    }
-
-    .filter-item {
+    .section-heading {
         display: flex;
-        flex-direction: column;
-
-        gap: 7px;
-    }
-
-    .filter-item label {
-        color: #475569 !important;
-
-        font-size: 12px;
-        font-weight: 750;
-    }
-
-    .filter-item select {
-        width: 100%;
-        min-height: 45px;
-
-        padding: 0 12px;
-
-        background: #f8fafc;
-
-        border: 1px solid #e2e8f0;
-
-        border-radius: 10px;
-
-        color: #334155 !important;
-
-        outline: none;
-    }
-
-    .filter-item select:focus {
-        border-color: #818cf8;
-
-        box-shadow:
-                0 0 0 3px rgba(99,102,241,.10);
-    }
-
-
-    /* ================= DASHBOARD ================= */
-
-    .dashboard-grid {
-        display: grid;
-
-        grid-template-columns: repeat(4,1fr);
-
-        gap: 16px;
-
-        margin-top: 20px;
-    }
-
-    .dashboard-card {
-        display: flex;
-        align-items: center;
-
-        gap: 14px;
-
-        padding: 21px;
-
-        background: #ffffff;
-
-        border: 1px solid #e5e7eb;
-
-        border-radius: 18px;
-
-        box-shadow:
-                0 8px 25px rgba(15,23,42,.05);
-
-        transition: .25s ease;
-    }
-
-    .dashboard-card:hover {
-        transform: translateY(-3px);
-
-        box-shadow:
-                0 15px 35px rgba(15,23,42,.10);
-    }
-
-    .dashboard-icon {
-        width: 48px;
-        height: 48px;
-
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        flex-shrink: 0;
-
-        background: #eef2ff;
-
-        border-radius: 13px;
-
-        font-size: 21px;
-    }
-
-    .dashboard-card strong {
-        display: block;
-
-        color: #111827 !important;
-
-        font-size: 25px;
-        font-weight: 900;
-    }
-
-    .dashboard-card span {
-        display: block;
-
-        margin-top: 4px;
-
-        color: #64748b !important;
-
-        font-size: 12px;
-    }
-
-
-    /* ================= PROGRESS ================= */
-
-    .progress-card {
-        margin-top: 18px;
-
-        padding: 24px;
-
-        background: #ffffff;
-
-        border: 1px solid #e5e7eb;
-
-        border-radius: 20px;
-
-        box-shadow:
-                0 8px 28px rgba(15,23,42,.05);
-    }
-
-    .progress-top {
-        display: flex;
-        align-items: center;
         justify-content: space-between;
-
-        margin-bottom: 14px;
-    }
-
-    .progress-top h3 {
-        margin: 0;
-
-        color: #111827 !important;
-
-        font-size: 17px;
-    }
-
-    .progress-top p {
-        margin: 5px 0 0;
-
-        color: #64748b !important;
-
-        font-size: 12px;
-    }
-
-    #progressText {
-        color: #6366f1 !important;
-
-        font-size: 22px;
-        font-weight: 900;
-    }
-
-    .progress-bar {
-        height: 10px;
-
-        overflow: hidden;
-
-        background: #e2e8f0;
-
-        border-radius: 999px;
-    }
-
-    .progress-fill {
-        width: 0%;
-        height: 100%;
-
-        background: linear-gradient(
-                90deg,
-                #6366f1,
-                #8b5cf6
-        );
-
-        border-radius: 999px;
-
-        transition: width .5s ease;
-    }
-
-
-    /* ================= DAILY GOAL ================= */
-
-    .daily-goal-card {
-        display: flex;
         align-items: center;
-        justify-content: space-between;
-
-        gap: 25px;
-
-        margin-top: 18px;
-        padding: 22px 25px;
-
-        background: linear-gradient(
-                135deg,
-                #ffffff,
-                #fffaf0
-        );
-
-        border: 1px solid #fde68a;
-
-        border-radius: 20px;
-    }
-
-    .goal-info {
-        display: flex;
-        align-items: center;
-
-        gap: 13px;
-    }
-
-    .goal-icon {
-        width: 48px;
-        height: 48px;
-
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        background: #fff7ed;
-
-        border-radius: 13px;
-
-        font-size: 21px;
-    }
-
-    .goal-info h3 {
-        margin: 0;
-
-        color: #111827 !important;
-
-        font-size: 16px;
-    }
-
-    .goal-info p {
-        margin: 4px 0 0;
-
-        color: #64748b !important;
-
-        font-size: 12px;
-    }
-
-    .goal-progress {
-        width: 300px;
-    }
-
-    .goal-bar {
-        height: 9px;
-
-        overflow: hidden;
-
-        background: #e2e8f0;
-
-        border-radius: 999px;
-    }
-
-    .goal-fill {
-        width: 0%;
-        height: 100%;
-
-        background: linear-gradient(
-                90deg,
-                #f59e0b,
-                #f97316
-        );
-
-        border-radius: 999px;
-    }
-
-
-    /* ================= QUESTIONS HEADER ================= */
-
-    .questions-section {
-        margin-top: 25px;
-    }
-
-    .questions-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-
-        margin-bottom: 18px;
-    }
-
-    .questions-header h2 {
-        margin: 0;
-
-        color: #111827 !important;
-
-        font-size: 25px;
-        font-weight: 900;
-    }
-
-    .questions-header p {
-        margin: 5px 0 0;
-
-        color: #64748b !important;
-
-        font-size: 13px;
-    }
-
-    .random-btn {
-        padding: 11px 17px;
-
-        border: none;
-        border-radius: 11px;
-
-        background: linear-gradient(
-                135deg,
-                #6366f1,
-                #8b5cf6
-        );
-
-        color: #ffffff !important;
-
-        font-weight: 800;
-
-        cursor: pointer;
-
-        box-shadow:
-                0 8px 20px rgba(99,102,241,.23);
-    }
-
-
-    /* ================= QUESTION CARD ================= */
-
-    .questions-container {
-        display: flex;
-        flex-direction: column;
-
-        gap: 18px;
-    }
-
-    .question-card {
-        padding: 25px;
-
-        background: #ffffff !important;
-
-        border: 1px solid #e5e7eb;
-
-        border-radius: 20px;
-
-        box-shadow:
-                0 8px 28px rgba(15,23,42,.055);
-
-        transition: .25s ease;
-    }
-
-    .question-card:hover {
-        transform: translateY(-3px);
-
-        border-color: #c7d2fe;
-
-        box-shadow:
-                0 17px 40px rgba(15,23,42,.10);
-    }
-
-    .question-top {
-        display: flex;
-        align-items: flex-start;
-
         gap: 12px;
+        margin-bottom: 22px;
     }
 
-    .question-number {
-        min-width: 43px;
-        height: 32px;
-
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        background: #eef2ff;
-
-        color: #4f46e5 !important;
-
-        border-radius: 9px;
-
-        font-size: 12px;
-        font-weight: 900;
-    }
-
-    .question-badges {
-        flex: 1;
-
-        display: flex;
-        flex-wrap: wrap;
-
-        gap: 7px;
-    }
-
-    .badge {
-        display: inline-flex;
-        align-items: center;
-
-        padding: 6px 10px;
-
-        border-radius: 8px;
-
-        font-size: 11px;
-        font-weight: 750;
-    }
-
-    .badge.category {
-        background: #f5f3ff;
-
-        border: 1px solid #ddd6fe;
-
-        color: #6d28d9 !important;
-    }
-
-    .badge.level {
-        background: #ecfdf5;
-
-        border: 1px solid #a7f3d0;
-
-        color: #047857 !important;
-    }
-
-    .badge.company {
-        background: #eff6ff;
-
-        border: 1px solid #bfdbfe;
-
-        color: #1d4ed8 !important;
-    }
-
-
-    /* ================= BOOKMARK ================= */
-
-    .bookmark-btn {
-        width: 38px;
-        height: 38px;
-
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        flex-shrink: 0;
-
-        padding: 0;
-
-        background: #ffffff;
-
-        border: 1px solid #e2e8f0;
-
-        border-radius: 10px;
-
-        color: #64748b;
-
-        cursor: pointer;
-
-        transition: .2s ease;
-    }
-
-    .bookmark-btn:hover {
-        background: #eef2ff;
-
-        color: #4f46e5;
-
-        border-color: #c7d2fe;
-    }
-
-
-    /* ================= QUESTION ================= */
-
-    .question-body {
-        margin-top: 18px;
-    }
-
-    .question-title {
+    .section-heading h2 {
+        font-family: 'Plus Jakarta Sans',sans-serif;
+        font-size: 17px;
         margin: 0;
-
-        color: #111827 !important;
-
-        font-size: 20px;
-
-        line-height: 1.55;
-
         font-weight: 800;
     }
 
-    .topic-label {
-        display: inline-flex;
-
-        margin-top: 10px;
-
-        padding: 5px 9px;
-
-        background: #f8fafc;
-
-        border: 1px solid #e2e8f0;
-
-        border-radius: 8px;
-
-        color: #64748b !important;
-
-        font-size: 11px;
-    }
-
-
-    /* ================= META ================= */
-
-    .question-meta {
-        display: flex;
-        flex-wrap: wrap;
-
-        gap: 8px;
-
-        margin-top: 16px;
-    }
-
-    .question-meta span {
-        padding: 6px 10px;
-
-        background: #f8fafc;
-
-        border: 1px solid #e2e8f0;
-
-        border-radius: 8px;
-
-        color: #64748b !important;
-
-        font-size: 11px;
-        font-weight: 650;
-    }
-
-
-    /* ================= ACTION BUTTONS ================= */
-
-    .question-actions {
-        display: flex;
-        flex-wrap: wrap;
-
-        gap: 9px;
-
-        margin-top: 20px;
-    }
-
-    .question-actions button,
-    .answer-actions button {
-        min-height: 41px;
-
-        padding: 9px 14px;
-
-        border-radius: 10px;
-
+    .section-heading p {
+        color: var(--ai-muted);
         font-size: 12px;
-        font-weight: 750;
+        margin: 6px 0 0;
+    }
 
+    .step-label {
+        color: #a78bfa;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 1px;
+    }
+
+    .form-label {
+        display: block;
+        color: #dfe2f1;
+        font-size: 12px;
+        font-weight: 700;
+        margin-bottom: 11px;
+    }
+
+    .role-grid {
+        display: grid;
+        grid-template-columns: repeat(3,minmax(0,1fr));
+        gap: 11px;
+    }
+
+    .role-option {
+        position: relative;
         cursor: pointer;
+    }
 
+    .role-option input {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .role-box {
+        min-height: 100px;
+        padding: 15px 12px;
+        border-radius: 14px;
+        background: #171d2d;
+        border: 1px solid rgba(255,255,255,.07);
         transition: .2s ease;
+    }
+
+    .role-box:hover {
+        border-color: rgba(167,139,250,.5);
+        transform: translateY(-2px);
+    }
+
+    .role-option input:checked + .role-box {
+        background: rgba(139,92,246,.14);
+        border-color: #8b5cf6;
+        box-shadow: 0 0 0 2px rgba(139,92,246,.10);
+    }
+
+    .role-icon {
+        width: 34px;
+        height: 34px;
+        display: grid;
+        place-items: center;
+        border-radius: 10px;
+        background: rgba(139,92,246,.15);
+        color: #c4b5fd;
+        margin-bottom: 10px;
+        font-size: 15px;
+    }
+
+    .role-box strong {
+        display: block;
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    .role-box small {
+        display: block;
+        margin-top: 4px;
+        color: var(--ai-muted);
+        font-size: 10px;
+    }
+
+    .level-grid {
+        display: grid;
+        grid-template-columns: repeat(3,1fr);
+        gap: 11px;
+        margin-top: 23px;
+    }
+
+    .level-option {
+        position: relative;
+        cursor: pointer;
+    }
+
+    .level-option input {
+        position: absolute;
+        opacity: 0;
+    }
+
+    .level-box {
+        padding: 15px 10px;
+        border: 1px solid var(--ai-border);
+        border-radius: 12px;
+        background: #171d2d;
+        text-align: center;
+        transition: .2s;
+    }
+
+    .level-box strong {
+        display: block;
+        font-size: 12px;
+    }
+
+    .level-box small {
+        display: block;
+        margin-top: 5px;
+        color: var(--ai-muted);
+        font-size: 10px;
+    }
+
+    .level-option input:checked + .level-box {
+        border-color: #8b5cf6;
+        background: rgba(139,92,246,.15);
+        color: #c4b5fd;
+    }
+
+    .settings-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+        margin-top: 22px;
+    }
+
+    .settings-row select {
+        width: 100%;
+        padding: 13px;
+        color: #f1f2ff;
+        background: #171d2d;
+        border: 1px solid var(--ai-border);
+        border-radius: 11px;
+        outline: none;
+        font-size: 12px;
+    }
+
+    .settings-row select option {
+        background: #171d2d;
     }
 
     .primary-btn {
+        width: 100%;
         border: none;
-
-        background: linear-gradient(
-                135deg,
-                #6366f1,
-                #8b5cf6
-        );
-
-        color: #ffffff !important;
-
-        box-shadow:
-                0 7px 18px rgba(99,102,241,.20);
+        border-radius: 12px;
+        padding: 16px;
+        margin-top: 23px;
+        color: white;
+        background: linear-gradient(110deg,#7c3aed,#6366f1);
+        font-size: 13px;
+        font-weight: 800;
+        cursor: pointer;
+        transition: .2s;
+        box-shadow: 0 8px 25px rgba(124,58,237,.22);
     }
 
     .primary-btn:hover {
         transform: translateY(-2px);
+        box-shadow: 0 12px 30px rgba(124,58,237,.32);
     }
 
-    .secondary-btn {
-        background: #ffffff;
-
-        border: 1px solid #e2e8f0;
-
-        color: #475569 !important;
+    .primary-btn:disabled {
+        opacity: .5;
+        cursor: not-allowed;
+        transform: none;
     }
 
-    .secondary-btn:hover {
-        background: #f8fafc;
-
-        border-color: #c7d2fe;
-
-        color: #4f46e5 !important;
+    .interview-room {
+        display: none;
     }
 
-    .complete-btn {
-        background: linear-gradient(
-                135deg,
-                #6366f1,
-                #8b5cf6
-        ) !important;
-
-        border: none !important;
-
-        color: #ffffff !important;
+    .interview-room.active {
+        display: block;
     }
 
-
-    /* ================= ANSWER ================= */
-
-    .answer-box {
-        margin-top: 20px;
-
-        padding: 22px;
-
-        background: #f8fafc !important;
-
-        border: 1px solid #e2e8f0;
-
-        border-left: 4px solid #6366f1;
-
-        border-radius: 14px;
-
-        color: #334155 !important;
-    }
-
-    .answer-header {
+    .room-top {
         display: flex;
         align-items: center;
         justify-content: space-between;
-
-        margin-bottom: 13px;
+        gap: 12px;
+        margin-bottom: 19px;
     }
 
-    .answer-header h4,
-    .explanation-box h4,
-    .followup-box h4,
-    .tips-box h4 {
-        margin: 0;
-
-        color: #111827 !important;
-
-        font-size: 14px;
-        font-weight: 850;
-    }
-
-    .close-answer-btn {
-        width: 30px;
-        height: 30px;
-
-        border: none;
-        border-radius: 8px;
-
-        background: #e2e8f0;
-
-        color: #475569;
-
-        cursor: pointer;
-    }
-
-    .answer-content p,
-    .explanation-box p,
-    .followup-box p,
-    .tips-box p {
-        margin: 0;
-
-        color: #475569 !important;
-
-        font-size: 14px;
-
-        line-height: 1.75;
-    }
-
-    .explanation-box,
-    .followup-box,
-    .tips-box {
-        margin-top: 16px;
-
-        padding: 15px;
-
-        background: #ffffff;
-
-        border: 1px solid #e2e8f0;
-
-        border-radius: 12px;
-    }
-
-    .explanation-box {
-        border-left: 3px solid #3b82f6;
-    }
-
-    .followup-box {
-        border-left: 3px solid #8b5cf6;
-    }
-
-    .tips-box {
-        border-left: 3px solid #f59e0b;
-    }
-
-    .answer-actions {
-        margin-top: 16px;
-    }
-
-
-    /* ================= EMPTY ================= */
-
-    .empty-state {
-        padding: 55px 25px;
-
-        text-align: center;
-
-        background: #ffffff;
-
-        border: 1px solid #e5e7eb;
-
-        border-radius: 20px;
-    }
-
-    .empty-state > div {
-        font-size: 42px;
-    }
-
-    .empty-state h2 {
-        color: #111827 !important;
-    }
-
-    .empty-state p {
-        color: #64748b !important;
-    }
-
-
-    /* ================= PAGINATION ================= */
-
-    .pagination-section {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-
-        margin-top: 25px;
-        margin-bottom: 25px;
-    }
-
-    .pagination-info {
-        color: #64748b !important;
-
-        font-size: 12px;
-    }
-
-    .pagination-info strong {
-        color: #111827 !important;
-    }
-
-    .pagination {
-        display: flex;
-        gap: 8px;
-        align-items: center;
-    }
-
-    .page-btn,
-    .page-number {
-        min-height: 40px;
-
+    .live-status {
         display: inline-flex;
         align-items: center;
-        justify-content: center;
-
-        padding: 0 13px;
-
-        border-radius: 10px;
-
-        font-size: 12px;
-        font-weight: 750;
+        gap: 8px;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: .8px;
+        color: #4ade80;
     }
 
-    .page-btn {
-        background: #ffffff;
-
-        border: 1px solid #e2e8f0;
-
-        color: #475569 !important;
-
-        text-decoration: none;
+    .live-status span {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #22c55e;
+        box-shadow: 0 0 12px #22c55e;
     }
 
-    .page-btn:hover {
-        background: #eef2ff;
-
-        border-color: #c7d2fe;
-
-        color: #4f46e5 !important;
+    .timer {
+        font-size: 18px;
+        font-weight: 800;
+        font-family: 'Plus Jakarta Sans',sans-serif;
+        font-variant-numeric: tabular-nums;
     }
 
-    .page-number {
-        background: #eef2ff;
-
-        color: #4f46e5 !important;
-    }
-
-
-    /* ================= TIP ================= */
-
-    .tip-section {
-        margin-bottom: 40px;
-    }
-
-    .tip-card {
+    .ai-avatar-area {
+        min-height: 235px;
         display: flex;
-        align-items: center;
-
-        gap: 15px;
-
-        padding: 20px 23px;
-
-        background: linear-gradient(
-                135deg,
-                #ffffff,
-                #fffaf0
-        );
-
-        border: 1px solid #fde68a;
-
-        border-radius: 18px;
-    }
-
-    .tip-card > span {
-        font-size: 27px;
-    }
-
-    .tip-card h3 {
-        margin: 0;
-
-        color: #111827 !important;
-
-        font-size: 15px;
-    }
-
-    .tip-card p {
-        margin: 5px 0 0;
-
-        color: #64748b !important;
-
-        font-size: 12px;
-
-        line-height: 1.6;
-    }
-
-
-    /* ================= MODAL ================= */
-
-    .modal-overlay {
-        position: fixed;
-
-        inset: 0;
-
-        z-index: 9999;
-
-        display: none;
-        align-items: center;
-        justify-content: center;
-
-        padding: 20px;
-
-        background: rgba(15,23,42,.60);
-
-        backdrop-filter: blur(7px);
-    }
-
-    .random-modal {
-        position: relative;
-
-        width: min(600px,100%);
-
-        padding: 35px;
-
-        background: #ffffff;
-
-        border-radius: 24px;
-
-        box-shadow:
-                0 30px 80px rgba(15,23,42,.25);
-    }
-
-    .modal-close {
-        position: absolute;
-
-        top: 15px;
-        right: 15px;
-
-        width: 36px;
-        height: 36px;
-
-        border: none;
-        border-radius: 10px;
-
-        background: #f1f5f9;
-
-        color: #475569;
-
-        cursor: pointer;
-    }
-
-    .random-icon {
-        text-align: center;
-
-        font-size: 40px;
-    }
-
-    .random-modal h2 {
-        text-align: center;
-
-        color: #111827 !important;
-    }
-
-    .random-question-content {
-        padding: 20px;
-
-        background: #f8fafc;
-
-        border: 1px solid #e2e8f0;
-
-        border-radius: 15px;
-
-        color: #334155 !important;
-
-        line-height: 1.7;
-    }
-
-    .random-modal-actions {
-        display: flex;
-        gap: 10px;
-
-        margin-top: 20px;
-    }
-
-
-    /* ================= TOAST ================= */
-
-    .toast {
-        position: fixed;
-
-        right: 25px;
-        bottom: 25px;
-
-        z-index: 10000;
-
-        padding: 13px 18px;
-
-        background: #111827;
-
-        color: #ffffff !important;
-
-        border-radius: 12px;
-
-        box-shadow:
-                0 12px 30px rgba(15,23,42,.2);
-
-        opacity: 0;
-
-        transform: translateY(15px);
-
-        pointer-events: none;
-
-        transition: .25s ease;
-    }
-
-    .toast.show {
-        opacity: 1;
-
-        transform: translateY(0);
-    }
-
-
-    /* ================= LOADING ================= */
-
-    .loading-overlay {
-        position: fixed;
-
-        inset: 0;
-
-        z-index: 10001;
-
-        display: none;
-
-        align-items: center;
-        justify-content: center;
         flex-direction: column;
-
-        background: rgba(255,255,255,.78);
-
-        backdrop-filter: blur(5px);
-    }
-
-    .loader {
-        width: 42px;
-        height: 42px;
-
-        border: 4px solid #e2e8f0;
-
-        border-top-color: #6366f1;
-
-        border-radius: 50%;
-
-        animation: spin .8s linear infinite;
-    }
-
-    @keyframes spin {
-        to {
-            transform: rotate(360deg);
-        }
-    }
-
-
-    /* ================= SCROLL TOP ================= */
-
-    .scroll-top {
-        position: fixed;
-
-        right: 24px;
-        bottom: 24px;
-
-        z-index: 500;
-
-        width: 52px;
-        height: 52px;
-
-        display: flex;
         align-items: center;
         justify-content: center;
+        background:
+                radial-gradient(circle,rgba(139,92,246,.16),transparent 55%),
+                #0d1120;
+        border: 1px solid rgba(139,92,246,.15);
+        border-radius: 17px;
+        padding: 25px;
+        text-align: center;
+    }
 
-        border: none;
+    .ai-avatar {
+        width: 92px;
+        height: 92px;
         border-radius: 50%;
+        display: grid;
+        place-items: center;
+        background: linear-gradient(145deg,#8b5cf6,#4f46e5);
+        box-shadow: 0 0 0 12px rgba(139,92,246,.09),0 0 50px rgba(139,92,246,.35);
+        font-size: 35px;
+        margin-bottom: 20px;
+    }
 
-        background: linear-gradient(
-                135deg,
-                #2563eb,
-                #6366f1
-        );
+    .ai-avatar.speaking {
+        animation: avatarPulse 1s infinite alternate;
+    }
 
-        color: #ffffff !important;
+    @keyframes avatarPulse {
+        from {transform: scale(1);box-shadow: 0 0 0 12px rgba(139,92,246,.09),0 0 30px rgba(139,92,246,.2)}
+        to {transform: scale(1.07);box-shadow: 0 0 0 20px rgba(139,92,246,.08),0 0 55px rgba(139,92,246,.5)}
+    }
 
-        font-size: 25px;
+    .ai-avatar-area h3 {
+        font-size: 15px;
+        margin: 0;
+    }
 
+    .ai-avatar-area p {
+        color: var(--ai-muted);
+        font-size: 11px;
+        margin: 7px 0 0;
+    }
+
+    .question-box {
+        padding: 20px;
+        margin-top: 16px;
+        border-radius: 14px;
+        background: #191e30;
+        border: 1px solid var(--ai-border);
+    }
+
+    .question-tag {
+        color: #a78bfa;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: .8px;
+        text-transform: uppercase;
+    }
+
+    .question-box h3 {
+        font-size: 15px;
+        line-height: 1.7;
+        margin: 12px 0 0;
+        font-weight: 600;
+    }
+
+    .answer-box {
+        width: 100%;
+        min-height: 110px;
+        resize: vertical;
+        background: #0d1120;
+        color: white;
+        border: 1px solid var(--ai-border);
+        border-radius: 12px;
+        padding: 14px;
+        margin-top: 15px;
+        outline: none;
+        font: inherit;
+        font-size: 12px;
+    }
+
+    .answer-box:focus {
+        border-color: #8b5cf6;
+    }
+
+    .answer-box::placeholder {
+        color: #737d96;
+    }
+
+    .voice-controls {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 13px;
+        margin: 19px 0;
+    }
+
+    .voice-btn {
+        width: 56px;
+        height: 56px;
+        border: 1px solid var(--ai-border);
+        border-radius: 50%;
+        color: white;
+        background: #252b40;
         cursor: pointer;
-
-        box-shadow:
-                0 10px 25px rgba(37,99,235,.28);
+        font-size: 19px;
+        transition: .2s;
     }
 
-
-    /* ================= RESPONSIVE ================= */
-
-    @media (max-width:1100px) {
-
-        .interview-hero {
-            padding: 35px;
-        }
-
-        .hero-stats {
-            width: 350px;
-        }
-
-        .filter-grid {
-            grid-template-columns: repeat(3,1fr);
-        }
-
-        .dashboard-grid {
-            grid-template-columns: repeat(2,1fr);
-        }
+    .voice-btn.recording {
+        background: #dc2626;
+        border-color: #ef4444;
+        animation: recordPulse 1s infinite;
     }
 
-
-    @media (max-width:800px) {
-
-        .interview-hero {
-            flex-direction: column;
-
-            align-items: stretch;
-        }
-
-        .hero-stats {
-            width: 100%;
-        }
-
-        .filter-grid {
-            grid-template-columns: repeat(2,1fr);
-        }
-
-        .daily-goal-card {
-            flex-direction: column;
-
-            align-items: stretch;
-        }
-
-        .goal-progress {
-            width: 100%;
-        }
+    @keyframes recordPulse {
+        50% {box-shadow: 0 0 0 10px rgba(239,68,68,.12)}
     }
 
+    .voice-help {
+        text-align: center;
+        color: var(--ai-muted);
+        font-size: 10px;
+    }
 
-    @media (max-width:600px) {
+    .room-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 11px;
+    }
 
-        .interview-hero,
-        .search-panel,
-        .filter-panel,
-        .dashboard-grid,
-        .progress-card,
-        .daily-goal-card,
-        .questions-section,
-        .pagination-section,
-        .tip-section {
-            width: calc(100% - 24px);
-        }
+    .room-actions button {
+        padding: 13px;
+        border-radius: 10px;
+        border: none;
+        color: white;
+        font-size: 11px;
+        font-weight: 800;
+        cursor: pointer;
+    }
 
-        .interview-hero {
-            padding: 25px 18px;
+    .next-btn {
+        background: linear-gradient(110deg,#7c3aed,#6366f1);
+    }
 
-            border-radius: 20px;
-        }
+    .end-btn {
+        background: rgba(239,68,68,.14);
+        color: #fca5a5 !important;
+        border: 1px solid rgba(239,68,68,.25) !important;
+    }
 
-        .hero-content h1 {
-            font-size: 30px;
-        }
+    .info-list {
+        display: flex;
+        flex-direction: column;
+        gap: 17px;
+    }
 
-        .hero-actions {
-            flex-direction: column;
-        }
+    .info-item {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+    }
 
-        .hero-btn {
-            width: 100%;
-        }
+    .info-icon {
+        flex-shrink: 0;
+        width: 35px;
+        height: 35px;
+        display: grid;
+        place-items: center;
+        color: #c4b5fd;
+        background: rgba(139,92,246,.13);
+        border-radius: 10px;
+    }
 
-        .hero-stats {
-            grid-template-columns: repeat(2,1fr);
-        }
+    .info-item strong {
+        display: block;
+        font-size: 12px;
+    }
 
-        .filter-grid {
+    .info-item p {
+        color: var(--ai-muted);
+        font-size: 10px;
+        line-height: 1.6;
+        margin: 5px 0 0;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(2,1fr);
+        gap: 11px;
+    }
+
+    .stat-box {
+        padding: 17px;
+        border-radius: 13px;
+        background: #171d2d;
+        border: 1px solid var(--ai-border);
+    }
+
+    .stat-box strong {
+        display: block;
+        font-size: 23px;
+        font-family: 'Plus Jakarta Sans',sans-serif;
+    }
+
+    .stat-box span {
+        display: block;
+        color: var(--ai-muted);
+        font-size: 10px;
+        margin-top: 5px;
+    }
+
+    .history-empty {
+        padding: 23px 12px;
+        border-radius: 13px;
+        text-align: center;
+        background: #171d2d;
+        border: 1px dashed rgba(255,255,255,.12);
+    }
+
+    .history-empty i {
+        font-size: 25px;
+        color: #a78bfa;
+    }
+
+    .history-empty p {
+        color: var(--ai-muted);
+        font-size: 11px;
+        line-height: 1.6;
+        margin: 10px 0 0;
+    }
+
+    .report-box {
+        display: none;
+    }
+
+    .report-box.active {
+        display: block;
+    }
+
+    .report-score {
+        text-align: center;
+        padding: 25px;
+        border-radius: 15px;
+        background: radial-gradient(circle,rgba(139,92,246,.17),transparent 70%),#171d2d;
+    }
+
+    .report-score strong {
+        display: block;
+        font-size: 48px;
+        font-family: 'Plus Jakarta Sans',sans-serif;
+        color: #c4b5fd;
+    }
+
+    .report-score span {
+        font-size: 11px;
+        color: var(--ai-muted);
+    }
+
+    .report-feedback {
+        margin-top: 15px;
+        padding: 16px;
+        background: #171d2d;
+        border-radius: 12px;
+    }
+
+    .report-feedback h4 {
+        margin: 0 0 9px;
+        font-size: 12px;
+    }
+
+    .report-feedback p {
+        color: var(--ai-muted);
+        font-size: 11px;
+        line-height: 1.7;
+        margin: 0;
+    }
+
+    .report-close {
+        margin-top: 15px;
+        width: 100%;
+        padding: 13px;
+        color: white;
+        background: #282e43;
+        border: 1px solid var(--ai-border);
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 700;
+    }
+
+    .interview-note {
+        color: var(--ai-muted);
+        font-size: 10px;
+        line-height: 1.7;
+        margin-top: 17px;
+    }
+
+    @media(max-width:950px) {
+        .interview-layout {
             grid-template-columns: 1fr;
         }
+    }
 
-        .dashboard-grid {
-            grid-template-columns: 1fr;
+    @media(max-width:600px) {
+        .interview-page {
+            padding: 20px 12px 35px;
         }
 
-        .questions-header {
-            flex-direction: column;
-
-            align-items: stretch;
-
-            gap: 12px;
+        .interview-hero {
+            padding: 25px 20px;
         }
 
-        .random-btn {
-            width: 100%;
-        }
-
-        .question-card {
+        .ai-card {
             padding: 18px;
         }
 
-        .question-title {
-            font-size: 17px;
+        .role-grid {
+            grid-template-columns: repeat(2,minmax(0,1fr));
         }
 
-        .question-actions {
-            display: grid;
-
-            grid-template-columns: 1fr 1fr;
+        .settings-row {
+            grid-template-columns: 1fr;
         }
 
-        .complete-btn {
-            grid-column: 1 / -1;
-        }
-
-        .pagination-section {
-            flex-direction: column;
-
-            align-items: flex-start;
-
+        .hero-features {
             gap: 12px;
         }
 
-        .random-modal-actions {
-            flex-direction: column;
-        }
-
-        .scroll-top {
-            width: 45px;
-            height: 45px;
-
-            right: 15px;
-            bottom: 15px;
+        .section-heading {
+            align-items: flex-start;
         }
     }
-
 </style>
 {% endblock %}
+
 {% block content %}
 
-<!-- ================= HERO ================= -->
-<section class="interview-hero">
-
-    <div class="hero-content">
-        <span class="hero-badge">🚀 Placement Preparation</span>
-
-        <h1>Interview Preparation Portal</h1>
-
-        <p>
-            Practice technical and HR interview questions,
-            track your preparation and become placement ready.
-        </p>
-
-        <div class="hero-actions">
-
-            <button type="button"
-                    class="hero-btn primary"
-                    id="randomQuestionBtn">
-                🎲 Random Question
-            </button>
-
-            <button type="button"
-                    class="hero-btn secondary"
-                    id="continueBtn">
-                ▶ Continue Practice
-            </button>
-
-        </div>
-    </div>
-
-    <div class="hero-stats">
-
-        <div class="hero-stat">
-            <span>📚</span>
-            <strong>{{ total_questions }}</strong>
-            <small>Questions</small>
-        </div>
-
-        <div class="hero-stat">
-            <span>📂</span>
-            <strong>{{ total_categories }}</strong>
-            <small>Categories</small>
-        </div>
-
-        <div class="hero-stat">
-            <span>🏢</span>
-            <strong>{{ total_companies }}</strong>
-            <small>Companies</small>
-        </div>
-
-        <div class="hero-stat">
-            <span>⭐</span>
-            <strong>4</strong>
-            <small>Levels</small>
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- ================= SEARCH ================= -->
-<section class="search-panel">
-
-    <div class="search-wrapper">
-
-        <i class="fas fa-search"></i>
-
-        <input
-            type="text"
-            id="searchInput"
-            autocomplete="off"
-            placeholder="Search questions, topics, companies...">
-
-        <button type="button"
-                id="clearSearchBtn"
-                class="clear-search">
-            ✕
-        </button>
-
-    </div>
-
-</section>
-
-
-<!-- ================= FILTERS ================= -->
-<section class="filter-panel">
-
-    <div class="filter-header">
-
-        <div>
-            <h3>🎯 Find Questions</h3>
-            <span id="filterResultText">
-                Showing all questions
-            </span>
-        </div>
-
-        <button type="button"
-                id="resetFiltersBtn"
-                class="reset-btn">
-            🔄 Reset
-        </button>
-
-    </div>
-
-
-    <div class="filter-grid">
-
-        <!-- CATEGORY -->
-        <div class="filter-item">
-
-            <label>Category</label>
-
-            <select id="categoryFilter">
-
-                <option value="">
-                    All Categories
-                </option>
-
-                {% for c in categories %}
-
-                <option value="{{ c }}">
-                    {{ c }}
-                </option>
-
-                {% endfor %}
-
-            </select>
-
-        </div>
-
-
-        <!-- LEVEL -->
-        <div class="filter-item">
-
-            <label>Difficulty</label>
-
-            <select id="levelFilter">
-
-                <option value="">
-                    All Levels
-                </option>
-
-                <option value="Basic">
-                    🟢 Basic
-                </option>
-
-                <option value="Intermediate">
-                    🟡 Intermediate
-                </option>
-
-                <option value="Advanced">
-                    🟠 Advanced
-                </option>
-
-                <option value="Expert">
-                    🔴 Expert
-                </option>
-
-            </select>
-
-        </div>
-
-
-        <!-- COMPANY -->
-        <div class="filter-item">
-
-            <label>Company</label>
-
-            <select id="companyFilter">
-
-                <option value="">
-                    All Companies
-                </option>
-
-                {% for company in companies %}
-
-                <option value="{{ company }}">
-                    {{ company }}
-                </option>
-
-                {% endfor %}
-
-            </select>
-
-        </div>
-
-
-        <!-- STATUS -->
-        <div class="filter-item">
-
-            <label>Status</label>
-
-            <select id="statusFilter">
-
-                <option value="">
-                    All Questions
-                </option>
-
-                <option value="completed">
-                    ✅ Completed
-                </option>
-
-                <option value="pending">
-                    ⏳ Pending
-                </option>
-
-                <option value="bookmarked">
-                    🔖 Bookmarked
-                </option>
-
-            </select>
-
-        </div>
-
-
-        <!-- SORT -->
-        <div class="filter-item">
-
-            <label>Sort By</label>
-
-            <select id="sortFilter">
-
-                <option value="default">
-                    Default
-                </option>
-
-                <option value="az">
-                    A → Z
-                </option>
-
-                <option value="za">
-                    Z → A
-                </option>
-
-                <option value="easy">
-                    Easy → Hard
-                </option>
-
-                <option value="hard">
-                    Hard → Easy
-                </option>
-
-            </select>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- ================= DASHBOARD ================= -->
-<section class="dashboard-grid">
-
-    <div class="dashboard-card">
-
-        <div class="dashboard-icon">
-            📚
-        </div>
-
-        <div>
-            <strong>{{ total_questions }}</strong>
-            <span>Total Questions</span>
-        </div>
-
-    </div>
-
-
-    <div class="dashboard-card">
-
-        <div class="dashboard-icon">
-            ✅
-        </div>
-
-        <div>
-            <strong id="completedCount">0</strong>
-            <span>Completed</span>
-        </div>
-
-    </div>
-
-
-    <div class="dashboard-card">
-
-        <div class="dashboard-icon">
-            🔖
-        </div>
-
-        <div>
-            <strong id="bookmarkCount">0</strong>
-            <span>Bookmarked</span>
-        </div>
-
-    </div>
-
-
-    <div class="dashboard-card">
-
-        <div class="dashboard-icon">
-            📈
-        </div>
-
-        <div>
-            <strong id="progressPercent">0%</strong>
-            <span>Progress</span>
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- ================= PROGRESS ================= -->
-<section class="progress-card">
-
-    <div class="progress-top">
-
-        <div>
-            <h3>📈 Learning Progress</h3>
-            <p>Keep practicing every day.</p>
-        </div>
-
-        <strong id="progressText">
-            0%
-        </strong>
-
-    </div>
-
-    <div class="progress-bar">
-
-        <div
-            class="progress-fill"
-            id="progressFill">
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- ================= DAILY GOAL ================= -->
-<section class="daily-goal-card">
-
-    <div class="goal-info">
-
-        <span class="goal-icon">🎯</span>
-
-        <div>
-            <h3>Daily Practice Goal</h3>
-            <p id="dailyGoalText">
-                0 / 20 Questions
-            </p>
-        </div>
-
-    </div>
-
-    <div class="goal-progress">
-
-        <div class="goal-bar">
-
-            <div
-                class="goal-fill"
-                id="dailyGoalFill">
+<div class="interview-page">
+
+    <section class="interview-hero">
+        <div class="hero-content">
+            <div class="hero-badge">
+                <span></span>
+                AI POWERED INTERVIEW STUDIO
             </div>
 
-        </div>
+            <h1>Practice Smarter.<br>Perform Better with <span>AI.</span></h1>
 
-    </div>
-
-</section>
-
-
-<!-- ================= QUESTIONS ================= -->
-<section class="questions-section">
-
-    <div class="questions-header">
-
-        <div>
-
-            <h2>Interview Questions</h2>
-
-            <p id="questionCountText">
-                Showing {{ questions|length }} questions
+            <p>
+                Experience realistic mock interviews with an AI interviewer.
+                Practice technical questions, improve your communication and
+                prepare confidently for your next placement.
             </p>
 
+            <div class="hero-features">
+                <div class="hero-feature"><i class="fas fa-microphone"></i> Voice Interaction</div>
+                <div class="hero-feature"><i class="fas fa-brain"></i> AI Evaluation</div>
+                <div class="hero-feature"><i class="fas fa-chart-line"></i> Performance Insights</div>
+            </div>
         </div>
+    </section>
 
-        <button
-            type="button"
-            id="randomVisibleBtn"
-            class="random-btn">
+    <div class="interview-layout">
 
-            🎲 Pick Random
+        <main>
 
-        </button>
+            <section class="ai-card" id="setupCard">
 
-    </div>
-
-
-    <div
-        id="questionsContainer"
-        class="questions-container">
-
-        {% if questions %}
-
-            {% for q in questions %}
-
-            <article
-                class="question-card"
-                id="question-{{ q.id }}"
-
-                data-id="{{ q.id }}"
-
-                data-category="{{ q.category or '' }}"
-
-                data-level="{{ q.level or '' }}"
-
-                data-company="{{ q.company or '' }}"
-
-                data-topic="{{ q.topic or '' }}">
-
-                <!-- TOP -->
-
-                <div class="question-top">
-
-                    <div class="question-number">
-                        Q{{ loop.index + ((page - 1) * 20) }}
+                <div class="section-heading">
+                    <div>
+                        <h2>Configure Your Interview</h2>
+                        <p>Personalize your mock interview experience.</p>
                     </div>
-
-
-                    <div class="question-badges">
-
-                        {% if q.category %}
-
-                        <span class="badge category">
-                            {{ q.category }}
-                        </span>
-
-                        {% endif %}
-
-
-                        {% if q.level %}
-
-                        <span class="badge level
-                            {{ q.level|lower }}">
-
-                            {{ q.level }}
-
-                        </span>
-
-                        {% endif %}
-
-
-                        {% if q.company %}
-
-                        <span class="badge company">
-                            🏢 {{ q.company }}
-                        </span>
-
-                        {% endif %}
-
-                    </div>
-
-
-                    <button
-                        type="button"
-                        class="bookmark-btn"
-                        data-id="{{ q.id }}"
-                        title="Bookmark">
-
-                        <i class="far fa-bookmark"></i>
-
-                    </button>
-
+                    <span class="step-label">STEP 01</span>
                 </div>
 
+                <form id="interviewSetup">
 
-                <!-- QUESTION -->
+                    <label class="form-label">Select Your Job Role</label>
 
-                <div class="question-body">
+                    <div class="role-grid">
 
-                    <h3 class="question-title">
-                        {{ q.question }}
+                        <label class="role-option">
+                            <input type="radio" name="role" value="Python Developer" checked>
+                            <div class="role-box">
+                                <div class="role-icon"><i class="fab fa-python"></i></div>
+                                <strong>Python Developer</strong>
+                                <small>Python & Backend</small>
+                            </div>
+                        </label>
+
+                        <label class="role-option">
+                            <input type="radio" name="role" value="Java Developer">
+                            <div class="role-box">
+                                <div class="role-icon"><i class="fab fa-java"></i></div>
+                                <strong>Java Developer</strong>
+                                <small>Java & OOP</small>
+                            </div>
+                        </label>
+
+                        <label class="role-option">
+                            <input type="radio" name="role" value="Full Stack Developer">
+                            <div class="role-box">
+                                <div class="role-icon"><i class="fas fa-layer-group"></i></div>
+                                <strong>Full Stack</strong>
+                                <small>Frontend & Backend</small>
+                            </div>
+                        </label>
+
+                        <label class="role-option">
+                            <input type="radio" name="role" value="Frontend Developer">
+                            <div class="role-box">
+                                <div class="role-icon"><i class="fas fa-code"></i></div>
+                                <strong>Frontend Developer</strong>
+                                <small>HTML, CSS & JS</small>
+                            </div>
+                        </label>
+
+                        <label class="role-option">
+                            <input type="radio" name="role" value="Backend Developer">
+                            <div class="role-box">
+                                <div class="role-icon"><i class="fas fa-server"></i></div>
+                                <strong>Backend Developer</strong>
+                                <small>APIs & Databases</small>
+                            </div>
+                        </label>
+
+                        <label class="role-option">
+                            <input type="radio" name="role" value="Data Analyst">
+                            <div class="role-box">
+                                <div class="role-icon"><i class="fas fa-chart-pie"></i></div>
+                                <strong>Data Analyst</strong>
+                                <small>SQL & Analytics</small>
+                            </div>
+                        </label>
+
+                    </div>
+
+                    <div class="level-grid">
+
+                        <label class="level-option">
+                            <input type="radio" name="level" value="Fresher" checked>
+                            <div class="level-box">
+                                <strong>Fresher</strong>
+                                <small>Beginner level</small>
+                            </div>
+                        </label>
+
+                        <label class="level-option">
+                            <input type="radio" name="level" value="Intermediate">
+                            <div class="level-box">
+                                <strong>Intermediate</strong>
+                                <small>Moderate level</small>
+                            </div>
+                        </label>
+
+                        <label class="level-option">
+                            <input type="radio" name="level" value="Advanced">
+                            <div class="level-box">
+                                <strong>Advanced</strong>
+                                <small>Expert level</small>
+                            </div>
+                        </label>
+
+                    </div>
+
+                    <div class="settings-row">
+
+                        <div>
+                            <label class="form-label" for="duration">Interview Duration</label>
+                            <select id="duration">
+                                <option value="10">10 Minutes</option>
+                                <option value="15" selected>15 Minutes</option>
+                                <option value="20">20 Minutes</option>
+                                <option value="30">30 Minutes</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="form-label" for="interviewLanguage">Interview Language</label>
+                            <select id="interviewLanguage">
+                                <option value="English">English</option>
+                                <option value="Hindi">Hindi</option>
+                                <option value="Hinglish">Hinglish</option>
+                            </select>
+                        </div>
+
+                    </div>
+
+                    <button type="submit" class="primary-btn" id="startBtn">
+                        <i class="fas fa-robot"></i>
+                        Start AI Mock Interview
+                        <i class="fas fa-arrow-right" style="margin-left:8px"></i>
+                    </button>
+
+                </form>
+
+                <p class="interview-note">
+                    <i class="fas fa-shield-alt"></i>
+                    Your interview experience is designed for placement preparation.
+                    AI evaluation and interview history will be connected through the backend.
+                </p>
+
+            </section>
+
+            <section class="ai-card interview-room" id="interviewRoom">
+
+                <div class="room-top">
+                    <div>
+                        <div class="live-status"><span></span> INTERVIEW IN PROGRESS</div>
+                        <div style="font-size:11px;color:#929bb3;margin-top:7px" id="roomRole">
+                            Python Developer
+                        </div>
+                    </div>
+
+                    <div class="timer" id="timer">15:00</div>
+                </div>
+
+                <div class="ai-avatar-area">
+                    <div class="ai-avatar" id="aiAvatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h3>AI Interviewer</h3>
+                    <p id="aiStatus">Your AI interviewer is ready.</p>
+                </div>
+
+                <div class="question-box">
+                    <span class="question-tag">
+                        <i class="fas fa-comment-dots"></i>
+                        INTERVIEW QUESTION
+                    </span>
+
+                    <h3 id="questionText">
+                        Welcome to your mock interview. Tell me about yourself.
                     </h3>
-
-                    {% if q.topic %}
-
-                    <span class="topic-label">
-                        📚 {{ q.topic }}
-                    </span>
-
-                    {% endif %}
-
                 </div>
 
+                <textarea
+                        class="answer-box"
+                        id="answerText"
+                        placeholder="Your spoken answer will appear here. You can also type your answer..."
+                ></textarea>
 
-                <!-- META -->
+                <div class="voice-controls">
+                    <button type="button" class="voice-btn" id="micBtn" title="Start microphone">
+                        <i class="fas fa-microphone"></i>
+                    </button>
 
-                <div class="question-meta">
-
-                    <span>
-                        ⏱ {{ q.expected_time or 2 }} min
-                    </span>
-
-                    <span>
-                        ⭐ {{ q.level or 'Basic' }}
-                    </span>
-
-                    <span>
-                        📂 {{ q.category or 'General' }}
-                    </span>
-
+                    <button type="button" class="voice-btn" id="speakBtn" title="Listen to question">
+                        <i class="fas fa-volume-up"></i>
+                    </button>
                 </div>
 
-
-                <!-- ACTIONS -->
-
-                <div class="question-actions">
-
-                    <button
-                        type="button"
-                        class="primary-btn answer-btn"
-                        data-id="{{ q.id }}">
-
-                        💡 Show Answer
-
-                    </button>
-
-
-                    <button
-                        type="button"
-                        class="secondary-btn copy-btn">
-
-                        📋 Copy
-
-                    </button>
-
-
-                    <button
-                        type="button"
-                        class="secondary-btn share-btn">
-
-                        📤 Share
-
-                    </button>
-
-
-                    <button
-                        type="button"
-                        class="secondary-btn complete-btn"
-                        data-id="{{ q.id }}">
-
-                        ✅ Mark Completed
-
-                    </button>
-
+                <div class="voice-help" id="voiceHelp">
+                    Click the microphone to speak your answer.
                 </div>
 
+                <div class="room-actions">
+                    <button type="button" class="next-btn" id="nextBtn">
+                        Submit Answer <i class="fas fa-arrow-right"></i>
+                    </button>
 
-                <!-- ANSWER -->
+                    <button type="button" class="end-btn" id="endBtn">
+                        <i class="fas fa-stop-circle"></i> End Interview
+                    </button>
+                </div>
 
-                <div
-                    class="answer-box"
-                    style="display:none;">
+                <p class="interview-note">
+                    Microphone permission is required for voice input.
+                    This frontend currently uses browser speech recognition and speech synthesis.
+                    Gemini AI conversation will be connected in the backend integration step.
+                </p>
 
-                    <div class="answer-header">
+            </section>
 
-                        <h4>✅ Answer</h4>
+            <section class="ai-card report-box" id="reportBox">
 
-                        <button
-                            type="button"
-                            class="close-answer-btn">
+                <div class="section-heading">
+                    <div>
+                        <h2><i class="fas fa-award" style="color:#a78bfa"></i> Interview Summary</h2>
+                        <p>Your practice session has ended.</p>
+                    </div>
+                    <span class="step-label">COMPLETED</span>
+                </div>
 
-                            ✕
+                <div class="report-score">
+                    <strong id="reportScore">--</strong>
+                    <span>AI Evaluation Score</span>
+                </div>
 
-                        </button>
+                <div class="report-feedback">
+                    <h4><i class="fas fa-star" style="color:#fbbf24"></i> Interview Summary</h4>
+                    <p id="reportSummary">
+                        Your detailed AI evaluation will be available after Gemini backend integration.
+                    </p>
+                </div>
 
+                <div class="report-feedback">
+                    <h4><i class="fas fa-thumbs-up" style="color:#4ade80"></i> Strengths</h4>
+                    <p id="reportStrengths">Your strengths will appear here after AI evaluation.</p>
+                </div>
+
+                <div class="report-feedback">
+                    <h4><i class="fas fa-bullseye" style="color:#a78bfa"></i> Areas to Improve</h4>
+                    <p id="reportImprovements">Your improvement suggestions will appear here.</p>
+                </div>
+
+                <button type="button" class="report-close" id="newInterviewBtn">
+                    <i class="fas fa-redo"></i> Start New Interview
+                </button>
+
+            </section>
+
+        </main>
+
+        <aside>
+
+            <section class="ai-card">
+
+                <div class="section-heading">
+                    <div>
+                        <h2>Interview Insights</h2>
+                        <p>What you will experience</p>
+                    </div>
+                    <i class="fas fa-sparkles" style="color:#a78bfa"></i>
+                </div>
+
+                <div class="info-list">
+
+                    <div class="info-item">
+                        <div class="info-icon"><i class="fas fa-robot"></i></div>
+                        <div>
+                            <strong>AI Interviewer</strong>
+                            <p>Practice with an AI interviewer based on your selected job role.</p>
+                        </div>
                     </div>
 
-
-                    <div class="answer-content">
-
-                        <p>
-                            {{ q.answer or 'Answer not available.' }}
-                        </p>
-
+                    <div class="info-item">
+                        <div class="info-icon"><i class="fas fa-microphone-alt"></i></div>
+                        <div>
+                            <strong>Voice-Based Answers</strong>
+                            <p>Speak naturally using your microphone during the interview.</p>
+                        </div>
                     </div>
 
-
-                    {% if q.explanation %}
-
-                    <div class="explanation-box">
-
-                        <h4>📘 Explanation</h4>
-
-                        <p>
-                            {{ q.explanation }}
-                        </p>
-
+                    <div class="info-item">
+                        <div class="info-icon"><i class="fas fa-brain"></i></div>
+                        <div>
+                            <strong>Smart Evaluation</strong>
+                            <p>Get feedback on technical knowledge, communication and answer quality.</p>
+                        </div>
                     </div>
 
-                    {% endif %}
-
-
-                    {% if q.followup_question %}
-
-                    <div class="followup-box">
-
-                        <h4>🎯 Follow-up Question</h4>
-
-                        <p>
-                            {{ q.followup_question }}
-                        </p>
-
-                    </div>
-
-                    {% endif %}
-
-
-                    {% if q.tips %}
-
-                    <div class="tips-box">
-
-                        <h4>💡 Interview Tip</h4>
-
-                        <p>
-                            {{ q.tips }}
-                        </p>
-
-                    </div>
-
-                    {% endif %}
-
-
-                    <div class="answer-actions">
-
-                        <button
-                            type="button"
-                            class="secondary-btn copy-answer-btn">
-
-                            📋 Copy Answer
-
-                        </button>
-
+                    <div class="info-item">
+                        <div class="info-icon"><i class="fas fa-chart-line"></i></div>
+                        <div>
+                            <strong>Performance Report</strong>
+                            <p>Understand your strengths and identify areas that need improvement.</p>
+                        </div>
                     </div>
 
                 </div>
 
-            </article>
+            </section>
 
-            {% endfor %}
+            <section class="ai-card">
 
+                <div class="section-heading">
+                    <div>
+                        <h2>Your Practice Stats</h2>
+                        <p>Interview preparation overview</p>
+                    </div>
+                </div>
 
-        {% else %}
+                <div class="stats-grid">
 
-        <div class="empty-state">
+                    <div class="stat-box">
+                        <strong id="sessionCount">0</strong>
+                        <span>Sessions This Visit</span>
+                    </div>
 
-            <div>📭</div>
+                    <div class="stat-box">
+                        <strong id="questionCount">0</strong>
+                        <span>Questions Attempted</span>
+                    </div>
 
-            <h2>No Questions Found</h2>
+                    <div class="stat-box">
+                        <strong id="totalMinutes">0</strong>
+                        <span>Minutes Practiced</span>
+                    </div>
 
-            <p>
-                Try another search or filter.
-            </p>
+                    <div class="stat-box">
+                        <strong>AI</strong>
+                        <span>Interview Mode</span>
+                    </div>
 
-        </div>
+                </div>
 
-        {% endif %}
+            </section>
 
-    </div>
+            <section class="ai-card">
 
-</section>
+                <div class="section-heading">
+                    <div>
+                        <h2>Interview History</h2>
+                        <p>Your recent practice sessions</p>
+                    </div>
+                    <i class="fas fa-history" style="color:#a78bfa"></i>
+                </div>
 
+                <div class="history-empty">
+                    <i class="fas fa-folder-open"></i>
+                    <p>Completed interview history will appear here after database integration.</p>
+                </div>
 
-<!-- ================= PAGINATION ================= -->
-<section class="pagination-section">
+            </section>
 
-    <div class="pagination-info">
-
-        Showing
-        <strong>{{ questions|length }}</strong>
-        questions
-
-    </div>
-
-
-    <div class="pagination">
-
-        {% if page > 1 %}
-
-        <a
-            class="page-btn"
-            href="{{ url_for('interview_questions', page=page - 1) }}">
-
-            ⬅ Previous
-
-        </a>
-
-        {% endif %}
-
-
-        <span class="page-number">
-
-            Page {{ page }} of {{ total_pages }}
-
-        </span>
-
-
-        {% if page < total_pages %}
-
-        <a
-            class="page-btn"
-            href="{{ url_for('interview_questions', page=page + 1) }}">
-
-            Next ➜
-
-        </a>
-
-        {% endif %}
-
-    </div>
-
-</section>
-
-
-<!-- ================= TIP ================= -->
-<section class="tip-section">
-
-    <div class="tip-card">
-
-        <span>💡</span>
-
-        <div>
-
-            <h3>Today's Interview Tip</h3>
-
-            <p>
-                First explain the concept, then give an example,
-                and finally explain how you used it in a project.
-            </p>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- ================= RANDOM MODAL ================= -->
-<div
-    id="randomModal"
-    class="modal-overlay">
-
-    <div class="random-modal">
-
-        <button
-            type="button"
-            id="closeRandomModal"
-            class="modal-close">
-
-            ✕
-
-        </button>
-
-
-        <div class="random-icon">
-            🎲
-        </div>
-
-        <h2>Random Interview Question</h2>
-
-        <div
-            id="randomQuestionContent"
-            class="random-question-content">
-
-        </div>
-
-
-        <div class="random-modal-actions">
-
-            <button
-                type="button"
-                id="randomAgainBtn"
-                class="primary-btn">
-
-                🎲 Another Question
-
-            </button>
-
-            <button
-                type="button"
-                id="openRandomQuestionBtn"
-                class="secondary-btn">
-
-                📖 Open Question
-
-            </button>
-
-        </div>
+        </aside>
 
     </div>
 
 </div>
 
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
 
-<!-- ================= TOAST ================= -->
-<div
-    id="toast"
-    class="toast">
+        const setupCard = document.getElementById("setupCard");
+        const setupForm = document.getElementById("interviewSetup");
+        const interviewRoom = document.getElementById("interviewRoom");
+        const reportBox = document.getElementById("reportBox");
 
-</div>
+        const startBtn = document.getElementById("startBtn");
+        const micBtn = document.getElementById("micBtn");
+        const speakBtn = document.getElementById("speakBtn");
+        const nextBtn = document.getElementById("nextBtn");
+        const endBtn = document.getElementById("endBtn");
+        const newInterviewBtn = document.getElementById("newInterviewBtn");
 
+        const timerDisplay = document.getElementById("timer");
+        const questionText = document.getElementById("questionText");
+        const answerText = document.getElementById("answerText");
+        const aiStatus = document.getElementById("aiStatus");
+        const aiAvatar = document.getElementById("aiAvatar");
+        const voiceHelp = document.getElementById("voiceHelp");
 
-<!-- ================= LOADING ================= -->
-<div
-    id="loadingOverlay"
-    class="loading-overlay">
+        const recognitionSupported = "SpeechRecognition" in window || "webkitSpeechRecognition" in window;
 
-    <div class="loader"></div>
+        let recognition = null;
+        let timerInterval = null;
+        let remainingSeconds = 0;
+        let interviewActive = false;
+        let currentQuestion = 0;
+        let questionAnswers = [];
+        let selectedRole = "";
+        let selectedLevel = "";
+        let selectedLanguage = "";
+        let totalDuration = 15;
+        let sessions = 0;
+        let practicedMinutes = 0;
+        let recognitionRunning = false;
 
-    <p>
-        Loading...
-    </p>
+        const questionBank = {
+            "Python Developer": {
+                "Fresher": [
+                    "Tell me about yourself and why you want to become a Python developer.",
+                    "What are the main features of Python?",
+                    "Explain the difference between a list and a tuple in Python.",
+                    "What is the difference between == and is in Python?",
+                    "Explain functions and how arguments work in Python.",
+                    "What is exception handling? Explain try and except.",
+                    "What are Python dictionaries and how do they work?",
+                    "What is object-oriented programming?",
+                    "What is the difference between a for loop and a while loop?",
+                    "Why should we hire you for this Python developer position?"
+                ],
+                "Intermediate": [
+                    "Explain decorators in Python with a practical example.",
+                    "What is the difference between multithreading and multiprocessing?",
+                    "Explain Python generators and the yield keyword.",
+                    "How does memory management work in Python?",
+                    "What are Python context managers?",
+                    "Explain shallow copy versus deep copy.",
+                    "How would you optimize a slow Python application?",
+                    "What are REST APIs and how would you build one in Python?",
+                    "Explain the Global Interpreter Lock.",
+                    "How do you write unit tests in Python?"
+                ],
+                "Advanced": [
+                    "Explain Python's descriptor protocol.",
+                    "How does Python's garbage collector work?",
+                    "Describe the asyncio event loop and cooperative multitasking.",
+                    "How would you design a highly scalable Python backend?",
+                    "Explain metaclasses and when you would use them.",
+                    "How would you profile and optimize memory-intensive Python code?",
+                    "Explain concurrency trade-offs in Python applications.",
+                    "How would you implement a distributed task processing system?",
+                    "Explain dependency injection and architectural patterns in Python.",
+                    "How would you design production-grade observability for a Python service?"
+                ]
+            },
+            "Java Developer": {
+                "Fresher": [
+                    "Tell me about yourself and your interest in Java development.",
+                    "What are the main features of Java?",
+                    "Explain the difference between JDK, JRE and JVM.",
+                    "What are the four pillars of object-oriented programming?",
+                    "What is the difference between == and equals()?",
+                    "Explain method overloading and method overriding.",
+                    "What is the difference between an interface and an abstract class?",
+                    "Explain Java exception handling.",
+                    "What is the Java Collections Framework?",
+                    "Why should we hire you as a Java developer?"
+                ],
+                "Intermediate": [
+                    "Explain the internal working of HashMap.",
+                    "What is the difference between ArrayList and LinkedList?",
+                    "Explain Java multithreading and synchronization.",
+                    "What are functional interfaces and lambda expressions?",
+                    "Explain the Stream API.",
+                    "What is the difference between checked and unchecked exceptions?",
+                    "How does garbage collection work in Java?",
+                    "What is dependency injection in Spring?",
+                    "Explain REST API development using Spring Boot.",
+                    "How do you handle transactions in a Java application?"
+                ],
+                "Advanced": [
+                    "Explain JVM memory management and garbage collection algorithms.",
+                    "How does the Java memory model guarantee visibility?",
+                    "Explain CompletableFuture and asynchronous programming.",
+                    "How would you troubleshoot a Java memory leak?",
+                    "Explain Spring Boot auto-configuration internally.",
+                    "How would you design a scalable microservices architecture?",
+                    "What are lock-free algorithms and compare-and-swap operations?",
+                    "How would you implement distributed transactions?",
+                    "Explain JVM performance tuning.",
+                    "How would you design a highly available Java application?"
+                ]
+            },
+            "Full Stack Developer": {
+                "Fresher": [
+                    "Tell me about yourself and your interest in full stack development.",
+                    "What is the difference between frontend and backend development?",
+                    "Explain HTML semantic elements.",
+                    "What is the difference between CSS Grid and Flexbox?",
+                    "What is JavaScript and how is it used in web applications?",
+                    "What is the DOM?",
+                    "What is the difference between GET and POST requests?",
+                    "What is a database and what is SQL?",
+                    "Explain how a browser communicates with a server.",
+                    "Describe a web project you have developed."
+                ],
+                "Intermediate": [
+                    "Explain the complete lifecycle of an HTTP request in a full stack application.",
+                    "How does authentication work using JWT?",
+                    "Explain React hooks and state management.",
+                    "How would you design RESTful APIs?",
+                    "What is database indexing and why is it useful?",
+                    "How do you prevent SQL injection?",
+                    "Explain session-based authentication versus token-based authentication.",
+                    "How do you optimize frontend performance?",
+                    "How would you deploy a full stack application?",
+                    "Explain CORS and how you troubleshoot it."
+                ],
+                "Advanced": [
+                    "Design a scalable full stack architecture for an online examination platform.",
+                    "How would you implement real-time communication in a web application?",
+                    "Explain database sharding and replication.",
+                    "How would you secure a production web application?",
+                    "Explain server-side rendering versus client-side rendering.",
+                    "How would you design a distributed caching strategy?",
+                    "How would you handle millions of concurrent users?",
+                    "Explain microservices communication patterns.",
+                    "How would you implement zero-downtime deployment?",
+                    "Describe your strategy for debugging complex production incidents."
+                ]
+            },
+            "Frontend Developer": {
+                "Fresher": [
+                    "Tell me about yourself and your interest in frontend development.",
+                    "What is semantic HTML?",
+                    "Explain the CSS box model.",
+                    "What is the difference between class and ID selectors?",
+                    "What are JavaScript data types?",
+                    "Explain event bubbling in JavaScript.",
+                    "What is responsive web design?",
+                    "What is the difference between let, const and var?",
+                    "What is the DOM?",
+                    "How would you make a website mobile-friendly?"
+                ],
+                "Intermediate": [
+                    "Explain closures in JavaScript.",
+                    "What is the virtual DOM in React?",
+                    "Explain React hooks.",
+                    "What is the difference between controlled and uncontrolled components?",
+                    "How do you optimize frontend loading performance?",
+                    "Explain promises and async/await.",
+                    "What is lazy loading?",
+                    "How do you manage global state in React?",
+                    "What are web accessibility standards?",
+                    "How would you handle API errors in a frontend application?"
+                ],
+                "Advanced": [
+                    "Explain browser rendering and critical rendering paths.",
+                    "How would you optimize Core Web Vitals?",
+                    "Explain React reconciliation and concurrent rendering.",
+                    "How would you architect a large-scale frontend application?",
+                    "Explain memory leaks in JavaScript and how to identify them.",
+                    "How would you implement a design system?",
+                    "Explain Web Workers and their use cases.",
+                    "How would you implement secure frontend authentication?",
+                    "Describe code splitting strategies for large applications.",
+                    "How would you test and monitor a production frontend?"
+                ]
+            },
+            "Backend Developer": {
+                "Fresher": [
+                    "Tell me about yourself and your interest in backend development.",
+                    "What happens when a user enters a URL in a browser?",
+                    "What is an API?",
+                    "Explain the difference between SQL and NoSQL databases.",
+                    "What is HTTP?",
+                    "Explain GET, POST, PUT and DELETE.",
+                    "What is server-side programming?",
+                    "What is database normalization?",
+                    "What is authentication?",
+                    "How would you connect an application to a database?"
+                ],
+                "Intermediate": [
+                    "Explain REST API design principles.",
+                    "How does JWT authentication work?",
+                    "What is database indexing?",
+                    "Explain database transactions and ACID properties.",
+                    "How do you prevent SQL injection?",
+                    "What is caching and when would you use Redis?",
+                    "Explain middleware in backend frameworks.",
+                    "How would you implement rate limiting?",
+                    "What is the difference between synchronous and asynchronous processing?",
+                    "How do you handle API versioning?"
+                ],
+                "Advanced": [
+                    "Design a scalable backend architecture for an e-commerce platform.",
+                    "Explain database sharding and replication strategies.",
+                    "How would you implement distributed caching?",
+                    "Explain message queues and event-driven architecture.",
+                    "How do you handle distributed transactions?",
+                    "How would you prevent race conditions?",
+                    "Explain horizontal versus vertical scaling.",
+                    "How would you design a resilient authentication service?",
+                    "How would you troubleshoot high API latency?",
+                    "Design a highly available backend system."
+                ]
+            },
+            "Data Analyst": {
+                "Fresher": [
+                    "Tell me about yourself and your interest in data analytics.",
+                    "What is data analysis?",
+                    "Explain the difference between structured and unstructured data.",
+                    "What is SQL?",
+                    "What is the difference between WHERE and HAVING?",
+                    "Explain primary key and foreign key.",
+                    "What is an Excel pivot table?",
+                    "What is data cleaning?",
+                    "What is the difference between mean, median and mode?",
+                    "Why is data visualization important?"
+                ],
+                "Intermediate": [
+                    "Explain SQL joins with practical examples.",
+                    "What are window functions in SQL?",
+                    "How do you handle missing values in a dataset?",
+                    "Explain the difference between Power BI and Excel.",
+                    "What is normalization in data analysis?",
+                    "How would you identify outliers?",
+                    "Explain correlation versus causation.",
+                    "What are DAX measures in Power BI?",
+                    "How do you build an effective dashboard?",
+                    "Describe how you would analyze a sales dataset."
+                ],
+                "Advanced": [
+                    "How would you design an end-to-end analytics pipeline?",
+                    "Explain query optimization techniques in SQL.",
+                    "How would you handle large-scale datasets?",
+                    "Explain statistical hypothesis testing.",
+                    "How would you identify and address data quality issues?",
+                    "Explain star schema versus snowflake schema.",
+                    "How would you optimize a complex Power BI model?",
+                    "Describe an approach to detecting anomalies in business data.",
+                    "How would you communicate complex insights to non-technical stakeholders?",
+                    "Design a data-driven strategy to improve customer retention."
+                ]
+            }
+        };
 
-</div>
+        function updateStats() {
+            document.getElementById("sessionCount").textContent = sessions;
+            document.getElementById("questionCount").textContent = questionAnswers.length;
+            document.getElementById("totalMinutes").textContent = practicedMinutes;
+        }
 
+        function stopRecognition() {
+            if (recognition && recognitionRunning) {
+                recognition.stop();
+            }
+        }
 
-<!-- ================= SCROLL TOP ================= -->
-<button
-    type="button"
-    id="scrollTopBtn"
-    class="scroll-top">
+        function stopSpeech() {
+            if ("speechSynthesis" in window) {
+                window.speechSynthesis.cancel();
+            }
+            aiAvatar.classList.remove("speaking");
+        }
 
-    ↑
+        function speakQuestion() {
+            if (!("speechSynthesis" in window)) {
+                aiStatus.textContent = "Speech synthesis is not supported in this browser.";
+                return;
+            }
 
-</button>
+            stopSpeech();
 
-{% endblock %}
+            const utterance = new SpeechSynthesisUtterance(questionText.textContent);
+            const language = selectedLanguage === "Hindi" ? "hi-IN" : "en-IN";
 
+            utterance.lang = language;
+            utterance.rate = 0.9;
+            utterance.pitch = 1;
 
-{% block js %}
+            utterance.onstart = function () {
+                aiStatus.textContent = "AI interviewer is speaking...";
+                aiAvatar.classList.add("speaking");
+            };
 
-<script src="{{ url_for('static', filename='js/interview.js') }}"></script>
+            utterance.onend = function () {
+                aiStatus.textContent = "Your turn. Please answer the question.";
+                aiAvatar.classList.remove("speaking");
+            };
+
+            utterance.onerror = function () {
+                aiStatus.textContent = "Unable to play voice. Please read the question.";
+                aiAvatar.classList.remove("speaking");
+            };
+
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function showQuestion() {
+            const questions = questionBank[selectedRole][selectedLevel];
+            const question = questions[currentQuestion % questions.length];
+
+            questionText.textContent = question;
+            answerText.value = "";
+            aiStatus.textContent = "AI interviewer is preparing your question.";
+
+            setTimeout(speakQuestion, 300);
+        }
+
+        function updateTimer() {
+            const minutes = Math.floor(remainingSeconds / 60);
+            const seconds = remainingSeconds % 60;
+
+            timerDisplay.textContent =
+                String(minutes).padStart(2, "0") + ":" +
+                String(seconds).padStart(2, "0");
+
+            if (remainingSeconds <= 0) {
+                finishInterview();
+                return;
+            }
+
+            remainingSeconds--;
+        }
+
+        setupForm.addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            selectedRole = document.querySelector('input[name="role"]:checked').value;
+            selectedLevel = document.querySelector('input[name="level"]:checked').value;
+            selectedLanguage = document.getElementById("interviewLanguage").value;
+            totalDuration = parseInt(document.getElementById("duration").value, 10);
+
+            currentQuestion = 0;
+            questionAnswers = [];
+            remainingSeconds = totalDuration * 60;
+            interviewActive = true;
+
+            document.getElementById("roomRole").textContent =
+                selectedRole + " | " + selectedLevel + " | " + selectedLanguage;
+
+            setupCard.style.display = "none";
+            reportBox.classList.remove("active");
+            interviewRoom.classList.add("active");
+
+            startBtn.disabled = true;
+
+            showQuestion();
+            updateTimer();
+
+            timerInterval = setInterval(updateTimer, 1000);
+        });
+
+        if (recognitionSupported) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new SpeechRecognition();
+
+            recognition.continuous = false;
+            recognition.interimResults = true;
+
+            recognition.onstart = function () {
+                recognitionRunning = true;
+                micBtn.classList.add("recording");
+                micBtn.innerHTML = '<i class="fas fa-stop"></i>';
+                voiceHelp.textContent = "Listening... Speak clearly.";
+                aiStatus.textContent = "Listening to your answer...";
+                stopSpeech();
+            };
+
+            recognition.onresult = function (event) {
+                let transcript = "";
+
+                for (let i = 0; i < event.results.length; i++) {
+                    transcript += event.results[i][0].transcript + " ";
+                }
+
+                answerText.value = transcript.trim();
+            };
+
+            recognition.onend = function () {
+                recognitionRunning = false;
+                micBtn.classList.remove("recording");
+                micBtn.innerHTML = '<i class="fas fa-microphone"></i>';
+                voiceHelp.textContent = "Recording finished. Review your answer before submitting.";
+                aiStatus.textContent = "Your answer has been captured.";
+            };
+
+            recognition.onerror = function (event) {
+                recognitionRunning = false;
+                micBtn.classList.remove("recording");
+                micBtn.innerHTML = '<i class="fas fa-microphone"></i>';
+
+                voiceHelp.textContent = event.error === "not-allowed"
+                    ? "Microphone permission denied. Allow microphone access in your browser."
+                    : "Microphone error: " + event.error;
+            };
+
+        } else {
+            micBtn.disabled = true;
+            micBtn.style.opacity = ".4";
+            voiceHelp.textContent = "Speech recognition is not supported. Try Google Chrome or type your answer.";
+        }
+
+        micBtn.addEventListener("click", function () {
+            if (!interviewActive) return;
+
+            if (!recognition) {
+                voiceHelp.textContent = "Speech recognition is not supported in this browser.";
+                return;
+            }
+
+            if (recognitionRunning) {
+                stopRecognition();
+                return;
+            }
+
+            try {
+                recognition.lang = selectedLanguage === "Hindi" ? "hi-IN" : "en-IN";
+                recognition.start();
+            } catch (error) {
+                voiceHelp.textContent = "Unable to start microphone. Please try again.";
+            }
+        });
+
+        speakBtn.addEventListener("click", function () {
+            if (interviewActive) {
+                speakQuestion();
+            }
+        });
+
+        nextBtn.addEventListener("click", function () {
+            if (!interviewActive) return;
+
+            stopRecognition();
+            stopSpeech();
+
+            const answer = answerText.value.trim();
+
+            if (!answer) {
+                alert("Please provide an answer before continuing.");
+                return;
+            }
+
+            questionAnswers.push({
+                question: questionText.textContent,
+                answer: answer
+            });
+
+            currentQuestion++;
+
+            if (currentQuestion >= 10) {
+                finishInterview();
+                return;
+            }
+
+            showQuestion();
+        });
+
+        function finishInterview() {
+            if (!interviewActive) return;
+
+            interviewActive = false;
+
+            clearInterval(timerInterval);
+            stopRecognition();
+            stopSpeech();
+
+            if (answerText.value.trim() && questionAnswers.length < 10) {
+                questionAnswers.push({
+                    question: questionText.textContent,
+                    answer: answerText.value.trim()
+                });
+            }
+
+            sessions++;
+            practicedMinutes += Math.max(
+                1,
+                Math.floor((totalDuration * 60 - remainingSeconds) / 60)
+            );
+
+            updateStats();
+
+            interviewRoom.classList.remove("active");
+            reportBox.classList.add("active");
+
+            document.getElementById("reportScore").textContent = "--";
+            document.getElementById("reportSummary").textContent =
+                "You completed " + questionAnswers.length +
+                " questions for the " + selectedRole +
+                " position. Your answers are ready for Gemini AI evaluation.";
+
+            document.getElementById("reportStrengths").textContent =
+                "Your answers have been collected. AI will identify your strengths after backend integration.";
+
+            document.getElementById("reportImprovements").textContent =
+                "Detailed technical and communication improvement suggestions will be generated after backend integration.";
+
+            startBtn.disabled = false;
+        }
+
+        endBtn.addEventListener("click", function () {
+            if (confirm("Are you sure you want to end this interview?")) {
+                finishInterview();
+            }
+        });
+
+        newInterviewBtn.addEventListener("click", function () {
+            reportBox.classList.remove("active");
+            interviewRoom.classList.remove("active");
+            setupCard.style.display = "block";
+
+            questionAnswers = [];
+            currentQuestion = 0;
+            timerDisplay.textContent = "15:00";
+
+            updateStats();
+            window.scrollTo({
+                top: setupCard.getBoundingClientRect().top + window.scrollY - 100,
+                behavior: "smooth"
+            });
+        });
+
+        updateStats();
+
+    });
+</script>
 
 {% endblock %}

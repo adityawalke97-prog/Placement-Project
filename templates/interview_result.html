@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+{% block title %}AI Interview Result{% endblock %}
+{% block css %}
+<style>
+.ir{max-width:1200px;margin:32px auto;padding:0 18px;color:#20243a}.ir h1{font-size:29px;font-weight:800}.ir-sub{color:#858ba3}.ir-hero{background:linear-gradient(120deg,#29215f,#6956e8);color:white;border-radius:20px;padding:28px;display:flex;align-items:center;justify-content:space-between;gap:20px;margin:22px 0}.ir-score{font-size:52px;font-weight:800}.ir-score small{font-size:14px}.ir-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.ir-card{background:white;border:1px solid #eceef5;border-radius:15px;padding:19px;margin-bottom:18px}.ir-metric{font-size:26px;font-weight:800}.ir-label{font-size:12px;color:#858ba3;margin-top:5px}.ir-layout{display:grid;grid-template-columns:1.3fr .7fr;gap:18px;margin-top:18px}.ir h3{font-size:16px;margin:0 0 15px}.ir-q{border:1px solid #eceef5;border-radius:12px;padding:15px;margin:12px 0}.ir-q p{font-size:13px;line-height:1.7;color:#555b72;white-space:pre-wrap}.ir-tag{font-size:12px;font-weight:800;color:#6956e8}.ir-list{padding:11px 13px;background:#f8f7ff;border-radius:9px;margin:8px 0;font-size:13px;line-height:1.6}.ir-actions{display:flex;gap:10px;flex-wrap:wrap}.ir-btn{display:inline-block;padding:11px 15px;background:#6956e8;color:white;text-decoration:none;border-radius:9px;font-size:13px;font-weight:700}.ir-btn.light{background:#f0edff;color:#5945ce}@media(max-width:800px){.ir-grid{grid-template-columns:repeat(2,1fr)}.ir-layout{grid-template-columns:1fr}.ir-hero{align-items:flex-start;flex-direction:column}}
+</style>
+{% endblock %}
+{% block content %}
+<div class="ir">
+    <h1>AI Interview Result</h1>
+    <p class="ir-sub">Your AI-evaluated performance report.</p>
+    <div class="ir-actions">
+        <a class="ir-btn" href="{{ url_for('ai_interview.interview_pdf', token=request.view_args.token) }}">Download PDF Report</a>
+        <a class="ir-btn light" href="{{ url_for('ai_interview.interview_home') }}">Retake Interview</a>
+        <a class="ir-btn light" href="{{ url_for('ai_interview.interview_history') }}">Interview History</a>
+    </div>
+    <section class="ir-hero">
+        <div><div class="ir-tag" style="color:#ddd6ff">FINAL PERFORMANCE</div><h2>{{ result.get('performance_status','Interview Evaluated') }}</h2><p>{{ result.get('summary','') }}</p><p>{{ result.get('role') }} · {{ result.get('difficulty') }} · {{ result.get('created_at') }}</p></div>
+        <div class="ir-score">{{ result.get('overall_score','--') }}<small>/100</small></div>
+    </section>
+    <section class="ir-grid">
+        {% for label,key in [('Technical Knowledge','technical_score'),('Communication','communication_score'),('Confidence','confidence_score'),('Problem Solving','problem_solving_score')] %}
+        <div class="ir-card"><div class="ir-metric">{{ result.get(key,'--') }}<small>/100</small></div><div class="ir-label">{{ label }}</div></div>
+        {% endfor %}
+    </section>
+    <div class="ir-layout">
+        <section class="ir-card">
+            <h3>Question-wise Evaluation</h3>
+            {% for item in questions %}
+            <div class="ir-q">
+                <div class="ir-tag">QUESTION {{ loop.index }} · {{ item.get('score','--') }}/10</div>
+                <strong>{{ item.get('question','') }}</strong>
+                <p><b>Your answer:</b> {{ item.get('answer','') }}</p>
+                <p><b>Expected answer:</b> {{ item.get('expected_answer','') }}</p>
+                <p><b>AI feedback:</b> {{ item.get('feedback','') }}</p>
+            </div>
+            {% else %}<p>No question evaluation available.</p>{% endfor %}
+        </section>
+        <aside>
+            <section class="ir-card"><h3>Strengths</h3>{% for item in strengths %}<div class="ir-list">{{ item }}</div>{% else %}<p>No strengths recorded.</p>{% endfor %}</section>
+            <section class="ir-card"><h3>Areas to Improve</h3>{% for item in weaknesses %}<div class="ir-list">{{ item }}</div>{% else %}<p>No improvement areas recorded.</p>{% endfor %}</section>
+            <section class="ir-card"><h3>Recommended Learning</h3>{% for item in recommendations %}<div class="ir-list">{{ item }}</div>{% else %}<p>No recommendations available.</p>{% endfor %}</section>
+        </aside>
+    </div>
+</div>
+{% endblock %}

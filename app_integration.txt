@@ -1,0 +1,31 @@
+INTEGRATION INTO YOUR EXISTING FLASK PROJECT
+
+1. Copy interview_feature.py into your project root.
+2. Copy templates/interview.html, templates/interview_result.html and templates/interview_history.html into your existing templates folder.
+3. Install dependencies:
+   pip install -r requirements-interview.txt
+4. Add the variables from .env.example to your existing .env file. Never commit your real API key.
+5. In app.py, after get_db_connection is defined and before app.run(), register the blueprint:
+
+   from interview_feature import create_interview_blueprint
+   app.register_blueprint(create_interview_blueprint(get_db_connection))
+
+6. The module uses your existing login endpoint named "login", your existing session key "user_id", and your existing get_db_connection() helper.
+7. Restart Flask. Open /interview. Interview tables are created automatically on first use.
+
+ROUTES
+/interview
+/ai-interview/start
+/ai-interview/answer
+/ai-interview/finish
+/ai-interview/result/<token>
+/ai-interview/history
+/ai-interview/report/<token>.pdf
+
+NOTES
+- This is a drop-in feature module for a Flask app that uses PyMySQL and a DictCursor-compatible database connection.
+- Browser speech-to-text depends on browser support and microphone permission. Chrome is recommended. A typed answer fallback is included.
+- Browser speech synthesis reads questions aloud. This is not Gemini Live audio; the Gemini API is used to generate questions and evaluate answers.
+- The Gemini API key must remain on the server, never in HTML or JavaScript.
+- The feature creates ai_interview_sessions and ai_interview_answers tables in the connected database.
+- Test locally with a non-production database before deploying.
