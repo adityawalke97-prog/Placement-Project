@@ -135,7 +135,7 @@
         align-items: center;
         justify-content: space-between;
         gap: 25px;
-        margin-bottom: 24px;
+        margin-bottom: 20px;
         box-shadow: 0 15px 35px rgba(82, 72, 201, .17);
     }
 
@@ -226,6 +226,95 @@
     .hero-visual i {
         font-size: 62px;
         color: #fff;
+    }
+
+    .project-announcement {
+        display: flex;
+        align-items: flex-start;
+        gap: 15px;
+        padding: 20px 22px;
+        margin-bottom: 25px;
+        background: linear-gradient(120deg, #eef2ff, #f5f3ff);
+        border: 1px solid #dcd9ff;
+        border-radius: 17px;
+        position: relative;
+        box-shadow: 0 5px 20px rgba(99, 91, 255, .04);
+    }
+
+    .announcement-icon {
+        width: 45px;
+        height: 45px;
+        min-width: 45px;
+        display: grid;
+        place-items: center;
+        border-radius: 13px;
+        background: linear-gradient(135deg, #635bff, #8178ff);
+        color: white;
+        font-size: 18px;
+        box-shadow: 0 6px 15px rgba(99, 91, 255, .2);
+    }
+
+    .announcement-content {
+        flex: 1;
+        padding-right: 22px;
+    }
+
+    .announcement-top {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        flex-wrap: wrap;
+        margin-bottom: 7px;
+    }
+
+    .announcement-content h3 {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 14px;
+        font-weight: 800;
+        color: #3730a3;
+        margin: 0;
+    }
+
+    .announcement-badge {
+        font-size: 9px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: .7px;
+        color: #635bff;
+        background: #e3e0ff;
+        padding: 5px 9px;
+        border-radius: 20px;
+    }
+
+    .announcement-content p {
+        color: #59627a;
+        font-size: 12px;
+        line-height: 1.8;
+        margin: 0;
+    }
+
+    .announcement-content strong {
+        color: #5148c9;
+    }
+
+    .announcement-close {
+        position: absolute;
+        right: 15px;
+        top: 13px;
+        width: 29px;
+        height: 29px;
+        border: none;
+        border-radius: 8px;
+        background: rgba(99, 91, 255, .08);
+        color: #7b8498;
+        font-size: 15px;
+        cursor: pointer;
+        transition: .2s;
+    }
+
+    .announcement-close:hover {
+        background: #635bff;
+        color: white;
     }
 
     .dash-section {
@@ -782,6 +871,26 @@
         .quick-grid {
             gap: 9px;
         }
+
+        .project-announcement {
+            padding: 15px;
+            gap: 11px;
+        }
+
+        .announcement-icon {
+            width: 38px;
+            height: 38px;
+            min-width: 38px;
+            font-size: 15px;
+        }
+
+        .announcement-content h3 {
+            font-size: 12px;
+        }
+
+        .announcement-content p {
+            font-size: 11px;
+        }
     }
 </style>
 
@@ -810,8 +919,8 @@
                     </div>
 
                     <span class="dash-profile-name">
-                    {{ user.name if user and user.name else session.get('name', 'Student') }}
-                </span>
+                        {{ user.name if user and user.name else session.get('name', 'Student') }}
+                    </span>
 
                     <i class="fa-solid fa-chevron-down" style="font-size:10px"></i>
                 </a>
@@ -840,6 +949,34 @@
                 <i class="fa-solid fa-graduation-cap"></i>
             </div>
         </section>
+
+        <div class="project-announcement" id="projectAnnouncement">
+            <div class="announcement-icon">
+                <i class="fa-solid fa-bullhorn"></i>
+            </div>
+
+            <div class="announcement-content">
+                <div class="announcement-top">
+                    <h3>Welcome to Placement Training Portal!</h3>
+                    <span class="announcement-badge">Development Update</span>
+                </div>
+
+                <p>
+                    We're happy to have you as one of our early users!
+                    Our platform is currently in its
+                    <strong>initial development stage</strong>.
+                    We're continuously working on improving existing features,
+                    adding new learning resources and making your placement
+                    preparation experience better. Some features may be updated
+                    over time. Your feedback and suggestions are valuable to us.
+                    <strong>Thank you for supporting our journey!</strong>
+                </p>
+            </div>
+
+            <button class="announcement-close" onclick="closeProjectAnnouncement()" title="Dismiss">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
 
         <section class="dash-section">
             <div class="dash-section-header">
@@ -1258,7 +1395,22 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
+    function closeProjectAnnouncement() {
+        const announcement = document.getElementById("projectAnnouncement");
+
+        if (announcement) {
+            announcement.style.display = "none";
+            localStorage.setItem("projectAnnouncementClosed", "true");
+        }
+    }
+
     document.addEventListener("DOMContentLoaded", function () {
+
+        const announcement = document.getElementById("projectAnnouncement");
+
+        if (announcement && localStorage.getItem("projectAnnouncementClosed") === "true") {
+            announcement.style.display = "none";
+        }
 
         const dateElement = document.getElementById("dashboardDate");
 
