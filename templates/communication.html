@@ -1,1174 +1,359 @@
-{% extends 'layout.html' %}
-
-{% block title %}Communication Skills{% endblock %}
-
+{% extends "layout.html" %}
+{% block title %}AI Communication Coach | Placement Training Portal{% endblock %}
 {% block content %}
-
-<div class="header-section">
-    <div class="header-icon">💬</div>
-
-    <h1>Communication Skills</h1>
-
-    <p>
-        Improve your English speaking, vocabulary, confidence
-        and interview communication skills.
-    </p>
-
-    <div class="level-badge">
-        🟢 Current Level: <strong>Intermediate</strong>
-    </div>
-</div>
-
-<div class="stats-grid">
-
-    <div class="stat-card">
-        <div class="stat-icon">🔥</div>
-        <div>
-            <h2>7 Days</h2>
-            <p>Current Streak</p>
-        </div>
-    </div>
-
-    <div class="stat-card">
-        <div class="stat-icon">🗣️</div>
-        <div>
-            <h2>24</h2>
-            <p>Speaking Sessions</p>
-        </div>
-    </div>
-
-    <div class="stat-card">
-        <div class="stat-icon">📚</div>
-        <div>
-            <h2>85</h2>
-            <p>Words Learned</p>
-        </div>
-    </div>
-
-    <div class="stat-card">
-        <div class="stat-icon">🎯</div>
-        <div>
-            <h2>78%</h2>
-            <p>Overall Progress</p>
-        </div>
-    </div>
-
-</div>
-
-<div class="daily-goal">
-
-    <div>
-        <span class="section-label">TODAY'S GOAL</span>
-
-        <h2>🚀 Complete Your Communication Practice</h2>
-
-        <p>
-            Spend at least <strong>30 minutes</strong> improving your
-            speaking, vocabulary and interview skills today.
-        </p>
-    </div>
-
-    <div class="goal-progress">
-        <div class="goal-circle">
-            70%
-        </div>
-    </div>
-
-</div>
-
-<div class="section-heading">
-    <h2>🎯 Communication Training</h2>
-
-    <p>
-        Practice different communication skills to become
-        interview-ready.
-    </p>
-</div>
-
-<div class="communication-grid">
-
-    <div class="skill-card">
-
-        <div class="icon">🗣️</div>
-
-        <span class="difficulty easy">
-            Beginner
-        </span>
-
-        <h3>Self Introduction</h3>
-
-        <p>
-            Learn how to introduce yourself professionally
-            in an interview within 60 seconds.
-        </p>
-
-        <div class="skill-info">
-            ⏱️ 10 min &nbsp; • &nbsp; ⭐ 4.8
-        </div>
-
-    </div>
-
-    <div class="skill-card">
-
-        <div class="icon">📖</div>
-
-        <span class="difficulty medium">
-            Intermediate
-        </span>
-
-        <h3>English Speaking</h3>
-
-        <p>
-            Practice daily English conversations and improve
-            your sentence formation.
-        </p>
-
-        <div class="skill-info">
-            ⏱️ 15 min &nbsp; • &nbsp; ⭐ 4.7
-        </div>
-
-    </div>
-
-    <div class="skill-card">
-
-        <div class="icon">😊</div>
-
-        <span class="difficulty easy">
-            Beginner
-        </span>
-
-        <h3>Body Language</h3>
-
-        <p>
-            Improve eye contact, posture, facial expressions
-            and confidence during interviews.
-        </p>
-
-        <div class="skill-info">
-            ⏱️ 10 min &nbsp; • &nbsp; ⭐ 4.9
-        </div>
-
-    </div>
-
-    <div class="skill-card">
-
-        <div class="icon">👥</div>
-
-        <span class="difficulty medium">
-            Intermediate
-        </span>
-
-        <h3>Group Discussion</h3>
-
-        <p>
-            Learn how to start discussions, express opinions,
-            agree, disagree and conclude effectively.
-        </p>
-
-        <div class="skill-info">
-            ⏱️ 20 min &nbsp; • &nbsp; ⭐ 4.6
-        </div>
-
-    </div>
-
-    <div class="skill-card">
-
-        <div class="icon">🎤</div>
-
-        <span class="difficulty hard">
-            Advanced
-        </span>
-
-        <h3>Interview Communication</h3>
-
-        <p>
-            Answer HR and technical interview questions
-            clearly and confidently.
-        </p>
-
-        <div class="skill-info">
-            ⏱️ 25 min &nbsp; • &nbsp; ⭐ 4.9
-        </div>
-
-    </div>
-
-    <div class="skill-card">
-
-        <div class="icon">🎧</div>
-
-        <span class="difficulty medium">
-            Intermediate
-        </span>
-
-        <h3>Listening Practice</h3>
-
-        <p>
-            Improve your listening and understanding skills
-            using English conversations and podcasts.
-        </p>
-
-        <div class="skill-info">
-            ⏱️ 15 min &nbsp; • &nbsp; ⭐ 4.7
-        </div>
-
-    </div>
-
-</div>
-
-<div class="two-column">
-
-    <div class="content-card">
-
-        <div class="card-title">
-
-            <span>🎙️</span>
-
-            <div>
-                <h2>Speaking Topics</h2>
-                <p>Speak for 1–2 minutes on each topic.</p>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+<div class="comm-page">
+    <section class="comm-hero">
+        <div class="hero-copy">
+            <span class="eyebrow"><i class="fa-solid fa-wand-magic-sparkles"></i> PERSONAL COMMUNICATION TRAINER</span>
+            <h1>Speak clearly.<br><span>Grow confidently.</span></h1>
+            <p>Practice real conversations, prepare for interviews, improve your spoken English and get actionable feedback from your AI communication coach.</p>
+            <div class="hero-actions">
+                <button class="btn-primary" onclick="document.getElementById('practiceStudio').scrollIntoView({behavior:'smooth'})"><i class="fa-solid fa-microphone"></i> Start speaking practice</button>
+                <span class="privacy-note"><i class="fa-solid fa-shield-halved"></i> Microphone starts only when you choose</span>
             </div>
-
         </div>
+        <div class="hero-visual">
+            <div class="orb orb-one"></div><div class="orb orb-two"></div>
+            <div class="voice-card">
+                <div class="voice-card-top"><span class="live-dot"></span> YOUR NEXT PRACTICE</div>
+                <div class="voice-wave"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+                <strong>Speak with confidence</strong>
+                <small>One short practice session at a time.</small>
+                <div class="voice-tags"><span>Fluency</span><span>Clarity</span><span>Confidence</span></div>
+            </div>
+        </div>
+    </section>
 
-        <div class="topic-list">
+    <section class="metric-grid">
+        <article class="metric-card"><div class="metric-icon purple"><i class="fa-solid fa-stopwatch"></i></div><div><span>Practice time</span><strong id="practiceMinutes">0 min</strong><small>This device</small></div></article>
+        <article class="metric-card"><div class="metric-icon blue"><i class="fa-solid fa-comments"></i></div><div><span>Sessions completed</span><strong id="sessionCount">0</strong><small>Saved in this browser</small></div></article>
+        <article class="metric-card"><div class="metric-icon green"><i class="fa-solid fa-book-open"></i></div><div><span>Words spoken</span><strong id="wordCount">0</strong><small>Across your practices</small></div></article>
+        <article class="metric-card"><div class="metric-icon orange"><i class="fa-solid fa-fire"></i></div><div><span>Daily target</span><strong id="dailyProgress">0 / 15 min</strong><small>Build a daily habit</small></div></article>
+    </section>
 
-            <div class="topic">
-                <span>01</span>
-                <div>
-                    <strong>Tell me about yourself.</strong>
-                    <small>Personal Introduction</small>
+    <section class="studio-section" id="practiceStudio">
+        <div class="section-head">
+            <div><span class="eyebrow dark-eyebrow">THE PRACTICE STUDIO</span><h2>Speak, listen and improve</h2><p>Choose a scenario, speak naturally and review specific suggestions.</p></div>
+            <span class="browser-pill"><i class="fa-solid fa-microphone-lines"></i> Browser voice support required</span>
+        </div>
+        <div class="studio-grid">
+            <div class="practice-panel">
+                <div class="panel-heading"><div><span class="panel-kicker">01 / CHOOSE A SCENARIO</span><h3>What do you want to practice?</h3></div><span class="step-number">01</span></div>
+                <div class="scenario-grid">
+                    <button class="scenario active" data-scenario="interview" data-title="Job interview" data-prompt="Tell me about yourself and explain why you are interested in this role."><span>💼</span><strong>Job interview</strong><small>HR & placement rounds</small></button>
+                    <button class="scenario" data-scenario="daily" data-title="Daily conversation" data-prompt="You meet a new classmate. Introduce yourself and start a friendly conversation."><span>☕</span><strong>Daily conversation</strong><small>Natural everyday English</small></button>
+                    <button class="scenario" data-scenario="group" data-title="Group discussion" data-prompt="The topic is: Is artificial intelligence helping students learn better? Share your opening opinion and support it with a reason."><span>👥</span><strong>Group discussion</strong><small>Opinions & discussion</small></button>
+                    <button class="scenario" data-scenario="work" data-title="Workplace communication" data-prompt="Your project task is delayed. Explain the situation professionally to your team lead and suggest a next step."><span>🧑‍💻</span><strong>Workplace</strong><small>Team & professional talk</small></button>
+                    <button class="scenario" data-scenario="presentation" data-title="Presentation" data-prompt="Give a short introduction to a project you have built. Explain the problem, your solution and its main benefit."><span>🎤</span><strong>Presentation</strong><small>Explain ideas clearly</small></button>
+                    <button class="scenario" data-scenario="confidence" data-title="Speak without fear" data-prompt="Talk for one minute about something you learned recently and why it matters to you."><span>🌱</span><strong>Confidence builder</strong><small>Build speaking comfort</small></button>
+                </div>
+                <div class="prompt-box">
+                    <div class="prompt-label"><i class="fa-solid fa-bullseye"></i> YOUR SPEAKING PROMPT</div>
+                    <p id="scenarioPrompt">Tell me about yourself and explain why you are interested in this role.</p>
+                    <div class="prompt-controls"><button class="text-btn" id="speakPrompt"><i class="fa-solid fa-volume-high"></i> Hear prompt</button><button class="text-btn" id="newPrompt"><i class="fa-solid fa-shuffle"></i> Change prompt</button></div>
+                </div>
+                <div class="record-area">
+                    <div class="record-top"><div><span class="panel-kicker">02 / YOUR TURN</span><h3>Speak your answer</h3></div><span class="record-status" id="recordStatus">Ready when you are</span></div>
+                    <div class="record-controls">
+                        <button class="record-button" id="recordButton" type="button"><i class="fa-solid fa-microphone"></i><span>Start speaking</span></button>
+                        <div class="timer" id="speechTimer">00:00</div>
+                        <button class="outline-btn" id="stopButton" type="button" disabled><i class="fa-solid fa-stop"></i> Stop</button>
+                    </div>
+                    <div class="transcript-wrap"><div class="transcript-head"><strong>Your transcript</strong><span id="wordLiveCount">0 words</span></div><div id="transcript" class="transcript" contenteditable="true" data-placeholder="Your spoken words will appear here. You can also type or edit your answer..."></div><div class="transcript-foot"><span><i class="fa-solid fa-circle-info"></i> Speak clearly and at a natural pace.</span><button class="text-btn" id="clearTranscript">Clear</button></div></div>
+                    <div class="analysis-actions"><button class="btn-primary" id="evaluateButton"><i class="fa-solid fa-sparkles"></i> Get AI feedback</button><button class="outline-btn" id="finishSession"><i class="fa-solid fa-check"></i> Complete session</button></div>
+                    <p class="support-note" id="speechSupport">Voice input works best in a supported browser such as desktop Chrome. You can type your answer if voice input is unavailable.</p>
                 </div>
             </div>
 
-            <div class="topic">
-                <span>02</span>
-                <div>
-                    <strong>My Career Goals</strong>
-                    <small>Career & Future</small>
+            <aside class="coach-panel">
+                <div class="coach-header"><div class="coach-avatar"><i class="fa-solid fa-robot"></i></div><div><span class="panel-kicker">YOUR PERSONAL COACH</span><h3>AI Communication Coach</h3><small><span class="live-dot"></span> Ready to help</small></div></div>
+                <div class="coach-intro" id="coachIntro"><strong>Let's make your next answer stronger.</strong><p>After you speak or type, select <b>Get AI feedback</b>. Your coach will point out what worked, what to improve and how to say it more naturally.</p></div>
+                <div class="feedback-empty" id="feedbackEmpty"><div><i class="fa-solid fa-message"></i></div><strong>Your feedback will appear here</strong><p>Try a 30–60 second answer to get useful, specific suggestions.</p></div>
+                <div class="feedback-result" id="feedbackResult" hidden></div>
+                <div class="coach-chat">
+                    <div class="chat-title"><strong>Ask your coach</strong><span>English practice help</span></div>
+                    <div class="chat-messages" id="chatMessages"><div class="chat-bubble coach-bubble">Hi! Ask me how to phrase a sentence, prepare for an interview or respond in a real-life situation.</div></div>
+                    <form id="coachChatForm" class="chat-form"><input id="coachInput" type="text" placeholder="Ask a communication question..." maxlength="600" autocomplete="off"><button type="submit" aria-label="Send"><i class="fa-solid fa-paper-plane"></i></button></form>
                 </div>
-            </div>
-
-            <div class="topic">
-                <span>03</span>
-                <div>
-                    <strong>Technology in Daily Life</strong>
-                    <small>Technology</small>
-                </div>
-            </div>
-
-            <div class="topic">
-                <span>04</span>
-                <div>
-                    <strong>My Favorite Project</strong>
-                    <small>Project Discussion</small>
-                </div>
-            </div>
-
-            <div class="topic">
-                <span>05</span>
-                <div>
-                    <strong>Why should we hire you?</strong>
-                    <small>Interview Practice</small>
-                </div>
-            </div>
-
+            </aside>
         </div>
+    </section>
 
-    </div>
-
-    <div class="content-card">
-
-        <div class="card-title">
-
-            <span>📚</span>
-
-            <div>
-                <h2>Vocabulary Builder</h2>
-                <p>Improve your professional vocabulary.</p>
+    <section class="learning-grid">
+        <div class="learning-card">
+            <div class="section-head compact"><div><span class="eyebrow dark-eyebrow">QUICK LEARNING</span><h2>Useful phrases for real situations</h2><p>Tap a phrase to hear how it sounds.</p></div></div>
+            <div class="phrase-list">
+                <button class="phrase" data-phrase="Could you please explain that again?"><span><b>When you don't understand</b><small>Could you please explain that again?</small></span><i class="fa-solid fa-volume-high"></i></button>
+                <button class="phrase" data-phrase="In my opinion, the most important point is..."><span><b>Sharing your opinion</b><small>In my opinion, the most important point is...</small></span><i class="fa-solid fa-volume-high"></i></button>
+                <button class="phrase" data-phrase="That's a good point. I would also like to add..."><span><b>Joining a discussion</b><small>That's a good point. I would also like to add...</small></span><i class="fa-solid fa-volume-high"></i></button>
+                <button class="phrase" data-phrase="Let me think for a moment so I can give you a clear answer."><span><b>When you need time</b><small>Let me think for a moment so I can give you a clear answer.</small></span><i class="fa-solid fa-volume-high"></i></button>
+                <button class="phrase" data-phrase="I haven't worked with that yet, but I am willing to learn."><span><b>When you don't know something</b><small>I haven't worked with that yet, but I am willing to learn.</small></span><i class="fa-solid fa-volume-high"></i></button>
             </div>
-
         </div>
-
-        <div class="word">
-
-            <div class="word-top">
-                <h3>Confident</h3>
-                <span>⭐</span>
+        <div class="learning-card">
+            <div class="section-head compact"><div><span class="eyebrow dark-eyebrow">A SIMPLE DAILY ROUTINE</span><h2>15 minutes that add up</h2><p>Short, repeatable practice beats memorising long scripts.</p></div></div>
+            <div class="routine-list">
+                <div><span class="routine-time">03 min</span><span><b>Warm up</b><small>Read a short paragraph aloud.</small></span></div>
+                <div><span class="routine-time">05 min</span><span><b>Speak freely</b><small>Answer one prompt without memorising.</small></span></div>
+                <div><span class="routine-time">04 min</span><span><b>Review & retry</b><small>Use feedback and say your answer again.</small></span></div>
+                <div><span class="routine-time">03 min</span><span><b>Learn phrases</b><small>Use two new phrases in your own sentences.</small></span></div>
             </div>
-
-            <p>
-                <strong>Meaning:</strong>
-                Feeling sure about your abilities.
-            </p>
-
-            <p class="example">
-                "I am confident about my technical skills."
-            </p>
-
+            <div class="routine-tip"><i class="fa-solid fa-lightbulb"></i><span><b>Remember:</b> The goal is clear communication, not a perfect accent.</span></div>
         </div>
-
-        <div class="word">
-
-            <div class="word-top">
-                <h3>Reliable</h3>
-                <span>⭐</span>
-            </div>
-
-            <p>
-                <strong>Meaning:</strong>
-                Someone who can be trusted.
-            </p>
-
-            <p class="example">
-                "I am a reliable and responsible team member."
-            </p>
-
-        </div>
-
-        <div class="word">
-
-            <div class="word-top">
-                <h3>Adaptable</h3>
-                <span>⭐</span>
-            </div>
-
-            <p>
-                <strong>Meaning:</strong>
-                Able to adjust to new situations.
-            </p>
-
-            <p class="example">
-                "I am adaptable and always ready to learn."
-            </p>
-
-        </div>
-
-    </div>
-
+    </section>
+    <div class="comm-toast" id="commToast" role="status"></div>
 </div>
-
-<div class="content-card interview-card">
-
-    <div class="card-title">
-
-        <span>🎤</span>
-
-        <div>
-            <h2>Interview Communication Practice</h2>
-            <p>Prepare answers for frequently asked HR questions.</p>
-        </div>
-
-    </div>
-
-    <div class="question">
-
-        <div class="question-number">
-            01
-        </div>
-
-        <div>
-            <h3>Tell me about yourself.</h3>
-
-            <p>
-                Start with your education, technical skills,
-                project experience and career goal.
-            </p>
-
-            <div class="answer-tip">
-                💡 Tip: Keep your answer between 60–90 seconds.
-            </div>
-        </div>
-
-    </div>
-
-    <div class="question">
-
-        <div class="question-number">
-            02
-        </div>
-
-        <div>
-            <h3>Why should we hire you?</h3>
-
-            <p>
-                Talk about your skills, willingness to learn,
-                problem-solving ability and project experience.
-            </p>
-
-            <div class="answer-tip">
-                💡 Tip: Connect your skills with the job requirements.
-            </div>
-        </div>
-
-    </div>
-
-    <div class="question">
-
-        <div class="question-number">
-            03
-        </div>
-
-        <div>
-            <h3>What are your strengths?</h3>
-
-            <p>
-                Mention qualities such as teamwork,
-                communication, learning ability and consistency.
-            </p>
-
-            <div class="answer-tip">
-                💡 Tip: Give one real example with your answer.
-            </div>
-        </div>
-
-    </div>
-
-    <div class="question">
-
-        <div class="question-number">
-            04
-        </div>
-
-        <div>
-            <h3>What is your weakness?</h3>
-
-            <p>
-                Mention a genuine weakness and explain
-                what you are doing to improve it.
-            </p>
-
-            <div class="answer-tip">
-                💡 Tip: Never say "I have no weaknesses."
-            </div>
-        </div>
-
-    </div>
-
-</div>
-
-<div class="tips-section">
-
-    <div class="content-card">
-
-        <div class="card-title">
-
-            <span>💡</span>
-
-            <div>
-                <h2>Daily Fluency Tips</h2>
-                <p>Small habits can improve your English quickly.</p>
-            </div>
-
-        </div>
-
-        <div class="tips-grid">
-
-            <div class="tip">
-                <span>01</span>
-                <strong>Think in English</strong>
-                <p>Try to form simple thoughts directly in English.</p>
-            </div>
-
-            <div class="tip">
-                <span>02</span>
-                <strong>Speak Daily</strong>
-                <p>Practice speaking for at least 15 minutes.</p>
-            </div>
-
-            <div class="tip">
-                <span>03</span>
-                <strong>Record Yourself</strong>
-                <p>Record your voice and identify mistakes.</p>
-            </div>
-
-            <div class="tip">
-                <span>04</span>
-                <strong>Learn 5 Words</strong>
-                <p>Learn five professional words every day.</p>
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
-
-<div class="content-card progress-card">
-
-    <div class="card-title">
-
-        <span>📈</span>
-
-        <div>
-            <h2>Weekly Progress</h2>
-            <p>Your communication practice performance.</p>
-        </div>
-
-    </div>
-
-    <div class="progress-item">
-
-        <div class="progress-info">
-            <span>Speaking</span>
-            <strong>75%</strong>
-        </div>
-
-        <div class="progress-bar">
-            <div class="progress speaking">
-                75%
-            </div>
-        </div>
-
-    </div>
-
-    <div class="progress-item">
-
-        <div class="progress-info">
-            <span>Vocabulary</span>
-            <strong>82%</strong>
-        </div>
-
-        <div class="progress-bar">
-            <div class="progress vocabulary">
-                82%
-            </div>
-        </div>
-
-    </div>
-
-    <div class="progress-item">
-
-        <div class="progress-info">
-            <span>Listening</span>
-            <strong>68%</strong>
-        </div>
-
-        <div class="progress-bar">
-            <div class="progress listening">
-                68%
-            </div>
-        </div>
-
-    </div>
-
-    <div class="progress-item">
-
-        <div class="progress-info">
-            <span>Interview Communication</span>
-            <strong>72%</strong>
-        </div>
-
-        <div class="progress-bar">
-            <div class="progress interview">
-                72%
-            </div>
-        </div>
-
-    </div>
-
-</div>
-
-<div class="content-card">
-
-    <div class="card-title">
-
-        <span>🏆</span>
-
-        <div>
-            <h2>Achievements</h2>
-            <p>Complete activities and unlock new badges.</p>
-        </div>
-
-    </div>
-
-    <div class="badges">
-
-        <div class="achievement unlocked">
-
-            <div>🔥</div>
-
-            <strong>7 Day Streak</strong>
-
-            <small>
-                Practiced for 7 consecutive days
-            </small>
-
-        </div>
-
-        <div class="achievement unlocked">
-
-            <div>🗣️</div>
-
-            <strong>First Speaker</strong>
-
-            <small>
-                Completed your first speaking session
-            </small>
-
-        </div>
-
-        <div class="achievement unlocked">
-
-            <div>📚</div>
-
-            <strong>Vocabulary Builder</strong>
-
-            <small>
-                Learned 50+ professional words
-            </small>
-
-        </div>
-
-        <div class="achievement locked">
-
-            <div>🏆</div>
-
-            <strong>Fluent Speaker</strong>
-
-            <small>
-                Reach 90% communication progress
-            </small>
-
-        </div>
-
-    </div>
-
-</div>
-
-<div class="challenge-box">
-
-    <div class="challenge-icon">
-        🔥
-    </div>
-
-    <div>
-
-        <span>TODAY'S CHALLENGE</span>
-
-        <h2>
-            Speak for 1 minute:
-            <strong>"Why do you want this job?"</strong>
-        </h2>
-
-        <p>
-            Focus on confidence, clear pronunciation and
-            professional vocabulary.
-        </p>
-
-    </div>
-
-</div>
-
-{% endblock %}
-
-{% block css %}
 
 <style>
-
-    *{
-        box-sizing:border-box;
-    }
-
-    .header-section{
-        text-align:center;
-        margin-bottom:35px;
-    }
-
-    .header-icon{
-        font-size:50px;
-    }
-
-    .header-section h1{
-        font-size:42px;
-        color:#1e293b;
-        margin:10px 0;
-    }
-
-    .header-section p{
-        color:#64748b;
-        font-size:17px;
-    }
-
-    .level-badge{
-        display:inline-block;
-        margin-top:15px;
-        padding:10px 18px;
-        background:#ecfdf5;
-        color:#047857;
-        border-radius:30px;
-        font-size:14px;
-    }
-
-    .stats-grid{
-        display:grid;
-        grid-template-columns:repeat(4,1fr);
-        gap:20px;
-        margin-bottom:30px;
-    }
-
-    .stat-card{
-        background:white;
-        padding:22px;
-        border-radius:18px;
-        display:flex;
-        align-items:center;
-        gap:15px;
-        box-shadow:0 5px 20px rgba(0,0,0,.07);
-    }
-
-    .stat-icon{
-        width:50px;
-        height:50px;
-        border-radius:14px;
-        background:#eff6ff;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        font-size:25px;
-    }
-
-    .stat-card h2{
-        margin:0;
-        color:#1e293b;
-    }
-
-    .stat-card p{
-        margin:5px 0 0;
-        color:#64748b;
-    }
-
-    .daily-goal{
-        background:linear-gradient(135deg,#2563eb,#4f46e5);
-        color:white;
-        padding:30px;
-        border-radius:22px;
-        display:flex;
-        justify-content:space-between;
-        align-items:center;
-        margin-bottom:40px;
-    }
-
-    .daily-goal h2{
-        margin:10px 0;
-    }
-
-    .daily-goal p{
-        opacity:.9;
-    }
-
-    .section-label{
-        font-size:12px;
-        letter-spacing:2px;
-        opacity:.8;
-    }
-
-    .goal-circle{
-        width:110px;
-        height:110px;
-        border:8px solid rgba(255,255,255,.35);
-        border-top-color:white;
-        border-radius:50%;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        font-size:25px;
-        font-weight:bold;
-    }
-
-    .section-heading{
-        margin:35px 0 20px;
-    }
-
-    .section-heading h2{
-        margin-bottom:5px;
-    }
-
-    .section-heading p{
-        color:#64748b;
-    }
-
-    .communication-grid{
-        display:grid;
-        grid-template-columns:repeat(3,1fr);
-        gap:22px;
-        margin-bottom:40px;
-    }
-
-    .skill-card{
-        background:white;
-        padding:28px;
-        border-radius:20px;
-        text-align:center;
-        box-shadow:0 5px 20px rgba(0,0,0,.07);
-        transition:.3s;
-    }
-
-    .skill-card:hover{
-        transform:translateY(-7px);
-    }
-
-    .icon{
-        font-size:43px;
-        margin-bottom:12px;
-    }
-
-    .skill-card h3{
-        color:#2563eb;
-        margin:12px 0;
-    }
-
-    .skill-card p{
-        color:#64748b;
-        line-height:1.6;
-    }
-
-    .skill-info{
-        margin-top:15px;
-        color:#64748b;
-        font-size:13px;
-    }
-
-    .difficulty{
-        display:inline-block;
-        padding:5px 12px;
-        border-radius:20px;
-        font-size:11px;
-        font-weight:bold;
-    }
-
-    .easy{
-        background:#dcfce7;
-        color:#15803d;
-    }
-
-    .medium{
-        background:#fef3c7;
-        color:#b45309;
-    }
-
-    .hard{
-        background:#fee2e2;
-        color:#b91c1c;
-    }
-
-    .two-column{
-        display:grid;
-        grid-template-columns:1fr 1fr;
-        gap:25px;
-        margin-bottom:25px;
-    }
-
-    .content-card{
-        background:white;
-        padding:30px;
-        border-radius:20px;
-        box-shadow:0 5px 20px rgba(0,0,0,.07);
-        margin-bottom:25px;
-    }
-
-    .card-title{
-        display:flex;
-        gap:15px;
-        align-items:center;
-        margin-bottom:25px;
-    }
-
-    .card-title > span{
-        font-size:32px;
-    }
-
-    .card-title h2{
-        margin:0;
-    }
-
-    .card-title p{
-        margin:5px 0 0;
-        color:#64748b;
-    }
-
-    .topic{
-        display:flex;
-        align-items:center;
-        gap:15px;
-        padding:15px;
-        border-bottom:1px solid #e2e8f0;
-    }
-
-    .topic > span{
-        width:35px;
-        height:35px;
-        border-radius:10px;
-        background:#eff6ff;
-        color:#2563eb;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        font-weight:bold;
-        font-size:12px;
-    }
-
-    .topic strong{
-        display:block;
-    }
-
-    .topic small{
-        color:#64748b;
-    }
-
-    .word{
-        padding:15px;
-        background:#f8fafc;
-        border-radius:14px;
-        margin-bottom:12px;
-    }
-
-    .word-top{
-        display:flex;
-        justify-content:space-between;
-    }
-
-    .word h3{
-        color:#2563eb;
-        margin:0;
-    }
-
-    .word p{
-        color:#475569;
-        font-size:14px;
-    }
-
-    .example{
-        font-style:italic;
-    }
-
-    .interview-card{
-        margin-top:25px;
-    }
-
-    .question{
-        display:flex;
-        gap:18px;
-        padding:20px 0;
-        border-bottom:1px solid #e2e8f0;
-    }
-
-    .question-number{
-        min-width:45px;
-        height:45px;
-        border-radius:12px;
-        background:#eff6ff;
-        color:#2563eb;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        font-weight:bold;
-    }
-
-    .question h3{
-        margin:0 0 8px;
-    }
-
-    .question p{
-        color:#64748b;
-        margin:0 0 10px;
-    }
-
-    .answer-tip{
-        padding:10px 12px;
-        background:#fffbeb;
-        color:#92400e;
-        border-radius:8px;
-        font-size:13px;
-    }
-
-    .tips-grid{
-        display:grid;
-        grid-template-columns:repeat(4,1fr);
-        gap:15px;
-    }
-
-    .tip{
-        background:#f8fafc;
-        padding:20px;
-        border-radius:15px;
-    }
-
-    .tip span{
-        color:#2563eb;
-        font-weight:bold;
-    }
-
-    .tip strong{
-        display:block;
-        margin:10px 0;
-    }
-
-    .tip p{
-        color:#64748b;
-        font-size:14px;
-    }
-
-    .progress-item{
-        margin-bottom:22px;
-    }
-
-    .progress-info{
-        display:flex;
-        justify-content:space-between;
-        margin-bottom:8px;
-    }
-
-    .progress-bar{
-        height:12px;
-        background:#e2e8f0;
-        border-radius:20px;
-        overflow:hidden;
-    }
-
-    .progress{
-        height:100%;
-        border-radius:20px;
-        color:transparent;
-    }
-
-    .speaking{
-        width:75%;
-        background:#2563eb;
-    }
-
-    .vocabulary{
-        width:82%;
-        background:#16a34a;
-    }
-
-    .listening{
-        width:68%;
-        background:#f59e0b;
-    }
-
-    .interview{
-        width:72%;
-        background:#7c3aed;
-    }
-
-    .badges{
-        display:grid;
-        grid-template-columns:repeat(4,1fr);
-        gap:15px;
-    }
-
-    .achievement{
-        text-align:center;
-        padding:20px;
-        border-radius:16px;
-        background:#f8fafc;
-    }
-
-    .achievement > div{
-        font-size:40px;
-    }
-
-    .achievement strong{
-        display:block;
-        margin:8px 0;
-    }
-
-    .achievement small{
-        color:#64748b;
-    }
-
-    .locked{
-        opacity:.45;
-    }
-
-    .challenge-box{
-        background:linear-gradient(135deg,#f59e0b,#ea580c);
-        color:white;
-        padding:30px;
-        border-radius:22px;
-        display:flex;
-        gap:20px;
-        align-items:center;
-        margin-top:25px;
-    }
-
-    .challenge-icon{
-        font-size:50px;
-    }
-
-    .challenge-box span{
-        font-size:12px;
-        letter-spacing:2px;
-        opacity:.85;
-    }
-
-    .challenge-box h2{
-        margin:8px 0;
-    }
-
-    .challenge-box p{
-        opacity:.9;
-    }
-
-    @media(max-width:900px){
-
-        .stats-grid{
-            grid-template-columns:repeat(2,1fr);
-        }
-
-        .communication-grid{
-            grid-template-columns:repeat(2,1fr);
-        }
-
-        .two-column{
-            grid-template-columns:1fr;
-        }
-
-        .tips-grid{
-            grid-template-columns:repeat(2,1fr);
-        }
-
-        .badges{
-            grid-template-columns:repeat(2,1fr);
-        }
-
-    }
-
-    @media(max-width:600px){
-
-        .header-section h1{
-            font-size:30px;
-        }
-
-        .stats-grid{
-            grid-template-columns:1fr;
-        }
-
-        .communication-grid{
-            grid-template-columns:1fr;
-        }
-
-        .daily-goal{
-            flex-direction:column;
-            text-align:center;
-            gap:20px;
-        }
-
-        .tips-grid{
-            grid-template-columns:1fr;
-        }
-
-        .badges{
-            grid-template-columns:1fr;
-        }
-
-        .challenge-box{
-            flex-direction:column;
-            text-align:center;
-        }
-
-    }
-
+    .comm-page{--ink:#172033;--muted:#718096;--line:#e8edf5;--purple:#6558e8;--blue:#3478f6;font-family:"DM Sans",sans-serif;color:var(--ink);max-width:1500px;margin:0 auto;padding:8px 0 42px}
+    .comm-page *{box-sizing:border-box}.comm-hero{position:relative;overflow:hidden;display:grid;grid-template-columns:1.15fr .85fr;align-items:center;min-height:300px;padding:42px 48px;border-radius:26px;background:linear-gradient(120deg,#111b36,#202b55 65%,#343b78);color:#fff;margin-bottom:22px}
+    .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:10px;font-weight:800;letter-spacing:1.7px;color:#bfc5ff}.comm-hero h1{font:800 clamp(34px,4vw,54px)/1.08 "Plus Jakarta Sans",sans-serif;letter-spacing:-2px;margin:17px 0 13px}.comm-hero h1 span{color:#a9a4ff}.hero-copy>p{max-width:610px;color:#d0d7ee;line-height:1.75;font-size:14px}.hero-actions{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-top:24px}.btn-primary{border:0;border-radius:11px;background:linear-gradient(110deg,#6558e8,#8275ff);color:#fff;padding:13px 18px;font-weight:800;font-size:13px;cursor:pointer;box-shadow:0 8px 22px #6558e83b;transition:.2s}.btn-primary:hover{transform:translateY(-2px);filter:brightness(1.06)}.privacy-note{font-size:11px;color:#c4cce3}.hero-visual{position:relative;min-height:220px;display:grid;place-items:center}.orb{position:absolute;border-radius:50%;filter:blur(1px)}.orb-one{width:220px;height:220px;background:#766bff33;right:14%;top:0}.orb-two{width:140px;height:140px;background:#3b9ef333;right:0;bottom:0}.voice-card{position:relative;width:min(330px,90%);padding:24px;border:1px solid #ffffff26;border-radius:20px;background:#ffffff12;backdrop-filter:blur(12px);box-shadow:0 20px 60px #070d2638}.voice-card-top{font-size:9px;letter-spacing:1.5px;color:#cdd2f1;font-weight:800}.live-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#35d49a;box-shadow:0 0 0 4px #35d49a20;margin-right:6px}.voice-wave{height:55px;display:flex;align-items:center;justify-content:center;gap:5px;margin:16px 0}.voice-wave i{width:5px;border-radius:8px;background:linear-gradient(#aaa4ff,#5f91ff);height:var(--h,20px);animation:wave 1s ease-in-out infinite alternate}.voice-wave i:nth-child(3n){--h:38px;animation-delay:.2s}.voice-wave i:nth-child(3n + 1){--h:25px;animation-delay:.5s}.voice-wave i:nth-child(3n + 2){--h:48px;animation-delay:.1s}@keyframes wave{to{transform:scaleY(.45);opacity:.65}}.voice-card strong,.voice-card small{display:block}.voice-card strong{font:700 17px "Plus Jakarta Sans"}.voice-card small{color:#c8cde7;margin-top:6px;font-size:11px}.voice-tags{display:flex;gap:7px;margin-top:17px}.voice-tags span{font-size:9px;padding:6px 9px;border-radius:20px;background:#ffffff17;color:#e0e4ff}
+    .metric-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:42px}.metric-card{display:flex;align-items:center;gap:14px;padding:18px;background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 5px 20px #15234b08}.metric-icon{width:43px;height:43px;display:grid;place-items:center;border-radius:13px;font-size:17px}.metric-icon.purple{background:#f0edff;color:#695be8}.metric-icon.blue{background:#eaf2ff;color:#3478f6}.metric-icon.green{background:#e8faf2;color:#1aa879}.metric-icon.orange{background:#fff3e6;color:#e58b2e}.metric-card span,.metric-card small{display:block;color:var(--muted);font-size:10px}.metric-card strong{display:block;font:800 22px "Plus Jakarta Sans";margin:3px 0}.metric-card small{font-size:9px}
+    .section-head{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;margin-bottom:18px}.dark-eyebrow{color:#7b72e9}.section-head h2{font:800 25px "Plus Jakarta Sans";letter-spacing:-.8px;margin:7px 0}.section-head p{color:var(--muted);font-size:12px;margin:0}.browser-pill{font-size:10px;color:#5e6477;background:#f3f5fb;padding:9px 12px;border-radius:30px;white-space:nowrap}.studio-section{margin-bottom:40px}.studio-grid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(310px,.8fr);gap:17px;align-items:start}.practice-panel,.coach-panel,.learning-card{background:#fff;border:1px solid var(--line);border-radius:19px;box-shadow:0 7px 25px #17254a08}.practice-panel{padding:24px}.panel-heading,.record-top{display:flex;justify-content:space-between;align-items:center;gap:12px}.panel-kicker{font-size:9px;font-weight:800;letter-spacing:1.5px;color:#8a8fa2}.panel-heading h3,.record-top h3,.coach-header h3{font:800 16px "Plus Jakarta Sans";margin:6px 0 0}.step-number{width:30px;height:30px;border-radius:10px;display:grid;place-items:center;background:#f0efff;color:#695be8;font-weight:800;font-size:11px}.scenario-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:17px 0}.scenario{display:flex;flex-direction:column;align-items:flex-start;text-align:left;gap:5px;padding:13px 11px;border:1px solid var(--line);border-radius:12px;background:#fff;cursor:pointer;transition:.2s}.scenario:hover,.scenario.active{border-color:#887df1;background:#f7f6ff;box-shadow:0 4px 12px #6558e80c}.scenario>span{font-size:21px}.scenario strong{font-size:11px}.scenario small{font-size:9px;color:var(--muted)}.prompt-box{padding:16px;border-radius:13px;background:linear-gradient(120deg,#f5f4ff,#f1f7ff);border:1px solid #e7e7ff}.prompt-label{font-size:9px;letter-spacing:1.2px;color:#6962bb;font-weight:800}.prompt-box p{font:700 14px/1.6 "Plus Jakarta Sans";margin:10px 0;color:#27304b}.prompt-controls{display:flex;gap:17px}.text-btn{border:0;background:none;color:#6258d7;font-size:10px;font-weight:800;cursor:pointer;padding:4px 0}.text-btn:hover{text-decoration:underline}.record-area{margin-top:22px}.record-status{font-size:10px;color:#778096}.record-controls{display:flex;align-items:center;gap:12px;margin:14px 0}.record-button{display:flex;align-items:center;gap:10px;border:0;background:#1e2948;color:#fff;padding:12px 16px;border-radius:11px;font-size:11px;font-weight:800;cursor:pointer}.record-button.recording{background:#e34f68;animation:pulse 1.3s infinite}.record-button:disabled,.outline-btn:disabled{opacity:.4;cursor:not-allowed}@keyframes pulse{50%{box-shadow:0 0 0 7px #e34f6824}}.timer{font:800 17px "Plus Jakarta Sans";font-variant-numeric:tabular-nums}.outline-btn{border:1px solid #dce2ed;border-radius:10px;padding:10px 13px;background:#fff;color:#48536b;font-size:10px;font-weight:800;cursor:pointer}.transcript-wrap{border:1px solid var(--line);border-radius:13px;overflow:hidden}.transcript-head,.transcript-foot{display:flex;justify-content:space-between;align-items:center;padding:10px 13px;background:#fafbfe}.transcript-head{border-bottom:1px solid var(--line)}.transcript-head strong{font-size:10px}.transcript-head span,.transcript-foot{font-size:9px;color:var(--muted)}.transcript{min-height:130px;max-height:240px;overflow:auto;padding:14px;font-size:12px;line-height:1.7;color:#34405a;outline:none;white-space:pre-wrap}.transcript:empty:before{content:attr(data-placeholder);color:#a2a9b8}.transcript-foot{border-top:1px solid var(--line)}.analysis-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}.analysis-actions .btn-primary{font-size:11px}.support-note{font-size:9px;line-height:1.6;color:#8b93a4;margin:11px 0 0}
+    .coach-panel{padding:20px;position:sticky;top:15px}.coach-header{display:flex;align-items:center;gap:12px;padding-bottom:17px;border-bottom:1px solid var(--line)}.coach-avatar{width:43px;height:43px;display:grid;place-items:center;border-radius:14px;background:linear-gradient(135deg,#6659e9,#438df4);color:#fff;font-size:17px}.coach-header h3{font-size:14px}.coach-header small{font-size:9px;color:#7b8497}.coach-intro{padding:15px 0 5px}.coach-intro strong{font-size:11px}.coach-intro p{font-size:10px;line-height:1.7;color:var(--muted);margin:6px 0}.feedback-empty{text-align:center;padding:23px 10px 25px;background:#f8f9fd;border:1px dashed #dfe4ef;border-radius:13px;margin:12px 0}.feedback-empty>div{width:39px;height:39px;margin:0 auto 10px;border-radius:13px;background:#eeedff;color:#695be8;display:grid;place-items:center}.feedback-empty strong{font-size:11px}.feedback-empty p{font-size:9px;color:var(--muted);line-height:1.6;max-width:210px;margin:6px auto}.feedback-result{padding:13px;border-radius:13px;background:#f8f9fd;margin:12px 0;max-height:390px;overflow:auto}.feedback-result h4{font:800 11px "Plus Jakarta Sans";margin:13px 0 6px;color:#343d5b}.feedback-result h4:first-child{margin-top:0}.feedback-result p,.feedback-result li{font-size:10px;line-height:1.65;color:#5f687d}.feedback-result ul{padding-left:17px;margin:5px 0}.feedback-score{display:flex;align-items:center;gap:10px;padding:10px;background:#eeedff;border-radius:10px;margin-bottom:10px}.feedback-score strong{font:800 24px "Plus Jakarta Sans";color:#6558e8}.feedback-score span{font-size:9px;color:#625d91}.coach-chat{border-top:1px solid var(--line);padding-top:15px;margin-top:16px}.chat-title{display:flex;justify-content:space-between;align-items:center}.chat-title strong{font-size:11px}.chat-title span{font-size:9px;color:var(--muted)}.chat-messages{display:flex;flex-direction:column;gap:8px;max-height:190px;overflow:auto;padding:12px 0}.chat-bubble{max-width:94%;padding:9px 11px;border-radius:11px;font-size:10px;line-height:1.6;white-space:pre-wrap}.coach-bubble{align-self:flex-start;background:#f0f2f8;color:#46516a}.user-bubble{align-self:flex-end;background:#6558e8;color:#fff}.chat-form{display:flex;gap:6px;border:1px solid #e2e6ef;border-radius:10px;padding:5px}.chat-form input{width:100%;border:0;outline:0;padding:6px;font:10px "DM Sans"}.chat-form button{width:31px;min-width:31px;border:0;border-radius:8px;background:#6558e8;color:white;cursor:pointer}
+    .learning-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:17px}.learning-card{padding:23px}.section-head.compact{margin-bottom:13px}.section-head.compact h2{font-size:18px}.phrase-list{display:flex;flex-direction:column}.phrase{display:flex;align-items:center;justify-content:space-between;gap:10px;text-align:left;padding:13px 2px;border:0;border-bottom:1px solid var(--line);background:none;cursor:pointer}.phrase:last-child{border-bottom:0}.phrase b,.phrase small{display:block}.phrase b{font-size:10px}.phrase small{font-size:10px;color:var(--muted);margin-top:4px}.phrase i{color:#6558e8;font-size:12px}.routine-list{display:flex;flex-direction:column;gap:12px}.routine-list>div{display:flex;align-items:center;gap:12px}.routine-time{min-width:60px;padding:7px 8px;border-radius:8px;background:#f0efff;color:#6558e8;text-align:center;font-size:9px;font-weight:800}.routine-list b,.routine-list small{display:block}.routine-list b{font-size:10px}.routine-list small{font-size:9px;color:var(--muted);margin-top:3px}.routine-tip{display:flex;gap:9px;align-items:flex-start;background:#fff8e9;color:#87601e;padding:11px;border-radius:10px;margin-top:17px;font-size:9px;line-height:1.6}.routine-tip i{margin-top:2px}.comm-toast{position:fixed;bottom:25px;right:25px;z-index:9999;background:#172033;color:#fff;padding:12px 17px;border-radius:10px;font-size:11px;box-shadow:0 8px 30px #0002;opacity:0;transform:translateY(10px);pointer-events:none;transition:.25s}.comm-toast.show{opacity:1;transform:translateY(0)}
+    @media(max-width:1050px){.studio-grid{grid-template-columns:1fr}.coach-panel{position:static}.coach-panel{display:grid;grid-template-columns:1fr 1fr;gap:12px}.coach-header,.coach-intro{grid-column:1/-1}.coach-chat{margin:0}.metric-grid{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:700px){.comm-hero{grid-template-columns:1fr;padding:28px 23px}.hero-visual{min-height:180px}.voice-card{width:270px}.section-head{align-items:flex-start;flex-direction:column}.browser-pill{white-space:normal}.scenario-grid{grid-template-columns:repeat(2,1fr)}.learning-grid{grid-template-columns:1fr}.coach-panel{display:block}.coach-chat{margin-top:16px}.metric-card{padding:13px}.metric-card strong{font-size:18px}.practice-panel,.learning-card{padding:17px}}
+    @media(max-width:420px){.metric-grid{gap:8px}.metric-card{gap:8px}.metric-icon{width:35px;height:35px}.record-controls{flex-wrap:wrap}.record-button{flex:1}.analysis-actions>*{flex:1}.scenario small{font-size:8px}}
 </style>
 
+<script>
+    (() => {
+        const $ = id => document.getElementById(id);
+        const transcript = $("transcript");
+        const promptText = $("scenarioPrompt");
+        const recordButton = $("recordButton");
+        const stopButton = $("stopButton");
+        const timer = $("speechTimer");
+        const status = $("recordStatus");
+        const feedbackResult = $("feedbackResult");
+        const feedbackEmpty = $("feedbackEmpty");
+        const toast = $("commToast");
+        let recognition = null;
+        let recording = false;
+        let startedAt = 0;
+        let timerInterval = null;
+        let elapsedSeconds = 0;
+        let finalTranscript = "";
+        let selectedScenario = "interview";
+        const promptSets = {
+            interview: ["Tell me about yourself and explain why you are interested in this role.","Describe a project you are proud of. What problem did it solve?","What is one skill you are currently improving, and how are you doing it?"],
+            daily: ["You meet a new classmate. Introduce yourself and start a friendly conversation.","Tell a friend about a film, book or activity you enjoyed recently.","You are ordering food. Ask a question and make a polite request."],
+            group: ["Is artificial intelligence helping students learn better? Share your view.","Should college students do internships while studying? Explain your opinion.","Is teamwork more important than individual talent? Give a reason."],
+            work: ["Your project task is delayed. Explain the situation professionally and suggest a next step.","Ask your teammate for an update without sounding rude.","You disagree with a suggestion. Explain your alternative respectfully."],
+            presentation: ["Introduce a project you built. Explain the problem, solution and main benefit.","Explain a technical concept in simple language to a non-technical person.","Present one improvement you would make to a college or workplace process."],
+            confidence: ["Talk for one minute about something you learned recently and why it matters.","Describe a challenge you handled and what you learned from it.","Speak about a goal you want to achieve in the next six months."]
+        };
+        const saved = JSON.parse(localStorage.getItem("communicationCoachStats") || '{"minutes":0,"sessions":0,"words":0,"day":"","today":0}');
+        function updateStats() {
+            const today = new Date().toISOString().slice(0,10);
+            if (saved.day !== today) { saved.day = today; saved.today = 0; }
+            $("practiceMinutes").textContent = saved.minutes + " min";
+            $("sessionCount").textContent = saved.sessions;
+            $("wordCount").textContent = saved.words.toLocaleString();
+            $("dailyProgress").textContent = Math.min(saved.today,15) + " / 15 min";
+            localStorage.setItem("communicationCoachStats", JSON.stringify(saved));
+        }
+        function notify(message) {
+            toast.textContent = message;
+            toast.classList.add("show");
+            setTimeout(() => toast.classList.remove("show"), 3000);
+        }
+        function words(text) { return (text.trim().match(/\b[\w']+\b/g) || []).length; }
+        function setTranscript(text) {
+            transcript.textContent = text;
+            $("wordLiveCount").textContent = words(text) + " words";
+        }
+        function speak(text) {
+            if (!("speechSynthesis" in window)) return notify("Speech playback is not supported in this browser.");
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = "en-IN";
+            utterance.rate = 0.92;
+            window.speechSynthesis.speak(utterance);
+        }
+        function updateTimer() {
+            const total = elapsedSeconds + (recording ? Math.floor((Date.now() - startedAt) / 1000) : 0);
+            timer.textContent = String(Math.floor(total / 60)).padStart(2,"0") + ":" + String(total % 60).padStart(2,"0");
+        }
+        function stopRecording() {
+            if (!recording) return;
+            recording = false;
+            elapsedSeconds += Math.floor((Date.now() - startedAt) / 1000);
+            if (recognition) { try { recognition.stop(); } catch(e) {} }
+            clearInterval(timerInterval);
+            recordButton.classList.remove("recording");
+            recordButton.innerHTML = '<i class="fa-solid fa-microphone"></i><span>Start speaking</span>';
+            stopButton.disabled = true;
+            status.textContent = "Recording stopped";
+            updateTimer();
+        }
+        function startRecording() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                notify("Voice recognition is not available here. Type your answer in the transcript box.");
+                $("speechSupport").textContent = "This browser does not provide speech recognition. Type your answer below, then request AI feedback.";
+                return;
+            }
+            if (recording) return;
+            recognition = new SpeechRecognition();
+            recognition.lang = "en-IN";
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognition.onstart = () => {
+                recording = true;
+                startedAt = Date.now();
+                recordButton.classList.add("recording");
+                recordButton.innerHTML = '<i class="fa-solid fa-wave-square"></i><span>Listening...</span>';
+                stopButton.disabled = false;
+                status.textContent = "Listening — speak naturally";
+                timerInterval = setInterval(updateTimer, 250);
+            };
+            recognition.onresult = event => {
+                let interim = "";
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    const text = event.results[i][0].transcript;
+                    if (event.results[i].isFinal) finalTranscript += text + " ";
+                    else interim += text;
+                }
+                setTranscript((finalTranscript + interim).trim());
+            };
+            recognition.onerror = event => {
+                status.textContent = event.error === "not-allowed" ? "Microphone permission denied" : "Voice input interrupted";
+                if (event.error === "not-allowed") notify("Allow microphone access in your browser to use voice practice.");
+            };
+            recognition.onend = () => {
+                if (recording) {
+                    recording = false;
+                    recordButton.classList.remove("recording");
+                    recordButton.innerHTML = '<i class="fa-solid fa-microphone"></i><span>Start speaking</span>';
+                    stopButton.disabled = true;
+                    clearInterval(timerInterval);
+                    status.textContent = "Recording stopped";
+                }
+            };
+            try { recognition.start(); } catch(e) { notify("Could not start microphone. Please try again."); }
+        }
+        document.querySelectorAll(".scenario").forEach(button => button.addEventListener("click", () => {
+            document.querySelectorAll(".scenario").forEach(item => item.classList.remove("active"));
+            button.classList.add("active");
+            selectedScenario = button.dataset.scenario;
+            promptText.textContent = button.dataset.prompt;
+            finalTranscript = "";
+            setTranscript("");
+            feedbackResult.hidden = true;
+            feedbackEmpty.hidden = false;
+        }));
+        $("newPrompt").addEventListener("click", () => {
+            const choices = promptSets[selectedScenario];
+            const next = choices[Math.floor(Math.random() * choices.length)];
+            promptText.textContent = next;
+            const active = document.querySelector(".scenario.active");
+            if (active) active.dataset.prompt = next;
+        });
+        $("speakPrompt").addEventListener("click", () => speak(promptText.textContent));
+        document.querySelectorAll(".phrase").forEach(button => button.addEventListener("click", () => speak(button.dataset.phrase)));
+        recordButton.addEventListener("click", startRecording);
+        stopButton.addEventListener("click", stopRecording);
+        transcript.addEventListener("input", () => {
+            finalTranscript = transcript.textContent;
+            $("wordLiveCount").textContent = words(finalTranscript) + " words";
+        });
+        $("clearTranscript").addEventListener("click", () => {
+            finalTranscript = "";
+            setTranscript("");
+            feedbackResult.hidden = true;
+            feedbackEmpty.hidden = false;
+        });
+        async function apiRequest(payload) {
+            const response = await fetch("/api/communication/coach", {
+                method: "POST",
+                headers: {"Content-Type":"application/json"},
+                body: JSON.stringify(payload)
+            });
+            const data = await response.json();
+            if (!response.ok || !data.success) throw new Error(data.error || "The coach could not respond. Please try again.");
+            return data;
+        }
+        function renderFeedback(data) {
+            const f = data.feedback || {};
+            const list = items => Array.isArray(items) ? items.map(x => `<li>${escapeHtml(x)}</li>`).join("") : "";
+            feedbackResult.innerHTML = `
+            <div class="feedback-score"><strong>${escapeHtml(f.score ?? "—")}</strong><span> / 100<br>Communication practice score</span></div>
+            <h4>What you did well</h4><ul>${list(f.strengths)}</ul>
+            <h4>Improve next</h4><ul>${list(f.improvements)}</ul>
+            <h4>Clearer way to say it</h4><p>${escapeHtml(f.better_version || "Keep your answer clear and specific.")}</p>
+            <h4>Try this next</h4><p>${escapeHtml(f.next_exercise || "Repeat your answer with one specific example.")}</p>
+            <h4>Coach's note</h4><p>${escapeHtml(f.summary || "Keep practising consistently.")}</p>`;
+            feedbackEmpty.hidden = true;
+            feedbackResult.hidden = false;
+        }
+        function escapeHtml(value) {
+            return String(value ?? "").replace(/[&<>"']/g, char => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[char]));
+        }
+        $("evaluateButton").addEventListener("click", async () => {
+            if (recording) stopRecording();
+            const answer = transcript.textContent.trim();
+            if (words(answer) < 5) return notify("Speak or type at least a few sentences before requesting feedback.");
+            const button = $("evaluateButton");
+            button.disabled = true;
+            button.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Coach is reviewing...';
+            try {
+                const data = await apiRequest({mode:"evaluate", scenario:selectedScenario, prompt:promptText.textContent, answer});
+                renderFeedback(data);
+            } catch(error) {
+                notify(error.message);
+            } finally {
+                button.disabled = false;
+                button.innerHTML = '<i class="fa-solid fa-sparkles"></i> Get AI feedback';
+            }
+        });
+        $("coachChatForm").addEventListener("submit", async event => {
+            event.preventDefault();
+            const input = $("coachInput");
+            const message = input.value.trim();
+            if (!message) return;
+            addChat(message, "user");
+            input.value = "";
+            const send = event.submitter || $("coachChatForm").querySelector("button");
+            send.disabled = true;
+            try {
+                const data = await apiRequest({mode:"chat", message});
+                addChat(data.reply || "Let's practise that together.", "coach");
+            } catch(error) {
+                addChat(error.message, "coach");
+            } finally {
+                send.disabled = false;
+            }
+        });
+        function addChat(message, who) {
+            const bubble = document.createElement("div");
+            bubble.className = "chat-bubble " + (who === "user" ? "user-bubble" : "coach-bubble");
+            bubble.textContent = message;
+            $("chatMessages").appendChild(bubble);
+            $("chatMessages").scrollTop = $("chatMessages").scrollHeight;
+        }
+        $("finishSession").addEventListener("click", () => {
+            if (recording) stopRecording();
+            const answer = transcript.textContent.trim();
+            if (words(answer) < 5) return notify("Add a spoken or typed answer before completing this session.");
+            const minutes = Math.max(1, Math.ceil(elapsedSeconds / 60));
+            saved.minutes += minutes;
+            saved.today += minutes;
+            saved.sessions += 1;
+            saved.words += words(answer);
+            elapsedSeconds = 0;
+            timer.textContent = "00:00";
+            updateStats();
+            notify("Practice session saved on this device. Great work!");
+        });
+        if (!(window.SpeechRecognition || window.webkitSpeechRecognition)) {
+            $("speechSupport").textContent = "Voice input is not supported in this browser. You can still type your answer and use the AI coach.";
+        }
+        updateStats();
+    })();
+</script>
 {% endblock %}
