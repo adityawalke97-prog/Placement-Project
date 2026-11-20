@@ -5563,9 +5563,77 @@ def inject_global_data():
 def courses():
     conn = None
     cursor = None
+
     try:
         conn = get_db_connection()
         cursor = conn.cursor(pymysql.cursors.DictCursor)
+
+        cursor.execute("""
+            SELECT
+                id,
+                faculty_name,
+                slug,
+                description
+            FROM pyq_faculties
+            WHERE is_active = 1
+            ORDER BY faculty_name
+        """)
+        faculties = cursor.fetchall()
+
+        cursor.execute("""
+            SELECT
+                c.id,
+                c.faculty_id,
+                c.course_code,
+                c.course_name,
+                c.slug,
+                c.course_level,
+                c.total_semesters,
+                c.description,
+                f.faculty_name,
+                f.slug AS faculty_slug
+            FROM pyq_courses c
+            INNER JOIN pyq_faculties f
+                ON f.id = c.faculty_id
+            WHERE c.is_active = 1
+              AND f.is_active = 1
+            ORDER BY f.faculty_name, c.course_name
+        """)
+        academic_courses = cursor.fetchall()
+
+        cursor.execute("""
+            SELECT
+                s.id,
+                s.course_id,
+                s.semester_no,
+                s.subject_code,
+                s.subject_name,
+                s.description
+            FROM pyq_subjects s
+            INNER JOIN pyq_courses c
+                ON c.id = s.course_id
+            WHERE s.is_active = 1
+              AND c.is_active = 1
+            ORDER BY s.course_id, s.semester_no, s.subject_name
+        """)
+        academic_subjects = cursor.fetchall()
+
+        cursor.execute("""
+            SELECT
+                id,
+                course_name,
+                semester,
+                subject_name,
+                exam_year,
+                exam_session,
+                marks,
+                paper_pattern,
+                file_path
+            FROM pyq_papers
+            ORDER BY exam_year DESC, semester, subject_name
+        """)
+        academic_papers = cursor.fetchall()
+
         cursor.execute("""
             SELECT
                 id,
@@ -5581,70 +5649,154 @@ def courses():
             ORDER BY id DESC
         """)
         all_materials = cursor.fetchall()
+
+        subjects_by_course = {}
+        for subject in academic_subjects:
+            course_id = subject["course_id"]
+            subjects_by_course.setdefault(course_id, []).append(subject)
+
+        papers_by_course = {}
+        for paper in academic_papers:
+            course_key = str(paper.get("course_name") or "").strip().lower()
+            papers_by_course.setdefault(course_key, []).append(paper)
+
+        courses_by_faculty = {}
+        for course in academic_courses:
+            course_id = course["id"]
+            course_name = str(course.get("course_name") or "").strip()
+            course_key = course_name.lower()
+
+            course["subjects"] = subjects_by_course.get(course_id, [])
+            course["papers"] = papers_by_course.get(course_key, [])
+
+            semesters = {}
+            for subject in course["subjects"]:
+                semester_no = subject["semester_no"]
+                semesters.setdefault(semester_no, []).append(subject)
+
+            course["semesters"] = [
+                {
+                    "semester_no": semester_no,
+                    "subjects": semester_subjects
+                }
+                for semester_no, semester_subjects in sorted(semesters.items())
+            ]
+
+            courses_by_faculty.setdefault(
+                course["faculty_id"], []
+            ).append(course)
+
+        for faculty in faculties:
+            faculty["courses"] = courses_by_faculty.get(faculty["id"], [])
+            faculty["total_courses"] = len(faculty["courses"])
+            faculty["total_subjects"] = sum(
+                len(course["subjects"])
+                for course in faculty["courses"]
+            )
+            faculty["total_papers"] = sum(
+                len(course["papers"])
+                for course in faculty["courses"]
+            )
+
         pyq_papers = []
+        for paper in academic_papers:
+            pyq_papers.append({
+                "id": paper["id"],
+                "title": paper["subject_name"],
+                "course_name": paper["course_name"],
+                "subject_name": paper["subject_name"],
+                "semester": paper["semester"],
+                "exam_year": paper["exam_year"],
+                "exam_session": paper["exam_session"],
+                "marks": paper["marks"],
+                "paper_pattern": paper["paper_pattern"],
+                "pdf_url": paper["file_path"],
+                "file_path": paper["file_path"]
+            })
+
         study_materials = []
-        courses_list = []
-        course_names = set()
         for item in all_materials:
-            course_name = str(item.get('course_name') or '').strip()
-            if course_name and course_name not in course_names:
-                course_names.add(course_name)
-                courses_list.append({
-                    'name': course_name,
-                    'course_name': course_name,
-                    'slug': course_name.lower().replace(' ', '-')
-                })
             material_type = str(
-                item.get('material_type') or ''
+                item.get("material_type") or ""
             ).strip().lower()
+
             category = str(
-                item.get('category') or ''
+                item.get("category") or ""
             ).strip().lower()
-            if material_type in ['pyq', 'question_bank'] or category in ['pyq', 'question_bank']:
-                pyq_papers.append({
-                    'id': item.get('id'),
-                    'title': item.get('title'),
-                    'course_name': course_name,
-                    'subject_name': item.get('subject_name'),
-                    'semester': item.get('semester'),
-                    'exam_year': '',
-                    'exam_session': '',
-                    'paper_pattern': 'SPPU',
-                    'pdf_url': item.get('pdf_link')
-                })
-            else:
-                study_materials.append({
-                    'id': item.get('id'),
-                    'title': item.get('title'),
-                    'description': item.get('description'),
-                    'filename': item.get('pdf_link'),
-                    'pdf_link': item.get('pdf_link'),
-                    'extension': 'PDF',
-                    'size': ''
-                })
+
+            if material_type in ("pyq", "question_bank") or category in (
+                "pyq", "question_bank"
+            ):
+                continue
+
+            study_materials.append({
+                "id": item["id"],
+                "title": item["title"],
+                "description": item["description"],
+                "filename": item["pdf_link"],
+                "pdf_link": item["pdf_link"],
+                "course_name": item["course_name"],
+                "semester": item["semester"],
+                "subject_name": item["subject_name"],
+                "extension": "PDF",
+                "size": ""
+            })
+
         pyq_semesters = sorted({
-            str(paper['semester'])
+            str(paper["semester"])
             for paper in pyq_papers
-            if paper.get('semester')
+            if paper.get("semester") is not None
         })
+
         pyq_years = sorted({
-            str(paper['exam_year'])
+            str(paper["exam_year"])
             for paper in pyq_papers
-            if paper.get('exam_year')
+            if paper.get("exam_year") is not None
         }, reverse=True)
+
+        total_faculties = len(faculties)
+        total_academic_courses = len(academic_courses)
+        total_academic_subjects = len(academic_subjects)
+        total_academic_papers = len(academic_papers)
+
+        courses_list = [
+            {
+                "id": course["id"],
+                "name": course["course_name"],
+                "course_name": course["course_name"],
+                "slug": course["slug"],
+                "faculty_id": course["faculty_id"],
+                "faculty_name": course["faculty_name"],
+                "total_semesters": course["total_semesters"],
+                "course_level": course["course_level"]
+            }
+            for course in academic_courses
+        ]
+
         return render_template(
-            'courses.html',
+            "courses.html",
+            faculties=faculties,
+            academic_courses=academic_courses,
+            academic_subjects=academic_subjects,
+            academic_papers=academic_papers,
             courses=courses_list,
             courses_list=courses_list,
+            courses_by_faculty=courses_by_faculty,
             pyq_papers=pyq_papers,
             pyq_semesters=pyq_semesters,
             pyq_years=pyq_years,
-            study_materials=study_materials
+            study_materials=study_materials,
+            total_faculties=total_faculties,
+            total_academic_courses=total_academic_courses,
+            total_academic_subjects=total_academic_subjects,
+            total_academic_papers=total_academic_papers
         )
+
     except Exception as e:
-        app.logger.exception(f"Courses Route Error: {e}")
-        flash("Unable to load courses. Please try again.", "danger")
-        return redirect(url_for('dashboard'))
+        app.logger.exception("ACADEMIC COURSES ERROR")
+        flash("Unable to load academic courses. Please try again.", "danger")
+        return redirect(url_for("dashboard"))
+
     finally:
         if cursor:
             cursor.close()

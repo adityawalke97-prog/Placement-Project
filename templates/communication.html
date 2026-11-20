@@ -1,359 +1,859 @@
 {% extends "layout.html" %}
-{% block title %}AI Communication Coach | Placement Training Portal{% endblock %}
+{% block title %}Communication Skills | Placement Training Portal{% endblock %}
 {% block content %}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
-<div class="comm-page">
-    <section class="comm-hero">
-        <div class="hero-copy">
-            <span class="eyebrow"><i class="fa-solid fa-wand-magic-sparkles"></i> PERSONAL COMMUNICATION TRAINER</span>
-            <h1>Speak clearly.<br><span>Grow confidently.</span></h1>
-            <p>Practice real conversations, prepare for interviews, improve your spoken English and get actionable feedback from your AI communication coach.</p>
-            <div class="hero-actions">
-                <button class="btn-primary" onclick="document.getElementById('practiceStudio').scrollIntoView({behavior:'smooth'})"><i class="fa-solid fa-microphone"></i> Start speaking practice</button>
-                <span class="privacy-note"><i class="fa-solid fa-shield-halved"></i> Microphone starts only when you choose</span>
-            </div>
+
+<div class="learning-page">
+    <section class="learn-hero">
+        <div class="hero-content">
+            <span class="hero-label"><i class="fa-solid fa-graduation-cap"></i> YOUR PERSONAL LEARNING SPACE</span>
+            <h1>Become a <span>confident communicator.</span></h1>
+            <p>Learn how to speak clearly, express your thoughts, build better conversations and communicate confidently in college, interviews and the workplace.</p>
+            <a href="#learning-path" class="hero-button">Start learning <i class="fa-solid fa-arrow-down"></i></a>
+            <div class="hero-points"><span><i class="fa-solid fa-check-circle"></i> Simple lessons</span><span><i class="fa-solid fa-check-circle"></i> Real-life examples</span><span><i class="fa-solid fa-check-circle"></i> Daily improvement tips</span></div>
         </div>
-        <div class="hero-visual">
-            <div class="orb orb-one"></div><div class="orb orb-two"></div>
-            <div class="voice-card">
-                <div class="voice-card-top"><span class="live-dot"></span> YOUR NEXT PRACTICE</div>
-                <div class="voice-wave"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-                <strong>Speak with confidence</strong>
-                <small>One short practice session at a time.</small>
-                <div class="voice-tags"><span>Fluency</span><span>Clarity</span><span>Confidence</span></div>
+        <div class="hero-art">
+            <div class="art-orbit orbit-a"></div><div class="art-orbit orbit-b"></div>
+            <div class="speech-card">
+                <div class="speech-card-icon"><i class="fa-solid fa-comments"></i></div>
+                <span>COMMUNICATION TIP</span>
+                <strong>Think clearly.<br>Speak simply.</strong>
+                <p>You don't need difficult English. You need clear thoughts and regular practice.</p>
+                <div class="speech-lines"><i></i><i></i><i></i></div>
             </div>
         </div>
     </section>
 
-    <section class="metric-grid">
-        <article class="metric-card"><div class="metric-icon purple"><i class="fa-solid fa-stopwatch"></i></div><div><span>Practice time</span><strong id="practiceMinutes">0 min</strong><small>This device</small></div></article>
-        <article class="metric-card"><div class="metric-icon blue"><i class="fa-solid fa-comments"></i></div><div><span>Sessions completed</span><strong id="sessionCount">0</strong><small>Saved in this browser</small></div></article>
-        <article class="metric-card"><div class="metric-icon green"><i class="fa-solid fa-book-open"></i></div><div><span>Words spoken</span><strong id="wordCount">0</strong><small>Across your practices</small></div></article>
-        <article class="metric-card"><div class="metric-icon orange"><i class="fa-solid fa-fire"></i></div><div><span>Daily target</span><strong id="dailyProgress">0 / 15 min</strong><small>Build a daily habit</small></div></article>
+    <section class="principles">
+        <div><span class="principle-icon violet"><i class="fa-solid fa-brain"></i></span><b>Clear thinking</b><small>Organise your thoughts before speaking.</small></div>
+        <div><span class="principle-icon blue"><i class="fa-solid fa-message"></i></span><b>Simple language</b><small>Use natural sentences people understand.</small></div>
+        <div><span class="principle-icon green"><i class="fa-solid fa-ear-listen"></i></span><b>Active listening</b><small>Understand others before responding.</small></div>
+        <div><span class="principle-icon orange"><i class="fa-solid fa-repeat"></i></span><b>Daily practice</b><small>Improve gradually with small habits.</small></div>
     </section>
 
-    <section class="studio-section" id="practiceStudio">
-        <div class="section-head">
-            <div><span class="eyebrow dark-eyebrow">THE PRACTICE STUDIO</span><h2>Speak, listen and improve</h2><p>Choose a scenario, speak naturally and review specific suggestions.</p></div>
-            <span class="browser-pill"><i class="fa-solid fa-microphone-lines"></i> Browser voice support required</span>
+    <section class="section-block" id="learning-path">
+        <div class="section-heading">
+            <div><span class="section-kicker">LEARN STEP BY STEP</span><h2>Your communication learning path</h2><p>Open a lesson, understand the concept and try the small activity.</p></div>
+            <span class="course-tag"><i class="fa-solid fa-book-open"></i> 8 practical lessons</span>
         </div>
+        <div class="lesson-grid">
+            <article class="lesson-card">
+                <div class="lesson-top"><span class="lesson-icon lavender"><i class="fa-solid fa-lightbulb"></i></span><span class="lesson-number">01</span></div>
+                <span class="lesson-category">FOUNDATION</span><h3>Build communication confidence</h3>
+                <p>Understand how to reduce hesitation and share your thoughts without worrying about every mistake.</p>
+                <button class="lesson-open" data-lesson="confidence">Learn this lesson <i class="fa-solid fa-arrow-right"></i></button>
+            </article>
+            <article class="lesson-card">
+                <div class="lesson-top"><span class="lesson-icon sky"><i class="fa-solid fa-language"></i></span><span class="lesson-number">02</span></div>
+                <span class="lesson-category">SPOKEN ENGLISH</span><h3>Make better sentences</h3>
+                <p>Learn simple sentence patterns that help you explain your ideas naturally in English.</p>
+                <button class="lesson-open" data-lesson="sentences">Learn this lesson <i class="fa-solid fa-arrow-right"></i></button>
+            </article>
+            <article class="lesson-card">
+                <div class="lesson-top"><span class="lesson-icon mint"><i class="fa-solid fa-ear-listen"></i></span><span class="lesson-number">03</span></div>
+                <span class="lesson-category">LISTENING</span><h3>Become an active listener</h3>
+                <p>Learn to listen carefully, understand the message and respond appropriately.</p>
+                <button class="lesson-open" data-lesson="listening">Learn this lesson <i class="fa-solid fa-arrow-right"></i></button>
+            </article>
+            <article class="lesson-card">
+                <div class="lesson-top"><span class="lesson-icon peach"><i class="fa-solid fa-people-arrows-left-right"></i></span><span class="lesson-number">04</span></div>
+                <span class="lesson-category">CONVERSATION</span><h3>Start and continue conversations</h3>
+                <p>Learn how to greet people, ask questions, show interest and avoid awkward silence.</p>
+                <button class="lesson-open" data-lesson="conversation">Learn this lesson <i class="fa-solid fa-arrow-right"></i></button>
+            </article>
+            <article class="lesson-card">
+                <div class="lesson-top"><span class="lesson-icon sky"><i class="fa-solid fa-briefcase"></i></span><span class="lesson-number">05</span></div>
+                <span class="lesson-category">PROFESSIONAL</span><h3>Speak professionally at work</h3>
+                <p>Learn polite requests, clear updates, teamwork language and respectful disagreement.</p>
+                <button class="lesson-open" data-lesson="workplace">Learn this lesson <i class="fa-solid fa-arrow-right"></i></button>
+            </article>
+            <article class="lesson-card">
+                <div class="lesson-top"><span class="lesson-icon lavender"><i class="fa-solid fa-users"></i></span><span class="lesson-number">06</span></div>
+                <span class="lesson-category">GROUP DISCUSSION</span><h3>Express your opinions clearly</h3>
+                <p>Learn how to enter a discussion, support your point and respect different opinions.</p>
+                <button class="lesson-open" data-lesson="discussion">Learn this lesson <i class="fa-solid fa-arrow-right"></i></button>
+            </article>
+            <article class="lesson-card">
+                <div class="lesson-top"><span class="lesson-icon mint"><i class="fa-solid fa-user-tie"></i></span><span class="lesson-number">07</span></div>
+                <span class="lesson-category">INTERVIEW SKILLS</span><h3>Communicate in interviews</h3>
+                <p>Learn how to structure answers, explain projects and speak honestly about your skills.</p>
+                <button class="lesson-open" data-lesson="interview">Learn this lesson <i class="fa-solid fa-arrow-right"></i></button>
+            </article>
+            <article class="lesson-card">
+                <div class="lesson-top"><span class="lesson-icon peach"><i class="fa-solid fa-handshake"></i></span><span class="lesson-number">08</span></div>
+                <span class="lesson-category">BODY LANGUAGE</span><h3>Use positive body language</h3>
+                <p>Understand eye contact, posture, facial expressions and confident presence.</p>
+                <button class="lesson-open" data-lesson="bodylanguage">Learn this lesson <i class="fa-solid fa-arrow-right"></i></button>
+            </article>
+        </div>
+    </section>
+
+    <section class="lesson-detail" id="lessonDetail" hidden>
+        <div class="detail-heading"><div><span class="section-kicker" id="detailCategory">LESSON</span><h2 id="detailTitle">Lesson title</h2></div><button id="closeLesson" class="close-lesson" aria-label="Close lesson"><i class="fa-solid fa-xmark"></i></button></div>
+        <div id="detailContent"></div>
+        <div class="lesson-footer"><span><i class="fa-solid fa-bookmark"></i> Take one idea and use it in a real conversation today.</span><button id="lessonDone" class="done-button"><i class="fa-solid fa-check"></i> Mark as learned</button></div>
+    </section>
+
+    <section class="section-block">
+        <div class="section-heading"><div><span class="section-kicker">SAY IT NATURALLY</span><h2>Useful English phrases for everyday situations</h2><p>Learn expressions you can actually use. Select the speaker icon to hear each phrase.</p></div></div>
+        <div class="phrase-categories">
+            <div class="phrase-panel"><div class="phrase-panel-title"><span>👋</span><div><b>Starting a conversation</b><small>Friendly and natural openings</small></div></div>
+                <div class="phrase-row"><span><b>Hi, how's your day going?</b><small>Casual greeting</small></span><button class="speak-phrase" data-say="Hi, how's your day going?"><i class="fa-solid fa-volume-high"></i></button></div>
+                <div class="phrase-row"><span><b>What are you working on these days?</b><small>Showing interest</small></span><button class="speak-phrase" data-say="What are you working on these days?"><i class="fa-solid fa-volume-high"></i></button></div>
+                <div class="phrase-row"><span><b>It's nice talking to you.</b><small>Ending politely</small></span><button class="speak-phrase" data-say="It's nice talking to you."><i class="fa-solid fa-volume-high"></i></button></div>
+            </div>
+            <div class="phrase-panel"><div class="phrase-panel-title"><span>💬</span><div><b>Expressing your thoughts</b><small>Share ideas clearly</small></div></div>
+                <div class="phrase-row"><span><b>In my opinion, the main point is...</b><small>Giving an opinion</small></span><button class="speak-phrase" data-say="In my opinion, the main point is..."><i class="fa-solid fa-volume-high"></i></button></div>
+                <div class="phrase-row"><span><b>I'd like to add something to that.</b><small>Adding an idea</small></span><button class="speak-phrase" data-say="I'd like to add something to that."><i class="fa-solid fa-volume-high"></i></button></div>
+                <div class="phrase-row"><span><b>I understand your point, however...</b><small>Disagreeing respectfully</small></span><button class="speak-phrase" data-say="I understand your point, however..."><i class="fa-solid fa-volume-high"></i></button></div>
+            </div>
+            <div class="phrase-panel"><div class="phrase-panel-title"><span>🙏</span><div><b>When you need help</b><small>Ask politely and confidently</small></div></div>
+                <div class="phrase-row"><span><b>Could you please explain that again?</b><small>Requesting clarification</small></span><button class="speak-phrase" data-say="Could you please explain that again?"><i class="fa-solid fa-volume-high"></i></button></div>
+                <div class="phrase-row"><span><b>Could you give me an example?</b><small>Understanding better</small></span><button class="speak-phrase" data-say="Could you give me an example?"><i class="fa-solid fa-volume-high"></i></button></div>
+                <div class="phrase-row"><span><b>Let me think for a moment.</b><small>Taking time to respond</small></span><button class="speak-phrase" data-say="Let me think for a moment."><i class="fa-solid fa-volume-high"></i></button></div>
+            </div>
+            <div class="phrase-panel"><div class="phrase-panel-title"><span>💼</span><div><b>Professional communication</b><small>College, internship and workplace</small></div></div>
+                <div class="phrase-row"><span><b>I'll complete this and share an update.</b><small>Giving a work update</small></span><button class="speak-phrase" data-say="I'll complete this and share an update."><i class="fa-solid fa-volume-high"></i></button></div>
+                <div class="phrase-row"><span><b>Thank you for pointing that out.</b><small>Responding to feedback</small></span><button class="speak-phrase" data-say="Thank you for pointing that out."><i class="fa-solid fa-volume-high"></i></button></div>
+                <div class="phrase-row"><span><b>I'll look into it and get back to you.</b><small>Responding to a request</small></span><button class="speak-phrase" data-say="I'll look into it and get back to you."><i class="fa-solid fa-volume-high"></i></button></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-block two-column">
+        <div class="content-panel">
+            <div class="section-heading small-heading"><div><span class="section-kicker">COMMON IMPROVEMENTS</span><h2>Say it in a clearer way</h2><p>Use natural, polite and complete sentences.</p></div></div>
+            <div class="correction-list">
+                <div class="correction"><span class="wrong">❌ I am having a doubt.</span><span class="right">✓ I have a question.</span></div>
+                <div class="correction"><span class="wrong">❌ Myself Aditya.</span><span class="right">✓ My name is Aditya.</span></div>
+                <div class="correction"><span class="wrong">❌ I didn't understood.</span><span class="right">✓ I didn't understand.</span></div>
+                <div class="correction"><span class="wrong">❌ He is senior than me.</span><span class="right">✓ He is senior to me.</span></div>
+                <div class="correction"><span class="wrong">❌ Revert back to me.</span><span class="right">✓ Please get back to me.</span></div>
+            </div>
+            <div class="note-box"><i class="fa-solid fa-circle-info"></i><span>Don't feel embarrassed about mistakes. Notice them, learn the natural expression and use it next time.</span></div>
+        </div>
+        <div class="content-panel">
+            <div class="section-heading small-heading"><div><span class="section-kicker">BODY LANGUAGE</span><h2>Communicate beyond words</h2><p>Your non-verbal signals also affect how your message is received.</p></div></div>
+            <div class="body-tips">
+                <div><span>👀</span><section><b>Natural eye contact</b><small>Look at the person while listening and speaking. Don't stare continuously.</small></section></div>
+                <div><span>🧍</span><section><b>Open posture</b><small>Keep your shoulders relaxed and avoid constantly looking down.</small></section></div>
+                <div><span>🙂</span><section><b>Friendly expression</b><small>A natural smile can make conversations more comfortable.</small></section></div>
+                <div><span>🤲</span><section><b>Meaningful gestures</b><small>Use relaxed hand gestures to support your message.</small></section></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-block">
+        <div class="section-heading"><div><span class="section-kicker">BUILD YOUR VOCABULARY</span><h2>Professional words to use in context</h2><p>Learn the meaning and a sentence you can use in real communication.</p></div></div>
+        <div class="vocab-grid">
+            <div class="vocab-card"><span>01</span><h3>Clarify</h3><p>To make something easier to understand.</p><em>Could you clarify the second point?</em><button class="speak-phrase" data-say="Could you clarify the second point?"><i class="fa-solid fa-volume-high"></i> Listen</button></div>
+            <div class="vocab-card"><span>02</span><h3>Collaborate</h3><p>To work together with other people.</p><em>I enjoy collaborating with my teammates.</em><button class="speak-phrase" data-say="I enjoy collaborating with my teammates."><i class="fa-solid fa-volume-high"></i> Listen</button></div>
+            <div class="vocab-card"><span>03</span><h3>Reliable</h3><p>Someone who can be trusted to do a task.</p><em>I always try to be a reliable team member.</em><button class="speak-phrase" data-say="I always try to be a reliable team member."><i class="fa-solid fa-volume-high"></i> Listen</button></div>
+            <div class="vocab-card"><span>04</span><h3>Prioritise</h3><p>To decide what is most important first.</p><em>I prioritise tasks based on deadlines.</em><button class="speak-phrase" data-say="I prioritise tasks based on deadlines."><i class="fa-solid fa-volume-high"></i> Listen</button></div>
+            <div class="vocab-card"><span>05</span><h3>Adaptable</h3><p>Able to adjust to new situations.</p><em>I am adaptable and open to learning.</em><button class="speak-phrase" data-say="I am adaptable and open to learning."><i class="fa-solid fa-volume-high"></i> Listen</button></div>
+            <div class="vocab-card"><span>06</span><h3>Appreciate</h3><p>To recognise the value of someone's help or effort.</p><em>I appreciate your time and guidance.</em><button class="speak-phrase" data-say="I appreciate your time and guidance."><i class="fa-solid fa-volume-high"></i> Listen</button></div>
+        </div>
+    </section>
+
+
+    <section class="section-block knowledge-library" id="knowledge-library">
+        <div class="section-heading">
+            <div><span class="section-kicker">DETAILED STUDY MATERIAL</span><h2>Communication knowledge library</h2><p>Explore practical concepts, methods, examples and ready-to-use formats for everyday and professional communication.</p></div>
+            <span class="course-tag"><i class="fa-solid fa-book-open-reader"></i> 12 study guides</span>
+        </div>
+        <div class="knowledge-search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input id="knowledgeSearch" type="search" placeholder="Search topics: 7 Cs, listening, email, presentation...">
+            <span id="knowledgeCount">12 guides</span>
+        </div>
+        <div class="knowledge-grid" id="knowledgeGrid">
+            <article class="knowledge-card" data-keywords="7 cs communication principles clear concise concrete correct coherent complete courteous">
+                <div class="knowledge-card-head"><span class="knowledge-icon purple"><i class="fa-solid fa-list-check"></i></span><span>GUIDE 01</span></div>
+                <h3>The 7 Cs of effective communication</h3>
+                <p>Use these seven principles to make your message easy to understand and act on.</p>
+                <div class="knowledge-body">
+                    <div class="knowledge-point"><b>1. Clear</b><p>Have one main purpose. Avoid confusing or vague wording.</p><em>Unclear: “Do that thing soon.” Clear: “Please send the report by 4 PM today.”</em></div>
+                    <div class="knowledge-point"><b>2. Concise</b><p>Use only the words needed. Remove repeated ideas and unnecessary details.</p></div>
+                    <div class="knowledge-point"><b>3. Concrete</b><p>Use facts, examples, dates and specific details instead of general statements.</p></div>
+                    <div class="knowledge-point"><b>4. Correct</b><p>Check grammar, names, numbers, facts and the recipient before sending a message.</p></div>
+                    <div class="knowledge-point"><b>5. Coherent</b><p>Arrange ideas logically so each sentence connects to the next.</p></div>
+                    <div class="knowledge-point"><b>6. Complete</b><p>Include the information the listener needs: what, why, when and next step.</p></div>
+                    <div class="knowledge-point"><b>7. Courteous</b><p>Use respectful language, even when correcting a mistake or disagreeing.</p></div>
+                </div>
+            </article>
+
+            <article class="knowledge-card" data-keywords="communication process sender encoding message channel receiver decoding feedback noise">
+                <div class="knowledge-card-head"><span class="knowledge-icon blue"><i class="fa-solid fa-arrows-left-right"></i></span><span>GUIDE 02</span></div>
+                <h3>How the communication process works</h3>
+                <p>Communication is a two-way process. A message is sent, understood and responded to.</p>
+                <div class="knowledge-body">
+                    <ol class="numbered-learning">
+                        <li><b>Sender:</b> the person who has information or an idea.</li>
+                        <li><b>Encoding:</b> converting the idea into words, signs or gestures.</li>
+                        <li><b>Message:</b> the information being shared.</li>
+                        <li><b>Channel:</b> the method, such as face-to-face, phone, email or chat.</li>
+                        <li><b>Receiver:</b> the person who gets the message.</li>
+                        <li><b>Decoding:</b> interpreting what the message means.</li>
+                        <li><b>Feedback:</b> the receiver's response that shows whether the message was understood.</li>
+                    </ol>
+                    <div class="knowledge-callout"><b>Example:</b> A team leader asks you to finish a task by Friday (message). You repeat the deadline to confirm (feedback). This prevents misunderstanding.</div>
+                    <h4>What is communication noise?</h4><p>Noise is anything that interferes with a message. It can be background sound, poor internet, unclear wording, stress, assumptions or unfamiliar terminology.</p>
+                </div>
+            </article>
+
+            <article class="knowledge-card" data-keywords="types verbal non verbal written visual oral communication">
+                <div class="knowledge-card-head"><span class="knowledge-icon green"><i class="fa-solid fa-comments"></i></span><span>GUIDE 03</span></div>
+                <h3>Types of communication</h3>
+                <p>Choose the communication style that suits the situation and the message.</p>
+                <div class="knowledge-body">
+                    <div class="knowledge-point"><b>Verbal / oral</b><p>Spoken communication in meetings, calls, conversations and presentations. Focus on clarity, pace and tone.</p></div>
+                    <div class="knowledge-point"><b>Non-verbal</b><p>Body posture, facial expressions, gestures, eye contact and personal space. Make sure these support your words.</p></div>
+                    <div class="knowledge-point"><b>Written</b><p>Emails, reports, notices and chat messages. Organise the message and check it before sending.</p></div>
+                    <div class="knowledge-point"><b>Visual</b><p>Charts, diagrams, slides, symbols and images. Keep visuals simple and label them clearly.</p></div>
+                    <h4>Choosing the right channel</h4><p>Use a quick chat for a simple update, a call for a discussion that needs immediate clarification, and email when a formal record or detailed information is needed.</p>
+                </div>
+            </article>
+
+            <article class="knowledge-card" data-keywords="barriers communication physical language cultural emotional psychological semantic overcome">
+                <div class="knowledge-card-head"><span class="knowledge-icon orange"><i class="fa-solid fa-triangle-exclamation"></i></span><span>GUIDE 04</span></div>
+                <h3>Barriers to communication</h3>
+                <p>Recognise what blocks understanding and learn how to reduce it.</p>
+                <div class="knowledge-body">
+                    <div class="knowledge-point"><b>Language barrier</b><p>Unfamiliar words, fast speech or complex sentences. Use simple words, explain terms and ask for clarification.</p></div>
+                    <div class="knowledge-point"><b>Physical barrier</b><p>Noise, distance or poor connectivity. Choose a quieter place and confirm important details in writing.</p></div>
+                    <div class="knowledge-point"><b>Emotional barrier</b><p>Stress, anger or fear can affect how a message is understood. Pause, calm down and speak respectfully.</p></div>
+                    <div class="knowledge-point"><b>Cultural barrier</b><p>People may have different communication styles. Avoid assumptions and ask polite questions when unsure.</p></div>
+                    <div class="knowledge-point"><b>Listening barrier</b><p>Interrupting or multitasking causes missed information. Give attention and summarise what you heard.</p></div>
+                    <div class="knowledge-callout"><b>Useful phrase:</b> “I want to make sure I understood correctly. Could you please explain that part again?”</div>
+                </div>
+            </article>
+
+            <article class="knowledge-card" data-keywords="speaking structure PREP point reason example point answer explain opinion">
+                <div class="knowledge-card-head"><span class="knowledge-icon purple"><i class="fa-solid fa-comment-dots"></i></span><span>GUIDE 05</span></div>
+                <h3>Organise your thoughts before speaking</h3>
+                <p>Use simple structures so your answer has a beginning, middle and end.</p>
+                <div class="knowledge-body">
+                    <h4>PREP method for opinions</h4>
+                    <div class="framework-step"><b>P — Point</b><span>State your main opinion.</span></div>
+                    <div class="framework-step"><b>R — Reason</b><span>Explain why you think so.</span></div>
+                    <div class="framework-step"><b>E — Example</b><span>Give a real or relevant example.</span></div>
+                    <div class="framework-step"><b>P — Point</b><span>Restate your key message briefly.</span></div>
+                    <div class="knowledge-callout"><b>Example topic: Teamwork</b><br>“I believe teamwork is important. It combines different skills and ideas. For example, in a college project, one person can handle the backend while another works on the interface. That's why teamwork can improve a project's outcome.”</div>
+                    <h4>When explaining a process</h4><p>Use: First → Next → After that → Finally. This makes instructions and project explanations easier to follow.</p>
+                </div>
+            </article>
+
+            <article class="knowledge-card" data-keywords="pronunciation fluency pace pause stress intonation clarity voice speaking">
+                <div class="knowledge-card-head"><span class="knowledge-icon blue"><i class="fa-solid fa-volume-high"></i></span><span>GUIDE 06</span></div>
+                <h3>Improve speaking clarity and fluency</h3>
+                <p>Being understood is more important than copying a particular accent.</p>
+                <div class="knowledge-body">
+                    <div class="knowledge-point"><b>Speak at a comfortable pace</b><p>Slow down slightly on important points. Very fast speech can make words difficult to understand.</p></div>
+                    <div class="knowledge-point"><b>Use pauses</b><p>Pause between ideas instead of filling every silence with “umm”, “actually” or “like”.</p></div>
+                    <div class="knowledge-point"><b>Practise word stress</b><p>Listen to how a word is pronounced and which syllable is stressed. Use a dictionary with audio to check unfamiliar words.</p></div>
+                    <div class="knowledge-point"><b>Read aloud</b><p>Read a short paragraph for five minutes. Focus on complete sounds, natural pauses and clear endings of words.</p></div>
+                    <div class="knowledge-point"><b>Record and review</b><p>Record a short practice explanation. Check whether the message is clear and whether you speak too quickly.</p></div>
+                    <div class="knowledge-callout">Do not try to remove your natural accent. Work on understandable pronunciation, clear words and confident delivery.</div>
+                </div>
+            </article>
+
+            <article class="knowledge-card" data-keywords="written communication email format subject greeting body closing professional email etiquette">
+                <div class="knowledge-card-head"><span class="knowledge-icon green"><i class="fa-solid fa-envelope"></i></span><span>GUIDE 07</span></div>
+                <h3>Write professional emails</h3>
+                <p>A professional email should make its purpose clear and tell the reader what action is needed.</p>
+                <div class="knowledge-body">
+                    <h4>Basic email structure</h4>
+                    <div class="email-sample"><b>Subject:</b> Request for project meeting<br><br>Hello [Name],<br><br>I would like to discuss the current project progress and clarify the next steps. Could we schedule a short meeting this week?<br><br>Thank you for your time.<br><br>Regards,<br>[Your Name]</div>
+                    <h4>Email checklist</h4>
+                    <ul><li>Write a short, specific subject line.</li><li>Use an appropriate greeting.</li><li>Explain the purpose in the first few lines.</li><li>Use short paragraphs and a polite tone.</li><li>State the action or response you need.</li><li>Check the recipient, attachment and spelling before sending.</li></ul>
+                    <div class="knowledge-callout"><b>Avoid:</b> ALL CAPS, unclear subjects such as “Hi”, slang in formal emails and sending a message without checking attachments.</div>
+                </div>
+            </article>
+
+            <article class="knowledge-card" data-keywords="chat messaging whatsapp slack etiquette workplace text digital communication">
+                <div class="knowledge-card-head"><span class="knowledge-icon orange"><i class="fa-solid fa-mobile-screen"></i></span><span>GUIDE 08</span></div>
+                <h3>Chat and messaging etiquette</h3>
+                <p>Short messages still need context, clarity and respect.</p>
+                <div class="knowledge-body">
+                    <div class="knowledge-point"><b>Give context</b><p>Instead of “Send it”, write “Could you share the updated Java assignment file?”</p></div>
+                    <div class="knowledge-point"><b>Ask one clear question at a time</b><p>Break complicated requests into readable points.</p></div>
+                    <div class="knowledge-point"><b>Respect availability</b><p>Do not expect an immediate reply unless the matter is urgent and agreed.</p></div>
+                    <div class="knowledge-point"><b>Use emojis carefully</b><p>They can make casual messages friendly, but avoid them in formal or sensitive communication.</p></div>
+                    <div class="knowledge-point"><b>Confirm important decisions</b><p>Summarise deadlines, responsibilities and decisions in the project group.</p></div>
+                    <div class="knowledge-callout"><b>Better message:</b> “Hi team, I have completed the login page. I will work on database connectivity next and share an update by tomorrow afternoon.”</div>
+                </div>
+            </article>
+
+            <article class="knowledge-card" data-keywords="presentation public speaking structure opening body conclusion slides audience nervous">
+                <div class="knowledge-card-head"><span class="knowledge-icon purple"><i class="fa-solid fa-person-chalkboard"></i></span><span>GUIDE 09</span></div>
+                <h3>Give a clear presentation</h3>
+                <p>Help your audience understand one main message instead of reading slides word for word.</p>
+                <div class="knowledge-body">
+                    <h4>Simple presentation structure</h4>
+                    <div class="framework-step"><b>Opening</b><span>Greet the audience, introduce the topic and explain why it matters.</span></div>
+                    <div class="framework-step"><b>Main points</b><span>Present two to four key ideas in a logical order, with examples.</span></div>
+                    <div class="framework-step"><b>Conclusion</b><span>Summarise the message and invite questions.</span></div>
+                    <h4>Useful opening lines</h4><div class="example-line">“Good morning everyone. Today, I am going to explain our project, the problem it solves and how we developed it.”</div>
+                    <h4>Presentation tips</h4><ul><li>Practise aloud instead of memorising every word.</li><li>Keep slides readable and avoid large paragraphs.</li><li>Face the audience and speak at a steady pace.</li><li>Use examples to explain technical ideas.</li><li>If you lose your place, pause and continue from the next point.</li></ul>
+                </div>
+            </article>
+
+            <article class="knowledge-card" data-keywords="conflict disagreement feedback criticism teamwork empathy solution">
+                <div class="knowledge-card-head"><span class="knowledge-icon blue"><i class="fa-solid fa-handshake-angle"></i></span><span>GUIDE 10</span></div>
+                <h3>Handle disagreement and feedback</h3>
+                <p>Professional communication means discussing problems without attacking people.</p>
+                <div class="knowledge-body">
+                    <h4>When you disagree</h4><ul><li>Listen to the complete point.</li><li>Acknowledge what makes sense.</li><li>Explain your concern with a reason or fact.</li><li>Suggest another option.</li></ul>
+                    <div class="example-line">“I understand why you suggested this design. My concern is that it may be difficult to use on mobile. Could we try a simpler layout?”</div>
+                    <h4>When receiving feedback</h4><p>Listen without interrupting. Ask for an example if the feedback is unclear. Thank the person and decide what improvement you can make.</p>
+                    <div class="example-line">“Thank you for the feedback. Could you show me which part needs improvement so I can correct it?”</div>
+                    <h4>When giving feedback</h4><p>Be specific, respectful and focused on the work. Mention the issue, its effect and a possible improvement.</p>
+                </div>
+            </article>
+
+            <article class="knowledge-card" data-keywords="telephone phone call etiquette greeting identify purpose listen note confirm ending">
+                <div class="knowledge-card-head"><span class="knowledge-icon green"><i class="fa-solid fa-phone"></i></span><span>GUIDE 11</span></div>
+                <h3>Speak confidently on phone calls</h3>
+                <p>Without body language, your words, tone and listening become especially important.</p>
+                <div class="knowledge-body">
+                    <ol class="numbered-learning"><li>Greet the person and introduce yourself.</li><li>Check whether it is a convenient time to talk.</li><li>Explain the purpose of your call briefly.</li><li>Listen carefully and take notes if details matter.</li><li>Repeat important names, dates or next steps.</li><li>End politely and thank the person.</li></ol>
+                    <div class="email-sample">“Hello, this is [Your Name]. I am calling regarding the internship application. Is this a good time to speak?”</div>
+                    <h4>If you cannot hear clearly</h4><p>Say: “I'm sorry, the connection is not clear. Could you please repeat that?” Do not pretend you heard important information.</p>
+                </div>
+            </article>
+
+            <article class="knowledge-card" data-keywords="daily improvement habit plan 30 day practice reading listening speaking writing">
+                <div class="knowledge-card-head"><span class="knowledge-icon orange"><i class="fa-solid fa-calendar-check"></i></span><span>GUIDE 12</span></div>
+                <h3>A 30-day communication improvement plan</h3>
+                <p>Build one habit at a time. Consistency is more useful than practising for hours once a week.</p>
+                <div class="knowledge-body">
+                    <div class="plan-week"><b>Week 1 — Build the base</b><p>Read aloud daily, learn five useful phrases, introduce yourself and describe your routine in simple English.</p></div>
+                    <div class="plan-week"><b>Week 2 — Improve conversations</b><p>Practise greetings, open questions, follow-up questions, active listening and polite clarification.</p></div>
+                    <div class="plan-week"><b>Week 3 — Professional communication</b><p>Write one sample email, give a project update, explain a technical concept simply and practise respectful disagreement.</p></div>
+                    <div class="plan-week"><b>Week 4 — Apply your skills</b><p>Give a short presentation, explain a project, participate in a group discussion and review your speaking recording.</p></div>
+                    <div class="knowledge-callout">At the end of each week, write down: What improved? What still feels difficult? What one habit will I continue next week?</div>
+                </div>
+            </article>
+        </div>
+        <div class="no-knowledge-results" id="noKnowledgeResults" hidden>No matching guide found. Try another keyword.</div>
+    </section>
+
+
+    <section class="section-block advanced-suite" id="advanced-suite">
+        <div class="section-heading">
+            <div><span class="section-kicker">PRACTISE • APPLY • IMPROVE</span><h2>Your communication practice studio</h2><p>Practise speaking, handle real-life situations and build useful vocabulary at your own pace.</p></div>
+            <span class="course-tag"><i class="fa-solid fa-wand-magic-sparkles"></i> Interactive tools</span>
+        </div>
+
+        <div class="advanced-stats">
+            <div class="advanced-stat"><span class="stat-icon"><i class="fa-solid fa-book-open"></i></span><div><b id="completedLessonStat">0/8</b><small>Lessons completed</small></div></div>
+            <div class="advanced-stat"><span class="stat-icon"><i class="fa-solid fa-microphone"></i></span><div><b id="speakingSessionStat">0</b><small>Speaking sessions</small></div></div>
+            <div class="advanced-stat"><span class="stat-icon"><i class="fa-solid fa-fire"></i></span><div><b id="learningStreakStat">0 days</b><small>Learning streak</small></div></div>
+            <div class="advanced-stat"><span class="stat-icon"><i class="fa-solid fa-chart-line"></i></span><div><b id="overallProgressStat">0%</b><small>Learning progress</small></div></div>
+        </div>
+
         <div class="studio-grid">
-            <div class="practice-panel">
-                <div class="panel-heading"><div><span class="panel-kicker">01 / CHOOSE A SCENARIO</span><h3>What do you want to practice?</h3></div><span class="step-number">01</span></div>
-                <div class="scenario-grid">
-                    <button class="scenario active" data-scenario="interview" data-title="Job interview" data-prompt="Tell me about yourself and explain why you are interested in this role."><span>💼</span><strong>Job interview</strong><small>HR & placement rounds</small></button>
-                    <button class="scenario" data-scenario="daily" data-title="Daily conversation" data-prompt="You meet a new classmate. Introduce yourself and start a friendly conversation."><span>☕</span><strong>Daily conversation</strong><small>Natural everyday English</small></button>
-                    <button class="scenario" data-scenario="group" data-title="Group discussion" data-prompt="The topic is: Is artificial intelligence helping students learn better? Share your opening opinion and support it with a reason."><span>👥</span><strong>Group discussion</strong><small>Opinions & discussion</small></button>
-                    <button class="scenario" data-scenario="work" data-title="Workplace communication" data-prompt="Your project task is delayed. Explain the situation professionally to your team lead and suggest a next step."><span>🧑‍💻</span><strong>Workplace</strong><small>Team & professional talk</small></button>
-                    <button class="scenario" data-scenario="presentation" data-title="Presentation" data-prompt="Give a short introduction to a project you have built. Explain the problem, your solution and its main benefit."><span>🎤</span><strong>Presentation</strong><small>Explain ideas clearly</small></button>
-                    <button class="scenario" data-scenario="confidence" data-title="Speak without fear" data-prompt="Talk for one minute about something you learned recently and why it matters to you."><span>🌱</span><strong>Confidence builder</strong><small>Build speaking comfort</small></button>
+            <article class="studio-card speaking-studio">
+                <div class="studio-card-title"><span class="studio-icon mic"><i class="fa-solid fa-microphone-lines"></i></span><div><span class="section-kicker">SPEAKING PRACTICE</span><h3>Speak & review studio</h3></div></div>
+                <p class="studio-description">Choose a topic, speak naturally and review your transcript. Microphone access depends on your browser and connection.</p>
+                <label class="field-label" for="speakingTopic">Practice topic</label>
+                <select id="speakingTopic" class="studio-input">
+                    <option value="Introduce yourself and describe your goals.">Self introduction</option>
+                    <option value="Explain a project you have worked on and the problem it solves.">Explain your project</option>
+                    <option value="Describe a challenge you faced and how you handled it.">Talk about a challenge</option>
+                    <option value="Explain why teamwork is important in a workplace.">Teamwork</option>
+                    <option value="Describe your daily routine and one thing you want to improve.">Daily routine</option>
+                </select>
+                <div class="speaking-prompt" id="speakingPrompt">Introduce yourself and describe your goals.</div>
+                <div class="recording-controls">
+                    <button type="button" class="studio-primary" id="startSpeech"><i class="fa-solid fa-microphone"></i> Start speaking</button>
+                    <button type="button" class="studio-secondary" id="stopSpeech" disabled><i class="fa-solid fa-stop"></i> Stop</button>
+                    <button type="button" class="studio-secondary" id="readPrompt"><i class="fa-solid fa-volume-high"></i> Hear topic</button>
                 </div>
-                <div class="prompt-box">
-                    <div class="prompt-label"><i class="fa-solid fa-bullseye"></i> YOUR SPEAKING PROMPT</div>
-                    <p id="scenarioPrompt">Tell me about yourself and explain why you are interested in this role.</p>
-                    <div class="prompt-controls"><button class="text-btn" id="speakPrompt"><i class="fa-solid fa-volume-high"></i> Hear prompt</button><button class="text-btn" id="newPrompt"><i class="fa-solid fa-shuffle"></i> Change prompt</button></div>
+                <div class="recording-status" id="speechStatus" role="status">Ready when you are. You can also type your response below.</div>
+                <label class="field-label" for="speechTranscript">Your response / transcript</label>
+                <textarea id="speechTranscript" class="studio-textarea" rows="5" placeholder="Your spoken words will appear here when speech recognition is supported. You can also type your practice response..."></textarea>
+                <div class="speech-metrics">
+                    <span><b id="speechWordCount">0</b><small>Words</small></span>
+                    <span><b id="speechSentenceCount">0</b><small>Sentences</small></span>
+                    <span><b id="speechTimeEstimate">0 min</b><small>Speaking time</small></span>
+                    <span><b id="fillerCount">0</b><small>Filler words</small></span>
                 </div>
-                <div class="record-area">
-                    <div class="record-top"><div><span class="panel-kicker">02 / YOUR TURN</span><h3>Speak your answer</h3></div><span class="record-status" id="recordStatus">Ready when you are</span></div>
-                    <div class="record-controls">
-                        <button class="record-button" id="recordButton" type="button"><i class="fa-solid fa-microphone"></i><span>Start speaking</span></button>
-                        <div class="timer" id="speechTimer">00:00</div>
-                        <button class="outline-btn" id="stopButton" type="button" disabled><i class="fa-solid fa-stop"></i> Stop</button>
-                    </div>
-                    <div class="transcript-wrap"><div class="transcript-head"><strong>Your transcript</strong><span id="wordLiveCount">0 words</span></div><div id="transcript" class="transcript" contenteditable="true" data-placeholder="Your spoken words will appear here. You can also type or edit your answer..."></div><div class="transcript-foot"><span><i class="fa-solid fa-circle-info"></i> Speak clearly and at a natural pace.</span><button class="text-btn" id="clearTranscript">Clear</button></div></div>
-                    <div class="analysis-actions"><button class="btn-primary" id="evaluateButton"><i class="fa-solid fa-sparkles"></i> Get AI feedback</button><button class="outline-btn" id="finishSession"><i class="fa-solid fa-check"></i> Complete session</button></div>
-                    <p class="support-note" id="speechSupport">Voice input works best in a supported browser such as desktop Chrome. You can type your answer if voice input is unavailable.</p>
+                <div class="speech-feedback" id="speechFeedback">Your practice suggestions will appear here after you review your response.</div>
+                <div class="recording-controls">
+                    <button type="button" class="studio-primary" id="reviewSpeech"><i class="fa-solid fa-magnifying-glass-chart"></i> Review my response</button>
+                    <button type="button" class="studio-secondary" id="saveSpeech"><i class="fa-solid fa-bookmark"></i> Save session</button>
+                    <button type="button" class="studio-text-button" id="clearSpeech">Clear</button>
                 </div>
-            </div>
+                <small class="privacy-note"><i class="fa-solid fa-lock"></i> Speech recognition runs through your browser's speech service where supported. Saved practice sessions stay in this browser.</small>
+            </article>
 
-            <aside class="coach-panel">
-                <div class="coach-header"><div class="coach-avatar"><i class="fa-solid fa-robot"></i></div><div><span class="panel-kicker">YOUR PERSONAL COACH</span><h3>AI Communication Coach</h3><small><span class="live-dot"></span> Ready to help</small></div></div>
-                <div class="coach-intro" id="coachIntro"><strong>Let's make your next answer stronger.</strong><p>After you speak or type, select <b>Get AI feedback</b>. Your coach will point out what worked, what to improve and how to say it more naturally.</p></div>
-                <div class="feedback-empty" id="feedbackEmpty"><div><i class="fa-solid fa-message"></i></div><strong>Your feedback will appear here</strong><p>Try a 30–60 second answer to get useful, specific suggestions.</p></div>
-                <div class="feedback-result" id="feedbackResult" hidden></div>
-                <div class="coach-chat">
-                    <div class="chat-title"><strong>Ask your coach</strong><span>English practice help</span></div>
-                    <div class="chat-messages" id="chatMessages"><div class="chat-bubble coach-bubble">Hi! Ask me how to phrase a sentence, prepare for an interview or respond in a real-life situation.</div></div>
-                    <form id="coachChatForm" class="chat-form"><input id="coachInput" type="text" placeholder="Ask a communication question..." maxlength="600" autocomplete="off"><button type="submit" aria-label="Send"><i class="fa-solid fa-paper-plane"></i></button></form>
+            <article class="studio-card roleplay-studio">
+                <div class="studio-card-title"><span class="studio-icon role"><i class="fa-solid fa-people-arrows-left-right"></i></span><div><span class="section-kicker">REAL-LIFE PRACTICE</span><h3>Conversation role-play</h3></div></div>
+                <p class="studio-description">Choose a situation, think about your response and compare it with a sample approach. These are practice scenarios, not a test.</p>
+                <label class="field-label" for="roleplayScenario">Choose a situation</label>
+                <select id="roleplayScenario" class="studio-input">
+                    <option value="classroom">Talking to a professor</option>
+                    <option value="teammate">Coordinating with a teammate</option>
+                    <option value="meeting">Giving a project update</option>
+                    <option value="clarification">Asking for clarification</option>
+                    <option value="feedback">Responding to feedback</option>
+                    <option value="networking">Meeting someone new</option>
+                </select>
+                <div class="roleplay-dialogue">
+                    <span class="dialogue-label">THE SITUATION</span>
+                    <h4 id="roleplayTitle">Talking to a professor</h4>
+                    <p id="roleplaySituation">You are unsure about an assignment requirement and need to ask your professor for guidance.</p>
+                    <div class="other-person"><span class="avatar-circle">P</span><div><small>OTHER PERSON</small><b id="roleplayLine">“What would you like to know about the assignment?”</b></div></div>
                 </div>
-            </aside>
+                <label class="field-label" for="roleplayAnswer">How would you respond?</label>
+                <textarea id="roleplayAnswer" class="studio-textarea" rows="4" placeholder="Write what you would naturally say..."></textarea>
+                <button type="button" class="studio-primary full-button" id="showRoleplayExample"><i class="fa-solid fa-lightbulb"></i> Show sample response</button>
+                <div class="roleplay-example" id="roleplayExample" hidden><b><i class="fa-solid fa-check-circle"></i> Sample response</b><p id="roleplaySample"></p><small>Use this as inspiration. Your own natural wording is welcome.</small></div>
+                <button type="button" class="studio-text-button" id="nextRoleplay">Try another situation <i class="fa-solid fa-arrow-right"></i></button>
+            </article>
+        </div>
+
+        <div class="studio-grid lower-studio-grid">
+            <article class="studio-card flashcard-studio">
+                <div class="studio-card-title"><span class="studio-icon vocab"><i class="fa-solid fa-layer-group"></i></span><div><span class="section-kicker">VOCABULARY BUILDER</span><h3>Professional phrase flashcards</h3></div></div>
+                <p class="studio-description">Recall the meaning first, then reveal an example to see how the phrase works in context.</p>
+                <div class="flashcard" id="phraseFlashcard">
+                    <span id="flashcardCategory">WORKPLACE</span>
+                    <h3 id="flashcardPhrase">Follow up</h3>
+                    <p id="flashcardMeaning" hidden>To contact someone again to check progress or get an update.</p>
+                    <div class="flashcard-example" id="flashcardExample" hidden>“I'll follow up with the team tomorrow.”</div>
+                    <button type="button" class="flashcard-reveal" id="revealFlashcard">Reveal meaning & example</button>
+                </div>
+                <div class="flashcard-controls"><button type="button" class="studio-secondary" id="previousFlashcard"><i class="fa-solid fa-arrow-left"></i> Previous</button><span id="flashcardPosition">1 / 10</span><button type="button" class="studio-primary" id="nextFlashcard">Next <i class="fa-solid fa-arrow-right"></i></button></div>
+                <button type="button" class="studio-text-button" id="speakFlashcard"><i class="fa-solid fa-volume-high"></i> Listen to phrase</button>
+            </article>
+
+            <article class="studio-card phrase-builder">
+                <div class="studio-card-title"><span class="studio-icon builder"><i class="fa-solid fa-puzzle-piece"></i></span><div><span class="section-kicker">SENTENCE BUILDER</span><h3>Build a natural sentence</h3></div></div>
+                <p class="studio-description">Combine a useful opening, an idea and a polite ending to practise complete professional sentences.</p>
+                <label class="field-label" for="sentenceOpening">1. Choose an opening</label>
+                <select id="sentenceOpening" class="studio-input"><option>I would like to</option><option>Could you please</option><option>In my opinion,</option><option>I understand your point, but</option><option>I'm currently working on</option></select>
+                <label class="field-label" for="sentenceIdea">2. Choose your message</label>
+                <select id="sentenceIdea" class="studio-input"><option>discuss the project timeline</option><option>share the updated document</option><option>suggest another approach</option><option>clarify the next steps</option><option>improve the user experience</option></select>
+                <label class="field-label" for="sentenceEnding">3. Choose an ending</label>
+                <select id="sentenceEnding" class="studio-input"><option>before the meeting.</option><option>when you have a moment.</option><option>because it may save time.</option><option>so we can move forward.</option><option>and share an update soon.</option></select>
+                <div class="built-sentence" id="builtSentence">I would like to discuss the project timeline before the meeting.</div>
+                <div class="recording-controls"><button type="button" class="studio-primary" id="buildSentence"><i class="fa-solid fa-wand-magic-sparkles"></i> Build sentence</button><button type="button" class="studio-secondary" id="listenBuiltSentence"><i class="fa-solid fa-volume-high"></i> Listen</button><button type="button" class="studio-secondary" id="copyBuiltSentence"><i class="fa-regular fa-copy"></i> Copy</button></div>
+                <div class="copy-status" id="copySentenceStatus" aria-live="polite"></div>
+            </article>
         </div>
     </section>
 
-    <section class="learning-grid">
-        <div class="learning-card">
-            <div class="section-head compact"><div><span class="eyebrow dark-eyebrow">QUICK LEARNING</span><h2>Useful phrases for real situations</h2><p>Tap a phrase to hear how it sounds.</p></div></div>
-            <div class="phrase-list">
-                <button class="phrase" data-phrase="Could you please explain that again?"><span><b>When you don't understand</b><small>Could you please explain that again?</small></span><i class="fa-solid fa-volume-high"></i></button>
-                <button class="phrase" data-phrase="In my opinion, the most important point is..."><span><b>Sharing your opinion</b><small>In my opinion, the most important point is...</small></span><i class="fa-solid fa-volume-high"></i></button>
-                <button class="phrase" data-phrase="That's a good point. I would also like to add..."><span><b>Joining a discussion</b><small>That's a good point. I would also like to add...</small></span><i class="fa-solid fa-volume-high"></i></button>
-                <button class="phrase" data-phrase="Let me think for a moment so I can give you a clear answer."><span><b>When you need time</b><small>Let me think for a moment so I can give you a clear answer.</small></span><i class="fa-solid fa-volume-high"></i></button>
-                <button class="phrase" data-phrase="I haven't worked with that yet, but I am willing to learn."><span><b>When you don't know something</b><small>I haven't worked with that yet, but I am willing to learn.</small></span><i class="fa-solid fa-volume-high"></i></button>
-            </div>
+    <section class="daily-plan">
+        <div class="daily-plan-head"><div><span class="section-kicker">A PRACTICAL DAILY HABIT</span><h2>Your 15-minute communication routine</h2><p>Follow this simple routine every day. Tick each activity when you finish it.</p></div><div class="daily-clock"><i class="fa-solid fa-clock"></i><strong>15 min</strong><small>Every day</small></div></div>
+        <div class="routine-steps">
+            <label class="routine-step"><input type="checkbox" class="routine-check"><span class="routine-time">3 MIN</span><span class="routine-text"><b>Read aloud</b><small>Read a short English paragraph slowly and clearly.</small></span></label>
+            <label class="routine-step"><input type="checkbox" class="routine-check"><span class="routine-time">5 MIN</span><span class="routine-text"><b>Speak about your day</b><small>Explain what you did today using simple sentences.</small></span></label>
+            <label class="routine-step"><input type="checkbox" class="routine-check"><span class="routine-time">4 MIN</span><span class="routine-text"><b>Listen and learn</b><small>Listen to a short English conversation and notice useful phrases.</small></span></label>
+            <label class="routine-step"><input type="checkbox" class="routine-check"><span class="routine-time">3 MIN</span><span class="routine-text"><b>Learn and reuse</b><small>Choose two new phrases and create your own sentences.</small></span></label>
         </div>
-        <div class="learning-card">
-            <div class="section-head compact"><div><span class="eyebrow dark-eyebrow">A SIMPLE DAILY ROUTINE</span><h2>15 minutes that add up</h2><p>Short, repeatable practice beats memorising long scripts.</p></div></div>
-            <div class="routine-list">
-                <div><span class="routine-time">03 min</span><span><b>Warm up</b><small>Read a short paragraph aloud.</small></span></div>
-                <div><span class="routine-time">05 min</span><span><b>Speak freely</b><small>Answer one prompt without memorising.</small></span></div>
-                <div><span class="routine-time">04 min</span><span><b>Review & retry</b><small>Use feedback and say your answer again.</small></span></div>
-                <div><span class="routine-time">03 min</span><span><b>Learn phrases</b><small>Use two new phrases in your own sentences.</small></span></div>
-            </div>
-            <div class="routine-tip"><i class="fa-solid fa-lightbulb"></i><span><b>Remember:</b> The goal is clear communication, not a perfect accent.</span></div>
-        </div>
+        <div class="routine-progress"><div><span id="routineProgressText">0 of 4 activities completed</span><b id="routinePercent">0%</b></div><div class="routine-bar"><span id="routineBarFill"></span></div></div>
+        <button class="reset-routine" id="resetRoutine"><i class="fa-solid fa-rotate-left"></i> Reset today's routine</button>
     </section>
-    <div class="comm-toast" id="commToast" role="status"></div>
+
+    <section class="final-tip"><div class="final-tip-icon"><i class="fa-solid fa-seedling"></i></div><div><span>ONE LAST THING</span><h2>Fluency grows through use, not memorisation.</h2><p>Don't wait until your English is perfect. Start with simple sentences, listen carefully, speak regularly and improve one small thing every day.</p></div></section>
 </div>
 
 <style>
-    .comm-page{--ink:#172033;--muted:#718096;--line:#e8edf5;--purple:#6558e8;--blue:#3478f6;font-family:"DM Sans",sans-serif;color:var(--ink);max-width:1500px;margin:0 auto;padding:8px 0 42px}
-    .comm-page *{box-sizing:border-box}.comm-hero{position:relative;overflow:hidden;display:grid;grid-template-columns:1.15fr .85fr;align-items:center;min-height:300px;padding:42px 48px;border-radius:26px;background:linear-gradient(120deg,#111b36,#202b55 65%,#343b78);color:#fff;margin-bottom:22px}
-    .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:10px;font-weight:800;letter-spacing:1.7px;color:#bfc5ff}.comm-hero h1{font:800 clamp(34px,4vw,54px)/1.08 "Plus Jakarta Sans",sans-serif;letter-spacing:-2px;margin:17px 0 13px}.comm-hero h1 span{color:#a9a4ff}.hero-copy>p{max-width:610px;color:#d0d7ee;line-height:1.75;font-size:14px}.hero-actions{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-top:24px}.btn-primary{border:0;border-radius:11px;background:linear-gradient(110deg,#6558e8,#8275ff);color:#fff;padding:13px 18px;font-weight:800;font-size:13px;cursor:pointer;box-shadow:0 8px 22px #6558e83b;transition:.2s}.btn-primary:hover{transform:translateY(-2px);filter:brightness(1.06)}.privacy-note{font-size:11px;color:#c4cce3}.hero-visual{position:relative;min-height:220px;display:grid;place-items:center}.orb{position:absolute;border-radius:50%;filter:blur(1px)}.orb-one{width:220px;height:220px;background:#766bff33;right:14%;top:0}.orb-two{width:140px;height:140px;background:#3b9ef333;right:0;bottom:0}.voice-card{position:relative;width:min(330px,90%);padding:24px;border:1px solid #ffffff26;border-radius:20px;background:#ffffff12;backdrop-filter:blur(12px);box-shadow:0 20px 60px #070d2638}.voice-card-top{font-size:9px;letter-spacing:1.5px;color:#cdd2f1;font-weight:800}.live-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#35d49a;box-shadow:0 0 0 4px #35d49a20;margin-right:6px}.voice-wave{height:55px;display:flex;align-items:center;justify-content:center;gap:5px;margin:16px 0}.voice-wave i{width:5px;border-radius:8px;background:linear-gradient(#aaa4ff,#5f91ff);height:var(--h,20px);animation:wave 1s ease-in-out infinite alternate}.voice-wave i:nth-child(3n){--h:38px;animation-delay:.2s}.voice-wave i:nth-child(3n + 1){--h:25px;animation-delay:.5s}.voice-wave i:nth-child(3n + 2){--h:48px;animation-delay:.1s}@keyframes wave{to{transform:scaleY(.45);opacity:.65}}.voice-card strong,.voice-card small{display:block}.voice-card strong{font:700 17px "Plus Jakarta Sans"}.voice-card small{color:#c8cde7;margin-top:6px;font-size:11px}.voice-tags{display:flex;gap:7px;margin-top:17px}.voice-tags span{font-size:9px;padding:6px 9px;border-radius:20px;background:#ffffff17;color:#e0e4ff}
-    .metric-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:42px}.metric-card{display:flex;align-items:center;gap:14px;padding:18px;background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 5px 20px #15234b08}.metric-icon{width:43px;height:43px;display:grid;place-items:center;border-radius:13px;font-size:17px}.metric-icon.purple{background:#f0edff;color:#695be8}.metric-icon.blue{background:#eaf2ff;color:#3478f6}.metric-icon.green{background:#e8faf2;color:#1aa879}.metric-icon.orange{background:#fff3e6;color:#e58b2e}.metric-card span,.metric-card small{display:block;color:var(--muted);font-size:10px}.metric-card strong{display:block;font:800 22px "Plus Jakarta Sans";margin:3px 0}.metric-card small{font-size:9px}
-    .section-head{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;margin-bottom:18px}.dark-eyebrow{color:#7b72e9}.section-head h2{font:800 25px "Plus Jakarta Sans";letter-spacing:-.8px;margin:7px 0}.section-head p{color:var(--muted);font-size:12px;margin:0}.browser-pill{font-size:10px;color:#5e6477;background:#f3f5fb;padding:9px 12px;border-radius:30px;white-space:nowrap}.studio-section{margin-bottom:40px}.studio-grid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(310px,.8fr);gap:17px;align-items:start}.practice-panel,.coach-panel,.learning-card{background:#fff;border:1px solid var(--line);border-radius:19px;box-shadow:0 7px 25px #17254a08}.practice-panel{padding:24px}.panel-heading,.record-top{display:flex;justify-content:space-between;align-items:center;gap:12px}.panel-kicker{font-size:9px;font-weight:800;letter-spacing:1.5px;color:#8a8fa2}.panel-heading h3,.record-top h3,.coach-header h3{font:800 16px "Plus Jakarta Sans";margin:6px 0 0}.step-number{width:30px;height:30px;border-radius:10px;display:grid;place-items:center;background:#f0efff;color:#695be8;font-weight:800;font-size:11px}.scenario-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:17px 0}.scenario{display:flex;flex-direction:column;align-items:flex-start;text-align:left;gap:5px;padding:13px 11px;border:1px solid var(--line);border-radius:12px;background:#fff;cursor:pointer;transition:.2s}.scenario:hover,.scenario.active{border-color:#887df1;background:#f7f6ff;box-shadow:0 4px 12px #6558e80c}.scenario>span{font-size:21px}.scenario strong{font-size:11px}.scenario small{font-size:9px;color:var(--muted)}.prompt-box{padding:16px;border-radius:13px;background:linear-gradient(120deg,#f5f4ff,#f1f7ff);border:1px solid #e7e7ff}.prompt-label{font-size:9px;letter-spacing:1.2px;color:#6962bb;font-weight:800}.prompt-box p{font:700 14px/1.6 "Plus Jakarta Sans";margin:10px 0;color:#27304b}.prompt-controls{display:flex;gap:17px}.text-btn{border:0;background:none;color:#6258d7;font-size:10px;font-weight:800;cursor:pointer;padding:4px 0}.text-btn:hover{text-decoration:underline}.record-area{margin-top:22px}.record-status{font-size:10px;color:#778096}.record-controls{display:flex;align-items:center;gap:12px;margin:14px 0}.record-button{display:flex;align-items:center;gap:10px;border:0;background:#1e2948;color:#fff;padding:12px 16px;border-radius:11px;font-size:11px;font-weight:800;cursor:pointer}.record-button.recording{background:#e34f68;animation:pulse 1.3s infinite}.record-button:disabled,.outline-btn:disabled{opacity:.4;cursor:not-allowed}@keyframes pulse{50%{box-shadow:0 0 0 7px #e34f6824}}.timer{font:800 17px "Plus Jakarta Sans";font-variant-numeric:tabular-nums}.outline-btn{border:1px solid #dce2ed;border-radius:10px;padding:10px 13px;background:#fff;color:#48536b;font-size:10px;font-weight:800;cursor:pointer}.transcript-wrap{border:1px solid var(--line);border-radius:13px;overflow:hidden}.transcript-head,.transcript-foot{display:flex;justify-content:space-between;align-items:center;padding:10px 13px;background:#fafbfe}.transcript-head{border-bottom:1px solid var(--line)}.transcript-head strong{font-size:10px}.transcript-head span,.transcript-foot{font-size:9px;color:var(--muted)}.transcript{min-height:130px;max-height:240px;overflow:auto;padding:14px;font-size:12px;line-height:1.7;color:#34405a;outline:none;white-space:pre-wrap}.transcript:empty:before{content:attr(data-placeholder);color:#a2a9b8}.transcript-foot{border-top:1px solid var(--line)}.analysis-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}.analysis-actions .btn-primary{font-size:11px}.support-note{font-size:9px;line-height:1.6;color:#8b93a4;margin:11px 0 0}
-    .coach-panel{padding:20px;position:sticky;top:15px}.coach-header{display:flex;align-items:center;gap:12px;padding-bottom:17px;border-bottom:1px solid var(--line)}.coach-avatar{width:43px;height:43px;display:grid;place-items:center;border-radius:14px;background:linear-gradient(135deg,#6659e9,#438df4);color:#fff;font-size:17px}.coach-header h3{font-size:14px}.coach-header small{font-size:9px;color:#7b8497}.coach-intro{padding:15px 0 5px}.coach-intro strong{font-size:11px}.coach-intro p{font-size:10px;line-height:1.7;color:var(--muted);margin:6px 0}.feedback-empty{text-align:center;padding:23px 10px 25px;background:#f8f9fd;border:1px dashed #dfe4ef;border-radius:13px;margin:12px 0}.feedback-empty>div{width:39px;height:39px;margin:0 auto 10px;border-radius:13px;background:#eeedff;color:#695be8;display:grid;place-items:center}.feedback-empty strong{font-size:11px}.feedback-empty p{font-size:9px;color:var(--muted);line-height:1.6;max-width:210px;margin:6px auto}.feedback-result{padding:13px;border-radius:13px;background:#f8f9fd;margin:12px 0;max-height:390px;overflow:auto}.feedback-result h4{font:800 11px "Plus Jakarta Sans";margin:13px 0 6px;color:#343d5b}.feedback-result h4:first-child{margin-top:0}.feedback-result p,.feedback-result li{font-size:10px;line-height:1.65;color:#5f687d}.feedback-result ul{padding-left:17px;margin:5px 0}.feedback-score{display:flex;align-items:center;gap:10px;padding:10px;background:#eeedff;border-radius:10px;margin-bottom:10px}.feedback-score strong{font:800 24px "Plus Jakarta Sans";color:#6558e8}.feedback-score span{font-size:9px;color:#625d91}.coach-chat{border-top:1px solid var(--line);padding-top:15px;margin-top:16px}.chat-title{display:flex;justify-content:space-between;align-items:center}.chat-title strong{font-size:11px}.chat-title span{font-size:9px;color:var(--muted)}.chat-messages{display:flex;flex-direction:column;gap:8px;max-height:190px;overflow:auto;padding:12px 0}.chat-bubble{max-width:94%;padding:9px 11px;border-radius:11px;font-size:10px;line-height:1.6;white-space:pre-wrap}.coach-bubble{align-self:flex-start;background:#f0f2f8;color:#46516a}.user-bubble{align-self:flex-end;background:#6558e8;color:#fff}.chat-form{display:flex;gap:6px;border:1px solid #e2e6ef;border-radius:10px;padding:5px}.chat-form input{width:100%;border:0;outline:0;padding:6px;font:10px "DM Sans"}.chat-form button{width:31px;min-width:31px;border:0;border-radius:8px;background:#6558e8;color:white;cursor:pointer}
-    .learning-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:17px}.learning-card{padding:23px}.section-head.compact{margin-bottom:13px}.section-head.compact h2{font-size:18px}.phrase-list{display:flex;flex-direction:column}.phrase{display:flex;align-items:center;justify-content:space-between;gap:10px;text-align:left;padding:13px 2px;border:0;border-bottom:1px solid var(--line);background:none;cursor:pointer}.phrase:last-child{border-bottom:0}.phrase b,.phrase small{display:block}.phrase b{font-size:10px}.phrase small{font-size:10px;color:var(--muted);margin-top:4px}.phrase i{color:#6558e8;font-size:12px}.routine-list{display:flex;flex-direction:column;gap:12px}.routine-list>div{display:flex;align-items:center;gap:12px}.routine-time{min-width:60px;padding:7px 8px;border-radius:8px;background:#f0efff;color:#6558e8;text-align:center;font-size:9px;font-weight:800}.routine-list b,.routine-list small{display:block}.routine-list b{font-size:10px}.routine-list small{font-size:9px;color:var(--muted);margin-top:3px}.routine-tip{display:flex;gap:9px;align-items:flex-start;background:#fff8e9;color:#87601e;padding:11px;border-radius:10px;margin-top:17px;font-size:9px;line-height:1.6}.routine-tip i{margin-top:2px}.comm-toast{position:fixed;bottom:25px;right:25px;z-index:9999;background:#172033;color:#fff;padding:12px 17px;border-radius:10px;font-size:11px;box-shadow:0 8px 30px #0002;opacity:0;transform:translateY(10px);pointer-events:none;transition:.25s}.comm-toast.show{opacity:1;transform:translateY(0)}
-    @media(max-width:1050px){.studio-grid{grid-template-columns:1fr}.coach-panel{position:static}.coach-panel{display:grid;grid-template-columns:1fr 1fr;gap:12px}.coach-header,.coach-intro{grid-column:1/-1}.coach-chat{margin:0}.metric-grid{grid-template-columns:repeat(2,1fr)}}
-    @media(max-width:700px){.comm-hero{grid-template-columns:1fr;padding:28px 23px}.hero-visual{min-height:180px}.voice-card{width:270px}.section-head{align-items:flex-start;flex-direction:column}.browser-pill{white-space:normal}.scenario-grid{grid-template-columns:repeat(2,1fr)}.learning-grid{grid-template-columns:1fr}.coach-panel{display:block}.coach-chat{margin-top:16px}.metric-card{padding:13px}.metric-card strong{font-size:18px}.practice-panel,.learning-card{padding:17px}}
-    @media(max-width:420px){.metric-grid{gap:8px}.metric-card{gap:8px}.metric-icon{width:35px;height:35px}.record-controls{flex-wrap:wrap}.record-button{flex:1}.analysis-actions>*{flex:1}.scenario small{font-size:8px}}
+    .learning-page{--ink:#19233a;--muted:#778197;--line:#e8edf5;--purple:#6558e8;font-family:"DM Sans",sans-serif;color:var(--ink);max-width:1500px;margin:0 auto;padding:8px 0 45px}.learning-page *{box-sizing:border-box}
+    .learn-hero{display:grid;grid-template-columns:1.15fr .85fr;align-items:center;min-height:315px;padding:42px 48px;border-radius:25px;background:linear-gradient(115deg,#121b36,#222e59 65%,#3b4380);color:white;overflow:hidden;position:relative}.hero-label,.section-kicker{font-size:9px;font-weight:800;letter-spacing:1.7px;color:#9e9af7}.hero-label i{margin-right:6px}.learn-hero h1{font:800 clamp(34px,4vw,52px)/1.1 "Plus Jakarta Sans";letter-spacing:-2px;margin:17px 0 13px}.learn-hero h1 span{color:#aaa4ff}.hero-content>p{font-size:13px;line-height:1.8;color:#d1d8ee;max-width:590px}.hero-button{display:inline-flex;align-items:center;gap:12px;text-decoration:none;background:#7569f1;color:#fff;border-radius:10px;padding:12px 17px;font-size:11px;font-weight:800;margin-top:12px}.hero-points{display:flex;gap:18px;flex-wrap:wrap;margin-top:22px;color:#cbd3e9;font-size:9px}.hero-points i{color:#6de0b2;margin-right:5px}.hero-art{min-height:230px;display:grid;place-items:center;position:relative}.art-orbit{position:absolute;border:1px solid #ffffff22;border-radius:50%}.orbit-a{width:250px;height:250px}.orbit-b{width:190px;height:190px;border-style:dashed}.speech-card{position:relative;width:255px;padding:22px;border-radius:19px;background:#ffffff14;border:1px solid #ffffff2c;backdrop-filter:blur(12px);box-shadow:0 20px 50px #080d2b55}.speech-card-icon{width:38px;height:38px;border-radius:12px;background:#8e83ff;display:grid;place-items:center;margin-bottom:15px}.speech-card>span{font-size:8px;letter-spacing:1.4px;color:#c3c8f3;font-weight:800}.speech-card strong{display:block;font:800 22px/1.25 "Plus Jakarta Sans";margin:9px 0}.speech-card p{font-size:10px;line-height:1.6;color:#d2d7eb}.speech-lines{display:flex;gap:5px;margin-top:14px}.speech-lines i{height:4px;width:25%;border-radius:5px;background:#8c83ff}
+    .principles{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:17px 0 42px}.principles>div{display:grid;grid-template-columns:42px 1fr;grid-template-rows:auto auto;column-gap:11px;align-items:center;padding:15px;background:#fff;border:1px solid var(--line);border-radius:14px}.principle-icon{grid-row:1/3;width:40px;height:40px;border-radius:12px;display:grid;place-items:center}.violet,.lavender{background:#f0edff;color:#695be8}.blue,.sky{background:#eaf2ff;color:#3478f6}.green,.mint{background:#e8faf2;color:#1aa879}.orange,.peach{background:#fff2e7;color:#e58b2e}.principles b{font-size:11px}.principles small{font-size:9px;color:var(--muted);line-height:1.5;margin-top:3px}
+    .section-block{margin:38px 0}.section-heading{display:flex;justify-content:space-between;align-items:flex-end;gap:15px;margin-bottom:18px}.section-heading h2,.detail-heading h2,.daily-plan h2{font:800 23px "Plus Jakarta Sans";letter-spacing:-.7px;margin:7px 0}.section-heading p,.daily-plan-head p{font-size:11px;color:var(--muted);margin:0}.course-tag{font-size:9px;color:#665be0;background:#f1efff;border-radius:30px;padding:9px 12px;white-space:nowrap}.lesson-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}.lesson-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;transition:.2s}.lesson-card:hover{transform:translateY(-4px);box-shadow:0 12px 25px #1c2a4a0d;border-color:#d9d5ff}.lesson-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}.lesson-icon{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;font-size:17px}.lesson-number{font:800 20px "Plus Jakarta Sans";color:#e4e7ef}.lesson-category{font-size:8px;font-weight:800;letter-spacing:1.2px;color:#8177dc}.lesson-card h3{font:800 13px/1.45 "Plus Jakarta Sans";margin:8px 0}.lesson-card p{font-size:10px;line-height:1.65;color:var(--muted);min-height:50px}.lesson-open{display:flex;align-items:center;justify-content:space-between;width:100%;border:0;border-top:1px solid var(--line);padding:12px 0 0;margin-top:9px;background:none;color:#6559df;font-size:10px;font-weight:800;cursor:pointer}
+    .lesson-detail{background:#fff;border:1px solid #dcd9ff;border-radius:18px;padding:25px;margin:25px 0;box-shadow:0 12px 35px #6558e80c}.detail-heading{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);padding-bottom:15px;margin-bottom:17px}.detail-heading h2{margin-bottom:0}.close-lesson{width:34px;height:34px;border:0;border-radius:10px;background:#f1f2f7;color:#606b80;cursor:pointer}.lesson-content-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.lesson-content-card{padding:16px;background:#f8f9fd;border-radius:12px}.lesson-content-card h3{font:800 12px "Plus Jakarta Sans";margin:0 0 9px}.lesson-content-card p,.lesson-content-card li{font-size:10px;line-height:1.8;color:#59647a}.lesson-content-card ul{padding-left:17px;margin:0}.example-line{padding:9px 11px;background:#fff;border-left:3px solid #8176ed;border-radius:7px;margin:8px 0;font-size:10px;line-height:1.6}.example-line b{color:#5148bb}.mini-activity{background:#f0efff;border-radius:12px;padding:14px;margin-top:14px;font-size:10px;line-height:1.7;color:#514b8c}.lesson-footer{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:18px;padding-top:15px;border-top:1px solid var(--line);font-size:9px;color:var(--muted)}.done-button{border:0;border-radius:9px;padding:10px 13px;background:#e8faf2;color:#16865e;font-size:10px;font-weight:800;cursor:pointer}
+    .phrase-categories{display:grid;grid-template-columns:1fr 1fr;gap:13px}.phrase-panel,.content-panel{background:#fff;border:1px solid var(--line);border-radius:16px;padding:19px}.phrase-panel-title{display:flex;align-items:center;gap:11px;padding-bottom:12px;border-bottom:1px solid var(--line)}.phrase-panel-title>span{width:37px;height:37px;border-radius:11px;background:#f2f0ff;display:grid;place-items:center;font-size:17px}.phrase-panel-title b,.phrase-panel-title small{display:block}.phrase-panel-title b{font-size:11px}.phrase-panel-title small{font-size:9px;color:var(--muted);margin-top:3px}.phrase-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 0;border-bottom:1px solid #f0f2f6}.phrase-row:last-child{border:0;padding-bottom:0}.phrase-row b,.phrase-row small{display:block}.phrase-row b{font-size:10px}.phrase-row small{font-size:9px;color:var(--muted);margin-top:3px}.speak-phrase{border:0;background:#f1efff;color:#6559df;border-radius:8px;padding:8px 10px;font-size:10px;cursor:pointer;white-space:nowrap}.two-column{display:grid;grid-template-columns:1fr 1fr;gap:14px}.small-heading h2{font-size:19px}.correction-list{display:flex;flex-direction:column;gap:8px}.correction{padding:10px 11px;border-radius:9px;background:#f8f9fc;display:flex;flex-direction:column;gap:5px;font-size:10px}.wrong{color:#bd5966}.right{color:#16865e;font-weight:700}.note-box{display:flex;gap:9px;background:#f0efff;color:#5e56a5;padding:11px;border-radius:10px;margin-top:13px;font-size:9px;line-height:1.6}.body-tips{display:flex;flex-direction:column;gap:14px}.body-tips>div{display:flex;gap:12px;align-items:flex-start}.body-tips>div>span{width:34px;height:34px;flex-shrink:0;border-radius:10px;background:#f5f4ff;display:grid;place-items:center;font-size:16px}.body-tips b,.body-tips small{display:block}.body-tips b{font-size:10px}.body-tips small{font-size:9px;line-height:1.6;color:var(--muted);margin-top:3px}
+    .vocab-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.vocab-card{position:relative;padding:17px;border:1px solid var(--line);border-radius:14px;background:#fff}.vocab-card>span{font:800 18px "Plus Jakarta Sans";color:#e0e2ec;position:absolute;right:15px;top:12px}.vocab-card h3{font:800 15px "Plus Jakarta Sans";margin:4px 0 7px;color:#6559d8}.vocab-card p{font-size:10px;color:var(--muted);margin:0 0 10px}.vocab-card em{display:block;font-size:10px;line-height:1.6;color:#46516a;background:#f7f8fc;border-radius:8px;padding:9px}.vocab-card .speak-phrase{margin-top:10px}
+    .daily-plan{background:linear-gradient(120deg,#f8f7ff,#f4f8ff);border:1px solid #e6e3ff;border-radius:19px;padding:25px;margin:40px 0}.daily-plan-head{display:flex;justify-content:space-between;align-items:center;gap:15px}.daily-clock{width:67px;height:67px;border-radius:17px;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#6559df;box-shadow:0 5px 16px #4b4a8c0d}.daily-clock i{font-size:13px}.daily-clock strong{font:800 13px "Plus Jakarta Sans";margin:3px 0}.daily-clock small{font-size:8px;color:var(--muted)}.routine-steps{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px}.routine-step{display:flex;align-items:center;gap:11px;padding:13px;background:#fff;border:1px solid #eceaf8;border-radius:12px;cursor:pointer}.routine-check{accent-color:#6559df;width:15px;height:15px}.routine-time{font-size:8px;font-weight:800;color:#6559df;background:#f1efff;padding:7px;border-radius:7px;white-space:nowrap}.routine-text b,.routine-text small{display:block}.routine-text b{font-size:10px}.routine-text small{font-size:9px;color:var(--muted);margin-top:3px;line-height:1.5}.routine-progress{margin-top:17px}.routine-progress>div:first-child{display:flex;justify-content:space-between;font-size:9px;color:#667087;margin-bottom:7px}.routine-progress b{color:#6559df}.routine-bar{height:7px;border-radius:10px;background:#e4e5f0;overflow:hidden}.routine-bar span{display:block;width:0;height:100%;background:linear-gradient(90deg,#6559df,#8b81f5);border-radius:10px;transition:.25s}.reset-routine{border:0;background:none;color:#777f93;font-size:9px;margin-top:12px;cursor:pointer}.final-tip{display:flex;align-items:center;gap:18px;padding:22px 25px;border-radius:17px;background:#14203e;color:#fff}.final-tip-icon{width:50px;height:50px;flex-shrink:0;border-radius:15px;background:#ffffff15;color:#9eebc9;display:grid;place-items:center;font-size:22px}.final-tip span{font-size:8px;letter-spacing:1.5px;color:#9eebc9;font-weight:800}.final-tip h2{font:800 17px "Plus Jakarta Sans";margin:6px 0}.final-tip p{font-size:10px;line-height:1.7;color:#c7d0e4;margin:0}
+    @media(max-width:1050px){.lesson-grid{grid-template-columns:repeat(2,1fr)}.principles{grid-template-columns:repeat(2,1fr)}.vocab-grid{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:700px){.learn-hero{grid-template-columns:1fr;padding:28px 22px}.hero-art{min-height:220px}.section-heading{align-items:flex-start;flex-direction:column}.phrase-categories,.two-column,.lesson-content-grid{grid-template-columns:1fr}.routine-steps{grid-template-columns:1fr}.daily-plan-head{align-items:flex-start}.lesson-footer{align-items:flex-start;flex-direction:column}.principles{gap:8px}.principles>div{padding:11px}.learn-hero h1{font-size:37px}}
+    @media(max-width:430px){.lesson-grid,.vocab-grid{grid-template-columns:1fr}.principles{grid-template-columns:1fr 1fr}.principles>div{grid-template-columns:34px 1fr}.principle-icon{width:32px;height:32px}.hero-points{gap:9px}.daily-plan{padding:18px}.final-tip{align-items:flex-start;padding:18px}}
+
+    .knowledge-search{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:0 13px;margin-bottom:14px;color:#8992a5}.knowledge-search input{border:0;outline:0;flex:1;min-width:0;padding:13px 0;font:11px "DM Sans";color:var(--ink);background:transparent}.knowledge-search span{font-size:9px;white-space:nowrap}.knowledge-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px;align-items:start}.knowledge-card{background:#fff;border:1px solid var(--line);border-radius:15px;padding:18px;min-width:0}.knowledge-card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:13px}.knowledge-card-head>span:last-child{font-size:8px;font-weight:800;letter-spacing:1px;color:#a0a6b5}.knowledge-icon{width:39px;height:39px;border-radius:12px;display:grid;place-items:center}.knowledge-icon.purple{background:#f0edff;color:#6559df}.knowledge-icon.blue{background:#eaf2ff;color:#3478f6}.knowledge-icon.green{background:#e8faf2;color:#1aa879}.knowledge-icon.orange{background:#fff2e7;color:#e58b2e}.knowledge-card h3{font:800 14px "Plus Jakarta Sans";margin:0 0 6px}.knowledge-card>p{font-size:10px;line-height:1.65;color:var(--muted);margin:0 0 13px}.knowledge-body{border-top:1px solid var(--line);padding-top:12px}.knowledge-body h4{font:800 10px "Plus Jakarta Sans";margin:13px 0 7px;color:#4d5870}.knowledge-body p,.knowledge-body li{font-size:10px;line-height:1.7;color:#667187}.knowledge-body ul,.numbered-learning{padding-left:17px;margin:7px 0}.knowledge-point{padding:9px 10px;background:#f8f9fc;border-radius:9px;margin:7px 0}.knowledge-point>b{font-size:10px;color:#35415b}.knowledge-point p{margin:3px 0 0}.knowledge-point em{display:block;margin-top:5px;color:#6559b7;font-size:9px;line-height:1.6}.knowledge-callout{padding:11px 12px;background:#f0efff;border-left:3px solid #7569e9;border-radius:8px;color:#55518f;font-size:10px;line-height:1.7;margin-top:10px}.framework-step{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;background:#f8f9fc;border-radius:8px;margin:6px 0}.framework-step b{font-size:9px;color:#6559df;min-width:78px}.framework-step span{font-size:9px;line-height:1.6;color:#647087}.email-sample{background:#f8f9fc;border:1px solid #edf0f5;border-radius:9px;padding:12px;font-size:10px;line-height:1.8;color:#4d5870}.plan-week{padding:10px 11px;border-bottom:1px solid #f0f2f6}.plan-week:last-of-type{border:0}.plan-week b{font-size:10px;color:#4d56a0}.plan-week p{margin:4px 0 0}.no-knowledge-results{padding:22px;text-align:center;color:var(--muted);background:#fff;border:1px dashed var(--line);border-radius:12px;font-size:11px}
+    @media(max-width:700px){.knowledge-grid{grid-template-columns:1fr}}
+
+
+    .advanced-suite{margin-top:42px}.advanced-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin:0 0 15px}.advanced-stat{display:flex;align-items:center;gap:11px;background:#fff;border:1px solid var(--line);border-radius:13px;padding:14px}.stat-icon,.studio-icon{width:38px;height:38px;display:grid;place-items:center;border-radius:11px;background:#f0efff;color:#6559df;flex-shrink:0}.advanced-stat b,.advanced-stat small{display:block}.advanced-stat b{font:800 17px "Plus Jakarta Sans";color:var(--ink)}.advanced-stat small{font-size:9px;color:var(--muted);margin-top:3px}.studio-grid{display:grid;grid-template-columns:1.08fr .92fr;gap:14px;align-items:start}.studio-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:19px;min-width:0}.studio-card-title{display:flex;align-items:center;gap:11px;margin-bottom:9px}.studio-card-title h3{font:800 15px "Plus Jakarta Sans";margin:3px 0 0}.studio-icon.mic{background:#eaf2ff;color:#3978e8}.studio-icon.role{background:#fff1e7;color:#db8734}.studio-icon.vocab{background:#e9f9f1;color:#159b70}.studio-icon.builder{background:#f2edff;color:#735de0}.studio-description{font-size:10px;line-height:1.7;color:var(--muted);margin:0 0 14px}.field-label{display:block;font-size:9px;font-weight:800;color:#59647a;margin:12px 0 6px}.studio-input,.studio-textarea{width:100%;border:1px solid #e5e8f0;border-radius:9px;padding:11px 12px;background:#fbfcfe;color:#35415a;font:10px "DM Sans";outline:none}.studio-input:focus,.studio-textarea:focus{border-color:#9389ed;box-shadow:0 0 0 3px #7569e916}.studio-textarea{resize:vertical;line-height:1.7}.speaking-prompt{margin:10px 0;padding:11px 12px;border-radius:9px;background:#f2f4ff;color:#5752a0;font-size:10px;line-height:1.6}.recording-controls{display:flex;gap:7px;flex-wrap:wrap;margin:11px 0}.studio-primary,.studio-secondary,.studio-text-button,.flashcard-reveal{border:0;border-radius:8px;padding:10px 12px;font:700 9px "DM Sans";cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:7px}.studio-primary{background:#6559df;color:white}.studio-primary:hover{background:#5145cb}.studio-secondary{background:#f0f2f7;color:#566078}.studio-secondary:disabled{opacity:.45;cursor:not-allowed}.studio-text-button{background:transparent;color:#6559df;padding-left:2px}.recording-status{font-size:9px;color:#68748b;padding:8px 10px;background:#f8f9fc;border-radius:8px;margin:8px 0}.speech-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:10px 0}.speech-metrics span{background:#f8f9fc;border-radius:8px;padding:9px 5px;text-align:center}.speech-metrics b,.speech-metrics small{display:block}.speech-metrics b{font:800 13px "Plus Jakarta Sans";color:#5148bd}.speech-metrics small{font-size:8px;color:var(--muted);margin-top:3px}.speech-feedback{font-size:9px;line-height:1.7;color:#58647c;background:#f2fbf7;border:1px solid #e1f4eb;border-radius:9px;padding:11px;margin:10px 0}.privacy-note{display:block;color:#8992a4;font-size:8px;line-height:1.6}.privacy-note i{margin-right:4px}.roleplay-dialogue{background:#f8f8ff;border:1px solid #eceaff;border-radius:12px;padding:14px;margin:13px 0}.dialogue-label{font-size:8px;letter-spacing:1px;font-weight:800;color:#8076d8}.roleplay-dialogue h4{font:800 13px "Plus Jakarta Sans";margin:8px 0}.roleplay-dialogue>p{font-size:10px;line-height:1.7;color:#667187}.other-person{display:flex;align-items:center;gap:9px;padding:10px;background:white;border-radius:9px;margin-top:12px}.avatar-circle{width:30px;height:30px;border-radius:50%;background:#eeeaff;color:#685bd7;display:grid;place-items:center;font-weight:800}.other-person small,.other-person b{display:block}.other-person small{font-size:7px;color:#8a91a4;letter-spacing:.8px}.other-person b{font-size:9px;line-height:1.5;margin-top:3px;color:#46516a}.full-button{width:100%;margin-top:10px}.roleplay-example{margin-top:11px;padding:12px;border-radius:9px;background:#eef9f3;border:1px solid #dff2e7}.roleplay-example b{font-size:10px;color:#21875f}.roleplay-example p{font-size:10px;line-height:1.7;color:#526b60}.roleplay-example small{font-size:8px;color:#788d82}.flashcard{min-height:210px;border-radius:14px;background:linear-gradient(145deg,#222b50,#4b4594);color:#fff;padding:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;margin:15px 0 10px}.flashcard>span{font-size:8px;letter-spacing:1.5px;color:#c6c1ff;font-weight:800}.flashcard h3{font:800 24px "Plus Jakarta Sans";margin:14px 0}.flashcard p{font-size:11px;line-height:1.6;color:#eef0ff}.flashcard-example{font-size:10px;line-height:1.6;color:#d6f5e7;margin:5px 0 12px}.flashcard-reveal{background:#ffffff20;color:white;border:1px solid #ffffff44}.flashcard-controls{display:flex;justify-content:space-between;align-items:center;gap:7px}.flashcard-controls>span{font-size:9px;color:var(--muted)}.built-sentence{padding:14px;background:#f4f2ff;border:1px solid #e9e5ff;border-radius:10px;color:#504a9a;font:700 12px/1.7 "Plus Jakarta Sans";margin:15px 0}.copy-status{font-size:9px;color:#16865e;min-height:15px}.lower-studio-grid{margin-top:14px}.studio-text-button:hover{text-decoration:underline}
+    @media(max-width:900px){.advanced-stats{grid-template-columns:1fr 1fr}.studio-grid{grid-template-columns:1fr}}
+    @media(max-width:480px){.advanced-stats{grid-template-columns:1fr 1fr}.advanced-stat{padding:10px}.studio-card{padding:14px}.speech-metrics{grid-template-columns:1fr 1fr}.recording-controls>*{flex:1}.flashcard-controls button{padding:9px}.flashcard{min-height:190px}}
+
 </style>
 
 <script>
     (() => {
-        const $ = id => document.getElementById(id);
-        const transcript = $("transcript");
-        const promptText = $("scenarioPrompt");
-        const recordButton = $("recordButton");
-        const stopButton = $("stopButton");
-        const timer = $("speechTimer");
-        const status = $("recordStatus");
-        const feedbackResult = $("feedbackResult");
-        const feedbackEmpty = $("feedbackEmpty");
-        const toast = $("commToast");
-        let recognition = null;
-        let recording = false;
-        let startedAt = 0;
-        let timerInterval = null;
-        let elapsedSeconds = 0;
-        let finalTranscript = "";
-        let selectedScenario = "interview";
-        const promptSets = {
-            interview: ["Tell me about yourself and explain why you are interested in this role.","Describe a project you are proud of. What problem did it solve?","What is one skill you are currently improving, and how are you doing it?"],
-            daily: ["You meet a new classmate. Introduce yourself and start a friendly conversation.","Tell a friend about a film, book or activity you enjoyed recently.","You are ordering food. Ask a question and make a polite request."],
-            group: ["Is artificial intelligence helping students learn better? Share your view.","Should college students do internships while studying? Explain your opinion.","Is teamwork more important than individual talent? Give a reason."],
-            work: ["Your project task is delayed. Explain the situation professionally and suggest a next step.","Ask your teammate for an update without sounding rude.","You disagree with a suggestion. Explain your alternative respectfully."],
-            presentation: ["Introduce a project you built. Explain the problem, solution and main benefit.","Explain a technical concept in simple language to a non-technical person.","Present one improvement you would make to a college or workplace process."],
-            confidence: ["Talk for one minute about something you learned recently and why it matters.","Describe a challenge you handled and what you learned from it.","Speak about a goal you want to achieve in the next six months."]
+
+        const knowledgeSearch = document.getElementById("knowledgeSearch");
+        const knowledgeCards = [...document.querySelectorAll(".knowledge-card")];
+        knowledgeSearch.addEventListener("input", () => {
+            const query = knowledgeSearch.value.trim().toLowerCase();
+            let visible = 0;
+            knowledgeCards.forEach(card => {
+                const matches = (card.innerText + " " + card.dataset.keywords).toLowerCase().includes(query);
+                card.hidden = !matches;
+                if (matches) visible++;
+            });
+            document.getElementById("knowledgeCount").textContent = `${visible} guides`;
+            document.getElementById("noKnowledgeResults").hidden = visible !== 0;
+        });
+
+        const lessons = {
+            confidence: {
+                category:"FOUNDATION · LESSON 01",
+                title:"Build communication confidence",
+                sections:[
+                    ["Understand confidence","Communication confidence does not mean speaking perfect English. It means being willing to express your thoughts, listen to others and continue even when you make a small mistake.","Start with short conversations. Speak slowly. Focus on your message instead of worrying about how others judge your English."],
+                    ["What to do","Prepare two or three simple points before an important conversation. Take a short pause when needed. If you make a mistake, correct it naturally and continue.","Replace the thought “My English is bad” with “I am learning to communicate better.”"],
+                    ["Avoid these habits","Do not translate every sentence word by word from your first language. Do not apologise repeatedly for your English. Do not stay silent only because you are afraid of mistakes.","You can say: “Let me explain that in a simple way.” or “Give me a moment to organise my thoughts.”"]
+                ],
+                activity:"For one minute, speak about your college, your interests or something you learned this week. Do not stop to correct every small mistake. Focus on completing your thought."
+            },
+            sentences: {
+                category:"SPOKEN ENGLISH · LESSON 02",
+                title:"Make better English sentences",
+                sections:[
+                    ["Use simple sentence patterns","Start with Subject + Verb + Object. Example: “I completed the assignment.” Add details when needed: “I completed the assignment yesterday with my classmates.”","Useful patterns: “I think…”, “I would like to…”, “I am interested in…”, “I have been learning…”"],
+                    ["Connect your ideas","Use because to explain a reason, but to show contrast, and so to explain a result. These small connectors make your answer easier to follow.","Example: “I enjoy programming because it helps me solve problems. I am still learning, but I practise regularly.”"],
+                    ["Speak in short groups of ideas","Avoid making one very long sentence. Share one idea, explain it, then move to the next point.","Instead of giving a long confusing answer, say: “First, I understood the problem. Then, I planned the solution. Finally, I tested the result.”"]
+                ],
+                activity:"Describe your daily routine in five sentences. Use “first”, “then”, “because” and “finally” at least once."
+            },
+            listening: {
+                category:"LISTENING · LESSON 03",
+                title:"Become an active listener",
+                sections:[
+                    ["Give full attention","Listen to understand the speaker's message. Avoid preparing your reply while the other person is still speaking.","Keep distractions away, let the speaker finish and notice the main idea."],
+                    ["Confirm what you understood","If something is unclear, ask a polite question instead of guessing.","Try: “So, do you mean that the deadline is Friday?” or “Could you explain the last part once more?”"],
+                    ["Respond to the actual point","A good response connects to what the other person said. Acknowledge their point before adding your own.","Try: “I understand your concern. One possible solution could be…”"]
+                ],
+                activity:"Listen to a short English conversation or video. After listening, explain its main idea aloud in three sentences."
+            },
+            conversation: {
+                category:"CONVERSATION · LESSON 04",
+                title:"Start and continue conversations",
+                sections:[
+                    ["Start naturally","Use a friendly greeting and a simple open question. Questions that cannot be answered only with yes or no often help conversations continue.","Try: “How was your class today?” or “What are you working on this week?”"],
+                    ["Show interest","Ask a follow-up question based on the other person's answer. Share a little related information about yourself too.","Example: “You are learning Python? That's interesting. What kind of project are you building?”"],
+                    ["End politely","When the conversation is complete, close it warmly instead of suddenly walking away.","Try: “It was nice talking to you. I'll see you later.”"]
+                ],
+                activity:"Practise a short conversation: greet someone, ask what they are learning, ask one follow-up question and close politely."
+            },
+            workplace: {
+                category:"PROFESSIONAL · LESSON 05",
+                title:"Speak professionally at work",
+                sections:[
+                    ["Make polite requests","Use “Could you please…?” and “Would it be possible to…?” instead of giving commands.","Example: “Could you please share the updated file when you get a chance?”"],
+                    ["Give clear updates","Explain what is complete, what is in progress and whether you need help. Be honest about delays.","Example: “I have completed the login page. I am working on database integration and expect to finish it tomorrow.”"],
+                    ["Disagree respectfully","Focus on the idea, not the person. Explain your reason and offer an alternative.","Example: “I understand your approach. Could we also consider this option because it may reduce the response time?”"]
+                ],
+                activity:"Imagine your project task is delayed. Explain the reason, current progress and a realistic next step in three or four sentences."
+            },
+            discussion: {
+                category:"GROUP DISCUSSION · LESSON 06",
+                title:"Express your opinions clearly",
+                sections:[
+                    ["Enter the discussion","Wait for a suitable pause. Use a polite opening to introduce your point without interrupting.","Try: “I'd like to add a point here.” or “From my perspective…”"],
+                    ["Support your opinion","A strong point includes an opinion, a reason and an example. Avoid repeating the same idea.","Structure: “I believe… because… For example…”"],
+                    ["Respect different views","You can disagree without making the conversation personal. Listen to the other view and explain your reasoning calmly.","Try: “That's an interesting perspective. I see it slightly differently because…”"]
+                ],
+                activity:"Choose a topic such as online learning or teamwork. Speak for one minute using an opinion, one reason and one example."
+            },
+            interview: {
+                category:"INTERVIEW SKILLS · LESSON 07",
+                title:"Communicate clearly in interviews",
+                sections:[
+                    ["Structure your introduction","Keep your introduction relevant: education, key skills, a project or experience, and the role you are interested in.","Do not memorise a robotic paragraph. Understand your points and explain them naturally."],
+                    ["Explain projects simply","Start with the problem, explain your solution, mention the technologies you used and describe your contribution.","Example structure: “The project solves… I built… using… My main responsibility was…”"],
+                    ["Answer honestly","If you do not know an answer, do not invent information. Explain what you know and show willingness to learn.","Try: “I haven't worked with that yet, but I understand the basics and I am willing to learn it.”"]
+                ],
+                activity:"Explain one project you have worked on. Cover the problem, your solution, the technology used and what you personally contributed."
+            },
+            bodylanguage: {
+                category:"BODY LANGUAGE · LESSON 08",
+                title:"Use positive body language",
+                sections:[
+                    ["Posture","Stand or sit comfortably with your shoulders relaxed. Avoid folding your arms tightly or constantly looking at the floor.","A comfortable posture helps you appear attentive and prepared."],
+                    ["Eye contact and expression","Use natural eye contact. Look away briefly when appropriate. Keep your facial expression relaxed and friendly.","You do not need to stare or force a smile. Aim to look engaged."],
+                    ["Gestures and listening","Use small, natural hand gestures when explaining an idea. Nod when you understand and avoid checking your phone.","Your gestures should support your message, not distract from it."]
+                ],
+                activity:"Practise explaining a familiar topic in front of a mirror. Notice your posture, facial expression and whether your gestures feel natural."
+            }
         };
-        const saved = JSON.parse(localStorage.getItem("communicationCoachStats") || '{"minutes":0,"sessions":0,"words":0,"day":"","today":0}');
-        function updateStats() {
-            const today = new Date().toISOString().slice(0,10);
-            if (saved.day !== today) { saved.day = today; saved.today = 0; }
-            $("practiceMinutes").textContent = saved.minutes + " min";
-            $("sessionCount").textContent = saved.sessions;
-            $("wordCount").textContent = saved.words.toLocaleString();
-            $("dailyProgress").textContent = Math.min(saved.today,15) + " / 15 min";
-            localStorage.setItem("communicationCoachStats", JSON.stringify(saved));
-        }
-        function notify(message) {
-            toast.textContent = message;
-            toast.classList.add("show");
-            setTimeout(() => toast.classList.remove("show"), 3000);
-        }
-        function words(text) { return (text.trim().match(/\b[\w']+\b/g) || []).length; }
-        function setTranscript(text) {
-            transcript.textContent = text;
-            $("wordLiveCount").textContent = words(text) + " words";
-        }
+        const detail = document.getElementById("lessonDetail");
+        const detailContent = document.getElementById("detailContent");
+        document.querySelectorAll(".lesson-open").forEach(button => button.addEventListener("click", () => {
+            const lesson = lessons[button.dataset.lesson];
+            document.getElementById("detailCategory").textContent = lesson.category;
+            document.getElementById("detailTitle").textContent = lesson.title;
+            detailContent.innerHTML = lesson.sections.map(section => `<article class="lesson-content-card"><h3>${section[0]}</h3><p>${section[1]}</p><div class="example-line">${section[2]}</div></article>`).join("") + `<div class="mini-activity"><b><i class="fa-solid fa-pen-to-square"></i> TRY THIS YOURSELF</b><br>${lesson.activity}</div>`;
+            detail.hidden = false;
+            detail.scrollIntoView({behavior:"smooth",block:"start"});
+        }));
+        document.getElementById("closeLesson").addEventListener("click", () => detail.hidden = true);
+        document.getElementById("lessonDone").addEventListener("click", event => {
+            event.currentTarget.innerHTML = '<i class="fa-solid fa-check-double"></i> Lesson reviewed';
+            event.currentTarget.disabled = true;
+            event.currentTarget.style.opacity = ".7";
+        });
         function speak(text) {
-            if (!("speechSynthesis" in window)) return notify("Speech playback is not supported in this browser.");
+            if (!("speechSynthesis" in window)) return;
             window.speechSynthesis.cancel();
             const utterance = new SpeechSynthesisUtterance(text);
             utterance.lang = "en-IN";
-            utterance.rate = 0.92;
+            utterance.rate = .9;
             window.speechSynthesis.speak(utterance);
         }
-        function updateTimer() {
-            const total = elapsedSeconds + (recording ? Math.floor((Date.now() - startedAt) / 1000) : 0);
-            timer.textContent = String(Math.floor(total / 60)).padStart(2,"0") + ":" + String(total % 60).padStart(2,"0");
+        document.querySelectorAll("[data-say]").forEach(button => button.addEventListener("click", () => speak(button.dataset.say)));
+
+        const progressKey = "communicationAdvancedProgress";
+        const readProgress = () => {
+            try { return JSON.parse(localStorage.getItem(progressKey) || '{"lessons":[],"sessions":0,"days":[]}'); }
+            catch { return {lessons:[],sessions:0,days:[]}; }
+        };
+        let advancedProgress = readProgress();
+        function saveProgress() {
+            localStorage.setItem(progressKey, JSON.stringify(advancedProgress));
+            renderAdvancedStats();
         }
-        function stopRecording() {
-            if (!recording) return;
-            recording = false;
-            elapsedSeconds += Math.floor((Date.now() - startedAt) / 1000);
-            if (recognition) { try { recognition.stop(); } catch(e) {} }
-            clearInterval(timerInterval);
-            recordButton.classList.remove("recording");
-            recordButton.innerHTML = '<i class="fa-solid fa-microphone"></i><span>Start speaking</span>';
-            stopButton.disabled = true;
-            status.textContent = "Recording stopped";
-            updateTimer();
+        function renderAdvancedStats() {
+            const completed = advancedProgress.lessons.length;
+            const routineCount = checks.filter(check => check.checked).length;
+            const progress = Math.round(((completed + routineCount / 4) / 9) * 100);
+            document.getElementById("completedLessonStat").textContent = `${completed}/8`;
+            document.getElementById("speakingSessionStat").textContent = advancedProgress.sessions || 0;
+            document.getElementById("overallProgressStat").textContent = `${Math.min(progress,100)}%`;
+            const dates = [...new Set(advancedProgress.days || [])].sort();
+            let streak = 0;
+            const today = new Date();
+            const dateKey = date => `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,"0")}-${String(date.getDate()).padStart(2,"0")}`;
+            const daySet = new Set(dates);
+            let cursor = new Date(today);
+            if (!daySet.has(dateKey(cursor))) cursor.setDate(cursor.getDate()-1);
+            while (daySet.has(dateKey(cursor))) { streak++; cursor.setDate(cursor.getDate()-1); }
+            document.getElementById("learningStreakStat").textContent = `${streak} ${streak === 1 ? "day" : "days"}`;
         }
-        function startRecording() {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if (!SpeechRecognition) {
-                notify("Voice recognition is not available here. Type your answer in the transcript box.");
-                $("speechSupport").textContent = "This browser does not provide speech recognition. Type your answer below, then request AI feedback.";
-                return;
-            }
-            if (recording) return;
-            recognition = new SpeechRecognition();
+        function markLearningDay() {
+            const now = new Date();
+            const key = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}-${String(now.getDate()).padStart(2,"0")}`;
+            advancedProgress.days = [...new Set([...(advancedProgress.days || []), key])];
+            saveProgress();
+        }
+        const originalLessonHandlerButtons = [...document.querySelectorAll(".lesson-open")];
+        originalLessonHandlerButtons.forEach(button => {
+            button.addEventListener("click", () => {
+                document.getElementById("lessonDone").dataset.lessonKey = button.dataset.lesson;
+                document.getElementById("lessonDone").disabled = advancedProgress.lessons.includes(button.dataset.lesson);
+                document.getElementById("lessonDone").innerHTML = advancedProgress.lessons.includes(button.dataset.lesson)
+                    ? '<i class="fa-solid fa-check-double"></i> Already learned'
+                    : '<i class="fa-solid fa-check"></i> Mark as learned';
+            });
+        });
+        const lessonDoneButton = document.getElementById("lessonDone");
+        lessonDoneButton.addEventListener("click", () => {
+            const key = lessonDoneButton.dataset.lessonKey;
+            if (key && !advancedProgress.lessons.includes(key)) advancedProgress.lessons.push(key);
+            markLearningDay();
+            lessonDoneButton.innerHTML = '<i class="fa-solid fa-check-double"></i> Lesson reviewed';
+            lessonDoneButton.disabled = true;
+            saveProgress();
+        });
+
+        const speechBox = document.getElementById("speechTranscript");
+        const speechStatus = document.getElementById("speechStatus");
+        const speechPrompt = document.getElementById("speakingPrompt");
+        const topicSelect = document.getElementById("speakingTopic");
+        topicSelect.addEventListener("change", () => speechPrompt.textContent = topicSelect.value);
+        let recognition = null;
+        let finalTranscript = "";
+        const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (SpeechRecognitionAPI) {
+            recognition = new SpeechRecognitionAPI();
             recognition.lang = "en-IN";
             recognition.continuous = true;
             recognition.interimResults = true;
             recognition.onstart = () => {
-                recording = true;
-                startedAt = Date.now();
-                recordButton.classList.add("recording");
-                recordButton.innerHTML = '<i class="fa-solid fa-wave-square"></i><span>Listening...</span>';
-                stopButton.disabled = false;
-                status.textContent = "Listening — speak naturally";
-                timerInterval = setInterval(updateTimer, 250);
+                speechStatus.textContent = "Listening... Speak naturally. Select Stop when you finish.";
+                document.getElementById("startSpeech").disabled = true;
+                document.getElementById("stopSpeech").disabled = false;
             };
             recognition.onresult = event => {
                 let interim = "";
                 for (let i = event.resultIndex; i < event.results.length; i++) {
-                    const text = event.results[i][0].transcript;
-                    if (event.results[i].isFinal) finalTranscript += text + " ";
-                    else interim += text;
+                    const transcript = event.results[i][0].transcript;
+                    if (event.results[i].isFinal) finalTranscript += transcript + " ";
+                    else interim += transcript;
                 }
-                setTranscript((finalTranscript + interim).trim());
+                speechBox.value = (finalTranscript + interim).trim();
+                updateSpeechMetrics();
             };
-            recognition.onerror = event => {
-                status.textContent = event.error === "not-allowed" ? "Microphone permission denied" : "Voice input interrupted";
-                if (event.error === "not-allowed") notify("Allow microphone access in your browser to use voice practice.");
-            };
+            recognition.onerror = event => speechStatus.textContent = `Microphone message: ${event.error}. You can type your response instead.`;
             recognition.onend = () => {
-                if (recording) {
-                    recording = false;
-                    recordButton.classList.remove("recording");
-                    recordButton.innerHTML = '<i class="fa-solid fa-microphone"></i><span>Start speaking</span>';
-                    stopButton.disabled = true;
-                    clearInterval(timerInterval);
-                    status.textContent = "Recording stopped";
-                }
+                document.getElementById("startSpeech").disabled = false;
+                document.getElementById("stopSpeech").disabled = true;
+                if (!speechStatus.textContent.startsWith("Microphone message")) speechStatus.textContent = "Recording stopped. Review your response below.";
             };
-            try { recognition.start(); } catch(e) { notify("Could not start microphone. Please try again."); }
+        } else {
+            speechStatus.textContent = "Speech recognition is not supported in this browser. Type your response below or try a supported Chrome browser.";
+            document.getElementById("startSpeech").disabled = true;
         }
-        document.querySelectorAll(".scenario").forEach(button => button.addEventListener("click", () => {
-            document.querySelectorAll(".scenario").forEach(item => item.classList.remove("active"));
-            button.classList.add("active");
-            selectedScenario = button.dataset.scenario;
-            promptText.textContent = button.dataset.prompt;
+        document.getElementById("startSpeech").addEventListener("click", () => {
+            if (!recognition) return;
+            finalTranscript = speechBox.value ? speechBox.value + " " : "";
+            try { recognition.start(); } catch { speechStatus.textContent = "The microphone is already active. Stop it before starting again."; }
+        });
+        document.getElementById("stopSpeech").addEventListener("click", () => recognition && recognition.stop());
+        document.getElementById("readPrompt").addEventListener("click", () => speak(topicSelect.value));
+        function updateSpeechMetrics() {
+            const value = speechBox.value.trim();
+            const words = value ? value.split(/\s+/).filter(Boolean) : [];
+            const sentences = value ? (value.match(/[.!?]+/g) || []).length : 0;
+            const fillers = (value.match(/\b(um|uh|umm|actually|basically|like|you know)\b/gi) || []).length;
+            document.getElementById("speechWordCount").textContent = words.length;
+            document.getElementById("speechSentenceCount").textContent = sentences;
+            document.getElementById("speechTimeEstimate").textContent = `${Math.ceil(words.length / 130)} min`;
+            document.getElementById("fillerCount").textContent = fillers;
+        }
+        speechBox.addEventListener("input", updateSpeechMetrics);
+        document.getElementById("reviewSpeech").addEventListener("click", () => {
+            const value = speechBox.value.trim();
+            const words = value ? value.split(/\s+/).filter(Boolean) : [];
+            const sentences = (value.match(/[.!?]+/g) || []).length;
+            const fillers = (value.match(/\b(um|uh|umm|actually|basically|like|you know)\b/gi) || []).length;
+            const tips = [];
+            if (words.length < 25) tips.push("Try expanding your response to 30–60 words so you can explain your point with a reason or example.");
+            else if (words.length > 180) tips.push("Your response is detailed. Try grouping it into a few shorter points.");
+            else tips.push("Good practice length. Keep your response focused on the topic.");
+            if (sentences < 2) tips.push("Use a few complete sentences rather than one long statement.");
+            else tips.push("You have multiple sentences. Check that each sentence communicates one clear idea.");
+            if (fillers) tips.push(`You used ${fillers} possible filler word(s). Pause briefly when you need time to think.`);
+            else tips.push("No common filler words were detected. Keep using natural pauses.");
+            if (!/[.!?]$/.test(value)) tips.push("Consider finishing your final thought with a complete sentence.");
+            document.getElementById("speechFeedback").innerHTML = tips.map(tip => `<div><i class="fa-solid fa-circle-check"></i> ${tip}</div>`).join("");
+            updateSpeechMetrics();
+        });
+        document.getElementById("saveSpeech").addEventListener("click", () => {
+            if (speechBox.value.trim().length < 5) {
+                speechStatus.textContent = "Add or record a response before saving a session.";
+                return;
+            }
+            advancedProgress.sessions = (advancedProgress.sessions || 0) + 1;
+            markLearningDay();
+            speechStatus.textContent = "Session saved to your learning progress on this browser.";
+            saveProgress();
+        });
+        document.getElementById("clearSpeech").addEventListener("click", () => {
+            if (recognition) { try { recognition.stop(); } catch {} }
+            speechBox.value = "";
             finalTranscript = "";
-            setTranscript("");
-            feedbackResult.hidden = true;
-            feedbackEmpty.hidden = false;
-        }));
-        $("newPrompt").addEventListener("click", () => {
-            const choices = promptSets[selectedScenario];
-            const next = choices[Math.floor(Math.random() * choices.length)];
-            promptText.textContent = next;
-            const active = document.querySelector(".scenario.active");
-            if (active) active.dataset.prompt = next;
+            updateSpeechMetrics();
+            document.getElementById("speechFeedback").textContent = "Your practice suggestions will appear here after you review your response.";
+            speechStatus.textContent = "Response cleared. Ready for another practice session.";
         });
-        $("speakPrompt").addEventListener("click", () => speak(promptText.textContent));
-        document.querySelectorAll(".phrase").forEach(button => button.addEventListener("click", () => speak(button.dataset.phrase)));
-        recordButton.addEventListener("click", startRecording);
-        stopButton.addEventListener("click", stopRecording);
-        transcript.addEventListener("input", () => {
-            finalTranscript = transcript.textContent;
-            $("wordLiveCount").textContent = words(finalTranscript) + " words";
+
+        const roleplays = {
+            classroom:["Talking to a professor","You are unsure about an assignment requirement and need to ask your professor for guidance.","“What would you like to know about the assignment?”","“Good morning, Professor. I'm working on the assignment and would like to clarify the second requirement. Could you please explain what is expected in that section?”"],
+            teammate:["Coordinating with a teammate","A teammate has not shared their part of the group project and the deadline is approaching.","“How is your part of the project coming along?”","“I've completed my section and wanted to check on your progress. Is anything blocking you? We can coordinate and decide how to finish before the deadline.”"],
+            meeting:["Giving a project update","Your manager asks you to briefly explain what you have completed and what you will do next.","“Can you give us a quick update?”","“I've completed the login page and tested the main flow. I'm currently connecting it to the database. I expect to finish the integration by tomorrow afternoon.”"],
+            clarification:["Asking for clarification","Someone gives you several instructions, but one important detail is not clear.","“Does that make sense?”","“I understand the overall task. Could you please clarify the expected output for the final step? I want to make sure I complete it correctly.”"],
+            feedback:["Responding to feedback","A colleague says your presentation contains too much technical detail.","“What do you think about the feedback?”","“Thank you for pointing that out. I'll simplify the technical sections and add a practical example so the main idea is easier to understand.”"],
+            networking:["Meeting someone new","You attend a college or professional event and want to start a friendly conversation.","“Hi, have we met before?”","“Hi, I'm [Your Name]. I'm studying computer science and I'm interested in web development. What are you currently learning or working on?”"]
+        };
+        const roleplaySelect = document.getElementById("roleplayScenario");
+        function renderRoleplay() {
+            const data = roleplays[roleplaySelect.value];
+            document.getElementById("roleplayTitle").textContent = data[0];
+            document.getElementById("roleplaySituation").textContent = data[1];
+            document.getElementById("roleplayLine").textContent = data[2];
+            document.getElementById("roleplaySample").textContent = data[3];
+            document.getElementById("roleplayExample").hidden = true;
+            document.getElementById("roleplayAnswer").value = "";
+        }
+        roleplaySelect.addEventListener("change", renderRoleplay);
+        document.getElementById("showRoleplayExample").addEventListener("click", () => {
+            document.getElementById("roleplayExample").hidden = false;
         });
-        $("clearTranscript").addEventListener("click", () => {
-            finalTranscript = "";
-            setTranscript("");
-            feedbackResult.hidden = true;
-            feedbackEmpty.hidden = false;
+        document.getElementById("nextRoleplay").addEventListener("click", () => {
+            roleplaySelect.selectedIndex = (roleplaySelect.selectedIndex + 1) % roleplaySelect.options.length;
+            renderRoleplay();
         });
-        async function apiRequest(payload) {
-            const response = await fetch("/api/communication/coach", {
-                method: "POST",
-                headers: {"Content-Type":"application/json"},
-                body: JSON.stringify(payload)
-            });
-            const data = await response.json();
-            if (!response.ok || !data.success) throw new Error(data.error || "The coach could not respond. Please try again.");
-            return data;
+
+        const flashcards = [
+            ["WORKPLACE","Follow up","To contact someone again to check progress or get an update.","I'll follow up with the team tomorrow."],
+            ["MEETINGS","Bring up","To introduce a topic for discussion.","I'd like to bring up one important point."],
+            ["TEAMWORK","Collaborate","To work together to achieve a shared goal.","We collaborated to complete the project."],
+            ["CLARITY","Clarify","To make information easier to understand.","Could you clarify the second requirement?"],
+            ["PLANNING","Prioritise","To decide which task is most important.","I'll prioritise the urgent tasks first."],
+            ["PROFESSIONAL","Appreciate","To recognise someone's help or effort.","I appreciate your time and guidance."],
+            ["DISCUSSION","Perspective","A particular way of looking at something.","I understand your perspective."],
+            ["WORKPLACE","Deadline","The time by which something must be completed.","The deadline for this task is Friday."],
+            ["FEEDBACK","Implement","To put a plan or suggestion into action.","I'll implement the suggested changes."],
+            ["CONFIDENCE","Elaborate","To explain an idea in more detail.","Could you elaborate on that point?"]
+        ];
+        let flashIndex = 0;
+        function renderFlashcard() {
+            const item = flashcards[flashIndex];
+            document.getElementById("flashcardCategory").textContent = item[0];
+            document.getElementById("flashcardPhrase").textContent = item[1];
+            document.getElementById("flashcardMeaning").textContent = item[2];
+            document.getElementById("flashcardExample").textContent = `“${item[3]}”`;
+            document.getElementById("flashcardMeaning").hidden = true;
+            document.getElementById("flashcardExample").hidden = true;
+            document.getElementById("revealFlashcard").textContent = "Reveal meaning & example";
+            document.getElementById("flashcardPosition").textContent = `${flashIndex+1} / ${flashcards.length}`;
         }
-        function renderFeedback(data) {
-            const f = data.feedback || {};
-            const list = items => Array.isArray(items) ? items.map(x => `<li>${escapeHtml(x)}</li>`).join("") : "";
-            feedbackResult.innerHTML = `
-            <div class="feedback-score"><strong>${escapeHtml(f.score ?? "—")}</strong><span> / 100<br>Communication practice score</span></div>
-            <h4>What you did well</h4><ul>${list(f.strengths)}</ul>
-            <h4>Improve next</h4><ul>${list(f.improvements)}</ul>
-            <h4>Clearer way to say it</h4><p>${escapeHtml(f.better_version || "Keep your answer clear and specific.")}</p>
-            <h4>Try this next</h4><p>${escapeHtml(f.next_exercise || "Repeat your answer with one specific example.")}</p>
-            <h4>Coach's note</h4><p>${escapeHtml(f.summary || "Keep practising consistently.")}</p>`;
-            feedbackEmpty.hidden = true;
-            feedbackResult.hidden = false;
+        document.getElementById("revealFlashcard").addEventListener("click", () => {
+            document.getElementById("flashcardMeaning").hidden = false;
+            document.getElementById("flashcardExample").hidden = false;
+            document.getElementById("revealFlashcard").textContent = "Meaning revealed";
+        });
+        document.getElementById("nextFlashcard").addEventListener("click", () => { flashIndex = (flashIndex+1) % flashcards.length; renderFlashcard(); });
+        document.getElementById("previousFlashcard").addEventListener("click", () => { flashIndex = (flashIndex-1+flashcards.length) % flashcards.length; renderFlashcard(); });
+        document.getElementById("speakFlashcard").addEventListener("click", () => speak(flashcards[flashIndex][1] + ". " + flashcards[flashIndex][3]));
+
+        function buildSentence() {
+            const sentence = `${document.getElementById("sentenceOpening").value} ${document.getElementById("sentenceIdea").value} ${document.getElementById("sentenceEnding").value}`;
+            document.getElementById("builtSentence").textContent = sentence;
+            document.getElementById("copySentenceStatus").textContent = "";
         }
-        function escapeHtml(value) {
-            return String(value ?? "").replace(/[&<>"']/g, char => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[char]));
-        }
-        $("evaluateButton").addEventListener("click", async () => {
-            if (recording) stopRecording();
-            const answer = transcript.textContent.trim();
-            if (words(answer) < 5) return notify("Speak or type at least a few sentences before requesting feedback.");
-            const button = $("evaluateButton");
-            button.disabled = true;
-            button.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Coach is reviewing...';
+        ["sentenceOpening","sentenceIdea","sentenceEnding"].forEach(id => document.getElementById(id).addEventListener("change", buildSentence));
+        document.getElementById("buildSentence").addEventListener("click", buildSentence);
+        document.getElementById("listenBuiltSentence").addEventListener("click", () => speak(document.getElementById("builtSentence").textContent));
+        document.getElementById("copyBuiltSentence").addEventListener("click", async () => {
+            const value = document.getElementById("builtSentence").textContent;
             try {
-                const data = await apiRequest({mode:"evaluate", scenario:selectedScenario, prompt:promptText.textContent, answer});
-                renderFeedback(data);
-            } catch(error) {
-                notify(error.message);
-            } finally {
-                button.disabled = false;
-                button.innerHTML = '<i class="fa-solid fa-sparkles"></i> Get AI feedback';
+                await navigator.clipboard.writeText(value);
+                document.getElementById("copySentenceStatus").textContent = "Sentence copied.";
+            } catch {
+                document.getElementById("copySentenceStatus").textContent = "Copy is unavailable in this browser. Select the sentence to copy it.";
             }
         });
-        $("coachChatForm").addEventListener("submit", async event => {
-            event.preventDefault();
-            const input = $("coachInput");
-            const message = input.value.trim();
-            if (!message) return;
-            addChat(message, "user");
-            input.value = "";
-            const send = event.submitter || $("coachChatForm").querySelector("button");
-            send.disabled = true;
-            try {
-                const data = await apiRequest({mode:"chat", message});
-                addChat(data.reply || "Let's practise that together.", "coach");
-            } catch(error) {
-                addChat(error.message, "coach");
-            } finally {
-                send.disabled = false;
-            }
-        });
-        function addChat(message, who) {
-            const bubble = document.createElement("div");
-            bubble.className = "chat-bubble " + (who === "user" ? "user-bubble" : "coach-bubble");
-            bubble.textContent = message;
-            $("chatMessages").appendChild(bubble);
-            $("chatMessages").scrollTop = $("chatMessages").scrollHeight;
+        renderFlashcard();
+        renderAdvancedStats();
+
+        const checks = [...document.querySelectorAll(".routine-check")];
+        function updateRoutine() {
+            const count = checks.filter(check => check.checked).length;
+            document.getElementById("routineProgressText").textContent = `${count} of 4 activities completed`;
+            document.getElementById("routinePercent").textContent = `${count * 25}%`;
+            document.getElementById("routineBarFill").style.width = `${count * 25}%`;
+            localStorage.setItem("communicationDailyRoutine", JSON.stringify({date:new Date().toDateString(),checks:checks.map(check => check.checked)}));
+            if (count > 0) markLearningDay();
+            renderAdvancedStats();
         }
-        $("finishSession").addEventListener("click", () => {
-            if (recording) stopRecording();
-            const answer = transcript.textContent.trim();
-            if (words(answer) < 5) return notify("Add a spoken or typed answer before completing this session.");
-            const minutes = Math.max(1, Math.ceil(elapsedSeconds / 60));
-            saved.minutes += minutes;
-            saved.today += minutes;
-            saved.sessions += 1;
-            saved.words += words(answer);
-            elapsedSeconds = 0;
-            timer.textContent = "00:00";
-            updateStats();
-            notify("Practice session saved on this device. Great work!");
+        checks.forEach(check => check.addEventListener("change", updateRoutine));
+        const saved = JSON.parse(localStorage.getItem("communicationDailyRoutine") || "null");
+        if (saved && saved.date === new Date().toDateString()) checks.forEach((check,index) => check.checked = !!saved.checks[index]);
+        updateRoutine();
+        renderAdvancedStats();
+        document.getElementById("resetRoutine").addEventListener("click", () => {
+            checks.forEach(check => check.checked = false);
+            updateRoutine();
         });
-        if (!(window.SpeechRecognition || window.webkitSpeechRecognition)) {
-            $("speechSupport").textContent = "Voice input is not supported in this browser. You can still type your answer and use the AI coach.";
-        }
-        updateStats();
     })();
 </script>
 {% endblock %}
