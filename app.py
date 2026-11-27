@@ -27,6 +27,7 @@ import json
 import csv
 import random
 import io
+from urllib.parse import quote
 from functools import wraps
 from datetime import datetime
 from zoneinfo import ZoneInfo
@@ -118,6 +119,138 @@ def login_required(f):
             )
         return f(*args, **kwargs)
     return decorated_function
+def scan_uploaded_pyq_pdfs(academic_courses, academic_subjects=None):
+    upload_folder = os.path.join(app.static_folder, "uploads")
+    uploaded_papers = []
+
+    if not os.path.isdir(upload_folder):
+        return uploaded_papers
+
+    academic_courses = academic_courses or []
+    academic_subjects = academic_subjects or []
+
+    def normalize(value):
+        value = str(value or "").lower()
+        value = re.sub(r"\.pdf$", "", value)
+        value = re.sub(r"[_\-.]+", " ", value)
+        value = re.sub(r"[^a-z0-9 ]", " ", value)
+        return re.sub(r"\s+", " ", value).strip()
+
+    for root, dirs, files in os.walk(upload_folder):
+        dirs[:] = [d for d in dirs if not d.startswith(".")]
+
+        for filename in sorted(files):
+            if not filename.lower().endswith(".pdf"):
+                continue
+
+            full_path = os.path.join(root, filename)
+
+            relative_path = os.path.relpath(
+                full_path,
+                app.static_folder
+            ).replace("\\", "/")
+
+            normalized_name = normalize(filename)
+            matched_course = None
+            matched_subject = None
+            matched_course_id = None
+
+            course_candidates = sorted(
+                academic_courses,
+                key=lambda item: max(
+                    len(normalize(item.get("course_name"))),
+                    len(normalize(item.get("course_code")))
+                ),
+                reverse=True
+            )
+
+            for course in course_candidates:
+                course_values = [
+                    course.get("course_name"),
+                    course.get("course_code"),
+                    course.get("slug")
+                ]
+
+                for value in course_values:
+                    normalized_value = normalize(value)
+
+                    if normalized_value and normalized_value in normalized_name:
+                        matched_course = course.get("course_name")
+                        matched_course_id = course.get("id")
+                        break
+
+                if matched_course:
+                    break
+
+            semester_match = re.search(
+                r"\b(?:semester|sem|s)\s*([1-8])\b",
+                normalized_name
+            )
+
+            if not semester_match:
+                semester_match = re.search(
+                    r"\b([1-8])\s*(?:st|nd|rd|th)?\s*semester\b",
+                    normalized_name
+                )
+
+            semester = semester_match.group(1) if semester_match else None
+
+            year_match = re.search(
+                r"\b(20(?:1[5-9]|2[0-9]))\b",
+                normalized_name
+            )
+
+            exam_year = year_match.group(1) if year_match else None
+
+            relevant_subjects = [
+                subject for subject in academic_subjects
+                if matched_course_id is not None
+                and subject.get("course_id") == matched_course_id
+            ]
+
+            if semester:
+                relevant_subjects = [
+                    subject for subject in relevant_subjects
+                    if str(subject.get("semester_no")) == semester
+                ]
+
+            relevant_subjects.sort(
+                key=lambda item: len(normalize(item.get("subject_name"))),
+                reverse=True
+            )
+
+            for subject in relevant_subjects:
+                subject_values = [
+                    subject.get("subject_name"),
+                    subject.get("subject_code")
+                ]
+
+                for value in subject_values:
+                    normalized_value = normalize(value)
+
+                    if normalized_value and normalized_value in normalized_name:
+                        matched_subject = subject.get("subject_name")
+                        break
+
+                if matched_subject:
+                    break
+
+            subject_name = matched_subject or os.path.splitext(filename)[0]
+
+            uploaded_papers.append({
+                "id": None,
+                "course_name": matched_course or "Uncategorized",
+                "semester": semester,
+                "subject_name": subject_name,
+                "exam_year": exam_year,
+                "exam_session": "Uploaded PDF",
+                "marks": None,
+                "paper_pattern": None,
+                "file_path": url_for("static", filename=relative_path),
+                "source": "static_upload"
+            })
+
+    return uploaded_papers
 @app.route("/")
 def home():
     return redirect(
@@ -5558,348 +5691,63 @@ def inject_global_data():
             ""
         )
 }
-@app.route('/courses')
-@login_required
-def courses():
-    conn = None
-    cursor = None
 
-    try:
-        conn = get_db_connection()
-        cursor = conn.cursor(pymysql.cursors.DictCursor)
-
-        cursor.execute("""
-            SELECT
-                id,
-                faculty_name,
-                slug,
-                description
-            FROM pyq_faculties
-            WHERE is_active = 1
-            ORDER BY faculty_name
-        """)
-        faculties = cursor.fetchall()
-
-        cursor.execute("""
-            SELECT
-                c.id,
-                c.faculty_id,
-                c.course_code,
-                c.course_name,
-                c.slug,
-                c.course_level,
-                c.total_semesters,
-                c.description,
-                f.faculty_name,
-                f.slug AS faculty_slug
-            FROM pyq_courses c
-            INNER JOIN pyq_faculties f
-                ON f.id = c.faculty_id
-            WHERE c.is_active = 1
-              AND f.is_active = 1
-            ORDER BY f.faculty_name, c.course_name
-        """)
-        academic_courses = cursor.fetchall()
-
-        cursor.execute("""
-            SELECT
-                s.id,
-                s.course_id,
-                s.semester_no,
-                s.subject_code,
-                s.subject_name,
-                s.description
-            FROM pyq_subjects s
-            INNER JOIN pyq_courses c
-                ON c.id = s.course_id
-            WHERE s.is_active = 1
-              AND c.is_active = 1
-            ORDER BY s.course_id, s.semester_no, s.subject_name
-        """)
-        academic_subjects = cursor.fetchall()
-
-        cursor.execute("""
-            SELECT
-                id,
-                course_name,
-                semester,
-                subject_name,
-                exam_year,
-                exam_session,
-                marks,
-                paper_pattern,
-                file_path
-            FROM pyq_papers
-            ORDER BY exam_year DESC, semester, subject_name
-        """)
-        academic_papers = cursor.fetchall()
-
-        cursor.execute("""
-            SELECT
-                id,
-                title,
-                description,
-                pdf_link,
-                category,
-                material_type,
-                course_name,
-                semester,
-                subject_name
-            FROM study_materials
-            ORDER BY id DESC
-        """)
-        all_materials = cursor.fetchall()
-
-        subjects_by_course = {}
-        for subject in academic_subjects:
-            course_id = subject["course_id"]
-            subjects_by_course.setdefault(course_id, []).append(subject)
-
-        papers_by_course = {}
-        for paper in academic_papers:
-            course_key = str(paper.get("course_name") or "").strip().lower()
-            papers_by_course.setdefault(course_key, []).append(paper)
-
-        courses_by_faculty = {}
-        for course in academic_courses:
-            course_id = course["id"]
-            course_name = str(course.get("course_name") or "").strip()
-            course_key = course_name.lower()
-
-            course["subjects"] = subjects_by_course.get(course_id, [])
-            course["papers"] = papers_by_course.get(course_key, [])
-
-            semesters = {}
-            for subject in course["subjects"]:
-                semester_no = subject["semester_no"]
-                semesters.setdefault(semester_no, []).append(subject)
-
-            course["semesters"] = [
-                {
-                    "semester_no": semester_no,
-                    "subjects": semester_subjects
-                }
-                for semester_no, semester_subjects in sorted(semesters.items())
-            ]
-
-            courses_by_faculty.setdefault(
-                course["faculty_id"], []
-            ).append(course)
-
-        for faculty in faculties:
-            faculty["courses"] = courses_by_faculty.get(faculty["id"], [])
-            faculty["total_courses"] = len(faculty["courses"])
-            faculty["total_subjects"] = sum(
-                len(course["subjects"])
-                for course in faculty["courses"]
-            )
-            faculty["total_papers"] = sum(
-                len(course["papers"])
-                for course in faculty["courses"]
-            )
-
-        pyq_papers = []
-        for paper in academic_papers:
-            pyq_papers.append({
-                "id": paper["id"],
-                "title": paper["subject_name"],
-                "course_name": paper["course_name"],
-                "subject_name": paper["subject_name"],
-                "semester": paper["semester"],
-                "exam_year": paper["exam_year"],
-                "exam_session": paper["exam_session"],
-                "marks": paper["marks"],
-                "paper_pattern": paper["paper_pattern"],
-                "pdf_url": paper["file_path"],
-                "file_path": paper["file_path"]
-            })
-
-        study_materials = []
-        for item in all_materials:
-            material_type = str(
-                item.get("material_type") or ""
-            ).strip().lower()
-
-            category = str(
-                item.get("category") or ""
-            ).strip().lower()
-
-            if material_type in ("pyq", "question_bank") or category in (
-                "pyq", "question_bank"
-            ):
-                continue
-
-            study_materials.append({
-                "id": item["id"],
-                "title": item["title"],
-                "description": item["description"],
-                "filename": item["pdf_link"],
-                "pdf_link": item["pdf_link"],
-                "course_name": item["course_name"],
-                "semester": item["semester"],
-                "subject_name": item["subject_name"],
-                "extension": "PDF",
-                "size": ""
-            })
-
-        pyq_semesters = sorted({
-            str(paper["semester"])
-            for paper in pyq_papers
-            if paper.get("semester") is not None
-        })
-
-        pyq_years = sorted({
-            str(paper["exam_year"])
-            for paper in pyq_papers
-            if paper.get("exam_year") is not None
-        }, reverse=True)
-
-        total_faculties = len(faculties)
-        total_academic_courses = len(academic_courses)
-        total_academic_subjects = len(academic_subjects)
-        total_academic_papers = len(academic_papers)
-
-        courses_list = [
-            {
-                "id": course["id"],
-                "name": course["course_name"],
-                "course_name": course["course_name"],
-                "slug": course["slug"],
-                "faculty_id": course["faculty_id"],
-                "faculty_name": course["faculty_name"],
-                "total_semesters": course["total_semesters"],
-                "course_level": course["course_level"]
-            }
-            for course in academic_courses
-        ]
-
-        return render_template(
-            "courses.html",
-            faculties=faculties,
-            academic_courses=academic_courses,
-            academic_subjects=academic_subjects,
-            academic_papers=academic_papers,
-            courses=courses_list,
-            courses_list=courses_list,
-            courses_by_faculty=courses_by_faculty,
-            pyq_papers=pyq_papers,
-            pyq_semesters=pyq_semesters,
-            pyq_years=pyq_years,
-            study_materials=study_materials,
-            total_faculties=total_faculties,
-            total_academic_courses=total_academic_courses,
-            total_academic_subjects=total_academic_subjects,
-            total_academic_papers=total_academic_papers
-        )
-
-    except Exception as e:
-        app.logger.exception("ACADEMIC COURSES ERROR")
-        flash("Unable to load academic courses. Please try again.", "danger")
-        return redirect(url_for("dashboard"))
-
-    finally:
-        if cursor:
-            cursor.close()
-        if conn:
-            conn.close()
 @app.route("/study-materials/file/<path:filename>")
 @login_required
 def open_study_material(filename):
     import os
     from flask import send_from_directory, request, abort
-    materials_folder = os.path.join(
-        app.root_path,
-        "static",
-        "uploads",
-        "study_materials"
+
+    uploads_folder = os.path.join(
+        app.static_folder,
+        "uploads"
     )
-    if not os.path.isdir(materials_folder):
+
+    filename = str(filename or "").replace("\\", "/").strip()
+
+    for prefix in (
+        "/static/uploads/",
+        "static/uploads/",
+        "/uploads/",
+        "uploads/"
+    ):
+        if filename.startswith(prefix):
+            filename = filename[len(prefix):]
+            break
+
+    filename = filename.lstrip("/")
+
+    file_path = os.path.join(
+        uploads_folder,
+        *filename.split("/")
+    )
+
+    if not os.path.isfile(file_path) and "/" not in filename:
+        alternative_path = os.path.join(
+            uploads_folder,
+            "study_materials",
+            filename
+        )
+
+        if os.path.isfile(alternative_path):
+            filename = os.path.join(
+                "study_materials",
+                filename
+            )
+
+    file_path = os.path.join(
+        uploads_folder,
+        *filename.split("/")
+    )
+
+    if not os.path.isfile(file_path):
         abort(404)
+
     return send_from_directory(
-        materials_folder,
+        uploads_folder,
         filename,
         as_attachment=request.args.get("download") == "1"
     )
-@app.route("/course/<course_name>")
-@login_required
-def course(course_name):
-    conn = None
-    cursor = None
-    try:
-        conn = get_db_connection()
-        cursor = conn.cursor(pymysql.cursors.DictCursor)
-        cursor.execute("""
-            SELECT *
-            FROM courses
-            WHERE LOWER(course_name) = LOWER(%s)
-            LIMIT 1
-        """, (course_name,))
-        course_info = cursor.fetchone()
-        if not course_info:
-            flash("Course not found.", "danger")
-            return redirect(url_for("courses"))
-        cursor.execute("""
-            SELECT
-                id,
-                day_number,
-                title,
-                notes,
-                code_snippet,
-                practice_task
-            FROM course_lessons
-            WHERE LOWER(course_name) = LOWER(%s)
-            ORDER BY day_number ASC
-        """, (course_name,))
-        lessons = cursor.fetchall()
-        cursor.execute("""
-            SELECT current_day, completed
-            FROM course_progress
-            WHERE user_id = %s
-            AND LOWER(course_name) = LOWER(%s)
-            LIMIT 1
-        """, (
-            session["user_id"],
-            course_name
-        ))
-        progress_data = cursor.fetchone()
-        completed_days = []
-        if progress_data:
-            completed = int(progress_data.get("completed") or 0)
-            if completed > 0:
-                completed_days = list(range(1, completed + 1))
-        total_days = len(lessons)
-        progress = len(completed_days)
-        percentage = (
-            min(int((progress / total_days) * 100), 100)
-            if total_days > 0 else 0
-        )
-        course_data = {
-            "name": course_info.get("course_title") or course_info.get("course_name"),
-            "level": course_info.get("level") or "Beginner",
-            "description": course_info.get("description") or "",
-            "projects": course_info.get("projects") or "0"
-        }
-        return render_template(
-            "java.html",
-            course=course_data,
-            lessons=lessons,
-            progress=progress,
-            percentage=percentage,
-            total_days=total_days,
-            completed_days=completed_days
-        )
-    except Exception:
-        app.logger.exception(
-            "Course learning page failed: %s",
-            course_name
-        )
-        flash("Unable to load course.", "danger")
-        return redirect(url_for("courses"))
-    finally:
-        if cursor:
-            cursor.close()
-        if conn:
-            conn.close()
 @app.route("/course/<course_name>/<int:day>")
 @login_required
 def course_day(course_name, day):
@@ -6593,6 +6441,214 @@ def is_admin():
         return view_func(*args, **kwargs)
     return decorated_view
 import re
+@app.route("/courses", methods=["GET"])
+@login_required
+def courses():
+
+    conn = None
+    cursor = None
+
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(pymysql.cursors.DictCursor)
+
+        cursor.execute("""
+            SELECT
+                id,
+                faculty_name,
+                slug,
+                description,
+                is_active
+            FROM pyq_faculties
+            WHERE is_active = 1
+            ORDER BY faculty_name ASC
+        """)
+
+        faculties = cursor.fetchall()
+
+        cursor.execute("""
+            SELECT
+                c.id,
+                c.faculty_id,
+                c.course_code,
+                c.course_name,
+                c.slug,
+                c.course_level,
+                c.total_semesters,
+                c.description,
+                c.is_active,
+                f.faculty_name,
+                f.slug AS faculty_slug
+            FROM pyq_courses c
+            LEFT JOIN pyq_faculties f
+                ON c.faculty_id = f.id
+            WHERE c.is_active = 1
+            ORDER BY c.course_name ASC
+        """)
+
+        academic_courses = cursor.fetchall()
+
+        cursor.execute("""
+            SELECT
+                s.id,
+                s.course_id,
+                s.semester_no,
+                s.subject_code,
+                s.subject_name,
+                s.description,
+                c.course_name,
+                c.slug AS course_slug
+            FROM pyq_subjects s
+            INNER JOIN pyq_courses c
+                ON s.course_id = c.id
+            WHERE c.is_active = 1
+            ORDER BY
+                c.course_name ASC,
+                s.semester_no ASC,
+                s.subject_name ASC
+        """)
+
+        academic_subjects = cursor.fetchall()
+
+        cursor.execute("""
+            SELECT
+                id,
+                course_name,
+                semester,
+                subject_name,
+                exam_year,
+                exam_session,
+                marks,
+                paper_pattern,
+                file_path
+            FROM pyq_papers
+            ORDER BY exam_year DESC, id DESC
+        """)
+
+        academic_papers = list(cursor.fetchall())
+
+        cursor.execute("""
+            SELECT
+                id,
+                title,
+                description,
+                pdf_link,
+                category,
+                material_type,
+                course_name,
+                semester,
+                subject_name
+            FROM study_materials
+            ORDER BY id DESC
+        """)
+
+        study_materials = cursor.fetchall()
+
+        uploaded_papers = scan_uploaded_pyq_pdfs(
+            academic_courses,
+            academic_subjects
+        )
+
+        existing_paths = {
+            str(paper.get("file_path") or "")
+            .replace("\\", "/")
+            .lstrip("/")
+            for paper in academic_papers
+        }
+
+        for paper in uploaded_papers:
+            uploaded_path = paper["file_path"].lstrip("/")
+
+            if uploaded_path not in existing_paths:
+                academic_papers.append(paper)
+                existing_paths.add(uploaded_path)
+
+        subjects_by_course = {}
+
+        for subject in academic_subjects:
+            course_id = subject["course_id"]
+
+            if course_id not in subjects_by_course:
+                subjects_by_course[course_id] = []
+
+            subjects_by_course[course_id].append(subject)
+
+        papers_by_course = {}
+
+        for paper in academic_papers:
+            course_name = paper.get("course_name") or "Uncategorized"
+
+            if course_name not in papers_by_course:
+                papers_by_course[course_name] = []
+
+            papers_by_course[course_name].append(paper)
+
+        courses_by_faculty = {}
+
+        for course in academic_courses:
+            faculty_id = course["faculty_id"]
+
+            if faculty_id not in courses_by_faculty:
+                courses_by_faculty[faculty_id] = []
+
+            courses_by_faculty[faculty_id].append(course)
+
+        pyq_semesters = sorted(
+            {
+                int(paper["semester"])
+                for paper in academic_papers
+                if paper.get("semester")
+                and str(paper["semester"]).isdigit()
+            }
+        )
+
+        pyq_years = sorted(
+            {
+                int(paper["exam_year"])
+                for paper in academic_papers
+                if paper.get("exam_year")
+                and str(paper["exam_year"]).isdigit()
+            },
+            reverse=True
+        )
+
+        total_faculties = len(faculties)
+        total_courses = len(academic_courses)
+        total_subjects = len(academic_subjects)
+        total_papers = len(academic_papers)
+
+        return render_template(
+            "courses.html",
+            faculties=faculties,
+            academic_courses=academic_courses,
+            academic_subjects=academic_subjects,
+            academic_papers=academic_papers,
+            study_materials=study_materials,
+            subjects_by_course=subjects_by_course,
+            papers_by_course=papers_by_course,
+            courses_by_faculty=courses_by_faculty,
+            pyq_papers=academic_papers,
+            pyq_semesters=pyq_semesters,
+            pyq_years=pyq_years,
+            courses=academic_courses,
+            courses_list=academic_courses,
+            total_faculties=total_faculties,
+            total_courses=total_courses,
+            total_subjects=total_subjects,
+            total_papers=total_papers
+        )
+
+    except Exception as e:
+        app.logger.exception("Academic Learning Hub Error: %s", e)
+        flash("Unable to load Academic Learning Hub. Please try again.", "danger")
+        return redirect(url_for("dashboard"))
+
+    finally:
+        if cursor:
+            cursor.close()
+
+        if conn:
+            conn.close()
 @app.route("/admin/pyq/courses", methods=["GET", "POST"])
 def pyq_admin_courses():
     if not admin_required():
@@ -8000,6 +8056,1411 @@ def admin_feedback_chat(feedback_id):
             cursor.close()
         if conn:
             conn.close()
+@app.route("/api/academic/subject/<int:subject_id>")
+@login_required
+def academic_subject_api(subject_id):
+    connection = get_db_connection()
+
+    try:
+        with connection.cursor(DictCursor) as cursor:
+            cursor.execute("""
+                SELECT id, subject_code, subject_name, description,
+                       semester_no, course_id
+                FROM pyq_subjects
+                WHERE id = %s
+            """, (subject_id,))
+
+            subject = cursor.fetchone()
+
+            if not subject:
+                return jsonify({"success": False, "message": "Subject not found"}), 404
+
+            cursor.execute("""
+                SELECT id, unit_no, unit_title, unit_description, display_order
+                FROM academic_units
+                WHERE subject_id = %s AND is_active = 1
+                ORDER BY display_order, unit_no
+            """, (subject_id,))
+
+            units = cursor.fetchall()
+
+            for unit in units:
+                cursor.execute("""
+                    SELECT id, lesson_title, display_order
+                    FROM academic_lessons
+                    WHERE unit_id = %s AND is_active = 1
+                    ORDER BY display_order, id
+                """, (unit["id"],))
+
+                unit["lessons"] = cursor.fetchall()
+
+            cursor.execute("""
+                SELECT COUNT(*) AS total
+                FROM academic_lessons l
+                JOIN academic_units u ON u.id = l.unit_id
+                WHERE u.subject_id = %s AND l.is_active = 1
+            """, (subject_id,))
+
+            total_lessons = cursor.fetchone()["total"]
+
+            cursor.execute("""
+                SELECT COUNT(*) AS completed
+                FROM academic_student_progress
+                WHERE user_id = %s
+                AND subject_id = %s
+                AND is_completed = 1
+            """, (current_user.id, subject_id))
+
+            completed_lessons = cursor.fetchone()["completed"]
+
+            cursor.execute("""
+                SELECT COUNT(*) AS total
+                FROM academic_questions
+                WHERE subject_id = %s
+            """, (subject_id,))
+
+            total_questions = cursor.fetchone()["total"]
+
+            cursor.execute("""
+                SELECT COUNT(*) AS total
+                FROM academic_practicals
+                WHERE subject_id = %s AND is_active = 1
+            """, (subject_id,))
+
+            total_practicals = cursor.fetchone()["total"]
+
+            return jsonify({
+                "success": True,
+                "subject": subject,
+                "units": units,
+                "statistics": {
+                    "total_lessons": total_lessons,
+                    "completed_lessons": completed_lessons,
+                    "total_questions": total_questions,
+                    "total_practicals": total_practicals,
+                    "progress": round(
+                        completed_lessons / total_lessons * 100
+                    ) if total_lessons else 0
+                }
+            })
+
+    finally:
+        connection.close()
+
+
+@app.route("/api/academic/lesson/<int:lesson_id>")
+@login_required
+def academic_lesson_api(lesson_id):
+    connection = get_db_connection()
+
+    try:
+        with connection.cursor(DictCursor) as cursor:
+            cursor.execute("""
+                SELECT
+                    l.id,
+                    l.lesson_title,
+                    l.lesson_content,
+                    l.examples,
+                    l.code_content,
+                    l.diagram_url,
+                    u.id AS unit_id,
+                    u.unit_no,
+                    u.unit_title,
+                    u.subject_id
+                FROM academic_lessons l
+                JOIN academic_units u ON u.id = l.unit_id
+                WHERE l.id = %s
+                AND l.is_active = 1
+                AND u.is_active = 1
+            """, (lesson_id,))
+
+            lesson = cursor.fetchone()
+
+            if not lesson:
+                return jsonify({"success": False, "message": "Lesson not found"}), 404
+
+            cursor.execute("""
+                SELECT is_completed
+                FROM academic_student_progress
+                WHERE user_id = %s AND lesson_id = %s
+            """, (current_user.id, lesson_id))
+
+            progress = cursor.fetchone()
+
+            lesson["is_completed"] = bool(
+                progress and progress["is_completed"]
+            )
+
+            return jsonify({
+                "success": True,
+                "lesson": lesson
+            })
+
+    finally:
+        connection.close()
+
+
+@app.route("/api/academic/progress/<int:subject_id>")
+@login_required
+def academic_progress_api(subject_id):
+    connection = get_db_connection()
+
+    try:
+        with connection.cursor(DictCursor) as cursor:
+            cursor.execute("""
+                SELECT
+                    l.id AS lesson_id,
+                    l.lesson_title,
+                    u.unit_no,
+                    u.unit_title,
+                    COALESCE(p.is_completed, 0) AS is_completed
+                FROM academic_lessons l
+                JOIN academic_units u ON u.id = l.unit_id
+                LEFT JOIN academic_student_progress p
+                    ON p.lesson_id = l.id
+                    AND p.user_id = %s
+                WHERE u.subject_id = %s
+                AND l.is_active = 1
+                AND u.is_active = 1
+                ORDER BY u.display_order, l.display_order
+            """, (current_user.id, subject_id))
+
+            lessons = cursor.fetchall()
+
+            total = len(lessons)
+            completed = sum(
+                1 for lesson in lessons if lesson["is_completed"]
+            )
+
+            return jsonify({
+                "success": True,
+                "lessons": lessons,
+                "total": total,
+                "completed": completed,
+                "percentage": round(completed / total * 100) if total else 0
+            })
+
+    finally:
+        connection.close()
+
+
+@app.route("/api/academic/progress/complete", methods=["POST"])
+@login_required
+def complete_academic_lesson():
+    data = request.get_json(silent=True) or {}
+
+    lesson_id = data.get("lesson_id")
+
+    if not lesson_id:
+        return jsonify({
+            "success": False,
+            "message": "Lesson ID is required"
+        }), 400
+
+    connection = get_db_connection()
+
+    try:
+        with connection.cursor(DictCursor) as cursor:
+            cursor.execute("""
+                SELECT u.subject_id
+                FROM academic_lessons l
+                JOIN academic_units u ON u.id = l.unit_id
+                WHERE l.id = %s AND l.is_active = 1
+            """, (lesson_id,))
+
+            lesson = cursor.fetchone()
+
+            if not lesson:
+                return jsonify({
+                    "success": False,
+                    "message": "Lesson not found"
+                }), 404
+
+            cursor.execute("""
+                SELECT id
+                FROM academic_student_progress
+                WHERE user_id = %s AND lesson_id = %s
+            """, (current_user.id, lesson_id))
+
+            existing = cursor.fetchone()
+
+            if existing:
+                cursor.execute("""
+                    UPDATE academic_student_progress
+                    SET is_completed = 1,
+                        completed_at = CURRENT_TIMESTAMP,
+                        subject_id = %s
+                    WHERE id = %s
+                """, (lesson["subject_id"], existing["id"]))
+            else:
+                cursor.execute("""
+                    INSERT INTO academic_student_progress
+                    (user_id, subject_id, lesson_id, is_completed, completed_at)
+                    VALUES (%s, %s, %s, 1, CURRENT_TIMESTAMP)
+                """, (
+                    current_user.id,
+                    lesson["subject_id"],
+                    lesson_id
+                ))
+
+            connection.commit()
+
+            return jsonify({
+                "success": True,
+                "message": "Lesson completed successfully"
+            })
+
+    except Exception:
+        connection.rollback()
+        raise
+
+    finally:
+        connection.close()
+
+
+@app.route("/api/academic/questions/<int:subject_id>")
+@login_required
+def academic_questions_api(subject_id):
+    unit_id = request.args.get("unit_id", type=int)
+    question_type = request.args.get("type")
+
+    connection = get_db_connection()
+
+    try:
+        with connection.cursor(DictCursor) as cursor:
+            query = """
+                SELECT
+                    id,
+                    unit_id,
+                    question_text,
+                    answer_text,
+                    question_type,
+                    marks,
+                    difficulty,
+                    is_important
+                FROM academic_questions
+                WHERE subject_id = %s
+            """
+
+            params = [subject_id]
+
+            if unit_id:
+                query += " AND unit_id = %s"
+                params.append(unit_id)
+
+            if question_type:
+                query += " AND question_type = %s"
+                params.append(question_type)
+
+            query += " ORDER BY is_important DESC, marks DESC, id DESC"
+
+            cursor.execute(query, tuple(params))
+            questions = cursor.fetchall()
+
+            return jsonify({
+                "success": True,
+                "questions": questions,
+                "total": len(questions)
+            })
+
+    finally:
+        connection.close()
+
+
+@app.route("/api/academic/practicals/<int:subject_id>")
+@login_required
+def academic_practicals_api(subject_id):
+    connection = get_db_connection()
+
+    try:
+        with connection.cursor(DictCursor) as cursor:
+            cursor.execute("""
+                SELECT
+                    id,
+                    practical_title,
+                    aim,
+                    theory,
+                    program_code,
+                    output_content,
+                    viva_questions
+                FROM academic_practicals
+                WHERE subject_id = %s
+                AND is_active = 1
+                ORDER BY display_order, id
+            """, (subject_id,))
+
+            practicals = cursor.fetchall()
+
+            return jsonify({
+                "success": True,
+                "practicals": practicals,
+                "total": len(practicals)
+            })
+
+    finally:
+        connection.close()
+@app.route("/admin/academic/units/add", methods=["POST"])
+@login_required
+@admin_required()
+def admin_add_academic_unit():
+    data = request.get_json(silent=True) or {}
+
+    subject_id = data.get("subject_id")
+    unit_no = data.get("unit_no")
+    unit_title = data.get("unit_title")
+
+    if not subject_id or not unit_no or not unit_title:
+        return jsonify({
+            "success": False,
+            "message": "Subject, unit number and title are required"
+        }), 400
+
+    connection = get_db_connection()
+
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                INSERT INTO academic_units
+                (subject_id, unit_no, unit_title, unit_description, display_order)
+                VALUES (%s, %s, %s, %s, %s)
+            """, (
+                subject_id,
+                unit_no,
+                unit_title,
+                data.get("unit_description", ""),
+                data.get("display_order", unit_no)
+            ))
+
+            unit_id = cursor.lastrowid
+            connection.commit()
+
+            return jsonify({
+                "success": True,
+                "message": "Unit added successfully",
+                "unit_id": unit_id
+            })
+
+    except Exception:
+        connection.rollback()
+        raise
+
+    finally:
+        connection.close()
+
+
+@app.route("/admin/academic/lessons/add", methods=["POST"])
+@login_required
+@admin_required()
+def admin_add_academic_lesson():
+    data = request.get_json(silent=True) or {}
+
+    unit_id = data.get("unit_id")
+    lesson_title = data.get("lesson_title")
+
+    if not unit_id or not lesson_title:
+        return jsonify({
+            "success": False,
+            "message": "Unit and lesson title are required"
+        }), 400
+
+    connection = get_db_connection()
+
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                INSERT INTO academic_lessons
+                (
+                    unit_id,
+                    lesson_title,
+                    lesson_content,
+                    examples,
+                    code_content,
+                    diagram_url,
+                    display_order
+                )
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
+            """, (
+                unit_id,
+                lesson_title,
+                data.get("lesson_content", ""),
+                data.get("examples", ""),
+                data.get("code_content", ""),
+                data.get("diagram_url", ""),
+                data.get("display_order", 0)
+            ))
+
+            lesson_id = cursor.lastrowid
+            connection.commit()
+
+            return jsonify({
+                "success": True,
+                "message": "Lesson added successfully",
+                "lesson_id": lesson_id
+            })
+
+    except Exception:
+        connection.rollback()
+        raise
+
+    finally:
+        connection.close()
+
+
+@app.route("/admin/academic/questions/add", methods=["POST"])
+@login_required
+@admin_required()
+def admin_add_academic_question():
+    data = request.get_json(silent=True) or {}
+
+    subject_id = data.get("subject_id")
+    question_text = data.get("question_text")
+
+    if not subject_id or not question_text:
+        return jsonify({
+            "success": False,
+            "message": "Subject and question are required"
+        }), 400
+
+    connection = get_db_connection()
+
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                INSERT INTO academic_questions
+                (
+                    subject_id,
+                    unit_id,
+                    question_text,
+                    answer_text,
+                    question_type,
+                    marks,
+                    difficulty,
+                    is_important
+                )
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            """, (
+                subject_id,
+                data.get("unit_id"),
+                question_text,
+                data.get("answer_text", ""),
+                data.get("question_type", "Theory"),
+                data.get("marks", 2),
+                data.get("difficulty", "Medium"),
+                data.get("is_important", 0)
+            ))
+
+            question_id = cursor.lastrowid
+            connection.commit()
+
+            return jsonify({
+                "success": True,
+                "message": "Question added successfully",
+                "question_id": question_id
+            })
+
+    except Exception:
+        connection.rollback()
+        raise
+
+    finally:
+        connection.close()
+
+
+@app.route("/admin/academic/practicals/add", methods=["POST"])
+@login_required
+@admin_required()
+def admin_add_academic_practical():
+    data = request.get_json(silent=True) or {}
+
+    subject_id = data.get("subject_id")
+    practical_title = data.get("practical_title")
+
+    if not subject_id or not practical_title:
+        return jsonify({
+            "success": False,
+            "message": "Subject and practical title are required"
+        }), 400
+
+    connection = get_db_connection()
+
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                INSERT INTO academic_practicals
+                (
+                    subject_id,
+                    practical_title,
+                    aim,
+                    theory,
+                    program_code,
+                    output_content,
+                    viva_questions,
+                    display_order
+                )
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            """, (
+                subject_id,
+                practical_title,
+                data.get("aim", ""),
+                data.get("theory", ""),
+                data.get("program_code", ""),
+                data.get("output_content", ""),
+                data.get("viva_questions", ""),
+                data.get("display_order", 0)
+            ))
+
+            practical_id = cursor.lastrowid
+            connection.commit()
+
+            return jsonify({
+                "success": True,
+                "message": "Practical added successfully",
+                "practical_id": practical_id
+            })
+
+    except Exception:
+        connection.rollback()
+        raise
+
+    finally:
+        connection.close()
+@app.route("/admin/academic")
+@login_required
+@admin_required()
+def admin_academic():
+    connection = get_db_connection()
+
+    try:
+        with connection.cursor(DictCursor) as cursor:
+            cursor.execute("""
+                SELECT
+                    s.id,
+                    s.subject_code,
+                    s.subject_name,
+                    s.semester_no,
+                    c.course_name
+                FROM pyq_subjects s
+                LEFT JOIN pyq_courses c ON c.id = s.course_id
+                ORDER BY c.course_name, s.semester_no, s.subject_name
+            """)
+
+            subjects = cursor.fetchall()
+
+            cursor.execute("""
+                SELECT
+                    u.id,
+                    u.subject_id,
+                    u.unit_no,
+                    u.unit_title,
+                    s.subject_name
+                FROM academic_units u
+                JOIN pyq_subjects s ON s.id = u.subject_id
+                WHERE u.is_active = 1
+                ORDER BY u.subject_id, u.display_order
+            """)
+
+            units = cursor.fetchall()
+
+        return render_template(
+            "admin_academic.html",
+            subjects=subjects,
+            units=units
+        )
+
+    finally:
+        connection.close()
+
+@app.route("/api/admin/academic/content")
+@login_required
+@admin_required()
+def admin_academic_content_api():
+    content_type = request.args.get("type", "all")
+    search = request.args.get("search", "").strip()
+    subject_id = request.args.get("subject_id", type=int)
+
+    connection = get_db_connection()
+
+    try:
+        result = {}
+
+        with connection.cursor(DictCursor) as cursor:
+
+            if content_type in ("all", "units"):
+                query = """
+                    SELECT
+                        u.id,
+                        u.subject_id,
+                        u.unit_no,
+                        u.unit_title,
+                        u.unit_description,
+                        s.subject_name
+                    FROM academic_units u
+                    JOIN pyq_subjects s ON s.id = u.subject_id
+                    WHERE 1=1
+                """
+                params = []
+
+                if search:
+                    query += " AND (u.unit_title LIKE %s OR s.subject_name LIKE %s)"
+                    params.extend([f"%{search}%", f"%{search}%"])
+
+                if subject_id:
+                    query += " AND u.subject_id = %s"
+                    params.append(subject_id)
+
+                query += " ORDER BY u.subject_id, u.display_order"
+
+                cursor.execute(query, tuple(params))
+                result["units"] = cursor.fetchall()
+
+            if content_type in ("all", "lessons"):
+                query = """
+                    SELECT
+                        l.id,
+                        l.unit_id,
+                        l.lesson_title,
+                        l.lesson_content,
+                        l.examples,
+                        l.code_content,
+                        l.diagram_url,
+                        u.unit_no,
+                        u.unit_title,
+                        u.subject_id,
+                        s.subject_name
+                    FROM academic_lessons l
+                    JOIN academic_units u ON u.id = l.unit_id
+                    JOIN pyq_subjects s ON s.id = u.subject_id
+                    WHERE 1=1
+                """
+                params = []
+
+                if search:
+                    query += """
+                        AND (
+                            l.lesson_title LIKE %s
+                            OR u.unit_title LIKE %s
+                            OR s.subject_name LIKE %s
+                        )
+                    """
+                    params.extend([
+                        f"%{search}%",
+                        f"%{search}%",
+                        f"%{search}%"
+                    ])
+
+                if subject_id:
+                    query += " AND u.subject_id = %s"
+                    params.append(subject_id)
+
+                query += " ORDER BY l.id DESC"
+
+                cursor.execute(query, tuple(params))
+                result["lessons"] = cursor.fetchall()
+
+            if content_type in ("all", "questions"):
+                query = """
+                    SELECT
+                        q.id,
+                        q.subject_id,
+                        q.unit_id,
+                        q.question_text,
+                        q.answer_text,
+                        q.question_type,
+                        q.marks,
+                        q.difficulty,
+                        q.is_important,
+                        s.subject_name,
+                        u.unit_title
+                    FROM academic_questions q
+                    JOIN pyq_subjects s ON s.id = q.subject_id
+                    LEFT JOIN academic_units u ON u.id = q.unit_id
+                    WHERE 1=1
+                """
+                params = []
+
+                if search:
+                    query += """
+                        AND (
+                            q.question_text LIKE %s
+                            OR s.subject_name LIKE %s
+                        )
+                    """
+                    params.extend([f"%{search}%", f"%{search}%"])
+
+                if subject_id:
+                    query += " AND q.subject_id = %s"
+                    params.append(subject_id)
+
+                query += " ORDER BY q.id DESC"
+
+                cursor.execute(query, tuple(params))
+                result["questions"] = cursor.fetchall()
+
+            if content_type in ("all", "practicals"):
+                query = """
+                    SELECT
+                        p.id,
+                        p.subject_id,
+                        p.practical_title,
+                        p.aim,
+                        p.theory,
+                        p.program_code,
+                        p.output_content,
+                        p.viva_questions,
+                        s.subject_name
+                    FROM academic_practicals p
+                    JOIN pyq_subjects s ON s.id = p.subject_id
+                    WHERE 1=1
+                """
+                params = []
+
+                if search:
+                    query += """
+                        AND (
+                            p.practical_title LIKE %s
+                            OR s.subject_name LIKE %s
+                        )
+                    """
+                    params.extend([f"%{search}%", f"%{search}%"])
+
+                if subject_id:
+                    query += " AND p.subject_id = %s"
+                    params.append(subject_id)
+
+                query += " ORDER BY p.id DESC"
+
+                cursor.execute(query, tuple(params))
+                result["practicals"] = cursor.fetchall()
+
+        return jsonify({
+            "success": True,
+            "data": result
+        })
+
+    finally:
+        connection.close()
+@app.route("/admin/academic/units/<int:unit_id>/edit", methods=["POST"])
+@login_required
+@admin_required()
+def admin_edit_academic_unit(unit_id):
+    data = request.get_json(silent=True) or {}
+
+    if not data.get("unit_title") or not data.get("unit_no"):
+        return jsonify({
+            "success": False,
+            "message": "Unit title and number are required"
+        }), 400
+
+    connection = get_db_connection()
+
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                UPDATE academic_units
+                SET unit_no = %s,
+                    unit_title = %s,
+                    unit_description = %s,
+                    display_order = %s
+                WHERE id = %s
+            """, (
+                data["unit_no"],
+                data["unit_title"],
+                data.get("unit_description", ""),
+                data.get("display_order", data["unit_no"]),
+                unit_id
+            ))
+
+            if cursor.rowcount == 0:
+                cursor.execute(
+                    "SELECT id FROM academic_units WHERE id = %s",
+                    (unit_id,)
+                )
+
+                if not cursor.fetchone():
+                    return jsonify({
+                        "success": False,
+                        "message": "Unit not found"
+                    }), 404
+
+            connection.commit()
+
+            return jsonify({
+                "success": True,
+                "message": "Unit updated successfully"
+            })
+
+    except Exception:
+        connection.rollback()
+        raise
+
+    finally:
+        connection.close()
+@app.route("/admin/academic/lessons/<int:lesson_id>/edit", methods=["POST"])
+@login_required
+@admin_required()
+def admin_edit_academic_lesson(lesson_id):
+    data = request.get_json(silent=True) or {}
+
+    if not data.get("lesson_title"):
+        return jsonify({
+            "success": False,
+            "message": "Lesson title is required"
+        }), 400
+
+    connection = get_db_connection()
+
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                UPDATE academic_lessons
+                SET lesson_title = %s,
+                    lesson_content = %s,
+                    examples = %s,
+                    code_content = %s,
+                    diagram_url = %s,
+                    display_order = %s
+                WHERE id = %s
+            """, (
+                data["lesson_title"],
+                data.get("lesson_content", ""),
+                data.get("examples", ""),
+                data.get("code_content", ""),
+                data.get("diagram_url", ""),
+                data.get("display_order", 0),
+                lesson_id
+            ))
+
+            if cursor.rowcount == 0:
+                cursor.execute(
+                    "SELECT id FROM academic_lessons WHERE id = %s",
+                    (lesson_id,)
+                )
+
+                if not cursor.fetchone():
+                    return jsonify({
+                        "success": False,
+                        "message": "Lesson not found"
+                    }), 404
+
+            connection.commit()
+
+            return jsonify({
+                "success": True,
+                "message": "Lesson updated successfully"
+            })
+
+    except Exception:
+        connection.rollback()
+        raise
+
+    finally:
+        connection.close()
+@app.route("/admin/academic/questions/<int:question_id>/edit", methods=["POST"])
+@login_required
+@admin_required()
+def admin_edit_academic_question(question_id):
+    data = request.get_json(silent=True) or {}
+
+    if not data.get("question_text") or not data.get("subject_id"):
+        return jsonify({
+            "success": False,
+            "message": "Question and subject are required"
+        }), 400
+
+    connection = get_db_connection()
+
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                UPDATE academic_questions
+                SET subject_id = %s,
+                    unit_id = %s,
+                    question_text = %s,
+                    answer_text = %s,
+                    question_type = %s,
+                    marks = %s,
+                    difficulty = %s,
+                    is_important = %s
+                WHERE id = %s
+            """, (
+                data["subject_id"],
+                data.get("unit_id") or None,
+                data["question_text"],
+                data.get("answer_text", ""),
+                data.get("question_type", "Theory"),
+                data.get("marks", 2),
+                data.get("difficulty", "Medium"),
+                data.get("is_important", 0),
+                question_id
+            ))
+
+            if cursor.rowcount == 0:
+                cursor.execute(
+                    "SELECT id FROM academic_questions WHERE id = %s",
+                    (question_id,)
+                )
+
+                if not cursor.fetchone():
+                    return jsonify({
+                        "success": False,
+                        "message": "Question not found"
+                    }), 404
+
+            connection.commit()
+
+            return jsonify({
+                "success": True,
+                "message": "Question updated successfully"
+            })
+
+    except Exception:
+        connection.rollback()
+        raise
+
+    finally:
+        connection.close()
+
+@app.route("/admin/academic/practicals/<int:practical_id>/edit", methods=["POST"])
+@login_required
+@admin_required()
+def admin_edit_academic_practical(practical_id):
+    data = request.get_json(silent=True) or {}
+
+    if not data.get("practical_title") or not data.get("subject_id"):
+        return jsonify({
+            "success": False,
+            "message": "Practical title and subject are required"
+        }), 400
+
+    connection = get_db_connection()
+
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                UPDATE academic_practicals
+                SET subject_id = %s,
+                    practical_title = %s,
+                    aim = %s,
+                    theory = %s,
+                    program_code = %s,
+                    output_content = %s,
+                    viva_questions = %s
+                WHERE id = %s
+            """, (
+                data["subject_id"],
+                data["practical_title"],
+                data.get("aim", ""),
+                data.get("theory", ""),
+                data.get("program_code", ""),
+                data.get("output_content", ""),
+                data.get("viva_questions", ""),
+                practical_id
+            ))
+
+            if cursor.rowcount == 0:
+                cursor.execute(
+                    "SELECT id FROM academic_practicals WHERE id = %s",
+                    (practical_id,)
+                )
+
+                if not cursor.fetchone():
+                    return jsonify({
+                        "success": False,
+                        "message": "Practical not found"
+                    }), 404
+
+            connection.commit()
+
+            return jsonify({
+                "success": True,
+                "message": "Practical updated successfully"
+            })
+
+    except Exception:
+        connection.rollback()
+        raise
+
+    finally:
+        connection.close()
+@app.route("/admin/academic/<string:content_type>/<int:content_id>/delete", methods=["POST"])
+@login_required
+@admin_required()
+def admin_delete_academic_content(content_type, content_id):
+    connection = get_db_connection()
+
+    try:
+        with connection.cursor() as cursor:
+
+            if content_type == "unit":
+                cursor.execute("""
+                    SELECT id
+                    FROM academic_units
+                    WHERE id = %s
+                """, (content_id,))
+
+                if not cursor.fetchone():
+                    return jsonify({
+                        "success": False,
+                        "message": "Unit not found"
+                    }), 404
+
+                cursor.execute("""
+                    SELECT id
+                    FROM academic_lessons
+                    WHERE unit_id = %s
+                """, (content_id,))
+
+                lesson_ids = [row[0] for row in cursor.fetchall()]
+
+                if lesson_ids:
+                    placeholders = ",".join(["%s"] * len(lesson_ids))
+
+                    cursor.execute(
+                        f"DELETE FROM academic_student_progress WHERE lesson_id IN ({placeholders})",
+                        tuple(lesson_ids)
+                    )
+
+                cursor.execute("""
+                    UPDATE academic_questions
+                    SET unit_id = NULL
+                    WHERE unit_id = %s
+                """, (content_id,))
+
+                cursor.execute(
+                    "DELETE FROM academic_lessons WHERE unit_id = %s",
+                    (content_id,)
+                )
+
+                cursor.execute(
+                    "DELETE FROM academic_units WHERE id = %s",
+                    (content_id,)
+                )
+
+            elif content_type == "lesson":
+                cursor.execute(
+                    "DELETE FROM academic_student_progress WHERE lesson_id = %s",
+                    (content_id,)
+                )
+
+                cursor.execute(
+                    "DELETE FROM academic_lessons WHERE id = %s",
+                    (content_id,)
+                )
+
+            elif content_type == "question":
+                cursor.execute(
+                    "DELETE FROM academic_questions WHERE id = %s",
+                    (content_id,)
+                )
+
+            elif content_type == "practical":
+                cursor.execute(
+                    "DELETE FROM academic_practicals WHERE id = %s",
+                    (content_id,)
+                )
+
+            else:
+                return jsonify({
+                    "success": False,
+                    "message": "Invalid content type"
+                }), 400
+
+            if cursor.rowcount == 0 and content_type != "unit":
+                return jsonify({
+                    "success": False,
+                    "message": "Content not found"
+                }), 404
+
+            connection.commit()
+
+            return jsonify({
+                "success": True,
+                "message": "Content deleted successfully"
+            })
+
+    except Exception:
+        connection.rollback()
+        raise
+
+    finally:
+        connection.close()
+@app.route("/academic/subject/<int:subject_id>")
+@login_required
+def academic_subject(subject_id):
+    connection = get_db_connection()
+
+    try:
+        with connection.cursor(DictCursor) as cursor:
+            cursor.execute("""
+                SELECT
+                    s.id,
+                    s.subject_code,
+                    s.subject_name,
+                    s.description,
+                    s.semester_no,
+                    c.course_name
+                FROM pyq_subjects s
+                LEFT JOIN pyq_courses c ON c.id = s.course_id
+                WHERE s.id = %s
+            """, (subject_id,))
+
+            subject = cursor.fetchone()
+
+            if not subject:
+                abort(404)
+
+            cursor.execute("""
+                SELECT
+                    u.id,
+                    u.unit_no,
+                    u.unit_title,
+                    u.unit_description,
+                    COUNT(l.id) AS total_lessons,
+                    SUM(
+                        CASE WHEN p.is_completed = 1 THEN 1 ELSE 0 END
+                    ) AS completed_lessons
+                FROM academic_units u
+                LEFT JOIN academic_lessons l
+                    ON l.unit_id = u.id AND l.is_active = 1
+                LEFT JOIN academic_student_progress p
+                    ON p.lesson_id = l.id
+                    AND p.user_id = %s
+                WHERE u.subject_id = %s
+                AND u.is_active = 1
+                GROUP BY
+                    u.id,
+                    u.unit_no,
+                    u.unit_title,
+                    u.unit_description,
+                    u.display_order
+                ORDER BY u.display_order, u.unit_no
+            """, (current_user.id, subject_id))
+
+            units = cursor.fetchall()
+
+            for unit in units:
+                unit["completed_lessons"] = unit["completed_lessons"] or 0
+
+                unit["progress"] = round(
+                    unit["completed_lessons"] / unit["total_lessons"] * 100
+                ) if unit["total_lessons"] else 0
+
+                cursor.execute("""
+                    SELECT
+                        l.id,
+                        l.lesson_title,
+                        l.display_order,
+                        COALESCE(p.is_completed, 0) AS is_completed
+                    FROM academic_lessons l
+                    LEFT JOIN academic_student_progress p
+                        ON p.lesson_id = l.id
+                        AND p.user_id = %s
+                    WHERE l.unit_id = %s
+                    AND l.is_active = 1
+                    ORDER BY l.display_order, l.id
+                """, (current_user.id, unit["id"]))
+
+                unit["lessons"] = cursor.fetchall()
+
+            cursor.execute("""
+                SELECT
+                    COUNT(l.id) AS total_lessons,
+                    SUM(
+                        CASE WHEN p.is_completed = 1 THEN 1 ELSE 0 END
+                    ) AS completed_lessons
+                FROM academic_lessons l
+                JOIN academic_units u ON u.id = l.unit_id
+                LEFT JOIN academic_student_progress p
+                    ON p.lesson_id = l.id
+                    AND p.user_id = %s
+                WHERE u.subject_id = %s
+                AND u.is_active = 1
+                AND l.is_active = 1
+            """, (current_user.id, subject_id))
+
+            progress = cursor.fetchone()
+
+            total = progress["total_lessons"] or 0
+            completed = progress["completed_lessons"] or 0
+
+            statistics = {
+                "total_lessons": total,
+                "completed_lessons": completed,
+                "progress": round(completed / total * 100) if total else 0
+            }
+
+            cursor.execute("""
+                SELECT COUNT(*) AS total
+                FROM academic_questions
+                WHERE subject_id = %s
+            """, (subject_id,))
+
+            statistics["total_questions"] = cursor.fetchone()["total"]
+
+            cursor.execute("""
+                SELECT COUNT(*) AS total
+                FROM academic_practicals
+                WHERE subject_id = %s
+                AND is_active = 1
+            """, (subject_id,))
+
+            statistics["total_practicals"] = cursor.fetchone()["total"]
+
+        return render_template(
+            "academic_subject.html",
+            subject=subject,
+            units=units,
+            statistics=statistics
+        )
+
+    finally:
+        connection.close()
+
+
+@app.route("/academic/lesson/<int:lesson_id>")
+@login_required
+def academic_lesson(lesson_id):
+    connection = get_db_connection()
+
+    try:
+        with connection.cursor(DictCursor) as cursor:
+            cursor.execute("""
+                SELECT
+                    l.id,
+                    l.lesson_title,
+                    l.lesson_content,
+                    l.examples,
+                    l.code_content,
+                    l.diagram_url,
+                    u.id AS unit_id,
+                    u.unit_no,
+                    u.unit_title,
+                    u.subject_id,
+                    s.subject_name
+                FROM academic_lessons l
+                JOIN academic_units u ON u.id = l.unit_id
+                JOIN pyq_subjects s ON s.id = u.subject_id
+                WHERE l.id = %s
+                AND l.is_active = 1
+                AND u.is_active = 1
+            """, (lesson_id,))
+
+            lesson = cursor.fetchone()
+
+            if not lesson:
+                abort(404)
+
+            cursor.execute("""
+                SELECT
+                    l.id,
+                    l.lesson_title,
+                    COALESCE(p.is_completed, 0) AS is_completed
+                FROM academic_lessons l
+                JOIN academic_units u ON u.id = l.unit_id
+                LEFT JOIN academic_student_progress p
+                    ON p.lesson_id = l.id
+                    AND p.user_id = %s
+                WHERE u.subject_id = %s
+                AND l.is_active = 1
+                AND u.is_active = 1
+                ORDER BY u.display_order, u.unit_no, l.display_order, l.id
+            """, (current_user.id, lesson["subject_id"]))
+
+            all_lessons = cursor.fetchall()
+
+            lesson_index = next(
+                (
+                    index for index, item in enumerate(all_lessons)
+                    if item["id"] == lesson_id
+                ),
+                -1
+            )
+
+            previous_lesson = (
+                all_lessons[lesson_index - 1]
+                if lesson_index > 0 else None
+            )
+
+            next_lesson = (
+                all_lessons[lesson_index + 1]
+                if 0 <= lesson_index < len(all_lessons) - 1
+                else None
+            )
+
+            cursor.execute("""
+                SELECT is_completed
+                FROM academic_student_progress
+                WHERE user_id = %s AND lesson_id = %s
+            """, (current_user.id, lesson_id))
+
+            progress = cursor.fetchone()
+
+            lesson["is_completed"] = bool(
+                progress and progress["is_completed"]
+            )
+
+        return render_template(
+            "academic_lesson.html",
+            lesson=lesson,
+            previous_lesson=previous_lesson,
+            next_lesson=next_lesson
+        )
+
+    finally:
+        connection.close()
+@app.route("/academic/questions/<int:subject_id>")
+@login_required
+def academic_questions_page(subject_id):
+    connection = get_db_connection()
+
+    try:
+        with connection.cursor(DictCursor) as cursor:
+            cursor.execute("""
+                SELECT id, subject_name, subject_code
+                FROM pyq_subjects
+                WHERE id = %s
+            """, (subject_id,))
+
+            subject = cursor.fetchone()
+
+            if not subject:
+                abort(404)
+
+        return render_template(
+            "academic_questions.html",
+            subject=subject
+        )
+
+    finally:
+        connection.close()
+
+
+@app.route("/academic/practicals/<int:subject_id>")
+@login_required
+def academic_practicals_page(subject_id):
+    connection = get_db_connection()
+
+    try:
+        with connection.cursor(DictCursor) as cursor:
+            cursor.execute("""
+                SELECT id, subject_name, subject_code
+                FROM pyq_subjects
+                WHERE id = %s
+            """, (subject_id,))
+
+            subject = cursor.fetchone()
+
+            if not subject:
+                abort(404)
+
+        return render_template(
+            "academic_practicals.html",
+            subject=subject
+        )
+
+    finally:
+        connection.close()
+
 if __name__ == "__main__":
     port = int(
         os.getenv(

@@ -165,7 +165,10 @@
             <i class="fa-solid fa-users"></i>
             Users &amp; Roles
         </a>
-
+        <a href="{{ url_for('admin_academic') }}">
+            <i class="fas fa-graduation-cap"></i>
+            <span>Academic Manager</span>
+        </a>
         <a class="nav-link {% if active_admin_page == 'mock' %}active{% endif %}"
            href="{{ url_for('admin_mock_questions') }}">
             <i class="fa-solid fa-circle-question"></i>

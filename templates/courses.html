@@ -6,12 +6,20 @@
 
 <style>
     .academic-page {
-        --academic-primary: #6366f1;
-        --academic-secondary: #8b5cf6;
-        --academic-bg: #f8fafc;
-        --academic-border: #e2e8f0;
-        color: #1e293b;
-        padding: 25px 0 60px;
+        --primary: #6366f1;
+        --primary-dark: #4f46e5;
+        --secondary: #8b5cf6;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --text: #1e293b;
+        --muted: #64748b;
+        --border: #e2e8f0;
+        --surface: #ffffff;
+        --background: #f8fafc;
+        color: var(--text);
+        width: 100%;
+        padding: 24px;
     }
 
     .academic-page * {
@@ -21,497 +29,698 @@
     .academic-hero {
         position: relative;
         overflow: hidden;
-        padding: 45px;
-        border-radius: 25px;
+        padding: 38px;
+        border-radius: 24px;
         color: white;
-        background: linear-gradient(120deg, #312e81, #6366f1, #8b5cf6);
-        margin-bottom: 28px;
+        background: linear-gradient(120deg, #312e81, #4f46e5 55%, #7c3aed);
+        margin-bottom: 26px;
+    }
+
+    .academic-hero::before,
+    .academic-hero::after {
+        content: "";
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(255,255,255,.08);
     }
 
     .academic-hero::before {
-        content: "";
-        position: absolute;
         width: 300px;
         height: 300px;
-        right: -80px;
-        top: -130px;
-        border-radius: 50%;
-        background: rgba(255,255,255,.1);
+        right: 8%;
+        top: -180px;
     }
 
-    .academic-hero-content {
+    .academic-hero::after {
+        width: 220px;
+        height: 220px;
+        right: -60px;
+        bottom: -150px;
+    }
+
+    .hero-content {
         position: relative;
-        z-index: 1;
-        max-width: 720px;
+        z-index: 2;
+        max-width: 700px;
+    }
+
+    .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 7px 13px;
+        border-radius: 30px;
+        background: rgba(255,255,255,.14);
+        font-size: 12px;
+        font-weight: 700;
+        margin-bottom: 17px;
     }
 
     .academic-hero h1 {
-        font-size: clamp(28px, 4vw, 42px);
+        color: white;
+        font-size: clamp(27px, 4vw, 39px);
         font-weight: 800;
-        margin-bottom: 12px;
+        margin: 0 0 12px;
+        letter-spacing: -.8px;
     }
 
     .academic-hero p {
-        color: rgba(255,255,255,.85);
+        color: rgba(255,255,255,.82);
         font-size: 15px;
-        line-height: 1.8;
-        margin-bottom: 22px;
+        line-height: 1.7;
+        margin: 0;
     }
 
-    .academic-hero-badges {
+    .hero-actions {
         display: flex;
         flex-wrap: wrap;
-        gap: 10px;
+        gap: 12px;
+        margin-top: 25px;
     }
 
-    .academic-hero-badges span {
-        background: rgba(255,255,255,.15);
-        border: 1px solid rgba(255,255,255,.2);
-        padding: 8px 14px;
-        border-radius: 30px;
-        font-size: 12px;
+    .hero-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        padding: 12px 18px;
+        border-radius: 11px;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 700;
+        transition: .2s;
+    }
+
+    .hero-btn-primary {
+        background: white;
+        color: #4338ca;
+    }
+
+    .hero-btn-secondary {
+        color: white;
+        border: 1px solid rgba(255,255,255,.35);
+        background: rgba(255,255,255,.1);
+    }
+
+    .hero-btn:hover {
+        transform: translateY(-2px);
+        color: inherit;
+    }
+
+    .hero-btn-primary:hover {
+        background: #eef2ff;
+        color: #4338ca;
     }
 
     .academic-stats {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
         gap: 16px;
-        margin-bottom: 30px;
+        margin-bottom: 26px;
     }
 
     .academic-stat {
-        background: white;
-        border: 1px solid var(--academic-border);
-        padding: 20px;
-        border-radius: 17px;
         display: flex;
         align-items: center;
         gap: 15px;
-        box-shadow: 0 4px 15px rgba(15,23,42,.03);
+        padding: 19px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 17px;
+        box-shadow: 0 3px 12px rgba(15,23,42,.025);
     }
 
-    .academic-stat-icon {
-        width: 48px;
-        height: 48px;
+    .stat-icon {
+        width: 47px;
+        height: 47px;
+        flex-shrink: 0;
         display: grid;
         place-items: center;
-        border-radius: 14px;
-        background: #eef2ff;
-        color: #6366f1;
-        font-size: 20px;
+        border-radius: 13px;
+        font-size: 19px;
     }
 
-    .academic-stat strong {
+    .stat-icon.purple {
+        background: #eef2ff;
+        color: #6366f1;
+    }
+
+    .stat-icon.green {
+        background: #ecfdf5;
+        color: #059669;
+    }
+
+    .stat-icon.orange {
+        background: #fff7ed;
+        color: #ea580c;
+    }
+
+    .stat-icon.blue {
+        background: #eff6ff;
+        color: #2563eb;
+    }
+
+    .stat-info strong {
         display: block;
         font-size: 23px;
         font-weight: 800;
+        line-height: 1.2;
     }
 
-    .academic-stat span {
-        color: #64748b;
+    .stat-info span {
+        color: var(--muted);
         font-size: 12px;
+        font-weight: 600;
     }
 
-    .academic-section-heading {
+    .academic-section {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 19px;
+        padding: 23px;
+        margin-bottom: 24px;
+    }
+
+    .section-heading {
         display: flex;
-        justify-content: space-between;
         align-items: center;
+        justify-content: space-between;
         gap: 15px;
-        margin: 32px 0 18px;
+        margin-bottom: 20px;
     }
 
-    .academic-section-heading h2 {
-        font-size: 22px;
+    .section-heading h2 {
+        font-size: 19px;
         font-weight: 800;
-        margin: 0 0 5px;
-    }
-
-    .academic-section-heading p {
-        color: #64748b;
-        font-size: 13px;
         margin: 0;
     }
 
-    .academic-toolbar {
-        display: flex;
-        gap: 12px;
-        flex-wrap: wrap;
-        margin-bottom: 17px;
+    .section-heading p {
+        color: var(--muted);
+        font-size: 12px;
+        margin: 5px 0 0;
     }
 
-    .academic-search {
-        flex: 1;
-        min-width: 220px;
-        position: relative;
+    .filter-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 13px;
     }
 
-    .academic-search i {
-        position: absolute;
-        left: 15px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: #94a3b8;
+    .filter-group label {
+        display: block;
+        font-size: 12px;
+        font-weight: 700;
+        margin-bottom: 8px;
+        color: #475569;
     }
 
-    .academic-search input,
-    .academic-select {
+    .filter-control {
         width: 100%;
-        min-height: 46px;
-        padding: 11px 14px;
-        border: 1px solid var(--academic-border);
-        border-radius: 12px;
-        background: white;
-        color: #334155;
+        height: 44px;
+        padding: 0 12px;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        background: #fff;
+        color: var(--text);
         outline: none;
+        font-size: 13px;
     }
 
-    .academic-search input {
-        padding-left: 42px;
-    }
-
-    .academic-search input:focus,
-    .academic-select:focus {
-        border-color: var(--academic-primary);
+    .filter-control:focus {
+        border-color: var(--primary);
         box-shadow: 0 0 0 3px rgba(99,102,241,.1);
     }
 
-    .academic-select {
-        width: auto;
-        min-width: 170px;
-        flex: 1;
+    .search-wrapper {
+        position: relative;
     }
 
-    .academic-categories {
+    .search-wrapper i {
+        position: absolute;
+        left: 14px;
+        top: 15px;
+        color: #94a3b8;
+    }
+
+    .search-wrapper input {
+        padding-left: 39px;
+    }
+
+    .filter-actions {
         display: flex;
-        gap: 9px;
-        flex-wrap: wrap;
-        margin: 20px 0;
+        gap: 10px;
+        align-items: end;
     }
 
-    .category-btn {
-        border: 1px solid var(--academic-border);
-        background: white;
-        color: #64748b;
-        padding: 9px 16px;
-        border-radius: 30px;
-        font-size: 12px;
+    .filter-btn {
+        height: 44px;
+        padding: 0 18px;
+        border: 0;
+        border-radius: 10px;
+        background: var(--primary);
+        color: white;
+        font-size: 13px;
         font-weight: 700;
         cursor: pointer;
-        transition: .2s;
     }
 
-    .category-btn:hover,
-    .category-btn.active {
-        background: #6366f1;
-        color: white;
-        border-color: #6366f1;
-    }
-
-    .academic-course-grid {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 17px;
-    }
-
-    .academic-course-card {
-        background: white;
-        border: 1px solid var(--academic-border);
-        border-radius: 18px;
-        padding: 21px;
-        transition: .25s;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .academic-course-card:hover {
-        transform: translateY(-4px);
-        border-color: #a5b4fc;
-        box-shadow: 0 12px 28px rgba(99,102,241,.1);
-    }
-
-    .course-card-top {
-        display: flex;
+    .reset-btn {
+        height: 44px;
+        display: inline-flex;
         align-items: center;
-        justify-content: space-between;
-        margin-bottom: 17px;
-    }
-
-    .course-card-icon {
-        width: 48px;
-        height: 48px;
-        display: grid;
-        place-items: center;
-        background: #eef2ff;
-        color: #6366f1;
-        border-radius: 14px;
-        font-size: 21px;
-    }
-
-    .course-level {
-        background: #f1f5f9;
-        color: #475569;
-        border-radius: 30px;
-        padding: 6px 10px;
-        font-size: 10px;
-        font-weight: 800;
-    }
-
-    .academic-course-card h3 {
-        font-size: 17px;
-        font-weight: 800;
-        margin: 0 0 8px;
-    }
-
-    .academic-course-card p {
-        font-size: 12px;
-        color: #64748b;
-        line-height: 1.7;
-        flex: 1;
-    }
-
-    .course-card-meta {
-        display: flex;
-        gap: 13px;
-        flex-wrap: wrap;
-        font-size: 11px;
-        color: #64748b;
-        margin: 10px 0 17px;
-    }
-
-    .course-card-meta i {
-        color: #6366f1;
-        margin-right: 4px;
-    }
-
-    .course-card-actions {
-        display: flex;
-        gap: 8px;
-    }
-
-    .course-card-actions button {
-        flex: 1;
-        border: 0;
-        padding: 10px;
+        justify-content: center;
+        padding: 0 16px;
+        border: 1px solid var(--border);
         border-radius: 10px;
-        background: #eef2ff;
-        color: #4f46e5;
-        font-size: 11px;
-        font-weight: 800;
-        cursor: pointer;
-    }
-
-    .course-card-actions button.primary {
-        background: #6366f1;
-        color: white;
+        color: var(--muted);
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 700;
     }
 
     .academic-tabs {
         display: flex;
-        gap: 10px;
-        border-bottom: 1px solid var(--academic-border);
-        margin: 20px 0;
+        flex-wrap: wrap;
+        gap: 8px;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 22px;
     }
 
     .academic-tab {
         border: 0;
         background: transparent;
-        padding: 14px 18px;
-        color: #64748b;
-        font-weight: 800;
+        padding: 12px 17px;
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 700;
         cursor: pointer;
         border-bottom: 3px solid transparent;
+        margin-bottom: -1px;
     }
 
     .academic-tab.active {
-        color: #6366f1;
-        border-bottom-color: #6366f1;
+        color: var(--primary);
+        border-bottom-color: var(--primary);
     }
 
-    .material-list {
+    .tab-panel {
+        display: none;
+    }
+
+    .tab-panel.active {
+        display: block;
+    }
+
+    .course-grid,
+    .resource-grid {
         display: grid;
-        gap: 12px;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 17px;
     }
 
-    .material-card {
+    .course-card,
+    .resource-card {
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        overflow: hidden;
+        background: white;
+        transition: .22s;
+    }
+
+    .course-card:hover,
+    .resource-card:hover {
+        transform: translateY(-4px);
+        border-color: #c7d2fe;
+        box-shadow: 0 12px 25px rgba(15,23,42,.07);
+    }
+
+    .course-card-top {
+        padding: 19px;
+        background: linear-gradient(135deg, #eef2ff, #f5f3ff);
+        position: relative;
+    }
+
+    .course-icon {
+        width: 48px;
+        height: 48px;
+        display: grid;
+        place-items: center;
+        background: white;
+        border-radius: 13px;
+        color: var(--primary);
+        font-size: 21px;
+        margin-bottom: 14px;
+    }
+
+    .course-level {
+        position: absolute;
+        right: 15px;
+        top: 16px;
+        background: white;
+        padding: 5px 10px;
+        border-radius: 30px;
+        color: #6366f1;
+        font-size: 10px;
+        font-weight: 800;
+    }
+
+    .course-card-body {
+        padding: 18px;
+    }
+
+    .course-card h3 {
+        font-size: 16px;
+        font-weight: 800;
+        margin: 0 0 7px;
+    }
+
+    .course-card p {
+        font-size: 12px;
+        line-height: 1.6;
+        color: var(--muted);
+        margin: 0 0 15px;
+    }
+
+    .course-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        color: var(--muted);
+        font-size: 11px;
+        margin-bottom: 17px;
+    }
+
+    .course-meta span {
         display: flex;
         align-items: center;
-        gap: 15px;
-        background: white;
-        border: 1px solid var(--academic-border);
-        padding: 17px;
-        border-radius: 15px;
+        gap: 5px;
+    }
+
+    .card-action {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        width: 100%;
+        padding: 11px;
+        background: #eef2ff;
+        color: #4f46e5;
+        border-radius: 9px;
+        text-decoration: none;
+        font-size: 12px;
+        font-weight: 800;
         transition: .2s;
     }
 
-    .material-card:hover {
-        border-color: #a5b4fc;
-        box-shadow: 0 5px 15px rgba(15,23,42,.04);
+    .card-action:hover {
+        background: var(--primary);
+        color: white;
     }
 
-    .material-icon {
-        width: 45px;
-        height: 45px;
-        flex-shrink: 0;
-        border-radius: 12px;
+    .resource-card {
+        padding: 17px;
+    }
+
+    .resource-header {
+        display: flex;
+        align-items: flex-start;
+        gap: 13px;
+        margin-bottom: 14px;
+    }
+
+    .resource-icon {
+        width: 43px;
+        height: 43px;
         display: grid;
         place-items: center;
-        background: #fef2f2;
-        color: #dc2626;
-        font-size: 19px;
+        flex-shrink: 0;
+        border-radius: 12px;
+        font-size: 18px;
     }
 
-    .material-info {
-        flex: 1;
+    .resource-icon.pdf {
+        background: #fef2f2;
+        color: #dc2626;
+    }
+
+    .resource-icon.notes {
+        background: #eff6ff;
+        color: #2563eb;
+    }
+
+    .resource-title {
         min-width: 0;
     }
 
-    .material-info h4 {
+    .resource-title h3 {
         font-size: 14px;
         font-weight: 800;
-        margin: 0 0 6px;
+        margin: 0 0 5px;
+        overflow-wrap: anywhere;
     }
 
-    .material-info p {
+    .resource-title span {
         font-size: 11px;
-        color: #64748b;
-        margin: 3px 0;
+        color: var(--muted);
     }
 
-    .material-actions {
-        display: flex;
-        gap: 8px;
+    .resource-description {
+        font-size: 12px;
+        line-height: 1.6;
+        color: var(--muted);
+        min-height: 38px;
+        margin-bottom: 13px;
     }
 
-    .material-actions a {
-        text-decoration: none;
-        padding: 9px 13px;
-        border-radius: 9px;
-        background: #eef2ff;
-        color: #4f46e5;
-        font-size: 11px;
-        font-weight: 800;
-    }
-
-    .material-actions a.download {
-        background: #ecfdf5;
-        color: #059669;
-    }
-
-    .year-filter {
+    .resource-tags {
         display: flex;
         flex-wrap: wrap;
-        gap: 8px;
-        margin: 18px 0;
+        gap: 6px;
+        margin-bottom: 15px;
     }
 
-    .year-btn {
-        border: 1px solid var(--academic-border);
-        background: white;
-        padding: 8px 14px;
-        border-radius: 9px;
-        color: #64748b;
-        font-size: 12px;
+    .resource-tag {
+        padding: 5px 9px;
+        background: #f1f5f9;
+        color: #475569;
+        font-size: 10px;
         font-weight: 700;
-        cursor: pointer;
+        border-radius: 6px;
     }
 
-    .year-btn.active {
-        background: #6366f1;
+    .resource-actions {
+        display: flex;
+        gap: 8px;
+    }
+
+    .resource-btn {
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        gap: 7px;
+        flex: 1;
+        padding: 10px 8px;
+        border-radius: 9px;
+        text-decoration: none;
+        font-size: 11px;
+        font-weight: 800;
+        border: 1px solid var(--border);
+        color: #475569;
+        background: white;
+    }
+
+    .resource-btn.view {
         color: white;
-        border-color: #6366f1;
+        background: var(--primary);
+        border-color: var(--primary);
+    }
+
+    .resource-btn:hover {
+        opacity: .85;
+        color: inherit;
+    }
+
+    .resource-btn.view:hover {
+        color: white;
     }
 
     .empty-state {
         text-align: center;
-        background: white;
+        padding: 48px 20px;
         border: 1px dashed #cbd5e1;
-        border-radius: 16px;
-        padding: 45px 20px;
-        color: #64748b;
+        border-radius: 15px;
+        background: #f8fafc;
+        grid-column: 1 / -1;
     }
 
     .empty-state i {
-        font-size: 35px;
-        color: #a5b4fc;
-        margin-bottom: 14px;
+        font-size: 34px;
+        color: #94a3b8;
+        margin-bottom: 13px;
     }
 
-    .empty-state strong {
-        display: block;
-        color: #334155;
-        margin-bottom: 6px;
+    .empty-state h3 {
+        font-size: 16px;
+        margin: 0 0 7px;
     }
 
-    .academic-hidden {
-        display: none !important;
+    .empty-state p {
+        font-size: 12px;
+        color: var(--muted);
+        margin: 0;
     }
 
-    .academic-course-card.filtered-out {
+    .result-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 17px;
+    }
+
+    .result-count {
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .year-filter {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .year-filter label {
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .year-filter select {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        font-size: 12px;
+        background: white;
+    }
+
+    .pyq-search-box {
+        position: relative;
+        flex: 1;
+        max-width: 480px;
+    }
+
+    .pyq-search-box i {
+        position: absolute;
+        left: 14px;
+        top: 15px;
+        color: #94a3b8;
+    }
+
+    .pyq-search-box input {
+        width: 100%;
+        height: 42px;
+        padding: 0 14px 0 40px;
+        border: 1px solid var(--border);
+        border-radius: 9px;
+        outline: none;
+        font-size: 12px;
+    }
+
+    .pyq-search-box input:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(99,102,241,.1);
+    }
+
+    .pyq-no-results {
         display: none;
     }
 
-    @media(max-width: 1000px) {
-        .academic-course-grid {
+    @media(max-width: 1100px) {
+        .academic-stats {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .course-grid,
+        .resource-grid {
             grid-template-columns: repeat(2, minmax(0, 1fr));
         }
 
-        .academic-stats {
+        .filter-grid {
             grid-template-columns: repeat(2, 1fr);
         }
     }
 
-    @media(max-width: 600px) {
+    @media(max-width: 650px) {
         .academic-page {
-            padding-top: 12px;
+            padding: 12px;
         }
 
         .academic-hero {
-            padding: 28px 22px;
+            padding: 25px 20px;
+            border-radius: 17px;
         }
 
         .academic-stats {
-            gap: 9px;
+            gap: 10px;
         }
 
         .academic-stat {
             padding: 13px;
-            gap: 9px;
+            gap: 10px;
         }
 
-        .academic-stat-icon {
+        .stat-icon {
             width: 38px;
             height: 38px;
             font-size: 16px;
         }
 
-        .academic-stat strong {
-            font-size: 18px;
+        .stat-info strong {
+            font-size: 19px;
         }
 
-        .academic-course-grid {
+        .stat-info span {
+            font-size: 10px;
+        }
+
+        .academic-section {
+            padding: 16px;
+        }
+
+        .filter-grid,
+        .course-grid,
+        .resource-grid {
             grid-template-columns: 1fr;
         }
 
-        .academic-toolbar {
+        .section-heading {
+            align-items: flex-start;
+        }
+
+        .result-toolbar {
+            align-items: stretch;
             flex-direction: column;
         }
 
-        .academic-select {
-            width: 100%;
+        .year-filter {
+            justify-content: space-between;
         }
 
-        .material-card {
-            align-items: flex-start;
-            flex-wrap: wrap;
+        .year-filter select {
+            flex: 1;
         }
 
-        .material-actions {
-            width: 100%;
-            padding-left: 58px;
+        .hero-actions {
+            flex-direction: column;
+        }
+
+        .hero-btn {
+            justify-content: center;
         }
 
         .academic-tabs {
             overflow-x: auto;
+            flex-wrap: nowrap;
         }
 
         .academic-tab {
@@ -522,663 +731,640 @@
 
 <div class="academic-page">
 
-    <div class="container-fluid">
-
-        <section class="academic-hero">
-            <div class="academic-hero-content">
-                <h1>Academic Learning Hub</h1>
-                <p>
-                    Your complete academic resource destination.
-                    Explore courses, subject-wise notes, previous year question papers,
-                    examination resources and study materials in one place.
-                </p>
-
-                <div class="academic-hero-badges">
-                    <span><i class="fas fa-book"></i> Subject-wise Notes</span>
-                    <span><i class="fas fa-file-pdf"></i> Previous Year Papers</span>
-                    <span><i class="fas fa-graduation-cap"></i> Multiple Faculties</span>
-                    <span><i class="fas fa-calendar"></i> 10 Years PYQ</span>
-                </div>
-            </div>
-        </section>
-
-        <section class="academic-stats">
-            <div class="academic-stat">
-                <div class="academic-stat-icon"><i class="fas fa-layer-group"></i></div>
-                <div>
-                    <strong>{{ faculties|default([])|length }}</strong>
-                    <span>Faculties</span>
-                </div>
+    <section class="academic-hero">
+        <div class="hero-content">
+            <div class="hero-badge">
+                <i class="fas fa-graduation-cap"></i>
+                ACADEMIC LEARNING HUB
             </div>
 
-            <div class="academic-stat">
-                <div class="academic-stat-icon"><i class="fas fa-graduation-cap"></i></div>
-                <div>
-                    <strong>{{ academic_courses|default([])|length }}</strong>
-                    <span>Academic Courses</span>
-                </div>
-            </div>
+            <h1>Your Complete Academic Learning Space</h1>
 
-            <div class="academic-stat">
-                <div class="academic-stat-icon"><i class="fas fa-book-open"></i></div>
-                <div>
-                    <strong>{{ academic_subjects|default([])|length }}</strong>
-                    <span>Subjects</span>
-                </div>
-            </div>
+            <p>
+                Access university notes, previous year question papers,
+                subject-wise study materials and academic resources
+                from one organized learning platform.
+            </p>
 
-            <div class="academic-stat">
-                <div class="academic-stat-icon"><i class="fas fa-file-pdf"></i></div>
-                <div>
-                    <strong>{{ (materials|default([])|length) + (academic_papers|default([])|length) }}</strong>
-                    <span>Study Resources</span>
-                </div>
-            </div>
-        </section>
+            <div class="hero-actions">
+                <a href="#academic-courses" class="hero-btn hero-btn-primary">
+                    <i class="fas fa-book-open"></i>
+                    Explore Courses
+                </a>
 
-        <div class="academic-section-heading">
+                <a href="#academic-resources" class="hero-btn hero-btn-secondary">
+                    <i class="fas fa-file-pdf"></i>
+                    Browse Study Materials
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="academic-stats">
+
+        <div class="academic-stat">
+            <div class="stat-icon purple">
+                <i class="fas fa-university"></i>
+            </div>
+            <div class="stat-info">
+                <strong>{{ faculties|length if faculties else 0 }}</strong>
+                <span>Faculties</span>
+            </div>
+        </div>
+
+        <div class="academic-stat">
+            <div class="stat-icon blue">
+                <i class="fas fa-book"></i>
+            </div>
+            <div class="stat-info">
+                <strong>{{ academic_courses|length if academic_courses else 0 }}</strong>
+                <span>Academic Courses</span>
+            </div>
+        </div>
+
+        <div class="academic-stat">
+            <div class="stat-icon green">
+                <i class="fas fa-file-alt"></i>
+            </div>
+            <div class="stat-info">
+                <strong>{{ academic_subjects|length if academic_subjects else 0 }}</strong>
+                <span>Subjects</span>
+            </div>
+        </div>
+
+        <div class="academic-stat">
+            <div class="stat-icon orange">
+                <i class="fas fa-file-pdf"></i>
+            </div>
+            <div class="stat-info">
+                <strong>{{ academic_papers|length if academic_papers else 0 }}</strong>
+                <span>Question Papers</span>
+            </div>
+        </div>
+
+    </section>
+
+    <section class="academic-section">
+
+        <div class="section-heading">
             <div>
-                <h2>Explore Academic Programs</h2>
-                <p>Choose your faculty and find your course.</p>
+                <h2><i class="fas fa-sliders-h"></i> Find Academic Resources</h2>
+                <p>Filter courses, semesters, subjects and learning materials.</p>
             </div>
         </div>
 
-        <div class="academic-toolbar">
-            <div class="academic-search">
-                <i class="fas fa-search"></i>
-                <input type="text" id="courseSearch" placeholder="Search courses, degrees or programs...">
+        <form action="{{ url_for('courses') }}" method="GET" id="academicFilterForm">
+
+            <div class="filter-grid">
+
+                <div class="filter-group">
+                    <label>Faculty</label>
+                    <select name="faculty" class="filter-control">
+                        <option value="">All Faculties</option>
+                        {% for faculty in faculties or [] %}
+                        <option value="{{ faculty.slug }}"
+                                {% if request.args.get('faculty') == faculty.slug %}selected{% endif %}>
+                        {{ faculty.faculty_name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label>Course</label>
+                    <select name="course" class="filter-control">
+                        <option value="">All Courses</option>
+                        {% for course in academic_courses or [] %}
+                        <option value="{{ course.slug }}"
+                                {% if request.args.get('course') == course.slug %}selected{% endif %}>
+                        {{ course.course_name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label>Semester</label>
+                    <select name="semester" class="filter-control">
+                        <option value="">All Semesters</option>
+                        {% for semester in pyq_semesters or [] %}
+                        <option value="{{ semester }}"
+                                {% if request.args.get('semester') == semester|string %}selected{% endif %}>
+                        Semester {{ semester }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label>Search Resources</label>
+                    <div class="search-wrapper">
+                        <i class="fas fa-search"></i>
+                        <input
+                                type="text"
+                                name="search"
+                                class="filter-control"
+                                placeholder="Search course or subject..."
+                                value="{{ request.args.get('search', '') }}">
+                    </div>
+                </div>
+
             </div>
 
-            <select class="academic-select" id="levelFilter">
-                <option value="all">All Levels</option>
-                <option value="ug">Undergraduate</option>
-                <option value="pg">Postgraduate</option>
-                <option value="diploma">Diploma</option>
-                <option value="professional">Professional</option>
-                <option value="competitive">Competitive Exams</option>
-            </select>
+            <div class="filter-actions" style="margin-top:15px;">
+                <button type="submit" class="filter-btn">
+                    <i class="fas fa-search"></i> Apply Filters
+                </button>
+
+                <a href="{{ url_for('courses') }}" class="reset-btn">
+                    <i class="fas fa-redo"></i> Reset
+                </a>
+            </div>
+
+        </form>
+    </section>
+
+    <section class="academic-section" id="academic-courses">
+
+        <div class="section-heading">
+            <div>
+                <h2><i class="fas fa-layer-group"></i> Academic Courses</h2>
+                <p>Explore your university courses and subject-wise learning resources.</p>
+            </div>
         </div>
 
-        <div class="academic-categories" id="categoryFilters">
-            <button class="category-btn active" data-category="all">All Programs</button>
-            <button class="category-btn" data-category="science">Science</button>
-            <button class="category-btn" data-category="commerce">Commerce</button>
-            <button class="category-btn" data-category="arts">Arts</button>
-            <button class="category-btn" data-category="management">Management</button>
-            <button class="category-btn" data-category="computer">Computer Applications</button>
-            <button class="category-btn" data-category="engineering">Engineering</button>
-            <button class="category-btn" data-category="medical">Medical</button>
-            <button class="category-btn" data-category="other">Other</button>
-        </div>
+        <div class="course-grid">
 
-        <div class="academic-course-grid" id="courseGrid">
+            {% for course in academic_courses or [] %}
 
-            {% for faculty in faculties|default([]) %}
-            {% for course in academic_courses|default([]) %}
-            {% if course.faculty_id|string == faculty.id|string %}
-            <article class="academic-course-card"
-                     data-category="{{ faculty.slug|default(faculty.faculty_name)|lower }}"
-                     data-level="{{ course.course_level|default('ug')|lower }}"
-                     data-search="{{ (course.course_name ~ ' ' ~ course.course_code|default('') ~ ' ' ~ faculty.faculty_name)|lower }}"
-                     data-course-id="{{ course.id }}">
+            <article class="course-card searchable-item"
+                     data-search="{{ (course.course_name|string ~ ' ' ~ course.course_code|string ~ ' ' ~ course.description|string)|lower }}">
 
                 <div class="course-card-top">
-                    <div class="course-card-icon">
+                    <div class="course-icon">
                         <i class="fas fa-graduation-cap"></i>
                     </div>
-                    <span class="course-level">{{ course.course_level|default('UG')|upper }}</span>
+
+                    <span class="course-level">
+                        {{ course.course_level or 'Academic' }}
+                    </span>
                 </div>
 
-                <h3>{{ course.course_name }}</h3>
-                <p>{{ course.description|default('Explore subject-wise notes, previous year papers and academic resources.') }}</p>
+                <div class="course-card-body">
 
-                <div class="course-card-meta">
-                    <span><i class="fas fa-building"></i> {{ faculty.faculty_name }}</span>
-                    <span><i class="fas fa-calendar"></i> {{ course.total_semesters|default(6) }} Semesters</span>
-                </div>
+                    <h3>{{ course.course_name }}</h3>
 
-                <div class="course-card-actions">
-                    <button class="primary" data-open-course="{{ course.id }}" data-course-name="{{ course.course_name|e }}">
-                        <i class="fas fa-book-open"></i> Study Resources
-                    </button>
-                    <button data-open-pyq="{{ course.id }}" data-course-name="{{ course.course_name|e }}">
-                        <i class="fas fa-file-pdf"></i> PYQ
-                    </button>
-                </div>
-            </article>
-            {% endif %}
-            {% endfor %}
-            {% endfor %}
+                    <p>
+                        {{ course.description or 'Explore semester-wise subjects, notes, question papers and academic resources.' }}
+                    </p>
 
-            {% if not academic_courses %}
-            {% set fallback_courses = [
-            ('Class 10', 'School Education', 'science', 'school', 'school'),
-            ('Class 11 Science', 'Physics, Chemistry, Mathematics and Biology', 'science', 'school', 'school'),
-            ('Class 12 Science', 'HSC Science stream study resources', 'science', 'school', 'school'),
-            ('Diploma Engineering', 'Engineering diploma subjects and papers', 'engineering', 'diploma', 'diploma'),
-            ('B.Sc Computer Science', 'Computer Science, programming and IT subjects', 'science', 'ug', 'graduation-cap'),
-            ('B.Sc Information Technology', 'Information Technology and computing subjects', 'science', 'ug', 'laptop-code'),
-            ('BCA', 'Bachelor of Computer Applications', 'computer', 'ug', 'laptop-code'),
-            ('B.Com', 'Bachelor of Commerce', 'commerce', 'ug', 'calculator'),
-            ('B.A.', 'Bachelor of Arts', 'arts', 'ug', 'book'),
-            ('BBA', 'Business Administration', 'management', 'ug', 'briefcase'),
-            ('B.Tech', 'Engineering and Technology', 'engineering', 'ug', 'gears'),
-            ('B.Pharm', 'Pharmacy and Pharmaceutical Sciences', 'medical', 'ug', 'capsules'),
-            ('M.Sc', 'Master of Science', 'science', 'pg', 'flask'),
-            ('MCA', 'Master of Computer Applications', 'computer', 'pg', 'laptop-code'),
-            ('MBA', 'Master of Business Administration', 'management', 'pg', 'briefcase'),
-            ('M.Com', 'Master of Commerce', 'commerce', 'pg', 'calculator'),
-            ('M.Tech', 'Master of Technology', 'engineering', 'pg', 'gears'),
-            ('M.A.', 'Master of Arts', 'arts', 'pg', 'book'),
-            ('CA', 'Chartered Accountancy', 'commerce', 'professional', 'calculator'),
-            ('CS', 'Company Secretary', 'commerce', 'professional', 'file-contract'),
-            ('CMA', 'Cost and Management Accountancy', 'commerce', 'professional', 'chart-line'),
-            ('ACCA', 'Association of Chartered Certified Accountants', 'commerce', 'professional', 'globe'),
-            ('CFA', 'Chartered Financial Analyst', 'commerce', 'professional', 'chart-pie'),
-            ('NIELIT', 'Computer and IT certifications', 'computer', 'professional', 'computer'),
-            ('UPSC', 'Civil Services Examination', 'other', 'competitive', 'landmark'),
-            ('MPSC', 'Maharashtra Public Service Commission', 'other', 'competitive', 'landmark'),
-            ('SSC', 'Staff Selection Commission', 'other', 'competitive', 'file-alt'),
-            ('Banking Exams', 'IBPS, SBI and banking recruitment', 'commerce', 'competitive', 'university'),
-            ('Railway Exams', 'RRB recruitment examinations', 'other', 'competitive', 'train'),
-            ('JEE', 'Joint Entrance Examination', 'engineering', 'competitive', 'atom'),
-            ('NEET', 'National Eligibility cum Entrance Test', 'medical', 'competitive', 'heart'),
-            ('MHT CET', 'Maharashtra Common Entrance Test', 'science', 'competitive', 'graduation-cap'),
-            ('GATE', 'Graduate Aptitude Test in Engineering', 'engineering', 'competitive', 'gears'),
-            ('CAT / MAT', 'Management entrance examinations', 'management', 'competitive', 'briefcase'),
-            ('UGC NET / SET', 'Lectureship and research eligibility', 'arts', 'competitive', 'chalkboard-teacher'),
-            ('NDA / CDS', 'Defence entrance examinations', 'other', 'competitive', 'shield-alt')
-            ] %}
+                    <div class="course-meta">
+                        <span>
+                            <i class="fas fa-code"></i>
+                            {{ course.course_code or 'Course' }}
+                        </span>
 
-            {% for name, description, category, level, icon in fallback_courses %}
-            <article class="academic-course-card"
-                     data-category="{{ category }}"
-                     data-level="{{ level }}"
-                     data-search="{{ (name ~ ' ' ~ description)|lower }}">
+                        <span>
+                            <i class="fas fa-calendar-alt"></i>
+                            {{ course.total_semesters or 0 }} Semesters
+                        </span>
+                    </div>
 
-                <div class="course-card-top">
-                    <div class="course-card-icon"><i class="fas fa-{{ icon }}"></i></div>
-                    <span class="course-level">{{ level|upper }}</span>
-                </div>
+                    <a href="/course/{{ course.slug or course.course_name|lower|replace(' ', '-') }}"
+                       class="card-action">
+                        Explore Course
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
 
-                <h3>{{ name }}</h3>
-                <p>{{ description }}</p>
-
-                <div class="course-card-meta">
-                    <span><i class="fas fa-book"></i> Academic Resources</span>
-                </div>
-
-                <div class="course-card-actions">
-                    <button class="primary" data-select-course="{{ name }}">
-                        <i class="fas fa-book-open"></i> Notes
-                    </button>
-                    <button data-select-pyq="{{ name }}">
-                        <i class="fas fa-file-pdf"></i> PYQ
-                    </button>
                 </div>
             </article>
+
+            {% else %}
+
+            <div class="empty-state">
+                <i class="fas fa-book-open"></i>
+                <h3>No Academic Courses Found</h3>
+                <p>Academic courses will appear here once they are added.</p>
+            </div>
+
             {% endfor %}
-            {% endif %}
+
+        </div>
+    </section>
+
+    <section class="academic-section" id="academic-resources">
+
+        <div class="section-heading">
+            <div>
+                <h2><i class="fas fa-folder-open"></i> Learning Resources</h2>
+                <p>Access notes, question banks and previous year papers.</p>
+            </div>
+        </div>
+
+        <div class="academic-tabs">
+
+            <button type="button" class="academic-tab active" data-tab="notes">
+                <i class="fas fa-book"></i> Study Notes
+            </button>
+
+            <button type="button" class="academic-tab" data-tab="pyq">
+                <i class="fas fa-file-pdf"></i> Previous Year Papers
+            </button>
+
+            <button type="button" class="academic-tab" data-tab="question-bank">
+                <i class="fas fa-clipboard-list"></i> Question Bank
+            </button>
 
         </div>
 
-        <div class="empty-state academic-hidden" id="courseEmpty">
-            <i class="fas fa-search"></i>
-            <strong>No courses found</strong>
-            <p>Try another search or category.</p>
+        <div class="tab-panel active" id="panel-notes">
+
+            <div class="result-toolbar">
+                <span class="result-count">
+                    Available Study Materials:
+                    <strong>{{ study_materials|length if study_materials else 0 }}</strong>
+                </span>
+            </div>
+
+            <div class="resource-grid">
+
+                {% for material in study_materials or [] %}
+
+                {% set file_url = material.pdf_link or material.file_path or '' %}
+
+                {% if file_url and not file_url.startswith('http') %}
+                {% if file_url.startswith('/') %}
+                {% if not file_url.startswith('/static/') %}
+                {% set file_url = url_for('static', filename=file_url.lstrip('/')) %}
+                {% endif %}
+                {% else %}
+                {% set file_url = url_for('static', filename=file_url.replace('static/', '')) %}
+                {% endif %}
+                {% endif %}
+
+                <article class="resource-card searchable-item"
+                         data-search="{{ (material.title|string ~ ' ' ~ material.description|string ~ ' ' ~ material.category|string ~ ' ' ~ material.course_name|string ~ ' ' ~ material.subject_name|string)|lower }}">
+
+                    <div class="resource-header">
+
+                        <div class="resource-icon notes">
+                            <i class="fas fa-book-open"></i>
+                        </div>
+
+                        <div class="resource-title">
+                            <h3>{{ material.title }}</h3>
+                            <span>{{ material.material_type or 'Study Material' }}</span>
+                        </div>
+
+                    </div>
+
+                    <div class="resource-description">
+                        {{ material.description or 'Academic study material for your preparation.' }}
+                    </div>
+
+                    <div class="resource-tags">
+                        {% if material.course_name %}
+                        <span class="resource-tag">{{ material.course_name }}</span>
+                        {% endif %}
+
+                        {% if material.semester %}
+                        <span class="resource-tag">Semester {{ material.semester }}</span>
+                        {% endif %}
+
+                        {% if material.subject_name %}
+                        <span class="resource-tag">{{ material.subject_name }}</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="resource-actions">
+
+                        {% if file_url %}
+                        <a href="{{ file_url }}" target="_blank" rel="noopener" class="resource-btn view">
+                            <i class="fas fa-eye"></i> View
+                        </a>
+
+                        <a href="{{ file_url }}" download class="resource-btn">
+                            <i class="fas fa-download"></i> Download
+                        </a>
+                        {% else %}
+                        <span class="resource-btn">File unavailable</span>
+                        {% endif %}
+
+                    </div>
+
+                </article>
+
+                {% else %}
+
+                <div class="empty-state">
+                    <i class="fas fa-book"></i>
+                    <h3>No Study Materials Available</h3>
+                    <p>Study notes will appear here when uploaded.</p>
+                </div>
+
+                {% endfor %}
+
+            </div>
         </div>
 
-        <section id="studyMaterials">
+        <div class="tab-panel" id="panel-pyq">
 
-            <div class="academic-section-heading">
-                <div>
-                    <h2>Study Resources</h2>
-                    <p>Find notes and question papers for your selected subject.</p>
-                </div>
-            </div>
+            <div class="result-toolbar">
 
-            <div class="academic-toolbar">
-                <select class="academic-select" id="facultyFilter">
-                    <option value="all">All Faculties</option>
-                    {% for faculty in faculties|default([]) %}
-                    <option value="{{ faculty.id }}">{{ faculty.faculty_name }}</option>
-                    {% endfor %}
-                </select>
-
-                <select class="academic-select" id="academicCourseFilter">
-                    <option value="all">All Courses</option>
-                    {% for course in academic_courses|default([]) %}
-                    <option value="{{ course.id }}" data-faculty="{{ course.faculty_id }}">
-                        {{ course.course_name }}
-                    </option>
-                    {% endfor %}
-                </select>
-
-                <select class="academic-select" id="semesterFilter">
-                    <option value="all">All Semesters</option>
-                    {% for semester in pyq_semesters|default([]) %}
-                    <option value="{{ semester }}">{{ semester }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-
-            <div class="academic-toolbar">
-                <div class="academic-search">
+                <div class="pyq-search-box">
                     <i class="fas fa-search"></i>
-                    <input type="text" id="subjectSearch" placeholder="Search subject or study material...">
+                    <input
+                            type="text"
+                            id="pyqSearchInput"
+                            placeholder="Search subject, course, semester, year or exam session...">
                 </div>
 
-                <select class="academic-select" id="subjectFilter">
-                    <option value="all">All Subjects</option>
-                    {% for subject in academic_subjects|default([]) %}
-                    <option value="{{ subject.id }}"
-                            data-course="{{ subject.course_id }}"
-                            data-semester="{{ subject.semester_no }}">
-                        {{ subject.subject_name }}
-                    </option>
-                    {% endfor %}
-                </select>
+                <div class="year-filter">
+                    <label for="pyqYearFilter">Year</label>
+                    <select id="pyqYearFilter">
+                        <option value="">All Years</option>
+                        {% for year in pyq_years or [] %}
+                        <option value="{{ year }}">{{ year }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
             </div>
 
-            <div class="academic-tabs">
-                <button class="academic-tab active" data-tab="notes">
-                    <i class="fas fa-book-open"></i> Notes & Study Material
-                </button>
-                <button class="academic-tab" data-tab="pyq">
-                    <i class="fas fa-file-pdf"></i> Previous Year Questions
-                </button>
+            <div class="result-count" style="margin-bottom:15px;">
+                Previous Year Question Papers:
+                <strong id="pyqVisibleCount">{{ academic_papers|length if academic_papers else 0 }}</strong>
             </div>
 
-            <div id="notesPanel">
-                <div class="academic-section-heading">
-                    <div>
-                        <h2>Notes & Learning Material</h2>
-                        <p>Access subject notes, reference PDFs and learning documents.</p>
+            <div class="resource-grid" id="pyqResourceGrid">
+
+                {% for paper in academic_papers or [] %}
+
+                {% set paper_url = paper.file_path or paper.pdf_link or '' %}
+
+                {% if paper_url and not paper_url.startswith('http') %}
+                {% if paper_url.startswith('/') %}
+                {% if not paper_url.startswith('/static/') %}
+                {% set paper_url = url_for('static', filename=paper_url.lstrip('/')) %}
+                {% endif %}
+                {% else %}
+                {% set paper_url = url_for('static', filename=paper_url.replace('static/', '')) %}
+                {% endif %}
+                {% endif %}
+
+                <article class="resource-card pyq-card"
+                         data-year="{{ paper.exam_year or '' }}"
+                         data-search="{{ (paper.course_name|string ~ ' ' ~ paper.subject_name|string ~ ' ' ~ paper.exam_year|string ~ ' ' ~ paper.exam_session|string ~ ' ' ~ paper.semester|string ~ ' ' ~ paper.marks|string)|lower }}">
+
+                    <div class="resource-header">
+
+                        <div class="resource-icon pdf">
+                            <i class="fas fa-file-pdf"></i>
+                        </div>
+
+                        <div class="resource-title">
+                            <h3>{{ paper.subject_name or 'Question Paper' }}</h3>
+                            <span>{{ paper.exam_session or 'University Examination' }}</span>
+                        </div>
+
                     </div>
-                </div>
 
-                <div class="material-list" id="notesList">
-                    {% for material in materials|default([]) %}
-                    {% if material.material_type|default('')|lower in ['notes', 'note', 'study_material', 'study material', 'material'] %}
-                    <article class="material-card"
-                             data-course="{{ material.course_name|default('')|lower }}"
-                             data-semester="{{ material.semester|default('')|lower }}"
-                             data-subject="{{ material.subject_name|default('')|lower }}"
-                             data-search="{{ (material.title|default('') ~ ' ' ~ material.description|default('') ~ ' ' ~ material.subject_name|default('') ~ ' ' ~ material.course_name|default(''))|lower }}">
-
-                        <div class="material-icon"><i class="fas fa-file-pdf"></i></div>
-
-                        <div class="material-info">
-                            <h4>{{ material.title }}</h4>
-                            <p>
-                                {{ material.course_name|default('General') }}
-                                {% if material.semester %} · Semester {{ material.semester }}{% endif %}
-                                {% if material.subject_name %} · {{ material.subject_name }}{% endif %}
-                            </p>
-                            {% if material.description %}
-                            <p>{{ material.description }}</p>
-                            {% endif %}
-                        </div>
-
-                        <div class="material-actions">
-                            {% if material.pdf_link %}
-                            <a href="{{ material.pdf_link }}" target="_blank" rel="noopener noreferrer">View</a>
-                            <a href="{{ material.pdf_link }}" download class="download">Download</a>
-                            {% endif %}
-                        </div>
-                    </article>
-                    {% endif %}
-                    {% endfor %}
-                </div>
-
-                <div class="empty-state academic-hidden" id="notesEmpty">
-                    <i class="fas fa-folder-open"></i>
-                    <strong>No notes available</strong>
-                    <p>Study materials will appear here when available.</p>
-                </div>
-            </div>
-
-            <div id="pyqPanel" class="academic-hidden">
-
-                <div class="academic-section-heading">
-                    <div>
-                        <h2>Previous Year Question Papers</h2>
-                        <p>Prepare with previous examination papers and question banks.</p>
+                    <div class="resource-description">
+                        {{ paper.course_name or 'Academic Course' }} question paper for
+                        {{ paper.exam_year or 'previous examination' }}.
                     </div>
+
+                    <div class="resource-tags">
+                        <span class="resource-tag">{{ paper.course_name or 'Course' }}</span>
+                        <span class="resource-tag">Semester {{ paper.semester or '-' }}</span>
+                        <span class="resource-tag">{{ paper.exam_year or 'Year N/A' }}</span>
+
+                        {% if paper.marks %}
+                        <span class="resource-tag">{{ paper.marks }} Marks</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="resource-actions">
+
+                        {% if paper_url %}
+                        <a href="{{ paper_url }}" target="_blank" rel="noopener" class="resource-btn view">
+                            <i class="fas fa-eye"></i> View Paper
+                        </a>
+
+                        <a href="{{ paper_url }}" download class="resource-btn">
+                            <i class="fas fa-download"></i> Download
+                        </a>
+                        {% else %}
+                        <span class="resource-btn">File unavailable</span>
+                        {% endif %}
+
+                    </div>
+
+                </article>
+
+                {% else %}
+
+                <div class="empty-state">
+                    <i class="fas fa-file-pdf"></i>
+                    <h3>No Question Papers Available</h3>
+                    <p>Previous year papers will appear here once uploaded.</p>
                 </div>
 
-                <div class="year-filter" id="yearFilter">
-                    <button class="year-btn active" data-year="all">All Years</button>
-                    {% for year in range(2026, 2016, -1) %}
-                    <button class="year-btn" data-year="{{ year }}">{{ year }}</button>
-                    {% endfor %}
+                {% endfor %}
+
+                <div class="empty-state pyq-no-results" id="pyqNoResults">
+                    <i class="fas fa-search"></i>
+                    <h3>No Question Papers Found</h3>
+                    <p>Try another subject name, course, semester or examination year.</p>
                 </div>
 
-                <div class="material-list" id="pyqList">
-
-                    {% for paper in academic_papers|default([]) %}
-                    <article class="material-card"
-                             data-course="{{ paper.course_name|default('')|lower }}"
-                             data-semester="{{ paper.semester|default('')|lower }}"
-                             data-subject="{{ paper.subject_name|default('')|lower }}"
-                             data-year="{{ paper.exam_year|default('') }}"
-                             data-search="{{ (paper.course_name|default('') ~ ' ' ~ paper.subject_name|default('') ~ ' ' ~ paper.exam_year|default('') ~ ' ' ~ paper.exam_session|default(''))|lower }}">
-
-                        <div class="material-icon"><i class="fas fa-file-pdf"></i></div>
-
-                        <div class="material-info">
-                            <h4>{{ paper.subject_name|default('Question Paper') }}</h4>
-                            <p>
-                                {{ paper.course_name|default('') }}
-                                {% if paper.semester %} · Semester {{ paper.semester }}{% endif %}
-                                {% if paper.exam_year %} · {{ paper.exam_year }}{% endif %}
-                                {% if paper.exam_session %} · {{ paper.exam_session }}{% endif %}
-                            </p>
-                            {% if paper.marks %}
-                            <p>{{ paper.marks }} Marks</p>
-                            {% endif %}
-                        </div>
-
-                        <div class="material-actions">
-                            {% if paper.file_path %}
-                            <a href="{{ paper.file_path }}" target="_blank" rel="noopener noreferrer">View</a>
-                            <a href="{{ paper.file_path }}" download class="download">Download</a>
-                            {% endif %}
-                        </div>
-                    </article>
-                    {% endfor %}
-
-                    {% for material in materials|default([]) %}
-                    {% if material.material_type|default('')|lower in ['pyq', 'question_bank', 'question bank', 'previous_year_question', 'previous year question'] %}
-                    <article class="material-card"
-                             data-course="{{ material.course_name|default('')|lower }}"
-                             data-semester="{{ material.semester|default('')|lower }}"
-                             data-subject="{{ material.subject_name|default('')|lower }}"
-                             data-year="{{ material.exam_year|default('') }}"
-                             data-search="{{ (material.title|default('') ~ ' ' ~ material.description|default('') ~ ' ' ~ material.subject_name|default('') ~ ' ' ~ material.course_name|default(''))|lower }}">
-
-                        <div class="material-icon"><i class="fas fa-file-pdf"></i></div>
-
-                        <div class="material-info">
-                            <h4>{{ material.title }}</h4>
-                            <p>
-                                {{ material.course_name|default('General') }}
-                                {% if material.semester %} · Semester {{ material.semester }}{% endif %}
-                                {% if material.subject_name %} · {{ material.subject_name }}{% endif %}
-                            </p>
-                        </div>
-
-                        <div class="material-actions">
-                            {% if material.pdf_link %}
-                            <a href="{{ material.pdf_link }}" target="_blank" rel="noopener noreferrer">View</a>
-                            <a href="{{ material.pdf_link }}" download class="download">Download</a>
-                            {% endif %}
-                        </div>
-                    </article>
-                    {% endif %}
-                    {% endfor %}
-
-                </div>
-
-                <div class="empty-state academic-hidden" id="pyqEmpty">
-                    <i class="fas fa-file-circle-question"></i>
-                    <strong>No question papers found</strong>
-                    <p>Try changing your selected course, subject or year.</p>
-                </div>
             </div>
+        </div>
 
-        </section>
+        <div class="tab-panel" id="panel-question-bank">
 
-    </div>
+            <div class="resource-grid">
+
+                {% for material in study_materials or [] %}
+
+                {% if material.material_type == 'question_bank' %}
+
+                {% set question_url = material.pdf_link or material.file_path or '' %}
+
+                {% if question_url and not question_url.startswith('http') %}
+                {% if question_url.startswith('/') %}
+                {% if not question_url.startswith('/static/') %}
+                {% set question_url = url_for('static', filename=question_url.lstrip('/')) %}
+                {% endif %}
+                {% else %}
+                {% set question_url = url_for('static', filename=question_url.replace('static/', '')) %}
+                {% endif %}
+                {% endif %}
+
+                <article class="resource-card searchable-item"
+                         data-search="{{ (material.title|string ~ ' ' ~ material.course_name|string ~ ' ' ~ material.subject_name|string)|lower }}">
+
+                    <div class="resource-header">
+                        <div class="resource-icon pdf">
+                            <i class="fas fa-clipboard-list"></i>
+                        </div>
+
+                        <div class="resource-title">
+                            <h3>{{ material.title }}</h3>
+                            <span>Question Bank</span>
+                        </div>
+                    </div>
+
+                    <div class="resource-description">
+                        {{ material.description or 'Practice questions for academic preparation.' }}
+                    </div>
+
+                    <div class="resource-tags">
+                        {% if material.course_name %}
+                        <span class="resource-tag">{{ material.course_name }}</span>
+                        {% endif %}
+
+                        {% if material.semester %}
+                        <span class="resource-tag">Semester {{ material.semester }}</span>
+                        {% endif %}
+
+                        {% if material.subject_name %}
+                        <span class="resource-tag">{{ material.subject_name }}</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="resource-actions">
+                        {% if question_url %}
+                        <a href="{{ question_url }}" target="_blank" rel="noopener" class="resource-btn view">
+                            <i class="fas fa-eye"></i> View
+                        </a>
+
+                        <a href="{{ question_url }}" download class="resource-btn">
+                            <i class="fas fa-download"></i> Download
+                        </a>
+                        {% else %}
+                        <span class="resource-btn">File unavailable</span>
+                        {% endif %}
+                    </div>
+
+                </article>
+
+                {% endif %}
+
+                {% else %}
+
+                <div class="empty-state">
+                    <i class="fas fa-clipboard-list"></i>
+                    <h3>No Question Banks Available</h3>
+                    <p>Question banks will appear here when uploaded.</p>
+                </div>
+
+                {% endfor %}
+
+            </div>
+        </div>
+
+    </section>
+
 </div>
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
 
-        const courseSearch = document.getElementById("courseSearch");
-        const levelFilter = document.getElementById("levelFilter");
-        const categoryButtons = document.querySelectorAll(".category-btn");
-        const courseCards = document.querySelectorAll(".academic-course-card");
-        const courseEmpty = document.getElementById("courseEmpty");
-
-        let activeCategory = "all";
-
-        function filterCourses() {
-            const query = courseSearch.value.toLowerCase().trim();
-            const level = levelFilter.value;
-            let visible = 0;
-
-            courseCards.forEach(card => {
-                const category = card.dataset.category || "";
-                const cardLevel = card.dataset.level || "";
-                const search = card.dataset.search || "";
-
-                const categoryMatch = activeCategory === "all" ||
-                    category.includes(activeCategory);
-
-                const levelMatch = level === "all" || cardLevel === level;
-                const searchMatch = search.includes(query);
-
-                const show = categoryMatch && levelMatch && searchMatch;
-
-                card.classList.toggle("filtered-out", !show);
-
-                if (show) visible++;
-            });
-
-            courseEmpty.classList.toggle("academic-hidden", visible > 0);
-        }
-
-        courseSearch.addEventListener("input", filterCourses);
-        levelFilter.addEventListener("change", filterCourses);
-
-        categoryButtons.forEach(button => {
-            button.addEventListener("click", function () {
-                categoryButtons.forEach(item => item.classList.remove("active"));
-                this.classList.add("active");
-
-                activeCategory = this.dataset.category;
-                filterCourses();
-            });
-        });
-
-        const facultyFilter = document.getElementById("facultyFilter");
-        const courseFilter = document.getElementById("academicCourseFilter");
-        const semesterFilter = document.getElementById("semesterFilter");
-        const subjectFilter = document.getElementById("subjectFilter");
-        const subjectSearch = document.getElementById("subjectSearch");
-
         const tabs = document.querySelectorAll(".academic-tab");
-        const notesPanel = document.getElementById("notesPanel");
-        const pyqPanel = document.getElementById("pyqPanel");
+        const panels = document.querySelectorAll(".tab-panel");
 
-        let activeTab = "notes";
-        let activeYear = "all";
-
-        function updateCourseOptions() {
-            const faculty = facultyFilter.value;
-
-            Array.from(courseFilter.options).forEach(option => {
-                if (option.value === "all") return;
-
-                option.hidden = faculty !== "all" &&
-                    option.dataset.faculty !== faculty;
-            });
-
-            if (courseFilter.selectedOptions[0]?.hidden) {
-                courseFilter.value = "all";
-            }
-
-            updateSubjectOptions();
-        }
-
-        function updateSubjectOptions() {
-            const course = courseFilter.value;
-            const semester = semesterFilter.value;
-
-            Array.from(subjectFilter.options).forEach(option => {
-                if (option.value === "all") return;
-
-                const courseMatch = course === "all" ||
-                    option.dataset.course === course;
-
-                const semesterMatch = semester === "all" ||
-                    option.dataset.semester === semester;
-
-                option.hidden = !(courseMatch && semesterMatch);
-            });
-
-            if (subjectFilter.selectedOptions[0]?.hidden) {
-                subjectFilter.value = "all";
-            }
-
-            filterResources();
-        }
-
-        function filterResources() {
-            const list = document.getElementById(
-                activeTab === "notes" ? "notesList" : "pyqList"
-            );
-
-            const empty = document.getElementById(
-                activeTab === "notes" ? "notesEmpty" : "pyqEmpty"
-            );
-
-            const cards = list.querySelectorAll(".material-card");
-
-            const selectedCourse = courseFilter.selectedOptions[0]?.textContent
-                .trim().toLowerCase() || "";
-
-            const selectedSubject = subjectFilter.selectedOptions[0]?.textContent
-                .trim().toLowerCase() || "";
-
-            const semester = semesterFilter.value.toLowerCase();
-            const query = subjectSearch.value.toLowerCase().trim();
-
-            let visible = 0;
-
-            cards.forEach(card => {
-                const text = card.dataset.search || "";
-                const cardCourse = card.dataset.course || "";
-                const cardSubject = card.dataset.subject || "";
-                const cardSemester = card.dataset.semester || "";
-                const year = card.dataset.year || "";
-
-                const courseMatch = courseFilter.value === "all" ||
-                    cardCourse.includes(selectedCourse);
-
-                const subjectMatch = subjectFilter.value === "all" ||
-                    cardSubject.includes(selectedSubject);
-
-                const semesterMatch = semester === "all" ||
-                    cardSemester.includes(semester);
-
-                const searchMatch = text.includes(query);
-
-                const yearMatch = activeTab !== "pyq" ||
-                    activeYear === "all" || year.includes(activeYear);
-
-                const show = courseMatch && subjectMatch &&
-                    semesterMatch && searchMatch && yearMatch;
-
-                card.classList.toggle("academic-hidden", !show);
-
-                if (show) visible++;
-            });
-
-            empty.classList.toggle("academic-hidden", visible > 0);
-        }
-
-        facultyFilter.addEventListener("change", updateCourseOptions);
-        courseFilter.addEventListener("change", updateSubjectOptions);
-        semesterFilter.addEventListener("change", updateSubjectOptions);
-        subjectFilter.addEventListener("change", filterResources);
-        subjectSearch.addEventListener("input", filterResources);
-
-        tabs.forEach(tab => {
+        tabs.forEach(function (tab) {
             tab.addEventListener("click", function () {
-                tabs.forEach(item => item.classList.remove("active"));
+
+                const selectedTab = this.dataset.tab;
+
+                tabs.forEach(function (item) {
+                    item.classList.remove("active");
+                });
+
+                panels.forEach(function (panel) {
+                    panel.classList.remove("active");
+                });
+
                 this.classList.add("active");
 
-                activeTab = this.dataset.tab;
+                const selectedPanel = document.getElementById("panel-" + selectedTab);
 
-                notesPanel.classList.toggle("academic-hidden", activeTab !== "notes");
-                pyqPanel.classList.toggle("academic-hidden", activeTab !== "pyq");
+                if (selectedPanel) {
+                    selectedPanel.classList.add("active");
+                }
 
-                filterResources();
             });
         });
 
-        document.querySelectorAll(".year-btn").forEach(button => {
-            button.addEventListener("click", function () {
-                document.querySelectorAll(".year-btn").forEach(item =>
-                    item.classList.remove("active")
-                );
+        const pyqSearch = document.getElementById("pyqSearchInput");
+        const yearFilter = document.getElementById("pyqYearFilter");
+        const pyqCards = document.querySelectorAll(".pyq-card");
+        const countElement = document.getElementById("pyqVisibleCount");
+        const noResults = document.getElementById("pyqNoResults");
 
-                this.classList.add("active");
-                activeYear = this.dataset.year;
+        function filterPYQ() {
 
-                filterResources();
+            const searchValue = pyqSearch.value.toLowerCase().trim();
+            const selectedYear = yearFilter.value;
+
+            let visibleCount = 0;
+
+            pyqCards.forEach(function (card) {
+
+                const searchData = (card.dataset.search || "").toLowerCase();
+                const cardYear = card.dataset.year || "";
+
+                const matchesSearch = searchData.includes(searchValue);
+                const matchesYear = !selectedYear || cardYear === selectedYear;
+
+                if (matchesSearch && matchesYear) {
+                    card.style.display = "";
+                    visibleCount++;
+                } else {
+                    card.style.display = "none";
+                }
+
             });
-        });
 
-        function openResources(courseName, showPyq) {
-            facultyFilter.value = "all";
-            updateCourseOptions();
+            countElement.textContent = visibleCount;
 
-            const option = Array.from(courseFilter.options).find(item =>
-                item.textContent.trim().toLowerCase() === courseName.toLowerCase()
-            );
-
-            if (option) {
-                courseFilter.value = option.value;
-                updateSubjectOptions();
+            if (noResults) {
+                noResults.style.display = visibleCount === 0 ? "block" : "none";
             }
-
-            activeTab = showPyq ? "pyq" : "notes";
-
-            tabs.forEach(tab => {
-                tab.classList.toggle("active", tab.dataset.tab === activeTab);
-            });
-
-            notesPanel.classList.toggle("academic-hidden", showPyq);
-            pyqPanel.classList.toggle("academic-hidden", !showPyq);
-
-            filterResources();
-
-            document.getElementById("studyMaterials").scrollIntoView({
-                behavior: "smooth",
-                block: "start"
-            });
         }
 
-        document.querySelectorAll("[data-open-course]").forEach(button => {
-            button.addEventListener("click", function () {
-                openResources(this.dataset.courseName, false);
-            });
-        });
+        if (pyqSearch) {
+            pyqSearch.addEventListener("input", filterPYQ);
+        }
 
-        document.querySelectorAll("[data-open-pyq]").forEach(button => {
-            button.addEventListener("click", function () {
-                openResources(this.dataset.courseName, true);
-            });
-        });
+        if (yearFilter) {
+            yearFilter.addEventListener("change", filterPYQ);
+        }
 
-        document.querySelectorAll("[data-select-course]").forEach(button => {
-            button.addEventListener("click", function () {
-                openResources(this.dataset.selectCourse, false);
-            });
-        });
+        const academicSearch = document.querySelector('input[name="search"]');
 
-        document.querySelectorAll("[data-select-pyq]").forEach(button => {
-            button.addEventListener("click", function () {
-                openResources(this.dataset.selectPyq, true);
-            });
-        });
+        if (academicSearch) {
+            academicSearch.addEventListener("input", function () {
 
-        updateCourseOptions();
-        filterCourses();
-        filterResources();
+                const searchValue = this.value.toLowerCase().trim();
+                const activePanel = document.querySelector(".tab-panel.active");
+
+                if (!activePanel || activePanel.id === "panel-pyq") {
+                    return;
+                }
+
+                activePanel.querySelectorAll(".searchable-item").forEach(function (card) {
+
+                    const content = card.dataset.search || "";
+
+                    card.style.display = content.includes(searchValue) ? "" : "none";
+
+                });
+
+            });
+        }
 
     });
 </script>
